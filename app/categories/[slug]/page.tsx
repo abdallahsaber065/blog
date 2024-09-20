@@ -47,17 +47,7 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
       }
     }
   );
-  const allCategories = ["all"];
-  blogs.forEach(blog => {
-    blog.tags.forEach(tag => {
-      const slugified = slugger.slug(tag.name);
-      if (!allCategories.includes(slugified)) {
-        allCategories.push(slugified);
-      }
-    });
-  });
-
-  allCategories.sort();
+  const allCategories = await prisma.category.findMany();
 
   const filteredBlogs = blogs.filter(blog => {
     if (params.slug === "all") {
@@ -79,7 +69,7 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
       <div className="grid  grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 grid-rows-2 gap-16 mt-5 sm:mt-10 md:mt-24 sxl:mt-32 px-5 sm:px-10 md:px-24 sxl:px-32">
         {filteredBlogs.map((blog, index) => (
           <article key={index} className="col-span-1 row-span-1 relative">
-            <BlogLayoutThree blog={blog} />
+            <BlogLayoutThree post={blog} />
           </article>
         ))}
       </div>
