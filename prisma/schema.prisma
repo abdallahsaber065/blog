@@ -1,0 +1,108 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  username            String    @unique
+  email               String    @unique
+  password            String
+  first_name          String?
+  last_name           String?
+  bio                 String?
+  profile_image_url   String?
+  role                String    @default("reader")
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  email_verified      Boolean   @default(false)
+  verification_token  String?
+  reset_token         String?
+  reset_token_expires DateTime?
+
+  posts         Post[]
+  media_library MediaLibrary[]
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  posts       Post[]
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  posts Post[]
+}
+
+model Post {
+  id                 Int       @id @default(autoincrement())
+  title              String
+  slug               String    @unique
+  content            String
+  excerpt            String?
+  author_id          Int?
+  category_id        Int?
+  status             String    @default("draft")
+  featured_image_url String?
+  views              Int       @default(0)
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  published_at       DateTime?
+  reading_time       Int?
+
+  author     User?      @relation(fields: [author_id], references: [id])
+  category   Category?  @relation(fields: [category_id], references: [id])
+  comments   Comment[]
+  tags       Tag[]
+  post_views PostView[] // Add this line to establish the relation
+}
+
+model Comment {
+  id           Int      @id @default(autoincrement())
+  post_id      Int
+  author_name  String
+  author_email String
+  content      String
+  status       String   @default("pending")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+}
+
+model PostView {
+  id        Int      @id @default(autoincrement())
+  post_id   Int
+  viewed_at DateTime @default(now())
+  viewer_ip String?
+
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+}
+
+model MediaLibrary {
+  id             Int      @id @default(autoincrement())
+  file_name      String
+  file_type      String?
+  file_size      Int?
+  file_url       String
+  uploaded_at    DateTime @default(now())
+  uploaded_by_id Int?
+
+  uploaded_by User? @relation(fields: [uploaded_by_id], references: [id])
+}
+
+model Setting {
+  id            Int    @id @default(autoincrement())
+  setting_name  String @unique
+  setting_value String
+}
