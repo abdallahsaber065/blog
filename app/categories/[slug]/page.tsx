@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 const CategoryPage = async ({ params }: { params: { slug: string } }) => {
+  console.log(params);
   const blogs = await prisma.post.findMany(
     {
       where: {
@@ -55,7 +56,7 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
     }
     return blog.tags.some(tag => slugger.slug(tag.name) === params.slug);
   });
-
+  console.log(allCategories)
   return (
     <article className="mt-12 flex flex-col text-dark dark:text-light">
       <div className=" px-5 sm:px-10  md:px-24  sxl:px-32 flex flex-col">
