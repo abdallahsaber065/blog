@@ -32,13 +32,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   return {
     title: `${params.slug.replaceAll("-", " ")} Blogs`,
-    description: `Learn more about ${params.slug === "all" ? "web development" : params.slug} through our collection of expert blogs and tutorials`,
+    description: `Learn more about ${params.slug === "all" ? "web development" : params.slug} through our collection of expert posts and tutorials`,
   };
 }
 
 const CategoryPage = async ({ params }: { params: { slug: string } }) => {
   console.log(params);
-  const blogs = await prisma.post.findMany(
+  const posts = await prisma.post.findMany(
     {
       where: {
         status: "published",
@@ -48,13 +48,14 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
       }
     }
   );
-  const allCategories = await prisma.tag.findMany();
 
-  const filteredBlogs = blogs.filter(blog => {
+  const allCategories = await prisma.tag.findMany();
+  console.log(allCategories);
+  const filteredBlogs = posts.filter(post => {
     if (params.slug === "all") {
       return true;
     }
-    return blog.tags.some(tag => slugger.slug(tag.slug) === params.slug);
+    return post.tags.some(tag => tag.slug === params.slug);
   });
   return (
     <article className="mt-12 flex flex-col text-dark dark:text-light">
