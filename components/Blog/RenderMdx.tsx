@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { useMDXComponent } from 'next-contentlayer/hooks'
+import { MDXProvider } from '@mdx-js/react'
 import Image from 'next/image'
 import { PrismaClient, Post } from '@prisma/client'
 
