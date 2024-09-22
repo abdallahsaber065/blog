@@ -48,15 +48,14 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
       }
     }
   );
-  const allCategories = await prisma.category.findMany();
+  const allCategories = await prisma.tag.findMany();
 
   const filteredBlogs = blogs.filter(blog => {
     if (params.slug === "all") {
       return true;
     }
-    return blog.tags.some(tag => slugger.slug(tag.name) === params.slug);
+    return blog.tags.some(tag => slugger.slug(tag.slug) === params.slug);
   });
-  console.log(allCategories)
   return (
     <article className="mt-12 flex flex-col text-dark dark:text-light">
       <div className=" px-5 sm:px-10  md:px-24  sxl:px-32 flex flex-col">
