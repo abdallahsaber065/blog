@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/utils/siteMetaData";
-import { slug } from "github-slugger";
+import { slug as slugger } from "github-slugger";
 import { generateTOC } from "@/utils";
 
 const prisma = new PrismaClient();
@@ -66,7 +66,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function BlogPage({ params } : { params: { slug: string } }) {
+export default async function BlogPage({ params }: { params: { slug: string } }) {
+
+
   const post = await prisma.post.findUnique({
     where: { slug: params.slug },
     include: {
@@ -76,6 +78,8 @@ export default async function BlogPage({ params } : { params: { slug: string } }
     },
   });
 
+  console.log(params);
+  console.log(post);
   if (!post) {
     notFound();
   }
@@ -113,7 +117,7 @@ export default async function BlogPage({ params } : { params: { slug: string } }
           <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <Tag
               name={post.tags[0].name}
-              link={`/categories/${slug(post.tags[0].name)}`}
+              link={`/categories/${slugger(post.tags[0].name)}`}
               className="px-6 text-sm py-2"
             />
             <h1

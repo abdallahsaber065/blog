@@ -2,11 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 const { PrismaClient } = require('@prisma/client');
+const slugger = require('slug');
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const contentDir = path.join(__dirname, 'content');
+
+  // ../content
+  const contentDir = path.join(__dirname, '..', 'content');
   const directories = fs.readdirSync(contentDir);
 
   for (const dir of directories) {
@@ -47,7 +50,7 @@ async function main() {
       category = await prisma.category.create({
         data: {
           name: data.category || 'Uncategorized',
-          slug: (data.category || 'Uncategorized').toLowerCase().replace(/ /g, '-'),
+          slug: slugger(data.category || 'Uncategorized'),
         },
       });
     }
@@ -63,7 +66,7 @@ async function main() {
         tag = await prisma.tag.create({
           data: {
             name: tagName,
-            slug: tagName.toLowerCase().replace(/ /g, '-'),
+            slug: slugger(tagName),
           },
         });
       }
@@ -74,7 +77,7 @@ async function main() {
     await prisma.post.create({
       data: {
         title: data.title,
-        slug: data.title.toLowerCase().replace(/ /g, '-'),
+        slug: slugger(data.title),
         content: content,
         excerpt: data.description,
         author_id: author.id,
