@@ -78,8 +78,6 @@ export default async function BlogPage({ params }: { params: { slug: string } })
     },
   });
 
-  console.log(params);
-  console.log(post);
   if (!post) {
     notFound();
   }

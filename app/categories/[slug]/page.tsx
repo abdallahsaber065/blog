@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 const CategoryPage = async ({ params }: { params: { slug: string } }) => {
-  console.log(params);
+
   const posts = await prisma.post.findMany(
     {
       where: {
@@ -50,7 +50,6 @@ const CategoryPage = async ({ params }: { params: { slug: string } }) => {
   );
 
   const allCategories = await prisma.tag.findMany();
-  console.log(allCategories);
   const filteredBlogs = posts.filter(post => {
     if (params.slug === "all") {
       return true;
