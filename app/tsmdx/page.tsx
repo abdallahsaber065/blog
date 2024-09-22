@@ -1,4 +1,4 @@
-import Post from '@/markdown/post.mdx'
+import Post from '../mdx/page.mdx'
 
 export default function TestMDX() {
     return <Post />
