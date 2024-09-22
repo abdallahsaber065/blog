@@ -30,6 +30,7 @@
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "mdx-bundler": "^10.0.3",
+    "next-mdx-remote": "^5.0.0",
     "next-sitemap": "^4.2.2",
     "postcss": "8.4.47",
     "react": "18.3.1",
