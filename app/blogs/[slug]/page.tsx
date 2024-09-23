@@ -7,6 +7,9 @@ import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/utils/siteMetaData";
 import { slug as slugger } from "github-slugger";
 import { generateTOC } from "@/utils";
+import { serialize } from 'next-mdx-remote/serialize';
+import mdxOptions from '@/mdxOptions'; // Adjust the path accordingly
+import { SerializeOptions } from 'next-mdx-remote/dist/types';
 
 const prisma = new PrismaClient();
 
@@ -99,6 +102,9 @@ export default async function BlogPage({ params }: { params: { slug: string } })
       }]
   }
 
+  // Serialize the post content
+  const mdxSource = await serialize(post.content, mdxOptions as SerializeOptions);
+
   return (
     <>
       <script
@@ -170,7 +176,7 @@ export default async function BlogPage({ params }: { params: { slug: string } })
               </ul>
             </details>
           </div>
-          <RenderMdx post={post} />
+          <RenderMdx post={post} mdxSource={mdxSource} />
         </div>
       </article>
     </>

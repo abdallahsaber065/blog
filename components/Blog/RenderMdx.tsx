@@ -2,8 +2,7 @@ import React from 'react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import { Post as PrismaPost, Tag, User } from '@prisma/client';
-import mdxOptions from '@/mdxOptions'; // Adjust the path accordingly
-import { SerializeOptions } from 'next-mdx-remote/dist/types';
+import { MDXRemoteSerializeResult, SerializeOptions } from 'next-mdx-remote/dist/types';
 
 type PostWithAuthorAndTags = PrismaPost & {
   author: User | null;
@@ -23,7 +22,8 @@ const mdxComponents = (featuredImageUrl: string) => ({
   ),
 });
 
-const RenderMdx = ({ post }: { post: PostWithAuthorAndTags }) => {
+const RenderMdx = ({ post, mdxSource }: { post: PostWithAuthorAndTags, mdxSource: MDXRemoteSerializeResult }) => {
+  console.log(mdxSource);
   return (
     <div className='col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
     prose-blockquote:bg-accent/20 
@@ -44,9 +44,8 @@ const RenderMdx = ({ post }: { post: PostWithAuthorAndTags }) => {
     sm:first-letter:text-5xl
     '>
       <MDXRemote
-        source={post.content}
+        source={mdxSource}
         components={mdxComponents(post.featured_image_url || '')}
-        options={mdxOptions as SerializeOptions}
       />
     </div>
   );
