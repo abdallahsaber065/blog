@@ -1,13 +1,9 @@
-// RenderMdx.tsx
-"use client"
 import React from 'react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
-import { PrismaClient, Post as PrismaPost, Tag, User } from '@prisma/client';
+import { Post as PrismaPost, Tag, User } from '@prisma/client';
 import mdxOptions from '@/mdxOptions'; // Adjust the path accordingly
 import { SerializeOptions } from 'next-mdx-remote/dist/types';
-
-const prisma = new PrismaClient();
 
 type PostWithAuthorAndTags = PrismaPost & {
   author: User | null;
