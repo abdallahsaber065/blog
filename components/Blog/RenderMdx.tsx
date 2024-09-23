@@ -1,26 +1,10 @@
-import React, { Suspense } from 'react';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+// components/RenderMdx.tsx
+'use client';
+
+import { MDXRemote } from 'next-mdx-remote';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import Image from 'next/image';
 import { Post as PrismaPost, Tag, User } from '@prisma/client';
-import { SerializeOptions } from 'next-mdx-remote/dist/types';
-// mdxOptions.js
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
-
-const mdxOptions = {
-  remarkPlugins: [remarkGfm],
-  rehypePlugins: [
-    rehypeSlug,
-    [rehypeAutolinkHeadings, { behavior: "wrap" }],
-    rehypePrettyCode,
-  ],
-};
-
-// function that take a post and return the compiled 
-
-
 
 type PostWithAuthorAndTags = PrismaPost & {
   author: User | null;
@@ -40,8 +24,12 @@ const mdxComponents = (featuredImageUrl: string) => ({
   ),
 });
 
-const RenderMdx = ({ post }: { post: PostWithAuthorAndTags }) => {
+interface RenderMdxProps {
+  post: PostWithAuthorAndTags;
+  mdxSource: MDXRemoteSerializeResult;
+}
 
+const RenderMdx: React.FC<RenderMdxProps> = ({ post, mdxSource }) => {
   return (
     <div className='col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
     prose-blockquote:bg-accent/20 
@@ -61,13 +49,10 @@ const RenderMdx = ({ post }: { post: PostWithAuthorAndTags }) => {
     first-letter:text-3xl
     sm:first-letter:text-5xl
     '>
-      <Suspense fallback={<>Loading...</>}>
-        <MDXRemote
-          source={post.content}
-          components={mdxComponents(post.featured_image_url || '')}
-          options={mdxOptions as SerializeOptions}
-        />
-      </Suspense>
+      <MDXRemote
+        {...mdxSource}
+        components={mdxComponents(post.featured_image_url || '')}
+      />
     </div>
   );
 };
