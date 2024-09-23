@@ -79,7 +79,6 @@ export default async function BlogPage({ params }: { params: { slug: string } })
   }
 
   const toc = generateTOC(post.content);
-
   let imageList = [siteMetadata.socialBanner];
   if (post.featured_image_url) {
     imageList = [post.featured_image_url];
@@ -152,14 +151,14 @@ export default async function BlogPage({ params }: { params: { slug: string } })
                         href={`#${heading.slug}`}
                         data-level={heading.level}
                         className="data-[level=two]:pl-0  data-[level=two]:pt-2
-                                         data-[level=two]:border-t border-solid border-dark/40
+                                         data-[level=two]:border-t border-solid
                                          data-[level=three]:pl-4
                                          sm:data-[level=three]:pl-6
                                          flex items-center justify-start
                                          "
                       >
                         {heading.level === "three" ? (
-                          <span className="flex w-1 h-1 rounded-full bg-dark mr-2">
+                          <span className="flex w-1 h-1 rounded-full mr-2">
                             &nbsp;
                           </span>
                         ) : null}
