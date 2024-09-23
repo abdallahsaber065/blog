@@ -8,6 +8,7 @@ import siteMetadata from "@/utils/siteMetaData";
 import { slug as slugger } from "github-slugger";
 import { generateTOC } from "@/utils";
 import { serialize } from 'next-mdx-remote/serialize';
+import { options } from "@/utils/articles/mdxconfig";
 
 const prisma = new PrismaClient();
 
@@ -94,14 +95,17 @@ export default async function BlogPage({ params }: { params: { slug: string } })
     "datePublished": post.published_at ? new Date(post.published_at).toISOString() : null,
     "dateModified": new Date(post.updated_at || post.published_at).toISOString(),
     "author": [{
-        "@type": "Person",
-        "name": post?.author ? [post.author.username] : siteMetadata.author,
-        "url": siteMetadata.twitter,
-      }]
+      "@type": "Person",
+      "name": post?.author ? [post.author.username] : siteMetadata.author,
+      "url": siteMetadata.twitter,
+    }]
   }
 
   // Serialize the post content
-  const mdxSource = await serialize(post.content);
+  const mdxSource = await serialize(
+    post.content,
+    options as any
+  );
 
   return (
     <>
@@ -136,7 +140,7 @@ export default async function BlogPage({ params }: { params: { slug: string } })
             sizes="100vw"
           />
         </div>
-        
+
         <BlogDetails post={post} postSlug={params.slug} tags={post.tags} />
         <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
           <div className="col-span-12 lg:col-span-4">
