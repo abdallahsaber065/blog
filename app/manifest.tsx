@@ -1,8 +1,8 @@
 export default function manifest() {
     return {
-      name: 'Next.js App',
-      short_name: 'Next.js App',
-      description: 'Next.js App',
+      name: 'Dev Trend',
+      short_name: 'Dev Trend',
+      description: 'A blog about web development, software engineering, and all Tech related topics.',
       start_url: '/',
       display: 'standalone',
     //   background_color: '#fff',
@@ -28,6 +28,7 @@ export default function manifest() {
           sizes: '512x512',
           type: 'image/png',
         },
+            
       ],
     }
   }
