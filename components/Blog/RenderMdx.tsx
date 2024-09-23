@@ -9,6 +9,19 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+const mdxOptions = {
+  remarkPlugins: [remarkGfm],
+  rehypePlugins: [
+    rehypeSlug,
+    [rehypeAutolinkHeadings, { behavior: "wrap" }],
+    rehypePrettyCode,
+  ],
+};
+
+// function that take a post and return the compiled 
+
+
+
 type PostWithAuthorAndTags = PrismaPost & {
   author: User | null;
   tags: Tag[];
@@ -28,17 +41,6 @@ const mdxComponents = (featuredImageUrl: string) => ({
 });
 
 const RenderMdx = ({ post }: { post: PostWithAuthorAndTags }) => {
-
-  const mdxOptions = {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      [rehypeAutolinkHeadings, { behavior: "wrap" }],
-      rehypePrettyCode,
-    ],
-  };
-
-  console.log('MDX Options:', mdxOptions);
 
   return (
     <div className='col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
