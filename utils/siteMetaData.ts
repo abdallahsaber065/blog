@@ -14,7 +14,7 @@ const siteMetadata = {
   twitter: 'https://x.com/DevTrend0',
   facebook: 'https://www.facebook.com/devtrends',
   linkedin: 'https://www.linkedin.com/in/abdallah-saber065/',
-  dribbble: 'https://twitter.com/DevTrend0',
+  dribbble: 'https://abdallah-saber.vercel.app/',
   locale: 'en-US',
 }
 
