@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     include: {
       author: true,
       tags: true,
-      category: true,
     },
   });
 
@@ -67,14 +66,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function BlogPage({ params }: { params: { slug: string } }) {
-
-
   const post = await prisma.post.findUnique({
     where: { slug: params.slug },
     include: {
       author: true,
       tags: true,
-      category: true,
     },
   });
 
@@ -98,10 +94,10 @@ export default async function BlogPage({ params }: { params: { slug: string } })
     "datePublished": post.published_at ? new Date(post.published_at).toISOString() : null,
     "dateModified": new Date(post.updated_at || post.published_at).toISOString(),
     "author": [{
-        "@type": "Person",
-        "name": post?.author ? [post.author.username] : siteMetadata.author,
-        "url": siteMetadata.twitter,
-      }]
+      "@type": "Person",
+      "name": post?.author ? [post.author.username] : siteMetadata.author,
+      "url": siteMetadata.twitter,
+    }]
   }
 
   return (
@@ -137,7 +133,7 @@ export default async function BlogPage({ params }: { params: { slug: string } })
             sizes="100vw"
           />
         </div>
-        
+
         <BlogDetails post={post} postSlug={params.slug} tags={post.tags} />
         <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
           <div className="col-span-12 lg:col-span-4">
@@ -155,12 +151,11 @@ export default async function BlogPage({ params }: { params: { slug: string } })
                       <a
                         href={`#${heading.slug}`}
                         data-level={heading.level}
-                        className="data-[level=two]:pl-0  data-[level=two]:pt-2
-                                         data-[level=two]:border-t border-solid border-dark/40
-                                         data-[level=three]:pl-4
-                                         sm:data-[level=three]:pl-6
-                                         flex items-center justify-start
-                                         "
+                        className="data-[level=two]:pl-0 data-[level=two]:pt-2
+                     data-[level=two]:border-t border-solid border-dark/40
+                     data-[level=three]:pl-4
+                     sm:data-[level=three]:pl-6
+                     flex items-center justify-start"
                       >
                         {heading.level === "three" ? (
                           <span className="flex w-1 h-1 rounded-full bg-dark mr-2">
