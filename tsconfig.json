@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "utilsDev/updateImagePaths.js", "utilsDev/extractAndAddCategories.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "utils/updateImagePaths.js", "utils/extractAndAddCategories.js"],
   "exclude": ["node_modules"]
 }
