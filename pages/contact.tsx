@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
-
 import { ClipLoader } from 'react-spinners'; // Import the spinner
 
 const ContactPage = () => {
@@ -44,19 +43,19 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-base-100">
+    <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark">
       <main className="container mx-auto py-16 px-4 flex-1">
         <section className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-primary mb-4">Contact Us</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-accent dark:text-accentDark mb-4">Contact Us</h1>
+          <p className="text-lg text-gray dark:text-light max-w-2xl mx-auto">
             Have questions, feedback, or want to contribute to Dev Trend? Get in touch with us using the form below or connect with us on social media!
           </p>
         </section>
         <section className="max-w-2xl mx-auto">
-          <form className="bg-base-200 p-8 rounded-lg shadow-lg space-y-6" onSubmit={handleSubmit}>
+          <form className="bg-light dark:bg-dark p-8 rounded-lg shadow-lg space-y-6" onSubmit={handleSubmit}>
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-secondary">Your Name</span>
+                <span className="label-text text-accent dark:text-accentDark">Your Name</span>
               </label>
               <input
                 type="text"
@@ -64,13 +63,13 @@ const ContactPage = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
                 required
               />
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-secondary">Your Email</span>
+                <span className="label-text text-accent dark:text-accentDark">Your Email</span>
               </label>
               <input
                 type="email"
@@ -78,25 +77,25 @@ const ContactPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
                 required
               />
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-secondary">Message</span>
+                <span className="label-text text-accent dark:text-accentDark">Message</span>
               </label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Enter your message"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
                 rows={5}
                 required
               ></textarea>
             </div>
-            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+            <button type="submit" className="btn btn-accent dark:btn-accentDark w-full" disabled={loading}>
               {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Send Message'}
             </button>
             {success && <p className="text-green-500 mt-4">Message sent successfully!</p>}
@@ -104,8 +103,8 @@ const ContactPage = () => {
           </form>
         </section>
         <section className="mt-16 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-secondary">Connect with Us</h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <h2 className="text-3xl font-bold mb-4 text-accent dark:text-accentDark">Connect with Us</h2>
+          <p className="text-lg text-gray dark:text-light mb-8">
             Follow us on social media to stay updated with the latest articles, news, and more!
           </p>
           <div className="flex justify-center space-x-4">
