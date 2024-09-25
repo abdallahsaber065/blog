@@ -18,8 +18,6 @@ interface HomeCoverSectionProps {
 const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
   const post = posts[0];
 
-  console.log(post);
-
   return (
     <div className='w-full inline-block'>
       <article className='flex flex-col items-start justify-end mx-5 sm:mx-10 relative h-[60vh] sm:h-[85vh]'>
