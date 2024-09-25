@@ -9,7 +9,10 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@mdxeditor/editor'],
+  reactStrictMode: true,
   webpack: (config) => {
+    config.experiments = { ...config.experiments, topLevelAwait: true };
     config.resolve.alias['public'] = path.join(__dirname, 'public');
     return config;
   },
