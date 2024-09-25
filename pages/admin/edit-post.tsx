@@ -1,4 +1,5 @@
 // pages/edit-post.tsx
+import "../../public/styles/globals.css";
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { FaSave, FaSpinner } from 'react-icons/fa';
@@ -6,7 +7,9 @@ import { ClipLoader } from 'react-spinners';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PrismaClient } from '@prisma/client';
-import { MDXEditor } from '@mdxeditor/editor';
+import {
+    MDXEditor, headingsPlugin, thematicBreakPlugin, quotePlugin, codeBlockPlugin, linkPlugin, imagePlugin, listsPlugin, tablePlugin
+} from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 
 const prisma = new PrismaClient();
@@ -28,9 +31,9 @@ const EditPost: React.FC<{ post: any, authors: any[], categories: any[], tags: a
         setPostData((prevPost: any) => (prevPost ? { ...prevPost, [name]: value } : null));
     };
 
-    const handleEditorChange = (text: string) => {
-        setPostData((prevPost: any) => (prevPost ? { ...prevPost, content: text } : null));
-    };
+    // const handleEditorChange = (text: string) => {
+    //     setPostData((prevPost: any) => (prevPost ? { ...prevPost, content: text } : null));
+    // };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -118,7 +121,7 @@ const EditPost: React.FC<{ post: any, authors: any[], categories: any[], tags: a
                             ) : (
                                 <MDXEditor
                                     markdown={postData.content}
-                                    onChange={handleEditorChange}
+                                    plugins={[headingsPlugin(), thematicBreakPlugin(), quotePlugin(), codeBlockPlugin(), linkPlugin(), imagePlugin(), listsPlugin(), tablePlugin()]}
                                     className="border border-gray-300 p-2 w-full"
                                 />
                             )}
