@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-
+import daisyui from 'daisyui'
+import forms from '@tailwindcss/forms'
+import typography from '@tailwindcss/typography'
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -37,7 +39,8 @@ module.exports = {
   },
 
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography')
+    forms,
+    typography,
+    daisyui
   ],
 };
