@@ -19,7 +19,7 @@ const Footer = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch('/api/users/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
