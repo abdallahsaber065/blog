@@ -6,10 +6,8 @@ import { ClipLoader } from 'react-spinners';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PrismaClient } from '@prisma/client';
-import { MDXEditor } from '@mdxeditor/editor'
-import '@mdxeditor/editor/style.css'
-
-// Dynamically import the MDX editor to avoid SSR issues
+import { MDXEditor } from '@mdxeditor/editor';
+import '@mdxeditor/editor/style.css';
 
 const prisma = new PrismaClient();
 
@@ -254,10 +252,34 @@ export const getServerSideProps = async (context: any) => {
         const categories = await prisma.category.findMany();
         const tags = await prisma.tag.findMany();
 
+        // Convert Date objects to strings
+        const serializeDate = (date: Date | undefined | null) => date ? date.toISOString() : null;
+
+        // serialize post data and .post.author.created_at
+        const serializedPost = {
+            ...post,
+            created_at: serializeDate(post?.created_at),
+            updated_at: serializeDate(post?.updated_at),
+            published_at: serializeDate(post?.published_at),
+
+            // serialize author data
+            author: {
+                ...post?.author,
+                created_at: serializeDate(post?.author?.created_at),
+                updated_at: serializeDate(post?.author?.updated_at),
+            },
+        };
+
+        const serializedAuthors = authors.map((author) => ({
+            ...author,
+            created_at: serializeDate(author.created_at),
+            updated_at: serializeDate(author.updated_at),
+        }));
+        
         return {
             props: {
-                post,
-                authors,
+                post: serializedPost,
+                authors: serializedAuthors,
                 categories,
                 tags,
             },
