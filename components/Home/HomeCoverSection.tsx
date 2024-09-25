@@ -52,18 +52,4 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
   );
 };
 
-export async function getStaticProps() {
-  const posts = await prisma.post.findMany({
-    include: {
-      tags: true,
-    },
-  });
-
-  return {
-    props: {
-      posts,
-    },
-  };
-}
-
 export default HomeCoverSection;
