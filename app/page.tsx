@@ -12,15 +12,6 @@ export default async function Home() {
     },
   });
 
-  // // Ensure all image paths start with a leading slash and are relative to the public directory
-  // // replace public and all before content with /
-  // const updatedBlogs = allBlogs.map(blog => ({
-  //   ...blog,
-  //   featured_image_url: blog.featured_image_url?.startsWith('http')
-  //     ? blog.featured_image_url
-  //     : `${blog.featured_image_url?.replace("../../public", "")}`,
-  // }));
-
   return (
     <main className="flex flex-col items-center justify-center">
       <HomeCoverSection posts={allBlogs} />
