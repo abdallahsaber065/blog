@@ -106,3 +106,12 @@ model Setting {
   setting_name  String @unique
   setting_value String
 }
+
+// newsletter subscription ALTER USER abdo WITH CREATEDB;
+model NewsletterSubscription {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  subscribed Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
