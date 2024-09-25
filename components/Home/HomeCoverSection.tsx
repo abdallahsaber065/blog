@@ -1,5 +1,4 @@
 import { PrismaClient, Post, Tag as PrismaTag } from '@prisma/client';
-import { sortPosts } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -17,8 +16,9 @@ interface HomeCoverSectionProps {
 }
 
 const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
-  const sortedBlogs = sortPosts(posts);
-  const post = sortedBlogs[0];
+  const post = posts[0];
+
+  console.log(post);
 
   return (
     <div className='w-full inline-block'>
