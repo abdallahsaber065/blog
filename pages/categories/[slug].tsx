@@ -1,13 +1,26 @@
 import { PrismaClient } from '@prisma/client';
 import BlogLayoutThree from "@/components/Blog/BlogLayoutThree";
 import Categories from "@/components/Blog/Categories";
-import GithubSlugger from "github-slugger";
-import { GetServerSideProps } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 
 const prisma = new PrismaClient();
-const slugger = new GithubSlugger();
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const tags = await prisma.tag.findMany();
+  const paths = tags.map(tag => ({
+    params: { slug: tag.slug },
+  }));
+
+  // Include a path for "all" categories
+  paths.push({ params: { slug: 'all' } });
+
+  return {
+    paths,
+    fallback: 'blocking', // Generate pages on-demand if not generated at build time
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params as { slug: string };
 
   const posts = await prisma.post.findMany({
@@ -35,13 +48,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     published_at: post.published_at ? post.published_at.toISOString() : null,
   }));
 
-
   return {
     props: {
       slug,
       posts: serializedPosts,
       categories: allCategories,
     },
+    revalidate: 3600, // Revalidate every hour
   };
 };
 
@@ -53,10 +66,6 @@ const CategoryPage = ({ slug, posts, categories }: { slug: string, posts: any[],
     updated_at: new Date(post.updated_at),
     published_at: post.published_at ? new Date(post.published_at) : null,
   }));
-
-  console.log(posts);
-  console.log(categories);
-  console.log(slug);
 
   return (
     <article className="mt-12 flex flex-col text-dark dark:text-light">

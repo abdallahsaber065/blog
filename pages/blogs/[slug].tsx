@@ -4,7 +4,6 @@ import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/utils/siteMetaData";
-import { slug as slugger } from "github-slugger";
 import { generateTOC } from "@/utils";
 import { serialize } from 'next-mdx-remote/serialize';
 import { options } from "@/utils/articles/mdxconfig";
@@ -23,7 +22,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
         params: { slug: post.slug },
     }));
 
-    return { paths, fallback: 'blocking' };
+    return {
+        paths,
+        fallback: 'blocking'
+    };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -114,7 +116,7 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <Tag
                             name={deserializedPost.tags[0].name}
-                            link={`/categories/${slugger(deserializedPost.tags[0].name)}`}
+                            link={`/categories/${deserializedPost.tags[0].slug}`}
                             className="px-6 text-sm py-2"
                         />
                         <h1
