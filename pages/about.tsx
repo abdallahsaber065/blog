@@ -45,6 +45,8 @@ const AboutPage = () => {
                 width={500}
                 height={300}
                 className="rounded-lg shadow-lg"
+                style={{ width: "auto", height: "auto" }}
+                priority
               />
             </div>
           </div>
