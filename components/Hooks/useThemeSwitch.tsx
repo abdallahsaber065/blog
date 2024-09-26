@@ -3,7 +3,7 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 export function useThemeSwitch(): [string, Dispatch<SetStateAction<string>>] {
-  const preferDarkQuery = "(prefers-color-schema:dark)";
+  const preferDarkQuery = "(prefers-color-scheme: dark)";
   const storageKey = "theme";
 
   const toggleTheme = (theme: string): void => {
@@ -23,7 +23,12 @@ export function useThemeSwitch(): [string, Dispatch<SetStateAction<string>>] {
     return window.matchMedia(preferDarkQuery).matches ? "dark" : "light";
   };
 
-  const [mode, setMode] = useState<string>("dark");
+  const [mode, setMode] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return getUserPreference();
+    }
+    return "light"; // Default to light if window is not defined
+  });
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(preferDarkQuery);
