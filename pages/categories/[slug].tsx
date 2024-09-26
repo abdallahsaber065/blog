@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import BlogLayoutThree from "@/components/Blog/BlogLayoutThree";
 import Categories from "@/components/Blog/Categories";
 import { GetStaticProps, GetStaticPaths } from 'next';
 
-const prisma = new PrismaClient();
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const tags = await prisma.tag.findMany();

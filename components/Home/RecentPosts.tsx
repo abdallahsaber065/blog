@@ -1,4 +1,4 @@
-import { sortPosts } from "@/utils";
+import { sortPosts } from "@/lib";
 import Link from "next/link";
 import React from "react";
 import BlogLayoutThree from "../Blog/BlogLayoutThree";

@@ -1,4 +1,4 @@
-import { cx } from "@/utils";
+import { cx } from "@/lib";
 import Link from "next/link";
 import React from "react";
 

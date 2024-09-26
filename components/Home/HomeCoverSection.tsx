@@ -1,11 +1,10 @@
-import { PrismaClient, Post, Tag as PrismaTag } from '@prisma/client';
+import { Post, Tag as PrismaTag } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import Tag from '../Elements/Tag';
 import { slug } from 'github-slugger';
 
-const prisma = new PrismaClient();
 
 interface PostWithTags extends Post {
   tags: PrismaTag[];
