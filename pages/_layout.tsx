@@ -78,6 +78,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/static/images/icons/favicon.ico" />
+        <link rel="apple-touch-icon" href="/static/images/icons/apple-touch-icon.png" />
+        {/* android-chrome */}
+        <link rel="icon" type="image/png" sizes="192x192" href="/static/images/icons/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/static/images/icons/android-chrome-512x512.png" />
+        {/* favicon 16 and 32 */}
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/images/icons/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/images/icons/favicon-32x32.png" />
+        {/* safari-pinned-tab */}
+        <link rel="mask-icon" href="/static/images/icons/safari-pinned-tab.svg" color="#5bbad5" />
+        {/* mstile 150x150 */}
+        <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
+        
       </head>
       <body
         className={cx(
