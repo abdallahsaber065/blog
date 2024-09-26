@@ -10,12 +10,14 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-in",
+  axes: ["opsz"]
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-mr",
+
 });
 
 export const metadata = {
