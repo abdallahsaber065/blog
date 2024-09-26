@@ -4,10 +4,16 @@ import FeaturedPosts from "@/components/Home/FeaturedPosts";
 import RecentPosts from "@/components/Home/RecentPosts";
 import { GetServerSideProps } from 'next';
 
-
 export const getServerSideProps: GetServerSideProps = async () => {
   const allBlogs = await prisma.post.findMany({
-    include: {
+    select: {
+      slug: true,
+      title: true,
+      excerpt: true,
+      created_at: true,
+      updated_at: true,
+      published_at: true,
+      featured_image_url: true,
       tags: true,
     },
     orderBy: {
