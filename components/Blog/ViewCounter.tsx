@@ -1,8 +1,7 @@
 "use client";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import React, { useEffect, useState } from "react";
 
-const prisma = new PrismaClient();
 
 const ViewCounter = ({ slug }: { slug: string }, noCount = false, showCount = true) => {
   const [views, setViews] = useState(0);

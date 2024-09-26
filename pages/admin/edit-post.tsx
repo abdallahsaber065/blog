@@ -6,13 +6,12 @@ import { FaSave, FaSpinner } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import {
     MDXEditor, headingsPlugin, thematicBreakPlugin, quotePlugin, codeBlockPlugin, linkPlugin, imagePlugin, listsPlugin, tablePlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 
-const prisma = new PrismaClient();
 
 const EditPost: React.FC<{ post: any, authors: any[], categories: any[], tags: any[] }> = ({ post, authors, categories, tags }) => {
     const router = useRouter();

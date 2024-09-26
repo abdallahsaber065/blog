@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "@/lib/prisma";
 import HomeCoverSection from "@/components/Home/HomeCoverSection";
 import FeaturedPosts from "@/components/Home/FeaturedPosts";
 import RecentPosts from "@/components/Home/RecentPosts";
 import { GetServerSideProps } from 'next';
 
-const prisma = new PrismaClient();
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const allBlogs = await prisma.post.findMany({

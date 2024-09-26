@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
-import siteMetadata from "@/utils/siteMetaData";
-import { generateTOC } from "@/utils";
+import siteMetadata from "@/lib/siteMetaData";
+import { generateTOC } from "@/lib";
 import { serialize } from 'next-mdx-remote/serialize';
-import { options } from "@/utils/articles/mdxconfig";
+import { options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({

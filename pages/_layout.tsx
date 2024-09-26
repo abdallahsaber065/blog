@@ -1,9 +1,9 @@
 import "../public/styles/globals.css";
-import { cx } from "@/utils";
+import { cx } from "@/lib";
 import { Inter, Manrope } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import siteMetadata from "@/utils/siteMetaData";
+import siteMetadata from "@/lib/siteMetaData";
 import { ReactNode } from 'react';
 import Head from 'next/head';
 

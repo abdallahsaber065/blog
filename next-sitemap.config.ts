@@ -1,4 +1,4 @@
-import siteMetadata from "./utils/siteMetaData";
+import siteMetadata from "./lib/siteMetaData";
 
 module.exports = {
   siteUrl: siteMetadata.siteUrl,

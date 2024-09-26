@@ -2,10 +2,10 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import { DribbbleIcon, GithubIcon, LinkedinIcon, MoonIcon, SunIcon, TwitterIcon } from "../Icons";
-import siteMetadata from "@/utils/siteMetaData";
+import siteMetadata from "@/lib/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState, useEffect } from "react";
-import { cx } from "@/utils";
+import { cx } from "@/lib";
 
 const Header = () => {
   const [mode, setMode] = useThemeSwitch();
