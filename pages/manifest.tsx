@@ -11,22 +11,22 @@ export default function manifest() {
     // theme_color: '#fff',
     icons: [
       {
-        src: `/favicon-32x32.png?version=${iconVersion}`,
+        src: `/static/images/icons/favicon-32x32.png?version=${iconVersion}`,
         sizes: '32x32',
         type: 'image/png',
       },
       {
-        src: `/favicon-16x16.png?version=${iconVersion}`,
+        src: `/static/images/icons/favicon-16x16.png?version=${iconVersion}`,
         sizes: '16x16',
         type: 'image/png',
       },
       {
-        src: `/android-chrome-192x192.png?version=${iconVersion}`,
+        src: `/static/images/icons/android-chrome-192x192.png?version=${iconVersion}`,
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: `/android-chrome-512x512.png?version=${iconVersion}`,
+        src: `/static/images/icons/android-chrome-512x512.png?version=${iconVersion}`,
         sizes: '512x512',
         type: 'image/png',
       },
