@@ -7,8 +7,8 @@ export default function manifest() {
     description: 'A blog about web development, software engineering, and all Tech related topics.',
     start_url: '/',
     display: 'standalone',
-    // background_color: '#fff',
-    // theme_color: '#fff',
+    background_color: '#fff',
+    theme_color: '#fff',
     icons: [
       {
         src: `/static/images/icons/favicon-32x32.png?version=${iconVersion}`,
