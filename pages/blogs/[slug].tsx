@@ -1,4 +1,3 @@
-
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
@@ -10,11 +9,13 @@ import { options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
 
-
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
         where: {
             status: 'published',
+        },
+        select: {
+            slug: true,
         },
     });
 
@@ -33,9 +34,28 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     const post = await prisma.post.findUnique({
         where: { slug },
-        include: {
-            author: true,
-            tags: true,
+        select: {
+            slug: true,
+            title: true,
+            content: true,
+            excerpt: true,
+            featured_image_url: true,
+            created_at: true,
+            updated_at: true,
+            published_at: true,
+            author: {
+                select: {
+                    username: true,
+                    created_at: true,
+                    updated_at: true,
+                },
+            },
+            tags: {
+                select: {
+                    name: true,
+                    slug: true,
+                },
+            },
         },
     });
 
