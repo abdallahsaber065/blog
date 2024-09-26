@@ -10,7 +10,9 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <script
+          <link rel="preload" href="/fonts/Inter.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <link rel="preload" href="/fonts/Manrope.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <script rel='preload'
             dangerouslySetInnerHTML={{
               __html: `
                 (function() {
