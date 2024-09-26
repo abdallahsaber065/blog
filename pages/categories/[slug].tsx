@@ -3,7 +3,6 @@ import BlogLayoutThree from "@/components/Blog/BlogLayoutThree";
 import Categories from "@/components/Blog/Categories";
 import { GetStaticProps, GetStaticPaths } from 'next';
 
-
 export const getStaticPaths: GetStaticPaths = async () => {
   const tags = await prisma.tag.findMany();
   const paths = tags.map(tag => ({
@@ -26,7 +25,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     where: {
       status: "published",
     },
-    include: {
+    select: {
+      slug: true,
+      title: true,
+      created_at: true,
+      updated_at: true,
+      published_at: true,
+      featured_image_url: true,
       tags: true,
     },
   });
