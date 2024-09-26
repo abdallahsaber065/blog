@@ -9,6 +9,9 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizeCss: true,
+  },
   transpilePackages: ['@mdxeditor/editor'],
   reactStrictMode: true,
   webpack: (config) => {
