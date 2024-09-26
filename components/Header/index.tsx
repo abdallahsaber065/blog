@@ -4,12 +4,17 @@ import Logo from "./Logo";
 import { DribbbleIcon, GithubIcon, LinkedinIcon, MoonIcon, SunIcon, TwitterIcon } from "../Icons";
 import siteMetadata from "@/utils/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cx } from "@/utils";
 
 const Header = () => {
   const [mode, setMode] = useThemeSwitch();
   const [click, setClick] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const toggle = () => {
     setClick(!click);
@@ -65,16 +70,18 @@ const Header = () => {
         <Link href="/contact" className="mx-2">
           Contact
         </Link>
-        <button
-          onClick={() => setMode(mode === "light" ? "dark" : "light")}
-          className={cx(
-            "w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1",
-            mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
-          )}
-          aria-label="theme-switcher"
-        >
-          {mode === "light" ? <MoonIcon className={"fill-dark"} /> : <SunIcon className={"fill-dark"} />}
-        </button>
+        {isMounted && (
+          <button
+            onClick={() => setMode(mode === "light" ? "dark" : "light")}
+            className={cx(
+              "w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1",
+              mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
+            )}
+            aria-label="theme-switcher"
+          >
+            {mode === "light" ? <MoonIcon className={"fill-dark"} /> : <SunIcon className={"fill-dark"} />}
+          </button>
+        )}
       </nav>
 
       <nav className="w-max py-3 px-8 border border-solid border-dark rounded-full font-medium capitalize items-center hidden sm:flex fixed top-1 right-1/2 translate-x-1/2 bg-light/80 backdrop-blur-sm z-50 bg-light dark:bg-dark text-dark dark:text-light">
@@ -87,16 +94,18 @@ const Header = () => {
         <Link href="/contact" className="mx-2">
           Contact
         </Link>
-        <button
-          onClick={() => setMode(mode === "light" ? "dark" : "light")}
-          className={cx(
-            "w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1",
-            mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
-          )}
-          aria-label="theme-switcher"
-        >
-          {mode === "light" ? <MoonIcon className={"fill-dark"} /> : <SunIcon className={"fill-dark"} />}
-        </button>
+        {isMounted && (
+          <button
+            onClick={() => setMode(mode === "light" ? "dark" : "light")}
+            className={cx(
+              "w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1",
+              mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
+            )}
+            aria-label="theme-switcher"
+          >
+            {mode === "light" ? <MoonIcon className={"fill-dark"} /> : <SunIcon className={"fill-dark"} />}
+          </button>
+        )}
       </nav>
       <div className="hidden sm:flex items-center">
         <a
