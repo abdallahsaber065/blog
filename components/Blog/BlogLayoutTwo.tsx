@@ -5,7 +5,16 @@ import React from "react";
 import { Post, Tag as PrismaTag } from "@prisma/client";
 
 interface BlogLayoutTwoProps {
-  post: Post & { tags: PrismaTag[] };
+  post: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    created_at: string;
+    updated_at: string;
+    published_at: string | null;
+    featured_image_url: string;
+    tags: { slug: string; name: string }[];
+  };
 }
 
 const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
