@@ -2,11 +2,20 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Post, Tag as PrismaTag } from "@prisma/client";
 
+// Define TypeScript types
 interface BlogLayoutThreeProps {
-  post: Post & { tags: PrismaTag[] };
+  post: {
+    slug: string;
+    title: string;
+    created_at: string;
+    updated_at: string;
+    published_at: string | null;
+    featured_image_url: string;
+    tags: { slug: string; name: string }[];
+  };
 }
+
 
 const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
   return (
