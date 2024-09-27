@@ -9,7 +9,16 @@ interface PostWithTags extends Post {
 }
 
 interface RecentPostsProps {
-  posts: PostWithTags[];
+  posts: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    created_at: string;
+    updated_at: string;
+    published_at: string | null;
+    featured_image_url: string;
+    tags: { slug: string; name: string }[];
+  }[];
 }
 
 const RecentPosts = ({ posts }: RecentPostsProps) => {
