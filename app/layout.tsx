@@ -57,14 +57,25 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <div
-            className={cx(
-                inter.variable,
-                manrope.variable,
-                "font-mr bg-light dark:bg-dark"
-            )}
-        >
+        <html lang="en">
             <Head>
+                <script rel='preload'
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                (function() {
+                  const preferDarkQuery = '(prefers-color-scheme: dark)';
+                  const storageKey = 'theme';
+                  const userPref = localStorage.getItem(storageKey);
+                  const prefersDark = window.matchMedia(preferDarkQuery).matches;
+                  if (userPref === 'dark' || (!userPref && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                })();
+              `,
+                    }}
+                />
                 <link rel="manifest" href="/manifest.json" />
                 <link rel="icon" href="/static/images/icons/favicon.ico" />
                 <link rel="apple-touch-icon" href="/static/images/icons/apple-touch-icon.png" />
@@ -79,9 +90,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 {/* mstile 150x150 */}
                 <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
             </Head>
-            <Header />
-            {children}
-            <Footer />
-        </div>
+
+            <body className="bg-light dark:bg-dark">
+                <div
+                    className={cx(
+                        inter.variable,
+                        manrope.variable,
+                        "font-mr bg-light dark:bg-dark"
+                    )}
+                >
+                    <Header />
+                    {children}
+                    <Footer />
+                </div>
+            </body>
+        </html>
+
     );
 }
