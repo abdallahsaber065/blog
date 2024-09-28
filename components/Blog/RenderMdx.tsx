@@ -6,11 +6,6 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import Image from 'next/image';
 import { Post as PrismaPost, Tag, User } from '@prisma/client';
 
-type PostWithAuthorAndTags = PrismaPost & {
-  author: User | null;
-  tags: Tag[];
-};
-
 const mdxComponents = (featuredImageUrl: string) => ({
   Image: (props: any) => (
     <Image
@@ -25,11 +20,11 @@ const mdxComponents = (featuredImageUrl: string) => ({
 });
 
 interface RenderMdxProps {
-  post: PostWithAuthorAndTags;
   mdxSource: MDXRemoteSerializeResult;
+  additionalComponents?: Record<string, React.FC>;
 }
 
-const RenderMdx: React.FC<RenderMdxProps> = ({ post, mdxSource }) => {
+const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource , additionalComponents }) => {
   return (
     <div className='
     col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
@@ -85,7 +80,9 @@ const RenderMdx: React.FC<RenderMdxProps> = ({ post, mdxSource }) => {
     '>
       <MDXRemote
       {...mdxSource}
-      components={mdxComponents(post.featured_image_url || '')}
+      components={{
+        ...additionalComponents,
+      }}
       />
     </div>
   );
