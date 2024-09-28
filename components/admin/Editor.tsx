@@ -3,7 +3,7 @@
 import type { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import React from 'react';
-import { MDXEditor, codeBlockPlugin, headingsPlugin, listsPlugin, linkPlugin, quotePlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, KitchenSinkToolbar, linkDialogPlugin, AdmonitionDirectiveDescriptor, codeMirrorPlugin, diffSourcePlugin, directivesPlugin, frontmatterPlugin, imagePlugin, sandpackPlugin, tablePlugin, thematicBreakPlugin } from '@mdxeditor/editor';
+import { MDXEditor, codeBlockPlugin, headingsPlugin, listsPlugin, linkPlugin, quotePlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, KitchenSinkToolbar, linkDialogPlugin, AdmonitionDirectiveDescriptor, codeMirrorPlugin, diffSourcePlugin, directivesPlugin, frontmatterPlugin, imagePlugin, tablePlugin, thematicBreakPlugin,DiffSourceToggleWrapper } from '@mdxeditor/editor';
 
 const PlainTextCodeEditorDescriptor: CodeBlockEditorDescriptor = {
     match: () => true,
@@ -20,14 +20,16 @@ const PlainTextCodeEditorDescriptor: CodeBlockEditorDescriptor = {
 
 interface EditorProps {
     markdown: string;
-    onChange: (value: string) => void;
+    onChange: (markdown: string) => void;
 }
 
-const Editor = ({ markdown , onChange} : EditorProps) => {
+
+const Editor = ({ markdown, onChange } : EditorProps) => {
     return (
         
         <MDXEditor
             markdown={markdown}
+            onChange={onChange}
             plugins={[
                 toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }),
                 listsPlugin(),
@@ -42,7 +44,7 @@ const Editor = ({ markdown , onChange} : EditorProps) => {
                 codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
                 codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
                 directivesPlugin({ directiveDescriptors: [ AdmonitionDirectiveDescriptor] }),
-                diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: 'boo' }),
+                diffSourcePlugin({ viewMode: 'rich-text'}),
                 markdownShortcutPlugin()
             ]}
         />

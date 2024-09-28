@@ -5,7 +5,7 @@ import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/lib/siteMetaData";
 import { generateTOC } from "@/lib";
 import { serialize } from 'next-mdx-remote/serialize';
-import { options } from "@/lib/articles/mdxconfig";
+import { getOptions } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
 
@@ -87,7 +87,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // Serialize the post content
     const mdxSource = await serialize(
         post.content,
-        options as any
+        getOptions(true) as any
     );
 
     // Convert Date objects to strings
@@ -124,6 +124,19 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
         updated_at: new Date(post.updated_at),
         published_at: post.published_at ? new Date(post.published_at) : null,
     };
+
+    const mdxComponents = (featuredImageUrl: string) => ({
+        Image: (props: any) => (
+            <Image
+                {...props}
+                src={featuredImageUrl}
+                alt={props.alt || 'Featured Image'}
+                width={800}
+                height={600}
+                style={{ width: '100%', height: 'auto' }}
+            />
+        ),
+    });
 
     return (
         <>
@@ -194,7 +207,7 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
                             </ul>
                         </details>
                     </div>
-                    <RenderMdx post={deserializedPost} mdxSource={mdxSource} />
+                    <RenderMdx  mdxSource={mdxSource} additionalComponents={mdxComponents(deserializedPost.featured_image_url)} />
                 </div>
             </article>
         </>
