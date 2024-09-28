@@ -38,12 +38,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onChang
 
     const handleContentChange = async (value: string) => {
         console.log('content', value);
-        onPostFieldChange('content', value);
         const mdx = await serialize(
             value,
             getOptions(false) as any
         );
-        console.log('Serialized MDX:', mdx); // Debugging log
         setMdxSource(mdx);
     };
 
