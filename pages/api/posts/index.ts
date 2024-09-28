@@ -27,7 +27,7 @@ const handleError = (res: NextApiResponse, error: any) => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
-    const { where, include, select } = query;
+    const { where, include, select , limit } = query;
 
     try {
         switch (method) {
@@ -36,6 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     where: where ? JSON.parse(where as string) : undefined,
                     ...(include ? { include: JSON.parse(include as string) } : {}),
                     ...(select ? { select: JSON.parse(select as string) } : {}),
+                    ...(limit ? { take: Number(limit) } : {}),
                 });
                 res.status(200).json(categories);
                 break;
