@@ -42,11 +42,22 @@ const PostEditorPage: React.FC = () => {
     const loadData = async (postId: number) => {
         setLoading(true);
         const [postData, tagsData, categoriesData] = await Promise.all([
-            fetch(`/api/posts?id=${postId}`).then((res) => res.json()),
+            fetch(`/api/posts?where={"id":${postId}}`).then((res) => res.json()),
             fetch(`/api/tags`).then((res) => res.json()),
             fetch(`/api/categories`).then((res) => res.json()),
         ]);
-        setPost(postData);
+
+        const post = postData[0];
+        if (!post) {
+            toast.error('Post not found');
+            router.push('/admin/posts');
+            return;
+        }
+
+        
+        
+
+        setPost(post);
         setTags(tagsData);
         setCategories(categoriesData);
         setLoading(false);
