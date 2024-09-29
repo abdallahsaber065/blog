@@ -3,50 +3,30 @@
 import type { CodeBlockEditorDescriptor } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import React from 'react';
-import { MDXEditor, codeBlockPlugin, headingsPlugin, listsPlugin, linkPlugin, quotePlugin, markdownShortcutPlugin, useCodeBlockEditorContext, toolbarPlugin, KitchenSinkToolbar, linkDialogPlugin, AdmonitionDirectiveDescriptor, codeMirrorPlugin, diffSourcePlugin, directivesPlugin, frontmatterPlugin, imagePlugin, tablePlugin, thematicBreakPlugin,DiffSourceToggleWrapper } from '@mdxeditor/editor';
+import 'react-markdown-editor-lite/lib/index.css';
+import MarkdownIt from 'markdown-it';
+import dynamic from 'next/dynamic';
 
-const PlainTextCodeEditorDescriptor: CodeBlockEditorDescriptor = {
-    match: () => true,
-    priority: 0,
-    Editor: (props) => {
-        const cb = useCodeBlockEditorContext();
-        return (
-            <div onKeyDown={(e) => e.nativeEvent.stopImmediatePropagation()}>
-                <textarea rows={3} cols={20} defaultValue={props.code} onChange={(e) => cb.setCode(e.target.value)} />
-            </div>
-        );
-    }
-}
+// Dynamically import the Markdown editor to avoid SSR issues
+const MdEditor = dynamic(() => import('react-markdown-editor-lite'), { ssr: false });
+const mdParser = new MarkdownIt();
+
 
 interface EditorProps {
     markdown: string;
     onChange: (markdown: string) => void;
+    parseMarkdown?: (markdown: string) => string;
 }
 
 
-const Editor = ({ markdown, onChange } : EditorProps) => {
+const Editor = ({ markdown, onChange, parseMarkdown } : EditorProps) => {
     return (
         
-        <MDXEditor
-            markdown={markdown}
-            onChange={onChange}
-            plugins={[
-                toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }),
-                listsPlugin(),
-                quotePlugin(),
-                headingsPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                imagePlugin(),
-                tablePlugin(),
-                thematicBreakPlugin(),
-                frontmatterPlugin(),
-                codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-                codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
-                directivesPlugin({ directiveDescriptors: [ AdmonitionDirectiveDescriptor] }),
-                diffSourcePlugin({ viewMode: 'rich-text'}),
-                markdownShortcutPlugin()
-            ]}
+        <MdEditor
+            value={markdown}
+            style={{ height: '500px' }}
+            renderHTML={(text) => (parseMarkdown ? parseMarkdown(text) : mdParser.render(text))}
+            onChange={({ text }) => onChange(text)}
         />
 
     );
