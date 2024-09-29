@@ -22,27 +22,35 @@ interface EditorProps {
 const Editor = ({ markdown, onChange, parseMarkdown } : EditorProps) => {
     return (
         
-        <MDXEditor
+        // <MDXEditor
             
-            markdown={markdown}
-            onChange={onChange}
-            plugins={[
-                toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }),
-                listsPlugin(),
-                quotePlugin(),
-                headingsPlugin(),
-                linkPlugin(),
-                linkDialogPlugin(),
-                imagePlugin(),
-                tablePlugin(),
-                thematicBreakPlugin(),
-                frontmatterPlugin(),
-                codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-                codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript' } }),
-                directivesPlugin({ directiveDescriptors: [ AdmonitionDirectiveDescriptor] }),
-                diffSourcePlugin({ viewMode: 'rich-text'}),
-                markdownShortcutPlugin()
-            ]}
+        //     markdown={markdown}
+        //     onChange={onChange}
+        //     plugins={[
+        //         toolbarPlugin({ toolbarContents: () => <KitchenSinkToolbar /> }),
+        //         listsPlugin(),
+        //         quotePlugin(),
+        //         headingsPlugin(),
+        //         linkPlugin(),
+        //         linkDialogPlugin(),
+        //         imagePlugin(),
+        //         tablePlugin(),
+        //         thematicBreakPlugin(),
+        //         frontmatterPlugin(),
+        //         codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+        //         codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS', txt: 'text', tsx: 'TypeScript', html: 'HTML' } }),
+        //         directivesPlugin({ directiveDescriptors: [ AdmonitionDirectiveDescriptor] }),
+        //         diffSourcePlugin({ viewMode: 'rich-text'}),
+        //         markdownShortcutPlugin()
+        //     ]}
+        // />
+
+        // lite editor
+        <MdEditor
+            style={{ height: "500px" }}
+            renderHTML={(text) => mdParser.render(text)}
+            onChange={({ text }) => onChange(text)}
+            value={markdown}
         />
 
     );

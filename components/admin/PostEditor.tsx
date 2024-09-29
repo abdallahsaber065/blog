@@ -44,15 +44,21 @@ const revertChanges = (value: string) => {
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
     const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
     const [currentPost, setCurrentPost] = useState<Post>(post);
+    const [markdownText, setMarkdownText] = useState<string>(post.content);
+    // set initial mdx source
+    if (!mdxSource)
+        serialize(post.content, getOptions(false) as any).then((mdx) => {
+            setMdxSource(mdx);
+        });
+    
 
-    const handleContentChange = async (value: string) => {
+    const handleContentChange = (value: string) => {
+        setMarkdownText(value);
         value = revertChanges(value);
-        const mdx = await serialize(
-            value,
-            getOptions(false) as any
-        );
-        setMdxSource(mdx);
-        setCurrentPost({ ...currentPost, content: value });
+        serialize(value, getOptions(false) as any).then((mdx) => {
+            setMdxSource(mdx);
+            setCurrentPost({ ...currentPost, content: value });
+        });
     };
 
     const handleFieldChange = (field: keyof Post, value: any) => {
@@ -99,7 +105,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 <div className="mb-4">
                     <label className="block text-gray-700">Content</label>
                     <Editor
-                        markdown={currentPost.content || ''}
+                        markdown={markdownText}
                         onChange={handleContentChange}
                     />
                 </div>
