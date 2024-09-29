@@ -1,5 +1,4 @@
 // pages/admin/PostEditorPage.tsx
-'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
@@ -81,22 +80,22 @@ const PostEditorPage: React.FC = () => {
 
         post.content = post.content.replace(/<Image/g, '```tsx\n<Image');
         post.content = post.content.replace(/\/>/g, '/>\n```');
-        post.content = post.content.replace('```html', '```js\n//html');
 
-        // // add space after adn before **...** to prevent markdown from rendering bold text
-        // // retrieve the bold text from the content before editing
-        // const boldMatch = post.content.match(/\*\*.*\*\*/g);
-        // const boldTextOnly = boldMatch?.map((text: string) => text.replace(/\*\*/g, ''));
-        // // trim the bold text from right and left
-        // const boldTextTrimmed = boldTextOnly?.map((text: string) => text.trim());
+        // add space after adn before **...** to prevent markdown from rendering bold text
+        // retrieve the bold text from the content before editing ex.: \*\*I often do this thing where list items have headings.\*\*
+        const boldMatch = post.content.match(/\\\*\\\*[^*]+?\\\*\\\*/g);
+        const boldTextOnly = boldMatch?.map((text: string) => text.replace(/\\\*\\\*/g, ''));
+        // trim the bold text from right and left
+        const boldTextTrimmed = boldTextOnly?.map((text: string) => text.trim());
 
-        // // replace matched bold text with trimmed bold text
-        // boldMatch?.forEach((text: string, index: number) => {
-        //     post.content = post.content.replace(text, ` **${boldTextTrimmed[index]}** `);
-        // });
-        // console.log("Bold Match: ", boldMatch);
-        // console.log("Bold Text Only: ", boldTextOnly);
-        // console.log("Bold Text Trimmed: ", boldTextTrimmed);
+        // replace matched bold text with trimmed bold text
+        boldMatch?.forEach((text: string, index: number) => {
+            post.content = post.content.replace(text, ` **${boldTextTrimmed[index]}** `);
+        });
+        console.log("Post: ", post.content);    
+        console.log("Bold Match: ", boldMatch);
+        console.log("Bold Text Only: ", boldTextOnly);
+        console.log("Bold Text Trimmed: ", boldTextTrimmed);
 
         setPost(post);
         setTags(tagsData);
