@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 interface Post {
     id: number;
     title: string;
+
+    featured_image_url: string;
     content: string;
     tags: number[];
     categories: number[];
@@ -53,6 +55,7 @@ const PostEditorPage: React.FC = () => {
             router.push('/admin/posts');
             return;
         }
+
 
         
         

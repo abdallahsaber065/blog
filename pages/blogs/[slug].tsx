@@ -8,6 +8,7 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { getOptions } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
+import React from "react";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
