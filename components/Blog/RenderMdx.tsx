@@ -6,18 +6,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import Image from 'next/image';
 import { Post as PrismaPost, Tag, User } from '@prisma/client';
 
-const mdxComponents = (featuredImageUrl: string) => ({
-  Image: (props: any) => (
-    <Image
-      {...props}
-      src={featuredImageUrl}
-      alt={props.alt || 'Featured Image'}
-      width={800}
-      height={600}
-      style={{ width: '100%', height: 'auto' }}
-    />
-  ),
-});
+
 
 interface RenderMdxProps {
   mdxSource: MDXRemoteSerializeResult;
