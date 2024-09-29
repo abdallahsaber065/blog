@@ -54,22 +54,62 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 break;
 
             case 'PUT':
-                console.log(body);
                 const putValidationError = validateRequiredFields(['id', 'data'], body);
                 if (putValidationError) {
                     return res.status(400).json({ error: putValidationError });
                 }
-
+            
                 const idError = validateId(body.id);
                 if (idError) {
+                    console.log(idError);
                     return res.status(400).json({ error: idError });
                 }
+            
+                const updateData: any = {};
+            
+                if (body.data.tags) {
+                    updateData.tags = {
+                        set: body.data.tags.map((tag: any) => ({ id: tag.id })),
+                    };
+                }
+            
+                if (body.data.category) {
+                    updateData.category = {
+                        connect: {
+                            id: body.data.category.id,
+                        },
+                    };
+                }
 
-                const updatedPost = await prisma.post.update({
-                    where: { id: Number(body.id) },
-                    data: body.data,
-                });
-                res.status(200).json(updatedPost);
+                if (body.data.author) {
+                    updateData.author = {
+                        connect: {
+                            id: body.data.author.id,
+                        },
+                    };
+                }
+
+                // get all remaining linear data in one object by removing the above data from the body
+                let linearData = { ...body.data };
+                delete linearData.tags;
+                delete linearData.category;
+                delete linearData.author;
+
+                // add each remaining linear data to the updateData object
+                for (const key in linearData) {
+                    updateData[key] = linearData[key];
+                }
+                
+                try {
+                    const updatedPost = await prisma.post.update({
+                        where: { id: Number(body.id) },
+                        data: updateData,
+                    });
+                    res.status(200).json(updatedPost);
+                } catch (error) {
+                    console.log(error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                }
                 break;
 
             case 'DELETE':

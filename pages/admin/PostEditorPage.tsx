@@ -6,14 +6,15 @@ import { toast, ToastContainer } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/admin/PostEditor';
 import 'react-toastify/dist/ReactToastify.css';
+import Tag from '@prisma/client';
 
 interface Post {
     id: number;
     title: string;
     featured_image_url: string;
     content: string;
-    tags: number[];
-    categories: number[];
+    tags: Tag[];
+    category: Category;
 }
 
 interface Tag {
@@ -66,7 +67,6 @@ const PostEditorPage: React.FC = () => {
         });
 
         const postUrl = `/api/posts?where=${postWhere}&select=${postSelect}`;
-        console
         const [postData, tagsData, categoriesData] = await Promise.all([
             fetch(postUrl).then((res) => res.json()),
             fetch(`/api/tags`).then((res) => res.json()),
@@ -90,20 +90,41 @@ const PostEditorPage: React.FC = () => {
         setLoading(false);
     };
 
-    const handleSave = async (updatedPost: Post) => {
+    const handleSave = async (updatedPost: any) => {
         setLoading(true);
         try {
-            console.log(updatedPost);
+            console.log(updatedPost.tags);
+            // serialize tags to match the API schema
+            updatedPost.tags = updatedPost.tags.map((tag: Tag) => (
+                {
+                    id: tag.id
+                }));
+            
+            // serialize category to match the API schema
+            updatedPost.category = {
+                id: updatedPost.category.id
+            };
+            
+            // remove id from updatedPost
+            let finalPost = { ...updatedPost };
+            delete finalPost.id;
+
+            console.log(finalPost.tags);
+            console.log(finalPost.category);
+
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updatedPost),
+                body: JSON.stringify(
+                    {
+                        data: finalPost,
+                        id: updatedPost.id
+                    }),
             });
             if (response.ok) {
                 toast.success('Post updated successfully');
-                router.push('/admin/posts');
             } else {
                 toast.error('Failed to update post');
             }

@@ -13,8 +13,8 @@ interface Post {
     title: string;
     featured_image_url: string;
     content: string;
-    tags: number[];
-    categories: number[];
+    tags: Tag[];
+    category: Category;
 }
 
 interface Tag {
@@ -56,7 +56,15 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
     };
 
     const handleFieldChange = (field: keyof Post, value: any) => {
-        setCurrentPost({ ...currentPost, [field]: value });
+        if (field === 'tags') {
+            const selectedTags = value.map((tagId: number) => tags.find(tag => tag.id === tagId));
+            setCurrentPost({ ...currentPost, tags: selectedTags });
+        } else if (field === 'category') {
+            const selectedCategory = categories.find(category => category.id === value);
+            setCurrentPost({ ...currentPost, category: selectedCategory || { id: 0, name: '' } });
+        } else {
+            setCurrentPost({ ...currentPost, [field]: value });
+        }
     };
 
     const onSaveListener = () => {
@@ -100,7 +108,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     <select
                         multiple
                         className="w-full p-2 border border-gray-300 rounded"
-                        value={currentPost.tags?.map(String) || []}
+                        value={currentPost.tags?.map(tag => String(tag.id)) || []}
                         onChange={(e) =>
                             handleFieldChange(
                                 'tags',
@@ -116,16 +124,12 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     </select>
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Categories</label>
+                    <label className="block text-gray-700">Category</label>
                     <select
-                        multiple
                         className="w-full p-2 border border-gray-300 rounded"
-                        value={currentPost.categories?.map(String) || []}
+                        value={currentPost.category?.id || ''}
                         onChange={(e) =>
-                            handleFieldChange(
-                                'categories',
-                                Array.from(e.target.selectedOptions, (option) => Number(option.value))
-                            )
+                            handleFieldChange('category', Number(e.target.value))
                         }
                     >
                         {categories.map((category) => (
