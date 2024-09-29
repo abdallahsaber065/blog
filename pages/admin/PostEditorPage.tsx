@@ -10,7 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 interface Post {
     id: number;
     title: string;
-
     featured_image_url: string;
     content: string;
     tags: number[];
@@ -43,22 +42,47 @@ const PostEditorPage: React.FC = () => {
 
     const loadData = async (postId: number) => {
         setLoading(true);
+        const postWhere = JSON.stringify({
+            id: postId,
+        });
+
+        const postSelect = JSON.stringify({
+            id: true,
+            title: true,
+            featured_image_url: true,
+            content: true,
+            tags: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            category: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        });
+
+        const postUrl = `/api/posts?where=${postWhere}&select=${postSelect}`;
+        console
         const [postData, tagsData, categoriesData] = await Promise.all([
-            fetch(`/api/posts?where={"id":${postId}}`).then((res) => res.json()),
+            fetch(postUrl).then((res) => res.json()),
             fetch(`/api/tags`).then((res) => res.json()),
             fetch(`/api/categories`).then((res) => res.json()),
         ]);
 
-        const post = postData[0];
+        let post = postData[0];
         if (!post) {
             toast.error('Post not found');
             router.push('/admin/posts');
             return;
         }
 
-
-        
-        
+        post.content = post.content.replace(/<Image/g, '```tsx\n<Image');
+        post.content = post.content.replace(/\/>/g, '/>\n```');
+        post.content = post.content.replace('```html', '```js\n//html');
 
         setPost(post);
         setTags(tagsData);
@@ -66,22 +90,16 @@ const PostEditorPage: React.FC = () => {
         setLoading(false);
     };
 
-    const handlePostChange = (field: keyof Post, value: any) => {
-        if (post) {
-            setPost({ ...post, [field]: value });
-        }
-    };
-
-    const handleSave = async () => {
-        if (!post) return;
+    const handleSave = async (updatedPost: Post) => {
         setLoading(true);
         try {
+            console.log(updatedPost);
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(post),
+                body: JSON.stringify(updatedPost),
             });
             if (response.ok) {
                 toast.success('Post updated successfully');
@@ -106,7 +124,6 @@ const PostEditorPage: React.FC = () => {
                     post={post}
                     tags={tags}
                     categories={categories}
-                    onChange={handlePostChange}
                     onSave={handleSave}
                 />
             )}

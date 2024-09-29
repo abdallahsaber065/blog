@@ -54,6 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 break;
 
             case 'PUT':
+                console.log(body);
                 const putValidationError = validateRequiredFields(['id', 'data'], body);
                 if (putValidationError) {
                     return res.status(400).json({ error: putValidationError });
