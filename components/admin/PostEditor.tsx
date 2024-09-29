@@ -79,7 +79,6 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
     return (
         <div className="flex">
             <div className="w-1/2 pr-4">
-                <h2 className="text-xl font-bold mb-2">Edit Post</h2>
                 <div className="mb-4">
                     <label className="block text-gray-700">Title</label>
                     <input
