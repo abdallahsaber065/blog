@@ -56,19 +56,19 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
     return (
-        <div className="p-4 bg-white rounded shadow-md">
+        <div className="p-4 bg-white dark:bg-dark rounded shadow-md">
             <div className="mb-4 flex justify-between items-center">
                 <input
                     type="text"
                     placeholder="Search posts..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                 />
                 <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                 >
                     <option value="All">All Categories</option>
                     {Array.from(new Set(posts.map(post => post.category.name))).map(category => (
@@ -77,7 +77,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 </select>
                 <button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="p-2 bg-blue-500 text-white rounded"
+                    className="p-2 bg-blue-500  text-white rounded"
                 >
                     Sort {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
                 </button>
@@ -90,7 +90,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 <select
                     value={postsPerPage}
                     onChange={(e) => setPostsPerPage(Number(e.target.value))}
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                 >
                     {[5, 10, 20, 50].map(number => (
                         <option key={number} value={number}>{number} per page</option>
@@ -98,26 +98,26 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 </select>
                 <button
                     onClick={() => setAdvancedSearch(!advancedSearch)}
-                    className="p-2 bg-yellow-500 text-white rounded"
+                    className="p-2 bg-yellow-500  text-white rounded"
                 >
                     {advancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
                 </button>
             </div>
             {advancedSearch && (
-                <div className="mb-4 p-4 border border-gray-300 rounded">
+                <div className="mb-4 p-4 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray">
                     <input
                         type="text"
                         placeholder="Filter by author..."
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
-                        className="p-2 border border-gray-300 rounded mb-2"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded mb-2 bg-light dark:bg-gray text-dark dark:text-light"
                     />
                     <input
                         type="date"
                         placeholder="Filter by date..."
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
-                        className="p-2 border border-gray-300 rounded"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                     />
                 </div>
             )}
@@ -149,17 +149,17 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                     <button
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 bg-gray-300 rounded disabled:opacity-50"
+                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50"
                     >
                         Previous
                     </button>
-                    <span>
+                    <span className="text-dark dark:text-light">
                         Page {currentPage} of {totalPages}
                     </span>
                     <button
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 bg-gray-300 rounded disabled:opacity-50"
+                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50"
                     >
                         Next
                     </button>
