@@ -106,17 +106,17 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
     return (
         <div className="flex flex-col">
             <div className="mb-4">
-                <label className="block text-gray-700">Title</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                 />
             </div>
             <div className="flex">
                 <div className="w-1/2 pr-2">
-                    <label className="block text-gray-700 mb-2">Content</label>
+                    <label className="block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
                     <Editor
                         markdown={markdownText}
                         onChange={handleContentChange}
@@ -124,7 +124,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     />
                 </div>
                 <div className="w-1/2 pl-2">
-                    <h2 className="text-xl font-bold mb-2">Preview</h2>
+                    <h2 className="text-xl font-bold my-4">Preview</h2>
                     <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }}>
                         {mdxSource ? (
                             <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents(currentPost.featured_image_url)} />
@@ -135,10 +135,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 </div>
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Tags</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
                 <select
                     multiple
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="p-2 border border-gray-300 rounded w-full text-gray dark:text-lightgray bg-white dark:bg-dark"
                     value={currentPost.tags?.map(tag => String(tag.id)) || []}
                     onChange={(e) =>
                         handleFieldChange(
@@ -148,16 +148,20 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     }
                 >
                     {tags.map((tag) => (
-                        <option key={tag.id} value={tag.id}>
+                        <option
+                            key={tag.id}
+                            value={tag.id}
+                            className={currentPost.tags?.some(selectedTag => selectedTag.id === tag.id) ? 'bg-accent dark:bg-accentDark dark:text-gray  font-semibold ' : ''}
+                        >
                             {tag.name}
                         </option>
                     ))}
                 </select>
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Category</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
                 <select
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={currentPost.category?.id || ''}
                     onChange={(e) =>
                         handleFieldChange('category', Number(e.target.value))
@@ -171,8 +175,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 </select>
             </div>
             <button
-                className="bg-blue-500 text-white p-2 rounded w-full mb-4"
-                onClick={onSaveListener}
+                className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
             >
                 <FaSave className="inline mr-2" />
                 Save
