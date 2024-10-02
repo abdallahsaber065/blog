@@ -3,9 +3,6 @@
 
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
-import Image from 'next/image';
-import { Post as PrismaPost, Tag, User } from '@prisma/client';
-
 
 
 interface RenderMdxProps {
@@ -56,10 +53,13 @@ const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource , additionalComponents 
     dark:prose-strong:text-light
 
     // Custom styles for inline code
-    prose-code:bg-gray-200
+    prose-code:bg-gray-100
     prose-code:text-dark
     dark:prose-code:bg-gray-800
     dark:prose-code:text-light
+
+
+    
 
     // Custom styles for links
     prose-a:text-accent

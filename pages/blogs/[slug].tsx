@@ -9,6 +9,7 @@ import { getOptions } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
 import React from "react";
+import CustomImage from '@/components/CustomImage';
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -126,17 +127,9 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
         published_at: post.published_at ? new Date(post.published_at) : null,
     };
 
-    const mdxComponents = (featuredImageUrl: string) => ({
-        Image: (props: any) => (
-            <Image
-                {...props}
-                src={featuredImageUrl}
-                alt={props.alt || 'Featured Image'}
-                width={800}
-                height={600}
-                style={{ width: '100%', height: 'auto' }}
-            />
-        ),
+    const mdxComponents = () => ({
+        Image: (props: any) => <CustomImage {...props} />,
+        img: (props: any) => <CustomImage {...props} />,
     });
 
     return (
@@ -208,7 +201,7 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
                             </ul>
                         </details>
                     </div>
-                    <RenderMdx  mdxSource={mdxSource} additionalComponents={mdxComponents(deserializedPost.featured_image_url)} />
+                    <RenderMdx  mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>
             </article>
         </>

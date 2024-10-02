@@ -7,6 +7,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import { getOptions } from "@/lib/articles/mdxconfig";
 import Image from 'next/image';
+import CustomImage from '@/components/CustomImage';
 
 interface Post {
     id: number;
@@ -34,12 +35,6 @@ interface PostEditorProps {
     onSave: (post: Post) => void;
 }
 
-const revertChanges = (value: string) => {
-    value = value.replace(/```tsx\n<Image/g, '<Image');
-    value = value.replace(/\/>\n```/g, '/>');
-    value = value.replace('```js\n//html', '```html');
-    return value;
-};
 
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
     const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
@@ -55,7 +50,6 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
 
     const handleContentChange = (value: string) => {
         setMarkdownText(value);
-        value = revertChanges(value);
         serialize(value, getOptions(false) as any).then((mdx) => {
             setMdxSource(mdx);
             setCurrentPost({ ...currentPost, content: value });
@@ -79,16 +73,8 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
     };
 
     const mdxComponents = (featuredImageUrl: string) => ({
-        Image: (props: any) => (
-            <Image
-                {...props}
-                src={featuredImageUrl}
-                alt={props.alt || 'Featured Image'}
-                width={800}
-                height={600}
-                style={{ width: '100%', height: 'auto' }}
-            />
-        ),
+        Image: (props: any) => <CustomImage {...props} />,
+        img: (props: any) => <CustomImage {...props} />,
     });
 
     const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => {

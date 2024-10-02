@@ -3,10 +3,10 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-
+import moonlightTheme from '@/assets/moon-night.json' with { type: 'json' };
 const codeOptions = {
-    theme: 'github-dark',
-    grid: false,
+    keepBackground: false,
+    theme: moonlightTheme
 }
 
 export const getOptions = (includeRehypePrettyCode: boolean = true) => ({
