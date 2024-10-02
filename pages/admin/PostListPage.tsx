@@ -6,10 +6,14 @@ import { ClipLoader } from 'react-spinners';
 import { useRouter } from 'next/router';
 import PostList from '@/components/admin/PostList';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { create } from 'domain';
 interface Post {
     id: number;
+    tags: string[];
     title: string;
+    category: { id: number; name: string };
+    author: { id: number; first_name: string; last_name: string };
+    created_at: string;
 }
 
 const PostListPage: React.FC = () => {
@@ -23,7 +27,34 @@ const PostListPage: React.FC = () => {
 
     const loadPosts = async () => {
         setLoading(true);
-        const postsData = await fetch('/api/posts?select={"id":true,"title":true}').then((res) => res.json());
+        const selectString = JSON.stringify(
+            {
+                id: true,
+                title: true,
+                tags: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+                created_at: true,
+                author: {
+                    select: {
+                        id: true,
+                        first_name: true,
+                        last_name: true,
+                    },
+                },
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                }
+            }
+        );
+
+        const postsData = await fetch('/api/posts?select=' + selectString).then((res) => res.json());
         setPosts(postsData);
         setLoading(false);
     };
@@ -31,7 +62,7 @@ const PostListPage: React.FC = () => {
     const handleDelete = async (id: number) => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/posts/${id}`, {
+            const response = await fetch(`/api/posts?id=${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -50,6 +81,8 @@ const PostListPage: React.FC = () => {
     const handleEdit = (id: number) => {
         router.push(`/admin/PostEditorPage?id=${id}`);
     };
+
+    console.log(posts);
 
     return (
         <div className="container mx-auto p-4">
