@@ -19,7 +19,7 @@ export const getOptions = (includeRehypePrettyCode: boolean = true) => ({
         rehypePlugins: [
             rehypeSlug,
             [rehypeAutolinkHeadings, { behavior: "append" }],
-            ...(includeRehypePrettyCode ? [[rehypePrettyCode, codeOptions]] : []),
+            ...(includeRehypePrettyCode ? [[rehypePrettyCode, codeOptions]] : [[rehypePrettyCode, codeOptions]]),
         ],
         format: 'mdx',
     },

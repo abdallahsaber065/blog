@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "lib/updateImagePaths.js",
+    "lib/dev/updateImagePaths.js",
     "lib/dev/extractAndAddCategories.js"
   ],
   "exclude": [

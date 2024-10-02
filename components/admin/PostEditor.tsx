@@ -1,12 +1,8 @@
 // components/PostEditor.tsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaSave } from 'react-icons/fa';
 import Editor from "@/components/admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdx';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
-import { getOptions } from "@/lib/articles/mdxconfig";
-import Image from 'next/image';
 import CustomImage from '@/components/CustomImage';
 
 interface Post {
@@ -35,25 +31,47 @@ interface PostEditorProps {
     onSave: (post: Post) => void;
 }
 
-
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
-    const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
+    const [mdxSource, setMdxSource] = useState<any>(null);
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
     const previewRef = useRef<HTMLDivElement>(null);
 
-    // set initial mdx source
-    if (!mdxSource)
-        serialize(post.content, getOptions(false) as any).then((mdx) => {
-            setMdxSource(mdx);
+    useEffect(() => {
+        const fetchSerializedContent = async () => {
+            const response = await fetch('/api/serializeContent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: post.content }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setMdxSource(data.mdxSource);
+            }
+        };
+
+        fetchSerializedContent();
+    }, [post.content]);
+
+    const handleContentChange = async (value: string) => {
+        setMarkdownText(value);
+
+        const response = await fetch('/api/serializeContent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: value }),
         });
 
-    const handleContentChange = (value: string) => {
-        setMarkdownText(value);
-        serialize(value, getOptions(false) as any).then((mdx) => {
-            setMdxSource(mdx);
+        if (response.ok) {
+            const data = await response.json();
+            setMdxSource(data.mdxSource);
             setCurrentPost({ ...currentPost, content: value });
-        });
+        }
     };
 
     const handleFieldChange = (field: keyof Post, value: any) => {
@@ -159,7 +177,6 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 <FaSave className="inline mr-2" />
                 Save
             </button>
-
         </div>
     );
 };
