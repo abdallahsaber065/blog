@@ -78,8 +78,6 @@ const PostEditorPage: React.FC = () => {
             return;
         }
 
-        post.content = post.content.replace(/<Image/g, '```tsx\n<Image');
-        post.content = post.content.replace(/\/>/g, '/>\n```');
 
         // add space after adn before **...** to prevent markdown from rendering bold text
         // retrieve the bold text from the content before editing ex.: \*\*I often do this thing where list items have headings.\*\*
