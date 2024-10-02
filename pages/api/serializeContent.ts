@@ -1,7 +1,8 @@
 // pages/api/serializeContent.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'next-mdx-remote/serialize';
-import { getOptions } from '@/lib/articles/mdxconfig';
+import { Options } from '@/lib/articles/mdxconfig';
+import { SerializeOptions } from 'next-mdx-remote/dist/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
@@ -11,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         try {
-            const mdxSource = await serialize(content, getOptions(false) as any);
+            const mdxSource = await serialize(content, Options as SerializeOptions);
             return res.status(200).json({ mdxSource });
         } catch (error) {
             return res.status(500).json({ error: 'Failed to serialize content' });
