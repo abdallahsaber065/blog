@@ -2,7 +2,6 @@
 import Image from 'next/image';
 
 const CustomImage = (props: any) => {
-    console.log(props);
     return (
         <Image
             src={props.src}
