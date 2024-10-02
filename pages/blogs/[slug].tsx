@@ -5,11 +5,12 @@ import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/lib/siteMetaData";
 import { generateTOC } from "@/lib";
 import { serialize } from 'next-mdx-remote/serialize';
-import { getOptions } from "@/lib/articles/mdxconfig";
+import { Options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
 import React from "react";
 import CustomImage from '@/components/CustomImage';
+import { SerializeOptions } from "next-mdx-remote/dist/types";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -89,7 +90,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // Serialize the post content
     const mdxSource = await serialize(
         post.content,
-        getOptions(true) as any
+        Options as SerializeOptions
     );
 
     // Convert Date objects to strings
@@ -201,7 +202,7 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
                             </ul>
                         </details>
                     </div>
-                    <RenderMdx  mdxSource={mdxSource} additionalComponents={mdxComponents()} />
+                    <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>
             </article>
         </>
