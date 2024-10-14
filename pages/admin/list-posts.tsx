@@ -79,7 +79,7 @@ const PostListPage: React.FC = () => {
     };
 
     const handleEdit = (id: number) => {
-        router.push(`/admin/PostEditorPage?id=${id}`);
+        router.push(`/admin/edit-post?id=${id}`);
     };
 
     console.log(posts);
