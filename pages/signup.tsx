@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import "@/styles/globals.css";
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import SignupForm from '@/components/signup/SignupForm';
