@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast, Id } from 'react-toastify';
+import { slug } from "github-slugger";
 import 'react-toastify/dist/ReactToastify.css';
+import { set } from 'date-fns';
 
 const CreatePost: React.FC = () => {
     const [title, setTitle] = useState('');
@@ -14,74 +16,152 @@ const CreatePost: React.FC = () => {
     const [featuredImage, setFeaturedImage] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSave = async () => {
-        setLoading(true);
+    const successToastId: Id = 'success-toast';
+    const errorToastId: Id = 'error-toast';
+
+    const genrate_postData = (isDraft = false) => {
+        const postData = {
+            title,
+            slug: slug(title),
+            excerpt,
+            content,
+            tags: {
+                connectOrCreate: tags.split(',').map(tag => ({
+                    where: {
+                        slug: slug(tag.trim())
+                    },
+                    create: {
+                        name: tag.trim(),
+                        slug: slug(tag.trim())
+                    }
+                }))
+            },
+            category: {
+                connectOrCreate: {
+                    where: {
+                        slug: slug(category)
+                    },
+                    create: {
+                        name: category,
+                        slug: slug(category)
+                    }
+                }
+            },
+            featured_image_url: featuredImage,
+            status: isDraft ? 'draft' : 'published',
+        };
+        return postData;
+    }
+
+    const SavePost = async (postData = {}) => {
         try {
-            const response = await axios.post('/api/posts', {
-                title,
-                excerpt,
-                content,
-                tags: tags.split(',').map(tag => tag.trim()),
-                category,
-                featured_image_url: featuredImage,
-            });
-            toast.success('Post created successfully!');
-        } catch (error) {
-            toast.error('Failed to create post.');
+            const response = await axios.post('/api/posts', postData);
+            console.log("API Response:", response.data);
+
+            if (!toast.isActive(successToastId)) {
+                toast.success('Post created successfully!', { toastId: successToastId });
+            }
+        } catch (error: any) {
+            console.error('Failed to create post:', error);
+
+            if (error.response) {
+                if (!toast.isActive(errorToastId)) {
+                    toast.error(`Error: ${error.response.data.error || "Server error"}`, { toastId: errorToastId });
+                }
+            } else if (error.request) {
+                if (!toast.isActive(errorToastId)) {
+                    toast.error('No response from server. Please try again later.', { toastId: errorToastId });
+                }
+            } else {
+                if (!toast.isActive(errorToastId)) {
+                    toast.error(`Error: ${error.message}`, { toastId: errorToastId });
+                }
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+
+
+    const handleSave = async () => {
+        setLoading(true);
+        const postData = genrate_postData();
+        SavePost(postData);
+    }
 
     const handleGenerateContent = async () => {
         setLoading(true);
         try {
             const topicResponse = await axios.post('http://localhost:5000/generate_topic_options', {
                 search_term: title,
-            }, { timeout: 300000 }); // 5 minutes timeout
+            }, { timeout: 300000 });
 
-            const topic = topicResponse.data.general_topics[0];
+            const topic = topicResponse.data?.general_topics?.[0];
             console.log('Topic:', topic);
+
+            if (!topic) {
+                throw new Error("No topic generated. Please try again.");
+            }
 
             const outlineResponse = await axios.post('http://localhost:5000/generate_outline', {
                 topic,
                 num_of_terms: 3,
                 num_of_keywords: 20,
-            }, { timeout: 300000 }); // 5 minutes timeout
-            const outline = outlineResponse.data.outline;
+            }, { timeout: 300000 });
+
+            const outline = outlineResponse.data?.outline;
             console.log('Outline:', outline);
+
+            if (!outline) {
+                throw new Error("No outline generated. Please try again.");
+            }
+
             const contentResponse = await axios.post('http://localhost:5000/generate_content', {
                 topic,
                 outline,
                 google_search_results: [],
-            }, { timeout: 300000 }); // 5 minutes timeout
-            const generatedContent = contentResponse.data.content;
+            }, { timeout: 300000 });
+
+            const generatedContent = contentResponse.data?.content;
             console.log('Generated Content:', generatedContent);
+
+            if (!generatedContent) {
+                throw new Error("No content generated. Please try again.");
+            }
+
             setContent(generatedContent);
 
             const metadataResponse = await axios.post('http://localhost:5000/generate_metadata', {
                 topic,
                 content: generatedContent,
-            }, { timeout: 300000 }); // 5 minutes timeout
-            const { title: generatedTitle, excerpt, tags, main_category } = metadataResponse.data;
+            }, { timeout: 300000 });
+
+            const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
             console.log('Generated Metadata:', metadataResponse.data);
+
             setTitle(generatedTitle);
             setExcerpt(excerpt);
             setTags(tags.join(', '));
             setCategory(main_category);
+            setFeaturedImage('placeholder.jpg');
 
-            toast.success('Content and metadata generated successfully!');
+            const postData = genrate_postData(true);
+            SavePost(postData);
         } catch (error: any) {
             console.error('Error during content generation:', error);
             if (error.response) {
-                // Server responded with a status other than 200 range
-                toast.error(`Error: ${error.response.data.error}`);
+                if (!toast.isActive(errorToastId)) {
+                    toast.error(`Error: ${error.response.data.error || "Server error"}`, { toastId: errorToastId });
+                }
             } else if (error.request) {
-                // Request was made but no response received
-                toast.error('No response from server. Please try again later.');
+                if (!toast.isActive(errorToastId)) {
+                    toast.error('No response from server. Please try again later.', { toastId: errorToastId });
+                }
             } else {
-                // Something else happened while setting up the request
-                toast.error(`Error: ${error.message}`);
+                if (!toast.isActive(errorToastId)) {
+                    toast.error(`Error: ${error.message}`, { toastId: errorToastId });
+                }
             }
         } finally {
             setLoading(false);

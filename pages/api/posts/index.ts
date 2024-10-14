@@ -28,6 +28,9 @@ const handleError = (res: NextApiResponse, error: any) => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
     const { where, include, select, limit } = query;
+    console.log('Method:', method);
+    console.log('Query:', query);
+    console.log('Body:', body);
 
     try {
         switch (method) {
