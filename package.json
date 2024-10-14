@@ -29,6 +29,7 @@
     "@types/react": "18.3.8",
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.20",
+    "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "critters": "^0.0.24",
     "daisyui": "^4.12.10",
