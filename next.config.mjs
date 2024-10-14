@@ -13,7 +13,7 @@ const nextConfig = {
     optimizeCss: true,
   },
   transpilePackages: ['@mdxeditor/editor'],
-  reactStrictMode: true,
+  reactStrictMode: false,
   webpack: (config) => {
     config.experiments = { ...config.experiments, topLevelAwait: true };
     config.resolve.alias['public'] = path.join(__dirname, 'public');
