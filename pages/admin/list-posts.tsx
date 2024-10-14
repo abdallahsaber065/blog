@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import PostList from '@/components/admin/PostList';
 import 'react-toastify/dist/ReactToastify.css';
 import { create } from 'domain';
+import { useSession } from 'next-auth/react';
+import withAdminAuth from '@/components/withAdminAuth';
 interface Post {
     id: number;
     tags: string[];
@@ -20,6 +22,15 @@ const PostListPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { data: session, status } = useSession();
+    
+    // check if user is admin
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user?.role !== 'admin') {
+            router.push('/');
+        }
+    }, [status, session]);
+
 
     useEffect(() => {
         loadPosts();
@@ -94,4 +105,4 @@ const PostListPage: React.FC = () => {
     );
 };
 
-export default PostListPage;
+export default withAdminAuth(PostListPage);

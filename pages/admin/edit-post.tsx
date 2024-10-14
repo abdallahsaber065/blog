@@ -6,6 +6,7 @@ import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/admin/PostEditor';
 import 'react-toastify/dist/ReactToastify.css';
 import Tag from '@prisma/client';
+import withAdminAuth from '@/components/withAdminAuth';
 
 interface Post {
     id: number;
@@ -163,4 +164,4 @@ const PostEditorPage: React.FC = () => {
     );
 };
 
-export default PostEditorPage;
+export default withAdminAuth(PostEditorPage);
