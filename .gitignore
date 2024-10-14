@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+# any md files rather than README.md
+docs/*.md
 # next.js
 /.next/
 /out/
