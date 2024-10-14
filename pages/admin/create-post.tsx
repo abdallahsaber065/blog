@@ -6,6 +6,7 @@ import { ToastContainer, toast, Id } from 'react-toastify';
 import { slug } from "github-slugger";
 import 'react-toastify/dist/ReactToastify.css';
 import { set } from 'date-fns';
+import { useSession } from 'next-auth/react';
 
 const CreatePost: React.FC = () => {
     const [title, setTitle] = useState('');
@@ -15,7 +16,8 @@ const CreatePost: React.FC = () => {
     const [category, setCategory] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const { data: session, status } = useSession();
+    
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
 
@@ -49,6 +51,7 @@ const CreatePost: React.FC = () => {
             },
             featured_image_url: featuredImage,
             status: isDraft ? 'draft' : 'published',
+            author_id: session?.user?.id,
         };
         return postData;
     }
@@ -144,7 +147,7 @@ const CreatePost: React.FC = () => {
             setExcerpt(excerpt);
             setTags(tags.join(', '));
             setCategory(main_category);
-            setFeaturedImage('placeholder.jpg');
+            setFeaturedImage('/blogs/placeholder.jpg');
 
             const postData = genrate_postData(true);
             SavePost(postData);
