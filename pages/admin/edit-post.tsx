@@ -7,6 +7,7 @@ import PostEditor from '@/components/admin/PostEditor';
 import 'react-toastify/dist/ReactToastify.css';
 import Tag from '@prisma/client';
 import withAdminAuth from '@/components/withAdminAuth';
+import readingTime from "reading-time"
 
 interface Post {
     id: number;
@@ -121,8 +122,8 @@ const PostEditorPage: React.FC = () => {
             let finalPost = { ...updatedPost };
             delete finalPost.id;
 
-            console.log(finalPost.tags);
-            console.log(finalPost.category);
+            // calculate reading time
+            finalPost.reading_time = Math.round(readingTime(finalPost.content).minutes);
 
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
