@@ -1,8 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import Editor from "@/components/admin/Editor";
-import RenderMdx from '@/components/Blog/RenderMdx';
-import CustomImage from '@/components/CustomImage';
+import EditorWithPreview from "@/components/admin/EditorWithPreview";
 
 interface Post {
     id: number;
@@ -31,46 +29,12 @@ interface PostEditorProps {
 }
 
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
-    const [mdxSource, setMdxSource] = useState<any>(null);
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
-    const previewRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const fetchSerializedContent = async () => {
-            const response = await fetch('/api/serializeContent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ content: post.content }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setMdxSource(data.mdxSource);
-            }
-        };
-
-        fetchSerializedContent();
-    }, [post.content]);
 
     const handleContentChange = async (value: string) => {
         setMarkdownText(value);
-
-        const response = await fetch('/api/serializeContent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ content: value }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            setMdxSource(data.mdxSource);
-            setCurrentPost({ ...currentPost, content: value });
-        }
+        setCurrentPost({ ...currentPost, content: value });
     };
 
     const handleFieldChange = (field: keyof Post, value: any) => {
@@ -89,19 +53,6 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
         onSave(currentPost);
     };
 
-    const mdxComponents = (featuredImageUrl: string) => ({
-        Image: (props: any) => <CustomImage {...props} />,
-        img: (props: any) => <CustomImage {...props} />,
-    });
-
-    const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => {
-        if (type === 'md' && previewRef.current) {
-            const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
-            const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
-            previewRef.current.scrollTop = scrollPercentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
-        }
-    };
-
     return (
         <div className="flex flex-col">
             <div className="mb-4">
@@ -113,26 +64,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                 />
             </div>
-            <div className="flex">
-                <div className="w-1/2 pr-2">
-                    <label className="block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
-                    <Editor
-                        markdown={markdownText}
-                        onChange={handleContentChange}
-                        onScroll={handleEditorScroll}
-                    />
-                </div>
-                <div className="w-1/2 pl-2">
-                    <h2 className="text-xl font-bold my-4">Preview</h2>
-                    <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }}>
-                        {mdxSource ? (
-                            <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents(currentPost.featured_image_url)} />
-                        ) : (
-                            <p>No preview available</p>
-                        )}
-                    </div>
-                </div>
-            </div>
+            <EditorWithPreview
+                markdownText={markdownText}
+                onContentChange={handleContentChange}
+            />
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
                 <select
@@ -175,7 +110,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
             </div>
             <button
                 className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
-                onClick={onSaveListener} // Add this line
+                onClick={onSaveListener}
             >
                 <FaSave className="inline mr-2" />
                 Save

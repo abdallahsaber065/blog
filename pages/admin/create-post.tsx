@@ -7,6 +7,7 @@ import { ToastContainer, toast, Id } from 'react-toastify';
 import { slug } from "github-slugger";
 import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from 'next-auth/react';
+import EditorWithPreview from '@/components/admin/EditorWithPreview';
 
 const CreatePost: React.FC = () => {
     const [topic, setTopic] = useState('');
@@ -22,6 +23,10 @@ const CreatePost: React.FC = () => {
 
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
+
+    const handleContentChange = async (value: string) => {
+        setContent(value);
+    }
 
     const genrate_postData = (isDraft = false) => {
         const postData = {
@@ -92,8 +97,6 @@ const CreatePost: React.FC = () => {
             setLoading(false);
         }
     }
-
-
 
     const handleSave = async () => {
         setLoading(true);
@@ -217,14 +220,10 @@ const CreatePost: React.FC = () => {
                     onChange={(e) => setExcerpt(e.target.value)}
                 />
             </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Content</label>
-                <textarea
-                    className="w-full p-2 border border-gray-300 rounded"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
-            </div>
+            <EditorWithPreview
+                markdownText={content}
+                onContentChange={handleContentChange}
+            />
             <div className="mb-4">
                 <label className="block text-gray-700">Tags (comma separated)</label>
                 <input
