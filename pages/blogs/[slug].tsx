@@ -172,24 +172,31 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
                     <div className="col-span-12 lg:col-span-4">
                         <details
-                            className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
+                            className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
                             open
                         >
-                            <summary className="text-lg font-semibold capitalize cursor-pointer">
+                            <summary
+                                className="text-lg font-semibold capitalize pt-4 pb-1 px-4
+                                cursor-pointer sticky top-0 bg-white dark:bg-dark z-10">
                                 Table Of Content
                             </summary>
-                            <ul className="mt-4 font-in text-base">
+                            <ul className="mt-4 font-in text-base mx-4">
                                 {toc.map((heading: any) => (
                                     <li key={`#${heading.slug}`} className="py-1">
                                         <a
                                             href={`#${heading.slug}`}
                                             data-level={heading.level}
-                                            className="data-[level=two]:pl-0  data-[level=two]:pt-2
-                        data-[level=two]:border-t border-solid
-                        data-[level=three]:pl-4
-                        sm:data-[level=three]:pl-6
-                        flex items-center justify-start
-                      "
+                                            className="
+                                                data-[level=one]:font-bold
+                                                data-[level=one]:pl-0
+                                                data-[level=one]:pt-2
+                                                data-[level=one]:border-t border-solid
+                                                data-[level=two]:list-disc list-inside
+                                                data-[level=two]:pl-2
+                                                data-[level=three]:pl-4
+                                                sm:data-[level=three]:pl-6
+                                                flex items-center justify-start
+                                            "
                                         >
                                             {heading.level === "three" && (
                                                 <span className="flex w-1 h-1 rounded-full mr-2">
