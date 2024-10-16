@@ -9,6 +9,7 @@ import { set } from 'date-fns';
 import { useSession } from 'next-auth/react';
 
 const CreatePost: React.FC = () => {
+    const [topic, setTopic] = useState('');
     const [title, setTitle] = useState('');
     const [excerpt, setExcerpt] = useState('');
     const [content, setContent] = useState('');
@@ -49,9 +50,14 @@ const CreatePost: React.FC = () => {
                     }
                 }
             },
+            author: {
+                connect: {
+                    id: parseInt(session?.user?.id || '5')
+                }
+            },
             featured_image_url: featuredImage,
             status: isDraft ? 'draft' : 'published',
-            author_id: session?.user?.id,
+            published_at: isDraft ? null : new Date(),
         };
         return postData;
     }
@@ -96,20 +102,14 @@ const CreatePost: React.FC = () => {
     const handleGenerateContent = async () => {
         setLoading(true);
         try {
-            const topicResponse = await axios.post('http://localhost:5000/generate_topic_options', {
-                search_term: title,
-            }, { timeout: 300000 });
-
-            const topic = topicResponse.data?.general_topics?.[0];
-            console.log('Topic:', topic);
 
             if (!topic) {
-                throw new Error("No topic generated. Please try again.");
+                throw new Error("Please enter a topic to generate content.");
             }
 
             const outlineResponse = await axios.post('http://localhost:5000/generate_outline', {
                 topic,
-                num_of_terms: 3,
+                num_of_terms: 2,
                 num_of_keywords: 20,
             }, { timeout: 300000 });
 
@@ -149,8 +149,11 @@ const CreatePost: React.FC = () => {
             setCategory(main_category);
             setFeaturedImage('/blogs/placeholder.jpg');
 
-            const postData = genrate_postData(true);
-            SavePost(postData);
+            
+            setTimeout(() => {
+                const postData = genrate_postData(true);
+                SavePost(postData);
+            }, 5000);
         } catch (error: any) {
             console.error('Error during content generation:', error);
             if (error.response) {
@@ -174,6 +177,16 @@ const CreatePost: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
+            <div className="mb-4">
+                <label className="block text-gray-700">Topic</label>
+                <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                />
+            </div>
+
             <div className="mb-4">
                 <label className="block text-gray-700">Title</label>
                 <input
