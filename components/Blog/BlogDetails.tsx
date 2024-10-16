@@ -20,7 +20,7 @@ const BlogDetails = ({ post, postSlug, tags }: BlogDetailsProps) => {
       <span className="m-3">
         <ViewCounter slug={postSlug} />
       </span>
-      <div className="m-3">{post.reading_time}</div>
+      <div className="m-3">{post.reading_time} min read</div>
       {tags.length > 0 && (
         <Link href={`/categories/${slug(tags[0].name)}`} className="m-3">
           #{tags[0].name}

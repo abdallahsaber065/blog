@@ -1,11 +1,11 @@
 // pages/create-post.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import readingTime from "reading-time"
 import { ClipLoader } from 'react-spinners';
 import { ToastContainer, toast, Id } from 'react-toastify';
 import { slug } from "github-slugger";
 import 'react-toastify/dist/ReactToastify.css';
-import { set } from 'date-fns';
 import { useSession } from 'next-auth/react';
 
 const CreatePost: React.FC = () => {
@@ -58,6 +58,7 @@ const CreatePost: React.FC = () => {
             featured_image_url: featuredImage,
             status: isDraft ? 'draft' : 'published',
             published_at: isDraft ? null : new Date(),
+            reading_time: Math.round(readingTime(content).minutes),
         };
         return postData;
     }
@@ -148,12 +149,6 @@ const CreatePost: React.FC = () => {
             setTags(tags.join(', '));
             setCategory(main_category);
             setFeaturedImage('/blogs/placeholder.jpg');
-
-            
-            setTimeout(() => {
-                const postData = genrate_postData(true);
-                SavePost(postData);
-            }, 5000);
         } catch (error: any) {
             console.error('Error during content generation:', error);
             if (error.response) {
