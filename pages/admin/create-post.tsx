@@ -18,7 +18,8 @@ const CreatePost: React.FC = () => {
     const [featuredImage, setFeaturedImage] = useState('');
     const [loading, setLoading] = useState(false);
     const { data: session, status } = useSession();
-    
+
+
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
 
@@ -137,9 +138,25 @@ const CreatePost: React.FC = () => {
 
             setContent(generatedContent);
 
+
+            // fetch(`/api/tags`).then((res) => res.json()),
+            // fetch(`/api/categories`).then((res) => res.json()),
+
+            const select = JSON.stringify({
+                name: true
+            });
+            const Tags = await axios.get(`/api/tags?select=${select}`);
+            const oldTags = Tags.data.map((tag: { name: any; }) => tag.name);
+
+            const Categories = await axios.get(`/api/categories?select=${select}`);
+            const oldCategories = Categories.data.map((category: { name: any; }) => category.name);
+
+
             const metadataResponse = await axios.post('http://localhost:5000/generate_metadata', {
                 topic,
                 content: generatedContent,
+                old_tags: oldTags,
+                old_categories: oldCategories,
             }, { timeout: 300000 });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
