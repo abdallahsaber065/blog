@@ -1,32 +1,49 @@
-// pages/create-post.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import readingTime from "reading-time"
+import readingTime from "reading-time";
 import { ClipLoader } from 'react-spinners';
 import { ToastContainer, toast, Id } from 'react-toastify';
 import { slug } from "github-slugger";
 import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from 'next-auth/react';
 import EditorWithPreview from '@/components/admin/EditorWithPreview';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
 
 const CreatePost: React.FC = () => {
     const [topic, setTopic] = useState('');
     const [title, setTitle] = useState('');
     const [excerpt, setExcerpt] = useState('');
     const [content, setContent] = useState('');
-    const [tags, setTags] = useState('');
-    const [category, setCategory] = useState('');
+    const [tags, setTags] = useState<{ label: string; value: string }[]>([]);
+    const [category, setCategory] = useState<{ label: string; value: string } | null>(null);
     const [featuredImage, setFeaturedImage] = useState('');
+    const [oldTags, setOldTags] = useState<{ label: string; value: string }[]>([]);
+    const [oldCategories, setOldCategories] = useState<{ label: string; value: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const { data: session, status } = useSession();
-
 
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
 
+    useEffect(() => {
+        const fetchOldTagsAndCategories = async () => {
+            const select = JSON.stringify({ name: true });
+            const Tags = await axios.get(`/api/tags?select=${select}`);
+            setOldTags(Tags.data.map((tag: { name: any; }) => ({ label: tag.name, value: tag.name })));
+
+            const Categories = await axios.get(`/api/categories?select=${select}`);
+            setOldCategories(Categories.data.map((category: { name: any; }) => ({ label: category.name, value: category.name })));
+        };
+
+        fetchOldTagsAndCategories();
+    }, []);
+
     const handleContentChange = async (value: string) => {
         setContent(value);
-    }
+    };
 
     const genrate_postData = (isDraft = false) => {
         const postData = {
@@ -35,24 +52,24 @@ const CreatePost: React.FC = () => {
             excerpt,
             content,
             tags: {
-                connectOrCreate: tags.split(',').map(tag => ({
+                connectOrCreate: tags.map(tag => ({
                     where: {
-                        slug: slug(tag.trim())
+                        slug: slug(tag.value)
                     },
                     create: {
-                        name: tag.trim(),
-                        slug: slug(tag.trim())
+                        name: tag.value,
+                        slug: slug(tag.value)
                     }
                 }))
             },
             category: {
                 connectOrCreate: {
                     where: {
-                        slug: slug(category)
+                        slug: slug(category?.value || '')
                     },
                     create: {
-                        name: category,
-                        slug: slug(category)
+                        name: category?.value || '',
+                        slug: slug(category?.value || '')
                     }
                 }
             },
@@ -67,7 +84,7 @@ const CreatePost: React.FC = () => {
             reading_time: Math.round(readingTime(content).minutes),
         };
         return postData;
-    }
+    };
 
     const SavePost = async (postData = {}) => {
         try {
@@ -96,18 +113,17 @@ const CreatePost: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleSave = async () => {
         setLoading(true);
         const postData = genrate_postData();
         SavePost(postData);
-    }
+    };
 
     const handleGenerateContent = async () => {
         setLoading(true);
         try {
-
             if (!topic) {
                 throw new Error("Please enter a topic to generate content.");
             }
@@ -141,34 +157,19 @@ const CreatePost: React.FC = () => {
 
             setContent(generatedContent);
 
-
-            // fetch(`/api/tags`).then((res) => res.json()),
-            // fetch(`/api/categories`).then((res) => res.json()),
-
-            const select = JSON.stringify({
-                name: true
-            });
-            const Tags = await axios.get(`/api/tags?select=${select}`);
-            const oldTags = Tags.data.map((tag: { name: any; }) => tag.name);
-
-            const Categories = await axios.get(`/api/categories?select=${select}`);
-            const oldCategories = Categories.data.map((category: { name: any; }) => category.name);
-
-
             const metadataResponse = await axios.post('http://localhost:5000/generate_metadata', {
                 topic,
                 content: generatedContent,
-                old_tags: oldTags,
-                old_categories: oldCategories,
+                old_tags: oldTags.map(tag => tag.value),
+                old_categories: oldCategories.map(category => category.value),
             }, { timeout: 300000 });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
-            console.log('Generated Metadata:', metadataResponse.data);
 
             setTitle(generatedTitle);
             setExcerpt(excerpt);
-            setTags(tags.join(', '));
-            setCategory(main_category);
+            setTags(tags.map((tag: any) => ({ label: tag, value: tag })));
+            setCategory(main_category ? { label: main_category, value: main_category } : null);
             setFeaturedImage('/blogs/placeholder.jpg');
         } catch (error: any) {
             console.error('Error during content generation:', error);
@@ -194,28 +195,28 @@ const CreatePost: React.FC = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
             <div className="mb-4">
-                <label className="block text-gray-700">Topic</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Topic</label>
                 <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-700">Title</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Excerpt</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Excerpt</label>
                 <textarea
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
                 />
@@ -225,28 +226,31 @@ const CreatePost: React.FC = () => {
                 onContentChange={handleContentChange}
             />
             <div className="mb-4">
-                <label className="block text-gray-700">Tags (comma separated)</label>
-                <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
+                <Select
+                    isMulti
+                    components={animatedComponents}
+                    options={oldTags}
                     value={tags}
-                    onChange={(e) => setTags(e.target.value)}
+                    onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                    className="w-full text-gray dark:text-g bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Category</label>
-                <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
+                <Select
+                    components={animatedComponents}
+                    options={oldCategories}
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Featured Image URL</label>
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Featured Image URL</label>
                 <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                     value={featuredImage}
                     onChange={(e) => setFeaturedImage(e.target.value)}
                 />
