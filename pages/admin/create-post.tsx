@@ -115,6 +115,7 @@ const CreatePost: React.FC = () => {
             }, { timeout: 300000 });
 
             const outline = outlineResponse.data?.outline;
+            const search_terms = outlineResponse.data?.search_terms;
             console.log('Outline:', outline);
 
             if (!outline) {
@@ -124,7 +125,7 @@ const CreatePost: React.FC = () => {
             const contentResponse = await axios.post('http://localhost:5000/generate_content', {
                 topic,
                 outline,
-                google_search_results: [],
+                search_terms,
             }, { timeout: 300000 });
 
             const generatedContent = contentResponse.data?.content;
