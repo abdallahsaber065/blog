@@ -1,4 +1,3 @@
-// components/PostEditor.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { FaSave } from 'react-icons/fa';
 import Editor from "@/components/admin/Editor";
@@ -176,6 +175,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
             </div>
             <button
                 className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
+                onClick={onSaveListener} // Add this line
             >
                 <FaSave className="inline mr-2" />
                 Save
