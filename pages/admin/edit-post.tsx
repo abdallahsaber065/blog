@@ -1,4 +1,4 @@
-// pages/admin/PostEditorPage.tsx
+// pages/admin/edit-post.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
@@ -138,6 +138,8 @@ const PostEditorPage: React.FC = () => {
             });
             if (response.ok) {
                 toast.success('Post updated successfully');
+                // reload the page to get the updated post
+                router.reload();
             } else {
                 toast.error('Failed to update post');
             }

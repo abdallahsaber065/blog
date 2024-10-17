@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import EditorWithPreview from "@/components/admin/EditorWithPreview";
+import Select from 'react-select';
 
 interface Post {
     id: number;
@@ -39,11 +40,9 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
 
     const handleFieldChange = (field: keyof Post, value: any) => {
         if (field === 'tags') {
-            const selectedTags = value.map((tagId: number) => tags.find(tag => tag.id === tagId));
-            setCurrentPost({ ...currentPost, tags: selectedTags });
+            setCurrentPost({ ...currentPost, tags: value });
         } else if (field === 'category') {
-            const selectedCategory = categories.find(category => category.id === value);
-            setCurrentPost({ ...currentPost, category: selectedCategory || { id: 0, name: '' } });
+            setCurrentPost({ ...currentPost, category: value });
         } else {
             setCurrentPost({ ...currentPost, [field]: value });
         }
@@ -51,6 +50,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
 
     const onSaveListener = () => {
         onSave(currentPost);
+        
     };
 
     return (
@@ -70,43 +70,28 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
             />
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
-                <select
-                    multiple
-                    className="p-2 border border-gray-300 rounded w-full text-gray dark:text-lightgray bg-white dark:bg-dark"
-                    value={currentPost.tags?.map(tag => String(tag.id)) || []}
-                    onChange={(e) =>
-                        handleFieldChange(
-                            'tags',
-                            Array.from(e.target.selectedOptions, (option) => Number(option.value))
-                        )
-                    }
-                >
-                    {tags.map((tag) => (
-                        <option
-                            key={tag.id}
-                            value={tag.id}
-                            className={currentPost.tags?.some(selectedTag => selectedTag.id === tag.id) ? 'bg-accent dark:bg-accentDark dark:text-gray  font-semibold ' : ''}
-                        >
-                            {tag.name}
-                        </option>
-                    ))}
-                </select>
+                <Select
+                    isMulti
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
+                    value={currentPost.tags}
+                    onChange={(selectedOptions) => handleFieldChange('tags', selectedOptions)}
+                    options={tags}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => String(option.id)}
+                />
             </div>
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
-                <select
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
-                    value={currentPost.category?.id || ''}
-                    onChange={(e) =>
-                        handleFieldChange('category', Number(e.target.value))
-                    }
-                >
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
+                <Select
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
+                    value={currentPost.category}
+                    onChange={(selectedOption) => handleFieldChange('category', selectedOption)}
+                    options={categories}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => String(option.id)}
+                />
             </div>
             <button
                 className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
