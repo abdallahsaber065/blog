@@ -86,17 +86,41 @@ const CreatePost: React.FC = () => {
         return postData;
     };
 
-    const SavePost = async (postData = {}) => {
+    const SavePost = async (postData: any) => {
         try {
+            let uniqueSlug = postData.slug;
+            let isUnique = false;
+    
+            // Check for unique slug
+            while (!isUnique) {
+                try {
+                    const response = await axios.get(`/api/posts?where=${JSON.stringify({ slug: uniqueSlug })}`);
+                    if (response.data.length === 0) {
+                        isUnique = true;
+                    } else {
+                        uniqueSlug = `${postData.slug}-${Date.now()}`;
+                        // toast to show that title is not unique
+                        if (!toast.isActive(errorToastId)) {
+                            toast.error('Title is not unique. Changing slug to make it unique.', { toastId: errorToastId });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking slug uniqueness:', error);
+                    throw new Error('Failed to check slug uniqueness.');
+                }
+            }
+    
+            postData.slug = uniqueSlug;
+    
             const response = await axios.post('/api/posts', postData);
             console.log("API Response:", response.data);
-
+    
             if (!toast.isActive(successToastId)) {
                 toast.success('Post created successfully!', { toastId: successToastId });
             }
         } catch (error: any) {
             console.error('Failed to create post:', error);
-
+    
             if (error.response) {
                 if (!toast.isActive(errorToastId)) {
                     toast.error(`Error: ${error.response.data.error || "Server error"}`, { toastId: errorToastId });
@@ -233,7 +257,8 @@ const CreatePost: React.FC = () => {
                     options={oldTags}
                     value={tags}
                     onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
-                    className="w-full text-gray dark:text-g bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
                 />
             </div>
             <div className="mb-4">
@@ -241,9 +266,10 @@ const CreatePost: React.FC = () => {
                 <Select
                     components={animatedComponents}
                     options={oldCategories}
-                    value={category}
+                    value={category}    
                     onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
                 />
             </div>
             <div className="mb-4">
