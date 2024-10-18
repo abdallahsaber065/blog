@@ -1,14 +1,13 @@
-// pages/admin/PostListPage.tsx
-'use client';
+// pages/admin/dashboard.tsx
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
-import { useRouter } from 'next/router';
 import PostList from '@/components/admin/PostList';
 import 'react-toastify/dist/ReactToastify.css';
-import { create } from 'domain';
 import { useSession } from 'next-auth/react';
 import withAdminAuth from '@/components/withAdminAuth';
+
 interface Post {
     id: number;
     tags: string[];
@@ -18,19 +17,17 @@ interface Post {
     created_at: string;
 }
 
-const PostListPage: React.FC = () => {
+const DashboardPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { data: session, status } = useSession();
-    
-    // check if user is admin
+
     useEffect(() => {
         if (status === 'authenticated' && session?.user?.role !== 'admin') {
             router.push('/');
         }
     }, [status, session]);
-
 
     useEffect(() => {
         loadPosts();
@@ -38,32 +35,30 @@ const PostListPage: React.FC = () => {
 
     const loadPosts = async () => {
         setLoading(true);
-        const selectString = JSON.stringify(
-            {
-                id: true,
-                title: true,
-                tags: {
-                    select: {
-                        id: true,
-                        name: true,
-                    },
+        const selectString = JSON.stringify({
+            id: true,
+            title: true,
+            tags: {
+                select: {
+                    id: true,
+                    name: true,
                 },
-                created_at: true,
-                author: {
-                    select: {
-                        id: true,
-                        first_name: true,
-                        last_name: true,
-                    },
+            },
+            created_at: true,
+            author: {
+                select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
                 },
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                    },
-                }
-            }
-        );
+            },
+            category: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        });
 
         const postsData = await fetch('/api/posts?select=' + selectString).then((res) => res.json());
         setPosts(postsData);
@@ -93,16 +88,26 @@ const PostListPage: React.FC = () => {
         router.push(`/admin/edit-post?id=${id}`);
     };
 
-    console.log(posts);
+    const handleCreate = () => {
+        router.push('/admin/create-post');
+    };
 
     return (
         <div className="container mx-auto p-4">
             <ToastContainer />
-            <h1 className="text-2xl font-bold mb-4">Posts</h1>
+            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+            <div className="mb-4">
+                <button
+                    className="bg-blue-500 text-white p-2 rounded"
+                    onClick={handleCreate}
+                >
+                    Create New Post
+                </button>
+            </div>
             {loading && <ClipLoader />}
             <PostList posts={posts} onSelectPost={handleEdit} onDeletePost={handleDelete} />
         </div>
     );
 };
 
-export default withAdminAuth(PostListPage);
+export default withAdminAuth(DashboardPage);
