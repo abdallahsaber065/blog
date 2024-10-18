@@ -24,6 +24,7 @@ const CreatePost: React.FC = () => {
     const [oldCategories, setOldCategories] = useState<{ label: string; value: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const { data: session, status } = useSession();
+    const [isMounted, setIsMounted] = useState(false);
 
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
@@ -39,6 +40,10 @@ const CreatePost: React.FC = () => {
         };
 
         fetchOldTagsAndCategories();
+    }, []);
+
+    useEffect(() => {
+        setIsMounted(true);
     }, []);
 
     const handleContentChange = async (value: string) => {
@@ -249,29 +254,33 @@ const CreatePost: React.FC = () => {
                 markdownText={content}
                 onContentChange={handleContentChange}
             />
-            <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
-                <Select
-                    isMulti
-                    components={animatedComponents}
-                    options={oldTags}
-                    value={tags}
-                    onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
-                    className="my-react-select-container"
-                    classNamePrefix="my-react-select"
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
-                <Select
-                    components={animatedComponents}
-                    options={oldCategories}
-                    value={category}    
-                    onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
-                    className="my-react-select-container"
-                    classNamePrefix="my-react-select"
-                />
-            </div>
+            {isMounted && (
+                <>
+                    <div className="mb-4">
+                        <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
+                        <Select
+                            isMulti
+                            components={animatedComponents}
+                            options={oldTags}
+                            value={tags}
+                            onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                            className="my-react-select-container"
+                            classNamePrefix="my-react-select"
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
+                        <Select
+                            components={animatedComponents}
+                            options={oldCategories}
+                            value={category}    
+                            onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
+                            className="my-react-select-container"
+                            classNamePrefix="my-react-select"
+                        />
+                    </div>
+                </>
+            )}
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Featured Image URL</label>
                 <input
