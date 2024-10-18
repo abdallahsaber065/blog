@@ -2,7 +2,6 @@ import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import React from "react";
 import { slug } from "github-slugger";
-import ViewCounter from "./ViewCounter";
 import { Post, Tag } from "@prisma/client";
 
 interface BlogDetailsProps {
@@ -17,9 +16,7 @@ const BlogDetails = ({ post, postSlug, tags }: BlogDetailsProps) => {
       <time className="m-3">
         {post.published_at ? format(parseISO(post.published_at.toISOString()), "LLLL d, yyyy") : "Unpublished"}
       </time>
-      <span className="m-3">
-        <ViewCounter slug={postSlug} />
-      </span>
+
       <div className="m-3">{post.reading_time} min read</div>
       {tags.length > 0 && (
         <Link href={`/categories/${slug(tags[0].name)}`} className="m-3">
