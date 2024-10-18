@@ -15,6 +15,9 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     useEffect(() => {
         const fetchSerializedContent = async () => {
+            if (!markdownText) {
+                return;
+            }
             const response = await fetch('/api/serializeContent', {
                 method: 'POST',
                 headers: {
