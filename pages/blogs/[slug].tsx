@@ -3,7 +3,6 @@ import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/lib/siteMetaData";
-import { generateTOC } from "@/lib";
 import { serialize } from 'next-mdx-remote/serialize';
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -11,6 +10,7 @@ import { prisma } from '@/lib/prisma';
 import React from "react";
 import CustomImage from '@/components/CustomImage';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
+import TableOfContent from "@/components/Blog/TableOfContenet";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -67,7 +67,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         return { notFound: true };
     }
 
-    const toc = generateTOC(post.content);
     let imageList = [siteMetadata.socialBanner];
     if (post.featured_image_url) {
         imageList = [post.featured_image_url];
@@ -112,7 +111,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return {
         props: {
             post: serializedPost,
-            toc,
             mdxSource,
             jsonLd,
         },
@@ -120,7 +118,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
 };
 
-const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
+const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
     // Convert strings back to Date objects
     const deserializedPost = {
         ...post,
@@ -170,46 +168,7 @@ const BlogPage = ({ post, toc, mdxSource, jsonLd }: any) => {
 
                 <BlogDetails post={deserializedPost} postSlug={deserializedPost.slug} tags={deserializedPost.tags} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-                    <div className="col-span-12 lg:col-span-4">
-                        <details
-                            className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
-                            open
-                        >
-                            <summary
-                                className="text-lg font-semibold capitalize pt-4 pb-1 px-4
-                                cursor-pointer sticky top-0 bg-white dark:bg-dark z-10">
-                                Table Of Content
-                            </summary>
-                            <ul className="mt-4 font-in text-base mx-4">
-                                {toc.map((heading: any) => (
-                                    <li key={`#${heading.slug}`} className="py-1">
-                                        <a
-                                            href={`#${heading.slug}`}
-                                            data-level={heading.level}
-                                            className="
-                                                data-[level=one]:font-bold
-                                                data-[level=one]:pl-0
-                                                data-[level=one]:pt-2
-                                                data-[level=one]:border-t border-solid
-                                                data-[level=two]:list-disc list-inside
-                                                data-[level=two]:pl-2
-                                                data-[level=three]:pl-4
-                                                sm:data-[level=three]:pl-6
-                                                flex items-center justify-start
-                                            "
-                                        >
-                                            {heading.level === "three" && (
-                                                <span className="flex w-1 h-1 rounded-full mr-2">
-                                                    &nbsp;
-                                                </span>
-                                            )}
-                                            <span className="hover:underline">{heading.text}</span>
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </details>
-                    </div>
+                    <TableOfContent content={post.content} />
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>
             </article>

@@ -24,19 +24,3 @@ export const sortPosts = (posts: PostWithTags[]): PostWithTags[] => {
       return compareDesc(dateA, dateB);
     });
 };
-
-export function generateTOC(content: string) {
-  const regex = /\n(#{1,6})\s+(.+)/g;
-  const slugger = new GithubSlugger();
-  const headings = Array.from(content.matchAll(regex)).map((match) => {
-    const [ , flag, text ] = match;
-
-    return {
-      level: flag.length === 1 ? 'one' : flag.length === 2 ? 'two' : 'three',
-      text: text || '',
-      slug: text ? slugger.slug(text) : '',
-    };
-  });
-
-  return headings;
-}
