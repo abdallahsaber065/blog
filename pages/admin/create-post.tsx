@@ -26,6 +26,14 @@ const CreatePost: React.FC = () => {
     const { data: session, status } = useSession();
     const [isMounted, setIsMounted] = useState(false);
 
+    const [showOutlineSettings, setShowOutlineSettings] = useState(false);
+    const [showContentSettings, setShowContentSettings] = useState(false);
+
+    const [numOfTerms, setNumOfTerms] = useState(3);
+    const [numOfKeywords, setNumOfKeywords] = useState(20);
+    const [userCustomInstructions, setUserCustomInstructions] = useState('');
+    const [numOfPoints, setNumOfPoints] = useState(5);
+
     const successToastId: Id = 'success-toast';
     const errorToastId: Id = 'error-toast';
 
@@ -159,8 +167,10 @@ const CreatePost: React.FC = () => {
 
             const outlineResponse = await axios.post('http://localhost:5000/generate_outline', {
                 topic,
-                num_of_terms: 2,
-                num_of_keywords: 20,
+                num_of_terms: numOfTerms,
+                num_of_keywords: numOfKeywords,
+                user_custom_instructions: userCustomInstructions,
+                num_of_points: numOfPoints,
             }, { timeout: 300000 });
 
             const outline = outlineResponse.data?.outline;
@@ -175,6 +185,7 @@ const CreatePost: React.FC = () => {
                 topic,
                 outline,
                 search_terms,
+                user_custom_instructions: userCustomInstructions,
             }, { timeout: 300000 });
 
             const generatedContent = contentResponse.data?.content;
@@ -231,6 +242,77 @@ const CreatePost: React.FC = () => {
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                 />
+            </div>
+
+            <div className="mb-4">
+                <button
+                    className="text-blue-500 underline"
+                    onClick={() => setShowOutlineSettings(!showOutlineSettings)}
+                >
+                    {showOutlineSettings ? 'Hide' : 'Show'} Outline Advanced Settings
+                </button>
+                {showOutlineSettings && (
+                    <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray">
+                        <div className="flex space-x-4 mb-4">
+                            <div className="flex-1">
+                                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Terms</label>
+                                <input
+                                    type="number"
+                                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                    value={numOfTerms}
+                                    onChange={(e) => setNumOfTerms(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Keywords</label>
+                                <input
+                                    type="number"
+                                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                    value={numOfKeywords}
+                                    onChange={(e) => setNumOfKeywords(Number(e.target.value))}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Points</label>
+                                <input
+                                    type="number"
+                                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                    value={numOfPoints}
+                                    onChange={(e) => setNumOfPoints(Number(e.target.value))}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
+                            <textarea
+                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                value={userCustomInstructions}
+                                onChange={(e) => setUserCustomInstructions(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="mb-4">
+                <button
+                    className="text-blue-500 underline"
+                    onClick={() => setShowContentSettings(!showContentSettings)}
+                >
+                    {showContentSettings ? 'Hide' : 'Show'} Content Generation Advanced Settings
+                </button>
+                {showContentSettings && (
+                    <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray">
+                        <div className="mb-4">
+                            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
+                            <textarea
+                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                value={userCustomInstructions}
+                                onChange={(e) => setUserCustomInstructions(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="mb-4">
