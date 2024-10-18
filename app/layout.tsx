@@ -58,7 +58,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
-            <Head>
+            <head>
                 <script rel='preload'
                     dangerouslySetInnerHTML={{
                         __html: `
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <link rel="mask-icon" href="/static/images/icons/safari-pinned-tab.svg" color="#5bbad5" />
                 {/* mstile 150x150 */}
                 <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
-            </Head>
+            </head>
 
             <body className="bg-light dark:bg-dark">
                 <div
