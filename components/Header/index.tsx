@@ -6,11 +6,13 @@ import siteMetadata from "@/lib/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState, useEffect } from "react";
 import { cx } from "@/lib";
+import { useSession } from "next-auth/react";
 
 const Header = () => {
   const [mode, setMode] = useThemeSwitch();
   const [click, setClick] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,6 +72,7 @@ const Header = () => {
         <Link href="/contact" className="mx-2">
           Contact
         </Link>
+        {}
         {isMounted && (
           <button
             onClick={() => setMode(mode === "light" ? "dark" : "light")}
@@ -94,6 +97,15 @@ const Header = () => {
         <Link href="/contact" className="mx-2">
           Contact
         </Link>
+        {/* make splitter between contact and admin */}
+        <span className="mx-2">|</span>
+        {
+          session?.user.role === "admin" && (
+            <Link href="/admin" className="mx-2">
+              Admin
+            </Link>
+          )
+        }
         {isMounted && (
           <button
             onClick={() => setMode(mode === "light" ? "dark" : "light")}
