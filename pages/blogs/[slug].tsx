@@ -168,7 +168,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
 
                 <BlogDetails post={deserializedPost} postSlug={deserializedPost.slug} tags={deserializedPost.tags} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-                    <TableOfContent content={post.content} />
+                    <TableOfContent mdxContent={post.content} />
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>
             </article>
