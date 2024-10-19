@@ -38,8 +38,9 @@ const CreatePost: React.FC = () => {
     const [numOfPoints, setNumOfPoints] = useState(5);
 
     const [outline, setOutline] = useState<any>(null);
+    const [outlineDraft, setOutlineDraft] = useState<any>(null);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
-    
+
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
@@ -107,7 +108,7 @@ const CreatePost: React.FC = () => {
         try {
             let uniqueSlug = postData.slug;
             let isUnique = false;
-    
+
             // Check for unique slug
             while (!isUnique) {
                 try {
@@ -124,16 +125,16 @@ const CreatePost: React.FC = () => {
                     throw new Error('Failed to check slug uniqueness.');
                 }
             }
-    
+
             postData.slug = uniqueSlug;
-    
+
             const response = await axios.post('/api/posts', postData);
             console.log("API Response:", response.data);
-    
+
             toast.success('Post created successfully!');
         } catch (error: any) {
             console.error('Failed to create post:', error);
-    
+
             if (error.response) {
                 toast.error(`Error: ${error.response.data.error || "Server error"}`);
             } else if (error.request) {
@@ -324,7 +325,7 @@ const CreatePost: React.FC = () => {
 
             <div className="flex space-x-4 mb-4">
                 <button
-                    className="bg-blue-500 text-white p-2 rounded"
+                    className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
                     onClick={handleGenerateOutline}
                     disabled={loading}
                 >
@@ -332,17 +333,22 @@ const CreatePost: React.FC = () => {
                 </button>
 
                 <button
-                    className="bg-green-500 text-white p-2 rounded"
-                    onClick={handleAcceptOutline}
-                >
-                    Accept Outline
-                </button>
-                <button
-                    className="bg-blue-500 text-white p-2 rounded"
+                    className="bg-yellow-500 text-white font-bold p-2 rounded hover:bg-yellow-600 dark:bg-yellow-700 dark:hover:bg-yellow-800"
                     onClick={() => setShowJSONEditor(true)}
                 >
                     Edit Outline
                 </button>
+                {outline && (
+                    <button
+                        className="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800"
+                        onClick={handleAcceptOutline}
+                        disabled={loading}
+                    >
+                        {loading ? <ClipLoader size={20} color={"#fff"} /> : 'enerate Content'}
+                    </button>
+                )}
+
+
             </div>
 
             <div className="mb-4">
@@ -385,7 +391,7 @@ const CreatePost: React.FC = () => {
                         <Select
                             components={animatedComponents}
                             options={oldCategories}
-                            value={category}    
+                            value={category}
                             onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
                             className="my-react-select-container"
                             classNamePrefix="my-react-select"
@@ -410,20 +416,13 @@ const CreatePost: React.FC = () => {
                 >
                     {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save'}
                 </button>
-                <button
-                    className="bg-green-500 text-white p-2 rounded"
-                    onClick={handleGenerateOutline}
-                    disabled={loading}
-                >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
-                </button>
             </div>
 
             {showJSONEditor && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-4 rounded shadow-lg w-3/4">
                         <h2 className="text-xl font-bold mb-4">Edit Outline</h2>
-                        <JSONEditorComponent value={outline} onChange={setOutline} />
+                        <JSONEditorComponent value={outline} onChange={setOutlineDraft} />
                         <div className="flex justify-end space-x-4 mt-4">
                             <button
                                 className="bg-red-500 text-white p-2 rounded"
@@ -433,7 +432,7 @@ const CreatePost: React.FC = () => {
                             </button>
                             <button
                                 className="bg-blue-500 text-white p-2 rounded"
-                                onClick={() => setShowJSONEditor(false)}
+                                onClick={() => { setShowJSONEditor(false); setOutline(outlineDraft); }}
                             >
                                 OK
                             </button>
