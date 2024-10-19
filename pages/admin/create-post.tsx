@@ -1,3 +1,4 @@
+// create-post.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import readingTime from "reading-time";
@@ -8,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import EditorWithPreview from '@/components/admin/EditorWithPreview';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import JSONEditorComponent from '@/components/JSONEditor';
 
 const animatedComponents = makeAnimated();
 
@@ -28,10 +30,16 @@ const CreatePost: React.FC = () => {
     const [showOutlineSettings, setShowOutlineSettings] = useState(false);
     const [showContentSettings, setShowContentSettings] = useState(false);
 
+    const [searchTerms, setSearchTerms] = useState('');
+
     const [numOfTerms, setNumOfTerms] = useState(3);
     const [numOfKeywords, setNumOfKeywords] = useState(20);
     const [userCustomInstructions, setUserCustomInstructions] = useState('');
     const [numOfPoints, setNumOfPoints] = useState(5);
+
+    const [outline, setOutline] = useState<any>(null);
+    const [showJSONEditor, setShowJSONEditor] = useState(false);
+    
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
@@ -144,7 +152,7 @@ const CreatePost: React.FC = () => {
         SavePost(postData);
     };
 
-    const handleGenerateContent = async () => {
+    const handleGenerateOutline = async () => {
         setLoading(true);
         try {
             if (!topic) {
@@ -160,17 +168,36 @@ const CreatePost: React.FC = () => {
             }, { timeout: 300000 });
 
             const outline = outlineResponse.data?.outline;
-            const search_terms = outlineResponse.data?.search_terms;
+            setSearchTerms(outlineResponse.data?.search_terms);
             console.log('Outline:', outline);
 
             if (!outline) {
                 throw new Error("No outline generated. Please try again.");
             }
 
+            setOutline(outline);
+            setShowJSONEditor(true);
+        } catch (error: any) {
+            console.error('Error during content generation:', error);
+            if (error.response) {
+                toast.error(`Error: ${error.response.data.error || "Server error"}`);
+            } else if (error.request) {
+                toast.error('No response from server. Please try again later.');
+            } else {
+                toast.error(`Error: ${error.message}`);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAcceptOutline = async () => {
+        setLoading(true);
+        try {
             const contentResponse = await axios.post('http://localhost:5000/generate_content', {
                 topic,
                 outline,
-                search_terms,
+                search_terms: searchTerms,
                 user_custom_instructions: userCustomInstructions,
             }, { timeout: 300000 });
 
@@ -295,6 +322,29 @@ const CreatePost: React.FC = () => {
                 )}
             </div>
 
+            <div className="flex space-x-4 mb-4">
+                <button
+                    className="bg-blue-500 text-white p-2 rounded"
+                    onClick={handleGenerateOutline}
+                    disabled={loading}
+                >
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Outline'}
+                </button>
+
+                <button
+                    className="bg-green-500 text-white p-2 rounded"
+                    onClick={handleAcceptOutline}
+                >
+                    Accept Outline
+                </button>
+                <button
+                    className="bg-blue-500 text-white p-2 rounded"
+                    onClick={() => setShowJSONEditor(true)}
+                >
+                    Edit Outline
+                </button>
+            </div>
+
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
@@ -362,12 +412,41 @@ const CreatePost: React.FC = () => {
                 </button>
                 <button
                     className="bg-green-500 text-white p-2 rounded"
-                    onClick={handleGenerateContent}
+                    onClick={handleGenerateOutline}
                     disabled={loading}
                 >
                     {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
                 </button>
             </div>
+
+            {showJSONEditor && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-4 rounded shadow-lg w-3/4">
+                        <h2 className="text-xl font-bold mb-4">Edit Outline</h2>
+                        <JSONEditorComponent value={outline} onChange={setOutline} />
+                        <div className="flex justify-end space-x-4 mt-4">
+                            <button
+                                className="bg-red-500 text-white p-2 rounded"
+                                onClick={() => setShowJSONEditor(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white p-2 rounded"
+                                onClick={() => setShowJSONEditor(false)}
+                            >
+                                OK
+                            </button>
+                            <button
+                                className="bg-green-500 text-white p-2 rounded"
+                                onClick={handleAcceptOutline}
+                            >
+                                Accept Outline
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
