@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdx';
 import CustomImage from '@/components/CustomImage';
+import toast from 'react-hot-toast';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -11,6 +12,7 @@ interface EditorWithPreviewProps {
 
 const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onContentChange }) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
     const previewRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -18,17 +20,27 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             if (!markdownText) {
                 return;
             }
-            const response = await fetch('/api/serializeContent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ content: markdownText }),
-            });
+            try {
+                const response = await fetch('/api/serializeContent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content: markdownText }),
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                setMdxSource(data.mdxSource);
+                if (response.ok) {
+                    const data = await response.json();
+                    setMdxSource(data.mdxSource);
+                    setError(null);
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData.error);
+                    setMdxSource(null);
+                }
+            } catch (error) {
+                setError('An unexpected error occurred');
+                setMdxSource(null);
             }
         };
 
@@ -61,7 +73,9 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             <div className="w-1/2 pl-2">
                 <h2 className="text-xl font-bold my-4">Preview</h2>
                 <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }}>
-                    {mdxSource ? (
+                    {error ? (
+                        <p className="text-red-500">{error}</p>
+                    ) : mdxSource ? (
                         <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                     ) : (
                         <p>No preview available</p>
