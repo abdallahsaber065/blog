@@ -1,10 +1,9 @@
 // pages/admin/edit-post.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { toast, ToastContainer } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/admin/PostEditor';
-import 'react-toastify/dist/ReactToastify.css';
 import Tag from '@prisma/client';
 import withAdminAuth from '@/components/withAdminAuth';
 import readingTime from "reading-time"
@@ -80,8 +79,7 @@ const PostEditorPage: React.FC = () => {
             return;
         }
 
-
-        // add space after adn before **...** to prevent markdown from rendering bold text
+        // add space after and before **...** to prevent markdown from rendering bold text
         // retrieve the bold text from the content before editing ex.: \*\*I often do this thing where list items have headings.\*\*
         const boldMatch = post.content.match(/\\\*\\\*[^*]+?\\\*\\\*/g);
         const boldTextOnly = boldMatch?.map((text: string) => text.replace(/\\\*\\\*/g, ''));
@@ -152,7 +150,6 @@ const PostEditorPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Edit Post</h1>
             {loading && <ClipLoader />}
             {post && (

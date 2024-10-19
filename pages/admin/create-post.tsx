@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import readingTime from "reading-time";
 import { ClipLoader } from 'react-spinners';
-import { ToastContainer, toast, Id } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import { slug } from "github-slugger";
-import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from 'next-auth/react';
 import EditorWithPreview from '@/components/admin/EditorWithPreview';
 import Select from 'react-select';
@@ -33,9 +32,6 @@ const CreatePost: React.FC = () => {
     const [numOfKeywords, setNumOfKeywords] = useState(20);
     const [userCustomInstructions, setUserCustomInstructions] = useState('');
     const [numOfPoints, setNumOfPoints] = useState(5);
-
-    const successToastId: Id = 'success-toast';
-    const errorToastId: Id = 'error-toast';
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
@@ -113,9 +109,7 @@ const CreatePost: React.FC = () => {
                     } else {
                         uniqueSlug = `${postData.slug}-${Date.now()}`;
                         // toast to show that title is not unique
-                        if (!toast.isActive(errorToastId)) {
-                            toast.error('Title is not unique. Changing slug to make it unique.', { toastId: errorToastId });
-                        }
+                        toast.error('Title is not unique. Changing slug to make it unique.');
                     }
                 } catch (error) {
                     console.error('Error checking slug uniqueness:', error);
@@ -128,24 +122,16 @@ const CreatePost: React.FC = () => {
             const response = await axios.post('/api/posts', postData);
             console.log("API Response:", response.data);
     
-            if (!toast.isActive(successToastId)) {
-                toast.success('Post created successfully!', { toastId: successToastId });
-            }
+            toast.success('Post created successfully!');
         } catch (error: any) {
             console.error('Failed to create post:', error);
     
             if (error.response) {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error(`Error: ${error.response.data.error || "Server error"}`, { toastId: errorToastId });
-                }
+                toast.error(`Error: ${error.response.data.error || "Server error"}`);
             } else if (error.request) {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error('No response from server. Please try again later.', { toastId: errorToastId });
-                }
+                toast.error('No response from server. Please try again later.');
             } else {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error(`Error: ${error.message}`, { toastId: errorToastId });
-                }
+                toast.error(`Error: ${error.message}`);
             }
         } finally {
             setLoading(false);
@@ -214,17 +200,11 @@ const CreatePost: React.FC = () => {
         } catch (error: any) {
             console.error('Error during content generation:', error);
             if (error.response) {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error(`Error: ${error.response.data.error || "Server error"}`, { toastId: errorToastId });
-                }
+                toast.error(`Error: ${error.response.data.error || "Server error"}`);
             } else if (error.request) {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error('No response from server. Please try again later.', { toastId: errorToastId });
-                }
+                toast.error('No response from server. Please try again later.');
             } else {
-                if (!toast.isActive(errorToastId)) {
-                    toast.error(`Error: ${error.message}`, { toastId: errorToastId });
-                }
+                toast.error(`Error: ${error.message}`);
             }
         } finally {
             setLoading(false);
@@ -388,7 +368,6 @@ const CreatePost: React.FC = () => {
                     {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
                 </button>
             </div>
-            <ToastContainer />
         </div>
     );
 };

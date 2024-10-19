@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import siteMetadata from "@/lib/siteMetaData";
 import { ReactNode } from 'react';
 import Head from 'next/head';
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
       </Head>
       <Header />
+      <Toaster position="top-right" />
       {children}
       <Footer />
     </div>
