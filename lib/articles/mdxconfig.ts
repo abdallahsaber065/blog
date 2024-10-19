@@ -3,8 +3,9 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
 import moonlightTheme from '@/assets/moon-night.json' with { type: 'json' };
-import { SerializeOptions } from "next-mdx-remote/dist/types";
 const codeOptions = {
     keepBackground: false,
     theme: moonlightTheme
@@ -16,11 +17,12 @@ export const Options: any = {
     // MDX's available options, see the MDX docs for more info.
     // https://mdxjs.com/packages/mdx/#compilefile-options
     mdxOptions: {
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkMath],
         rehypePlugins: [
             rehypeSlug,
             [rehypeAutolinkHeadings, { behavior: "append" }],
             [rehypePrettyCode, codeOptions],
+            rehypeKatex,
         ],
         format: 'mdx',
     },
