@@ -59,6 +59,7 @@ model Post {
   updated_at         DateTime  @updatedAt
   published_at       DateTime?
   reading_time       Int?
+  outline           String?
 
   author     User?      @relation(fields: [author_id], references: [id])
   category   Category?  @relation(fields: [category_id], references: [id])
