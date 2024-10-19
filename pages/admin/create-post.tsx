@@ -1,4 +1,3 @@
-// create-post.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import readingTime from "reading-time";
@@ -39,8 +38,15 @@ const CreatePost: React.FC = () => {
 
     const [outline, setOutline] = useState<any>(null);
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
+    const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
 
+    const handleSaveOutline = () => {
+        console.log('Saving outline:', outlineDraft);
+        console.log('Old outline:', outline);
+        setOutline(outlineDraft || outline);
+        setShowJSONEditor(false);
+    }
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
@@ -151,7 +157,7 @@ const CreatePost: React.FC = () => {
     const handleSave = async () => {
         setLoading(true);
         const postData = genrate_postData();
-        SavePost(postData);
+        await SavePost(postData);
     };
 
     const handleGenerateOutline = async () => {
@@ -159,6 +165,15 @@ const CreatePost: React.FC = () => {
         try {
             if (!topic) {
                 throw new Error("Please enter a topic to generate content.");
+            }
+
+            if (includeSearchTerms && !searchTerms) {
+                toast.error("Please enter search terms to generate content.");
+                return;
+            }
+
+            else if (!includeSearchTerms) {
+                setNumOfTerms(0);
             }
 
             const outlineResponse = await axios.post('http://localhost:5000/generate_outline', {
@@ -345,10 +360,20 @@ const CreatePost: React.FC = () => {
                         onClick={handleAcceptOutline}
                         disabled={loading}
                     >
-                        {loading ? <ClipLoader size={20} color={"#fff"} /> : 'enerate Content'}
+                        {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
                     </button>
                 )}
 
+                {/* check box to decide includeSearchTerms */}
+                <div className="flex items-center">
+                    <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={includeSearchTerms}
+                        onChange={() => setIncludeSearchTerms(!includeSearchTerms)}
+                    />
+                    <label className="text-gray dark:text-lightgray">Include Search Terms</label>
+                </div>
 
             </div>
 
@@ -423,7 +448,7 @@ const CreatePost: React.FC = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-4 rounded shadow-lg w-3/4">
                         <h2 className="text-xl font-bold mb-4">Edit Outline</h2>
-                        <JSONEditorComponent value={outline} onChange={setOutlineDraft} />
+                        <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
                         <div className="flex justify-end space-x-4 mt-4">
                             <button
                                 className="bg-red-500 text-white p-2 rounded"
@@ -433,15 +458,9 @@ const CreatePost: React.FC = () => {
                             </button>
                             <button
                                 className="bg-blue-500 text-white p-2 rounded"
-                                onClick={() => { setShowJSONEditor(false); setOutline(outlineDraft); }}
+                                onClick={handleSaveOutline}
                             >
-                                OK
-                            </button>
-                            <button
-                                className="bg-green-500 text-white p-2 rounded"
-                                onClick={handleAcceptOutline}
-                            >
-                                Accept Outline
+                                Save
                             </button>
                         </div>
                     </div>
