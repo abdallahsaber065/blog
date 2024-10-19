@@ -2,7 +2,7 @@
 import { getSession, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 
 interface User {

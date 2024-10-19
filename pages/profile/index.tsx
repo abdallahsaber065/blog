@@ -3,8 +3,7 @@ import { getSession, signIn, signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import RequestVerification from '@/components/signup/RequestVerification';
 import { useRouter } from 'next/router';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 
 interface User {
@@ -75,7 +74,6 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     return (
         <div className="min-h-screen flex flex-col justify-between bg-base-100">
-            <ToastContainer />
             <main className="container mx-auto py-16 px-4 flex-1">
                 <div className="max-w-4xl mx-auto bg-base-200 p-8 rounded-lg shadow-lg">
                     <h1 className="text-4xl font-bold text-center mb-8">Profile</h1>

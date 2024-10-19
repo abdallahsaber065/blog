@@ -1,10 +1,9 @@
-// pages/admin/dashboard.tsx
+// pages/admin/index.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { toast, ToastContainer } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostList from '@/components/admin/PostList';
-import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from 'next-auth/react';
 import withAdminAuth from '@/components/withAdminAuth';
 
@@ -96,7 +95,6 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <ToastContainer />
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             <div className="mb-4">
                 <button

@@ -4,8 +4,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { DribbbleIcon, GithubIcon, LinkedinIcon, TwitterIcon } from "../Icons";
 import Link from "next/link";
 import siteMetadata from "@/lib/siteMetaData";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 
 const Footer = () => {
@@ -110,7 +109,6 @@ const Footer = () => {
           </a>
         </div>
       </div>
-      <ToastContainer />
     </footer>
   );
 };
