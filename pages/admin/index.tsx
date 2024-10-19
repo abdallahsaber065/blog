@@ -10,6 +10,7 @@ import withAdminAuth from '@/components/withAdminAuth';
 
 interface Post {
     id: number;
+    slug: string;
     tags: string[];
     title: string;
     category: { id: number; name: string };
@@ -37,6 +38,7 @@ const DashboardPage: React.FC = () => {
         setLoading(true);
         const selectString = JSON.stringify({
             id: true,
+            slug: true,
             title: true,
             tags: {
                 select: {

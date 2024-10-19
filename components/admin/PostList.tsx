@@ -4,6 +4,7 @@ import { FaTrash, FaEdit } from 'react-icons/fa';
 
 interface Post {
     id: number;
+    slug: string
     tags: string[];
     title: string;
     category: { id: number; name: string };
@@ -124,9 +125,9 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
             <ul className="mb-4">
                 {paginatedPosts.map((post) => (
                     <li key={post.id} className="mb-2 flex justify-between items-center">
-                        <span className="text-blue-500 cursor-pointer" onClick={() => onSelectPost(post.id)}>
+                        <a className="text-blue-500 cursor-pointer" href={`/blogs/${post.slug}`} target="_blank">
                             {post.title}
-                        </span>
+                        </a>
                         <div>
                             <button
                                 className="text-green-500 mr-2"
