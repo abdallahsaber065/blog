@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { email } = req.body;
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+    const ip = ipData.ip;
+
+    console.log('Email:', email);
+    console.log('IP:', ip);
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
@@ -23,7 +29,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Create a new subscription
       const newSubscription = await prisma.newsletterSubscription.create({
-        data: { email },
+        data: {
+          email: email,
+          user_ip: ip,
+        }
       });
 
       return res.status(200).json({ message: 'Subscribed successfully', subscription: newSubscription });
