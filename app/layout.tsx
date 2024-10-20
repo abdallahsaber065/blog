@@ -55,12 +55,7 @@ export const metadata = {
     },
 };
 
-interface RootLayoutProps {
-    children: ReactNode;
-    session: any;
-}
-
-export default function RootLayout({ children, session }: RootLayoutProps) {
+export default function RootLayout({ children, session }: { children: ReactNode, session: any }) {
     return (
         <html lang="en">
             <head>
