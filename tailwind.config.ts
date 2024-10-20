@@ -2,6 +2,7 @@
 import daisyui from 'daisyui'
 import forms from '@tailwindcss/forms'
 import typography from '@tailwindcss/typography'
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -18,6 +19,11 @@ module.exports = {
         accentDark: "#ffdb4d",
         lightgray: "#D1D5DB",
         gray: "#333b47",
+        primary: "#4A90E2",
+        secondary: "#50E3C2",
+        danger: "#E94E77",
+        warning: "#F5A623",
+        success: "#7ED321",
       },
       fontFamily: {
         mr: ["var(--font-mr)"],
@@ -46,13 +52,11 @@ module.exports = {
   ],
 
   daisyui: {
-    // themes: ["light", "dark", "bumblebee", "cmyk", "sunset", "night", "dim"], // active themes
-    // darkTheme: "dark", // name of one of the included themes for dark mode
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: "", // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: false, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ":root", // The element that receives theme color CSS variables
+    base: true,
+    styled: true,
+    utils: true,
+    prefix: "",
+    logs: false,
+    themeRoot: ":root",
   },
 };
