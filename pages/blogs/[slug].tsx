@@ -7,10 +7,11 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
-import React from "react";
+import React, { useEffect } from "react";
 import CustomImage from '@/components/CustomImage';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
+import axios from "axios";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -38,6 +39,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     const post = await prisma.post.findUnique({
         where: { slug },
         select: {
+            id: true,
             slug: true,
             title: true,
             content: true,
@@ -119,6 +121,20 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
+    useEffect(() => {
+        const recordPostView = async () => {
+            try {
+                await axios.post('/api/posts/post-view', { post_id: post.id });
+            } catch (error) {
+                console.error('Error recording post view:', error);
+            }
+        };
+
+        recordPostView();
+    }, [post.id]);
+
+
+
     // Convert strings back to Date objects
     const deserializedPost = {
         ...post,
