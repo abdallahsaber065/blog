@@ -90,6 +90,16 @@ model PostView {
   post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
 }
 
+// newsletter subscription ALTER USER abdo WITH CREATEDB;
+model NewsletterSubscription {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  subscribed Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_ip    String?
+}
+
 model MediaLibrary {
   id             Int      @id @default(autoincrement())
   file_name      String
@@ -106,13 +116,4 @@ model Setting {
   id            Int    @id @default(autoincrement())
   setting_name  String @unique
   setting_value String
-}
-
-// newsletter subscription ALTER USER abdo WITH CREATEDB;
-model NewsletterSubscription {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  subscribed Boolean  @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
 }
