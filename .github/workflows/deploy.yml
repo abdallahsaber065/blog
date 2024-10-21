@@ -25,15 +25,6 @@ jobs:
       with:
         node-version: '22'
     
-    - name: Deploy to VPS
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        password: ${{ secrets.VPS_PASS }}
-        source: "."
-        target: "/var/www/devtrend.tech"
-
     - name: Execute commands on VPS
       uses: appleboy/ssh-action@v1.1.0
       with:
@@ -42,6 +33,7 @@ jobs:
         password: ${{ secrets.VPS_PASS }}
         script: |
           cd /var/www/devtrend.tech
+          git pull
           npm install
           npm run build
           pm2 restart devtrend || pm2 start npm --name "devtrend" -- start
