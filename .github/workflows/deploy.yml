@@ -21,18 +21,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '22'
     
     - name: Deploy to VPS
-      uses: appleboy/scp-action@v0.1.1
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
@@ -40,8 +35,8 @@ jobs:
         source: "."
         target: "/var/www/devtrend.tech"
 
-    - name: Restart PM2
-      uses: appleboy/ssh-action@v0.1.1
+    - name: Execute commands on VPS
+      uses: appleboy/ssh-action@v1.1.0
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
