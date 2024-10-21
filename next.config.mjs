@@ -2,6 +2,11 @@ import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// dotenv
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -26,7 +31,12 @@ const nextConfig = {
   compiler: {
     // Remove console logs only in production
     removeConsole: process.env.NODE_ENV === "production"
+  },
+
+  env: {
+    CONTENT_GENERATOR_API_LINK: process.env.CONTENT_GENERATOR_API_LINK,
   }
+
 };
 
 const withMDX = createMDX({
