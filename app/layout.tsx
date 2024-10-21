@@ -55,7 +55,7 @@ export const metadata = {
     },
 };
 
-export default function RootLayout({ children, session }: { children: ReactNode, session: any }) {
+export default function RootLayout({ children}: { children: ReactNode}) {
     return (
         <html lang="en">
             <head>
@@ -87,7 +87,7 @@ export default function RootLayout({ children, session }: { children: ReactNode,
                 />
             </head>
             <body className={cx(inter.variable, manrope.variable, "font-mr bg-light dark:bg-dark")}>
-                <ClientProvider session={session}>
+                <ClientProvider>
                     <Header />
                     {children}
                     <Footer />
