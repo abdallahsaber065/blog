@@ -35,6 +35,10 @@ const nextConfig = {
 
   env: {
     CONTENT_GENERATOR_API_LINK: process.env.CONTENT_GENERATOR_API_LINK,
+    DATABASE_URL: process.env.DATABASE_URL,
+    SECRET_KEY: process.env.SECRET_KEY,
+    MAILGUN_USER: process.env.MAILGUN_USER,
+    MAILGUN_PASS: process.env.MAILGUN_PASS,
   }
 
 };
