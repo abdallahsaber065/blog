@@ -15,7 +15,6 @@ jobs:
       NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       CONTENT_GENERATOR_API_LINK: ${{ secrets.CONTENT_GENERATOR_API_LINK }}
-
     steps:
 
     - name: Checkout code
@@ -31,7 +30,7 @@ jobs:
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_KEY }}
+        password: ${{ secrets.VPS_PASS }}
         source: "."
         target: "/var/www/devtrend.tech"
 
@@ -40,7 +39,7 @@ jobs:
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_KEY }}
+        password: ${{ secrets.VPS_PASS }}
         script: |
           cd /var/www/devtrend.tech
           npm install
