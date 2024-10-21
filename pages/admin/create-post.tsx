@@ -11,6 +11,8 @@ import makeAnimated from 'react-select/animated';
 import JSONEditorComponent from '@/components/JSONEditor';
 
 const animatedComponents = makeAnimated();
+const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
+
 
 const CreatePost: React.FC = () => {
     const [topic, setTopic] = useState('');
@@ -40,8 +42,6 @@ const CreatePost: React.FC = () => {
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
-
-    const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
 
     const handleSaveOutline = () => {
         console.log('Saving outline:', outlineDraft);
