@@ -41,6 +41,8 @@ const CreatePost: React.FC = () => {
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
 
+    const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
+
     const handleSaveOutline = () => {
         console.log('Saving outline:', outlineDraft);
         console.log('Old outline:', outline);
@@ -176,7 +178,7 @@ const CreatePost: React.FC = () => {
                 setNumOfTerms(0);
             }
 
-            const outlineResponse = await axios.post('http://localhost:5000/generate_outline', {
+            const outlineResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_outline`, {
                 topic,
                 num_of_terms: numOfTerms,
                 num_of_keywords: numOfKeywords,
@@ -211,7 +213,7 @@ const CreatePost: React.FC = () => {
     const handleAcceptOutline = async () => {
         setLoading(true);
         try {
-            const contentResponse = await axios.post('http://localhost:5000/generate_content', {
+            const contentResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_content`, {
                 topic,
                 outline,
                 search_terms: searchTerms,
@@ -227,7 +229,7 @@ const CreatePost: React.FC = () => {
 
             setContent(generatedContent);
 
-            const metadataResponse = await axios.post('http://localhost:5000/generate_metadata', {
+            const metadataResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_metadata`, {
                 topic,
                 content: generatedContent,
                 old_tags: oldTags.map(tag => tag.value),
