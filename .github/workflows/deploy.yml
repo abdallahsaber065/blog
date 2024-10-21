@@ -8,6 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      MAILGUN_USER: ${{ secrets.MAILGUN_USER }}
+      MAILGUN_PASS: ${{ secrets.MAILGUN_PASS }}
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      CONTENT_GENERATOR_API_LINK: ${{ secrets.CONTENT_GENERATOR_API_LINK }}
 
     steps:
 
@@ -16,27 +23,3 @@ jobs:
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
-      with:
-        node-version: '22'
-    
-    - name: Deploy to VPS
-      uses: appleboy/scp-action@v0.1.1
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_KEY }}
-        source: "."
-        target: "/var/www/devtrend.tech"
-
-    - name: Restart PM2
-      uses: appleboy/ssh-action@v0.1.1
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_KEY }}
-        script: |
-          cd /var/www/devtrend.tech
-          npm install
-          npm run build
-          pm2 restart devtrend || pm2 start npm --name "devtrend" -- start
-          pm2 save
