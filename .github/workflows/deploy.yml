@@ -2,39 +2,22 @@ name: Deploy to VPS
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      MAILGUN_USER: ${{ secrets.MAILGUN_USER }}
-      MAILGUN_PASS: ${{ secrets.MAILGUN_PASS }}
-      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      CONTENT_GENERATOR_API_LINK: ${{ secrets.CONTENT_GENERATOR_API_LINK }}
-    steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '22'
+  build:
+    runs-on: self-hosted
     
-    - name: Execute commands on VPS
-      uses: appleboy/ssh-action@v1.1.0
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        password: ${{ secrets.VPS_PASS }}
-        script: |
-          cd /var/www/devtrend.tech
-          git pull
-          npm install
-          npm run build
-          pm2 restart devtrend || pm2 start npm --name "devtrend" -- start
-          pm2 save
+    strategy:
+      matrix:
+        node-version: [22.10.0]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Trigger Redeploy API
+      run: |
+        curl -X POST https://redeploy.api.devtrend.tech \
+        -H "Content-Type: application/json" \
+        -d '{"secret": "${{ secrets.REDEPLOY_SECRET }}"}'
