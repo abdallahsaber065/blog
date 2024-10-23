@@ -3,8 +3,10 @@
 # Navigate to the project directory
 cd /var/www/devtrend.tech || exit
 
-# Pull the latest changes from the main branch
-git pull origin main --force
+# Pull the latest changes from the git repository and ignore any local changes
+git fetch origin
+git reset --hard origin/main
+
 
 # Install dependencies
 npm install
