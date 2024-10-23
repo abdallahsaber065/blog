@@ -40,3 +40,4 @@ next-env.d.ts
 .vscode
 .env
 .env.local
+.env.development
