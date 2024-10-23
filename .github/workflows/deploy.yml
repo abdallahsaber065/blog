@@ -18,6 +18,6 @@ jobs:
       
     - name: Trigger Redeploy API
       run: |
-        curl -X POST https://generate.api.devtrend.tech \
+        curl -X POST https://generate.api.devtrend.tech/redeploy \
         -H "Content-Type: application/json" \
         -d '{"secret_key": "${{ secrets.REDEPLOY_SECRET }}"}'
