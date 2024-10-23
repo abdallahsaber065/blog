@@ -8,16 +8,36 @@ jobs:
   build:
     runs-on: self-hosted
     
-    strategy:
-      matrix:
-        node-version: [22.10.0]
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
       
-    - name: Trigger Redeploy API
+    - name: Trigger Git Fetch
       run: |
-        curl -X POST https://generate.api.devtrend.tech/redeploy \
+        curl -X POST https://deploy.api.devtrend.tech/deploy_nextjs_blog/git_fetch \
         -H "Content-Type: application/json" \
-        -d '{"secret_key": "${{ secrets.REDEPLOY_SECRET }}"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}"}'
+        
+    - name: Trigger Git Reset
+      run: |
+        curl -X POST https://deploy.api.devtrend.tech/deploy_nextjs_blog/git_reset \
+        -H "Content-Type: application/json" \
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}"}'
+        
+    - name: Trigger NPM Install
+      run: |
+        curl -X POST https://deploy.api.devtrend.tech/deploy_nextjs_blog/npm_install \
+        -H "Content-Type: application/json" \
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}"}'
+        
+    - name: Trigger NPM Build
+      run: |
+        curl -X POST https://deploy.api.devtrend.tech/deploy_nextjs_blog/npm_build \
+        -H "Content-Type: application/json" \
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}"}'
+        
+    - name: Trigger PM2 Reload
+      run: |
+        curl -X POST https://deploy.api.devtrend.tech/deploy_nextjs_blog/pm2_reload \
+        -H "Content-Type: application/json" \
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}"}'
