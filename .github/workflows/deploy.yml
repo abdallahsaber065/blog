@@ -12,30 +12,30 @@ jobs:
       
     - name: Trigger Git Fetch
       run: |
-        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute-command \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin"}'
 
     - name: Reset to Main
       run: |
-        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute-command \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main"}'
 
     - name: Install Dependencies
       run: |
-        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute-command \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install"}'
 
     - name: Build Project
       run: |
-        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute-command \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm run build"}'
 
     - name: Reload PM2
       run: |
-        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute-command \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech"}'
