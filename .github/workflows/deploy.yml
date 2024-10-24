@@ -9,8 +9,6 @@ jobs:
     runs-on: self-hosted
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
       
     - name: Trigger Git Fetch
       run: |
