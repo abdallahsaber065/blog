@@ -169,14 +169,14 @@ const CreatePost: React.FC = () => {
                 throw new Error("Please enter a topic to generate content.");
             }
 
-            if (includeSearchTerms && !searchTerms) {
-                toast.error("Please enter search terms to generate content.");
-                return;
+            if (!includeSearchTerms) {
+                setNumOfTerms(0);
+            } else {
+                if (numOfTerms === 0) {
+                    setNumOfTerms(3);
+                }
             }
 
-            else if (!includeSearchTerms) {
-                setNumOfTerms(0);
-            }
 
             const outlineResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_outline`, {
                 topic,
