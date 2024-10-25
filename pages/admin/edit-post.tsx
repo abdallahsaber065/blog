@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
-import PostEditor from '@/components/admin/PostEditor';
+import PostEditor from '@/components/Admin/PostEditor';
 import Tag from '@prisma/client';
 import withAdminAuth from '@/components/withAdminAuth';
 import readingTime from "reading-time"
@@ -90,7 +90,7 @@ const PostEditorPage: React.FC = () => {
         boldMatch?.forEach((text: string, index: number) => {
             post.content = post.content.replace(text, ` **${boldTextTrimmed[index]}** `);
         });
-        console.log("Post: ", post.content);    
+        console.log("Post: ", post.content);
         console.log("Bold Match: ", boldMatch);
         console.log("Bold Text Only: ", boldTextOnly);
         console.log("Bold Text Trimmed: ", boldTextTrimmed);
@@ -110,12 +110,12 @@ const PostEditorPage: React.FC = () => {
                 {
                     id: tag.id
                 }));
-            
+
             // serialize category to match the API schema
             updatedPost.category = {
                 id: updatedPost.category.id
             };
-            
+
             // remove id from updatedPost
             let finalPost = { ...updatedPost };
             delete finalPost.id;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
-import PostList from '@/components/admin/PostList';
+import PostList from '@/components/Admin/PostList';
 import { useSession } from 'next-auth/react';
 import withAdminAuth from '@/components/withAdminAuth';
 

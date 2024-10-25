@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { slug } from "github-slugger";
 import { useSession } from 'next-auth/react';
-import EditorWithPreview from '@/components/admin/EditorWithPreview';
+import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import JSONEditorComponent from '@/components/JSONEditor';

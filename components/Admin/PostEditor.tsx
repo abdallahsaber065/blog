@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import EditorWithPreview from "@/components/admin/EditorWithPreview";
+import EditorWithPreview from "@/components/Admin/EditorWithPreview";
 import Select from 'react-select';
 
 interface Post {
@@ -50,7 +50,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
 
     const onSaveListener = () => {
         onSave(currentPost);
-        
+
     };
 
     return (
