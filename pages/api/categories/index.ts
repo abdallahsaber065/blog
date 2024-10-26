@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 // Utility function to validate input
 const validateInput = (input: any, type: string): string | null => {
@@ -17,18 +18,24 @@ const validateInput = (input: any, type: string): string | null => {
 
 // Utility function to handle errors
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-    console.error(message, error);
+    logger.error(`${message}: ${error.message}`);
     res.status(500).json({ error: message });
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { method } = req;
+    const { method, query, body } = req;
 
+    // log query and body if body is present
+    let queryLog = query;
+    if (body) {
+        queryLog = { ...query, body };
+    }
+    let log = `\n${method} /api/tags\nRequest: ${JSON.stringify({ query: queryLog })}`;
     switch (method) {
         case 'GET':
             // Fetch categories with optional select and where parameters
             try {
-                const { select, where } = req.query;
+                const { select, where } = query;
                 const categories = await prisma.category.findMany({
                     select: select ? JSON.parse(select as string) : undefined,
                     where: where ? JSON.parse(where as string) : undefined,
@@ -41,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         case 'POST':
             // Create a new category
-            const { name, slug, description } = req.body;
+            const { name, slug, description } = body;
 
             const nameError = validateInput(name, 'string');
             const slugError = validateInput(slug, 'string');
@@ -67,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         case 'PUT':
             // Update a category by ID
-            const { id, newName, newSlug, newDescription } = req.body;
+            const { id, newName, newSlug, newDescription } = body;
 
             const idError = validateInput(id, 'id');
             const newNameError = validateInput(newName, 'string');
@@ -95,7 +102,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         case 'DELETE':
             // Delete a category by ID
-            const { deleteId } = req.body;
+            const { deleteId } = body;
 
             const deleteIdError = validateInput(deleteId, 'id');
 
@@ -118,4 +125,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
             res.status(405).end(`Method ${method} Not Allowed`);
     }
+    log += `\nResponse Status: ${res.statusCode} ${res.statusMessage}`;
+    logger.info(log);
 }
