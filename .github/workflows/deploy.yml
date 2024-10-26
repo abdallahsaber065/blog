@@ -14,13 +14,13 @@ jobs:
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin || exit"}'
 
     - name: Reset to Main
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main || exit"}'
 
     - name: Install Dependencies
       run: |
@@ -38,10 +38,10 @@ jobs:
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh || exit"}'
 
     - name: Reload PM2
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech --update-env"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech --update-env || exit"}'
