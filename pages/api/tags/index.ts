@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import logger from '@/lib/logger';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -19,7 +20,7 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any) => {
-    console.error(error);
+    logger.error(`Internal Server Error: ${error.message}`);
     res.status(500).json({ error: 'Internal Server Error' });
 };
 
@@ -27,22 +28,30 @@ const handleError = (res: NextApiResponse, error: any) => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
-    const { where, include, select } = query;
+    // log query and body if body is present
+    let queryLog = query;
+    if (body) {
+        queryLog = { ...query, body };
+    }
+    let log = `\n${method} /api/tags\nRequest: ${JSON.stringify({ query: queryLog })}`;
 
     try {
         switch (method) {
             case 'GET':
                 const tags = await prisma.tag.findMany({
-                    where: where ? JSON.parse(where as string) : undefined,
-                    ...(include ? { include: JSON.parse(include as string) } : {}),
-                    ...(select ? { select: JSON.parse(select as string) } : {}),
+                    where: query.where ? JSON.parse(query.where as string) : undefined,
+                    ...(query.include ? { include: JSON.parse(query.include as string) } : {}),
+                    ...(query.select ? { select: JSON.parse(query.select as string) } : {}),
                 });
                 res.status(200).json(tags);
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             case 'POST':
                 const postValidationError = validateRequiredFields(['name', 'slug'], body);
                 if (postValidationError) {
+                    log += `\nResponse Status: 400 ${postValidationError}`;
+                    logger.info(log);
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -51,16 +60,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 res.status(201).json(newTag);
                 await res.revalidate('/categories');
+                log += `\nResponse Status: 201 Created`;
                 break;
 
             case 'PUT':
                 const putValidationError = validateRequiredFields(['id', 'data'], body);
                 if (putValidationError) {
+                    log += `\nResponse Status: 400 ${putValidationError}`;
+                    logger.info(log);
                     return res.status(400).json({ error: putValidationError });
                 }
 
                 const idError = validateId(body.id);
                 if (idError) {
+                    log += `\nResponse Status: 400 ${idError}`;
+                    logger.info(log);
                     return res.status(400).json({ error: idError });
                 }
 
@@ -70,11 +84,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 res.status(200).json(updatedTag);
                 await res.revalidate('/categories');
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             case 'DELETE':
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
+                    log += `\nResponse Status: 400 ${deleteIdError}`;
+                    logger.info(log);
                     return res.status(400).json({ error: deleteIdError });
                 }
 
@@ -83,13 +100,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 res.status(200).json({ message: 'Tag deleted' });
                 await res.revalidate('/categories');
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             default:
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+                log += `\nResponse Status: 405 Method ${method} Not Allowed`;
                 res.status(405).end(`Method ${method} Not Allowed`);
         }
     } catch (error) {
         handleError(res, error);
     }
+
+    logger.info(log);
 }

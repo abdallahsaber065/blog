@@ -1,105 +1,128 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import logger from '@/lib/logger';
 
-const SECRET_KEY = process.env.SECRET_KEY;
-
-// Helper Functions
-const validateRequiredFields = (fields: string[], body: any) => {
-    for (const field of fields) {
-        if (!body[field]) {
-            return `Field ${field} is required.`;
+// Utility function to validate input
+const validateInput = (input: any, type: string): string | null => {
+    if (type === 'id') {
+        if (!input || isNaN(Number(input))) {
+            return 'Invalid ID';
+        }
+    } else if (type === 'string') {
+        if (!input || typeof input !== 'string' || input.trim() === '') {
+            return 'Invalid string';
         }
     }
     return null;
 };
 
-const validateId = (id: any) => {
-    if (isNaN(Number(id))) {
-        return 'Invalid ID.';
-    }
-    return null;
+// Utility function to handle errors
+const handleError = (res: NextApiResponse, error: any, message: string) => {
+    logger.error(`${message}: ${error.message}`);
+    res.status(500).json({ error: message });
 };
 
-const handleError = (res: NextApiResponse, error: any) => {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-};
-
-// API Handler
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
-    const { where, include, select } = query;
+    // Log query and body if body is present
+    let queryLog = query;
+    if (body) {
+        queryLog = { ...query, body };
+    }
+    let log = `\n${method} /api/tags\nRequest: ${JSON.stringify({ query: queryLog }, null, 2)}`;
 
     try {
         switch (method) {
             case 'GET':
-                const users = await prisma.user.findMany({
+                // Fetch tags with optional select and where parameters
+                const { select, where } = query;
+                const tags = await prisma.tag.findMany({
+                    select: select ? JSON.parse(select as string) : undefined,
                     where: where ? JSON.parse(where as string) : undefined,
-                    ...(include ? { include: JSON.parse(include as string) } : {}),
-                    ...(select ? { select: JSON.parse(select as string) } : {}),
                 });
-                res.status(200).json(users);
+                res.status(200).json(tags);
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             case 'POST':
-                const postValidationError = validateRequiredFields(['username', 'email', 'password'], body);
-                if (postValidationError) {
-                    return res.status(400).json({ error: postValidationError });
+                // Create a new tag
+                const { name, slug } = body;
+
+                const nameError = validateInput(name, 'string');
+                const slugError = validateInput(slug, 'string');
+
+                if (nameError || slugError) {
+                    log += `\nResponse Status: 400 ${nameError || slugError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: nameError || slugError });
                 }
 
-                const hashedPassword = await bcrypt.hash(body.password, 10);
-                const newUser = await prisma.user.create({
+                const newTag = await prisma.tag.create({
                     data: {
-                        ...body,
-                        password: hashedPassword,
+                        name,
+                        slug,
                     },
                 });
-
-                if (!SECRET_KEY) {
-                    return res.status(500).json({ error: 'SECRET_KEY is not defined' });
-                }
-                const token = jwt.sign({ userId: newUser.id }, SECRET_KEY, { expiresIn: '1h' });
-                res.status(201).json({ user: newUser, token });
+                res.status(201).json(newTag);
+                await res.revalidate('/tags');
+                log += `\nResponse Status: 201 Created`;
                 break;
 
             case 'PUT':
-                const putValidationError = validateRequiredFields(['id', 'data'], body);
-                if (putValidationError) {
-                    return res.status(400).json({ error: putValidationError });
+                // Update a tag by ID
+                const { id, newName, newSlug } = body;
+
+                const idError = validateInput(id, 'id');
+                const newNameError = validateInput(newName, 'string');
+                const newSlugError = validateInput(newSlug, 'string');
+
+                if (idError || newNameError || newSlugError) {
+                    log += `\nResponse Status: 400 ${idError || newNameError || newSlugError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: idError || newNameError || newSlugError });
                 }
 
-                const idError = validateId(body.id);
-                if (idError) {
-                    return res.status(400).json({ error: idError });
-                }
-
-                const updatedUser = await prisma.user.update({
-                    where: { id: Number(body.id) },
-                    data: body.data,
+                const updatedTag = await prisma.tag.update({
+                    where: { id: Number(id) },
+                    data: {
+                        name: newName,
+                        slug: newSlug,
+                    },
                 });
-                res.status(200).json(updatedUser);
+                res.status(200).json(updatedTag);
+                await res.revalidate('/tags');
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             case 'DELETE':
-                const deleteIdError = validateId(query.id);
+                // Delete a tag by ID
+                const { deleteId } = body;
+
+                const deleteIdError = validateInput(deleteId, 'id');
+
                 if (deleteIdError) {
+                    log += `\nResponse Status: 400 ${deleteIdError}`;
+                    logger.info(log);
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                await prisma.user.delete({
-                    where: { id: Number(query.id) },
+                const deletedTag = await prisma.tag.delete({
+                    where: { id: Number(deleteId) },
                 });
-                res.status(200).json({ message: 'User deleted' });
+                res.status(200).json(deletedTag);
+                await res.revalidate('/tags');
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             default:
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+                log += `\nResponse Status: 405 Method ${method} Not Allowed`;
                 res.status(405).end(`Method ${method} Not Allowed`);
         }
     } catch (error) {
-        handleError(res, error);
+        handleError(res, error, 'Internal Server Error');
     }
+
+    logger.info(log);
 }

@@ -2,11 +2,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
 import { check, validationResult } from 'express-validator';
+import logger from '@/lib/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
+    const { method, body } = req;
+
+    // Log query and body if body is present
+    let log = `\n${method} /api/contact\nRequest: ${JSON.stringify({ body: { ...body, email: '***' } }, null, 2)}`;
+
+    if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        log += `\nResponse Status: 405 Method ${method} Not Allowed`;
+        logger.info(log);
+        return res.status(405).end(`Method ${method} Not Allowed`);
     }
 
     // Define validation rules
@@ -19,6 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        log += `\nResponse Status: 400 Validation errors: ${JSON.stringify(errors.array(), null, 2)}`;
+        logger.info(log);
         return res.status(400).json({ errors: errors.array() });
     }
 
@@ -41,9 +51,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             text: message,
         });
 
+        log += `\nResponse Status: 200 Email sent successfully`;
+        logger.info(log);
         res.status(200).json({ message: 'Email sent successfully' });
-    } catch (error) {
-        console.error('Error sending email:', error);
+    } catch (error: any) {
+        logger.error(`Error sending email: ${error.message}`);
+        log += `\nResponse Status: 500 Failed to send email`;
+        logger.info(log);
         res.status(500).json({ error: 'Failed to send email' });
     }
 }
