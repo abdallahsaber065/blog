@@ -376,7 +376,7 @@ const CreatePost: React.FC = () => {
                 >
                     View Logs
                 </button>
-                {showLogViewer && <LogViewer onClose={() => setShowLogViewer(false)} />}
+                {showLogViewer && <LogViewer onClose={() => setShowLogViewer(false)} link='https://generate.api.devtrend.tech/logs' />}
 
 
                 {/* check box to decide includeSearchTerms */}
