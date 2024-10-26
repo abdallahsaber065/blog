@@ -14,7 +14,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://generate.api.devtrend.tech/logs');
+            const response = await axios.get('https://generate.api.devtrend.tech/logs');
             setLogs(response.data);
         } catch (error) {
             console.error('Failed to fetch logs:', error);
