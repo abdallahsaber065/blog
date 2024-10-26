@@ -28,14 +28,20 @@ jobs:
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install"}'
 
-    - name: Build Project
+    - name: Build Project in temporary folder
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm run build"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "BUILD_DIR=temp npm run build || exit"}'
+
+    - name: Copy build to main folder (redeploy.sh)
+      run: |
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        -H "Content-Type: application/json" \
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh"}'
 
     - name: Reload PM2
       run: |
         curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech"}'
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech --update-env"}'
