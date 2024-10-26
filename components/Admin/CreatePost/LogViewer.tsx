@@ -9,12 +9,16 @@ interface LogViewerProps {
 const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
     const [logs, setLogs] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
+    const [numLines, setNumLines] = useState<number>(10);
+    const [fetchAll, setFetchAll] = useState<boolean>(false);
     const logEndRef = useRef<HTMLDivElement>(null);
 
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://generate.api.devtrend.tech/logs');
+            const response = await axios.get('https://generate.api.devtrend.tech/logs', {
+                params: fetchAll ? { num_lines: 0 } : { num_lines: numLines }
+            });
             setLogs(response.data);
         } catch (error) {
             console.error('Failed to fetch logs:', error);
@@ -25,7 +29,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
 
     useEffect(() => {
         fetchLogs();
-    }, []);
+    }, [numLines, fetchAll]);
 
     useEffect(() => {
         if (logEndRef.current) {
@@ -53,13 +57,40 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
                         </button>
                     </div>
                 </div>
+                <div className="flex items-center mb-4">
+                    <label className="mr-2">Number of lines:</label>
+                    <select
+                        className="p-2 rounded border"
+                        value={numLines}
+                        onChange={(e) => setNumLines(Number(e.target.value))}
+                        disabled={fetchAll}
+                    >
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                    </select>
+                    <label className="ml-4 mr-2">Fetch all:</label>
+                    <input
+                        type="checkbox"
+                        checked={fetchAll}
+                        onChange={(e) => {
+                            setFetchAll(e.target.checked);
+                            if (e.target.checked) {
+                                setNumLines(0);
+                            }
+                        }}
+                    />
+                </div>
                 <div className="flex-1 overflow-y-auto bg-gray-100 p-2 rounded">
                     {loading ? (
                         <div className="flex justify-center items-center h-full">
                             <ClipLoader size={50} color={"#000"} />
                         </div>
                     ) : (
-                        <pre className="whitespace-pre-wrap">{logs}</pre>
+                        <pre className="whitespace-pre-wrap text-sm text-zinc-950 dark:text-zinc-300 bg-zinc-300 dark:bg-zinc-950 p-2 rounded">
+                            {logs}
+                        </pre>
                     )}
                     <div ref={logEndRef} />
                 </div>
