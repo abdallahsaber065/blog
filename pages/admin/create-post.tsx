@@ -371,7 +371,7 @@ const CreatePost: React.FC = () => {
 
                 {/* View Logs Button */}
                 <button
-                    className="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800"
+                    className="bg-slate-500 text-white font-bold p-2 rounded hover:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-800"
                     onClick={() => setShowLogViewer(true)}
                 >
                     View Logs
