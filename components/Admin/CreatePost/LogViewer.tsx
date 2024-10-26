@@ -38,19 +38,19 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
     }, [logs]);
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
-            <div className="bg-white p-4 rounded shadow-lg w-3/4 h-3/4 flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20 dark:bg-opacity-75">
+            <div className="bg-white p-4 rounded shadow-lg w-3/4 h-3/4 flex flex-col dark:bg-zinc-800">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">Log Viewer</h2>
+                    <h2 className="text-xl font-bold dark:text-white">Log Viewer</h2>
                     <div className="space-x-2">
                         <button
-                            className="bg-blue-500 text-white p-2 rounded"
+                            className="bg-blue-500 text-white p-2 rounded dark:bg-blue-700"
                             onClick={fetchLogs}
                         >
                             Refresh
                         </button>
                         <button
-                            className="bg-red-500 text-white p-2 rounded"
+                            className="bg-red-500 text-white p-2 rounded dark:bg-red-700"
                             onClick={onClose}
                         >
                             Close
@@ -58,9 +58,9 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center mb-4">
-                    <label className="mr-2">Number of lines:</label>
+                    <label className="mr-2 dark:text-white">Number of lines:</label>
                     <select
-                        className="p-2 rounded border"
+                        className="p-2 rounded border dark:bg-zinc-700 dark:text-white"
                         value={numLines}
                         onChange={(e) => setNumLines(Number(e.target.value))}
                         disabled={fetchAll}
@@ -70,7 +70,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
                         <option value={50}>50</option>
                         <option value={100}>100</option>
                     </select>
-                    <label className="ml-4 mr-2">Fetch all:</label>
+                    <label className="ml-4 mr-2 dark:text-white">Fetch all:</label>
                     <input
                         type="checkbox"
                         checked={fetchAll}
@@ -80,9 +80,10 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
                                 setNumLines(0);
                             }
                         }}
+                        className="dark:bg-zinc-700"
                     />
                 </div>
-                <div className="flex-1 overflow-y-auto bg-gray-100 p-2 rounded">
+                <div className="flex-1 overflow-y-auto bg-gray-100 p-2 rounded dark:bg-zinc-900">
                     {loading ? (
                         <div className="flex justify-center items-center h-full">
                             <ClipLoader size={50} color={"#000"} />
@@ -95,7 +96,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
                     <div ref={logEndRef} />
                 </div>
                 <button
-                    className="bg-green-500 text-white p-2 rounded mt-2"
+                    className="bg-green-500 text-white p-2 rounded mt-2 dark:bg-green-700"
                     onClick={() => logEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 >
                     Scroll to End
