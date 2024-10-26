@@ -3,10 +3,11 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 
 interface LogViewerProps {
+    link: string;
     onClose: () => void;
 }
 
-const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
+const LogViewer: React.FC<LogViewerProps> = ({ onClose, link }) => {
     const [logs, setLogs] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [numLines, setNumLines] = useState<number>(10);
@@ -16,7 +17,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose }) => {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://generate.api.devtrend.tech/logs', {
+            const response = await axios.get(link, {
                 params: fetchAll ? { num_lines: 0 } : { num_lines: numLines }
             });
             setLogs(response.data);
