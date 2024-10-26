@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostList from '@/components/Admin/PostList';
 import { useSession } from 'next-auth/react';
-import withAdminAuth from '@/components/withAdminAuth';
+import withAdminAuth from '@/components/Admin/withAdminAuth';
 
 interface Post {
     id: number;
