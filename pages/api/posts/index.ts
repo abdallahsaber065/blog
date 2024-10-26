@@ -54,6 +54,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     data: body,
                 });
                 res.status(201).json(newPost);
+                await res.revalidate("/");
+                await res.revalidate('/categories');
                 break;
 
             case 'PUT':
@@ -109,6 +111,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         data: updateData,
                     });
                     res.status(200).json(updatedPost);
+                    await res.revalidate("/");
+                    await res.revalidate('/categories');
                 } catch (error) {
                     console.log(error);
                     res.status(500).json({ error: 'Internal Server Error' });
@@ -125,6 +129,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     where: { id: Number(query.id) },
                 });
                 res.status(200).json({ message: 'Post deleted successfully' });
+                await res.revalidate("/");
+                await res.revalidate('/categories');
                 break;
 
             default:
