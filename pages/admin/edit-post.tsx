@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/Admin/PostEditor';
 import Tag from '@prisma/client';
-import withAdminAuth from '@/components/withAdminAuth';
+import withAdminAuth from '@/components/Admin/withAdminAuth';
 import readingTime from "reading-time"
 
 interface Post {

@@ -8,7 +8,9 @@ import { useSession } from 'next-auth/react';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import JSONEditorComponent from '@/components/JSONEditor';
+import JSONEditorComponent from '@/components/Admin/JSONEditor';
+import LogViewer from '@/components/Admin/CreatePost/LogViewer';
+import withAdminAuth from '@/components/Admin/withAdminAuth';
 
 const animatedComponents = makeAnimated();
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
@@ -42,6 +44,7 @@ const CreatePost: React.FC = () => {
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
+    const [showLogViewer, setShowLogViewer] = useState(false);
 
     const handleSaveOutline = () => {
         console.log('Saving outline:', outlineDraft);
@@ -366,6 +369,16 @@ const CreatePost: React.FC = () => {
                     </button>
                 )}
 
+                {/* View Logs Button */}
+                <button
+                    className="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800"
+                    onClick={() => setShowLogViewer(true)}
+                >
+                    View Logs
+                </button>
+                {showLogViewer && <LogViewer onClose={() => setShowLogViewer(false)} />}
+
+
                 {/* check box to decide includeSearchTerms */}
                 <div className="flex items-center">
                     <input
@@ -472,4 +485,4 @@ const CreatePost: React.FC = () => {
     );
 };
 
-export default CreatePost;
+export default withAdminAuth(CreatePost);
