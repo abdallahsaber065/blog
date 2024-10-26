@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "NODE_NO_WARNINGS=1 next build",
+    "build": "NODE_NO_WARNINGS=1 BUILD_DIR=temp next build",
     "dev": "NODE_NO_WARNINGS=1 next dev",
-    "start": "unset BUILD_DIR && next start",
+    "start": "BUILD_DIR=.next && next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
