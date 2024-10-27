@@ -36,10 +36,10 @@
     ".next/types/**/*.ts",
     "lib/dev/updateImagePaths.js",
     "lib/dev/extractAndAddCategories.js",
-    "lib/dev/test.js",
-    "temp/types/**/*.ts"
+    "lib/dev/test.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "releases"
   ]
 }
