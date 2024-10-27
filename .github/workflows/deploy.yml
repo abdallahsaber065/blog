@@ -5,46 +5,82 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  deploy:
     runs-on: self-hosted
 
     steps:
-    - name: Trigger Git Fetch
+    - name: Set up environment variables
+      working-directory: /var/www/devtrend.tech
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
-        -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin || exit"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
+        echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
+        echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+    - name: Clean up old temp directory if exists
+      working-directory: /var/www/devtrend.tech
+      run: |
+        if [ -d "temp" ]; then
+          echo -e ">>> \033[1;34mCleaning up old temp directory...\033[0m"
+          rm -rf temp
         fi
 
-    - name: Reset to Main
+    - name: Build the project in temp directory
+      working-directory: /var/www/devtrend.tech
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
-        -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
+        echo -e ">>> \033[1;34mBuilding the project in temp directory...\033[0m"
+        BUILD_DIR=temp npm run build || { echo -e "\033[1;31mBuild failed\033[0m"; exit 1; }
+
+    - name: Check if temp directory exists
+      working-directory: /var/www/devtrend.tech
+      run: |
+        if [ ! -d "temp" ]; then
+          echo -e "\033[1;31mtemp Directory not exists!\033[0m"
           exit 1
         fi
+        echo -e "\033[1;32mBuild successful in temp directory\033[0m"
 
-    - name: Install Dependencies
+    - name: Create release directory if not exists
+      working-directory: /var/www/devtrend.tech
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
-        -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
+        echo -e ">>> \033[1;34mCreating release directory if not exists...\033[0m"
+        if [ ! -d "releases" ]; then
+          mkdir releases
         fi
 
-    - name: Build & Deploy the new release
+    - name: Move the build to releases directory with timestamp
+      working-directory: /var/www/devtrend.tech
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
-        -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
+        echo -e ">>> \033[1;34mMoving build to releases directory...\033[0m"
+        mv temp "$NEW_BUILD_DIR" || { echo -e "\033[1;31mFailed to move build to releases directory\033[0m"; exit 1; }
+        echo -e "\033[1;32mBuild moved to $NEW_BUILD_DIR\033[0m"
+
+    - name: Update the symbolic link
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mUpdating symbolic link...\033[0m"
+        ln -sfn "$NEW_BUILD_DIR" .next || { 
+          echo -e "\033[1;31mFailed to update symbolic link\033[0m"; 
+          ln -sfn "$CURRENT_RELEASE" .next  # Revert to the old release
+          exit 1; 
+        }
+        echo -e "\033[1;32mRelease $NEW_BUILD_DIR staged successfully\033[0m"
+
+    - name: Reload the pm2 process
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mReloading the pm2 process...\033[0m"
+        pm2 reload devtrend-tech --update-env || { 
+          echo -e "\033[1;31mFailed to reload pm2 process\033[0m"; 
+          ln -sfn "$CURRENT_RELEASE" .next  # Revert to the old release
+          exit 1; 
+        }
+        echo -e "\033[1;32mPM2 process reloaded successfully\033[0m"
+
+    - name: Check the number of releases and keep only 3 latest releases
+      working-directory: /var/www/devtrend.tech
+      run: |
+        RELEASES_COUNT=$(find releases -mindepth 1 -maxdepth 1 -type d | wc -l)
+        if [ "$RELEASES_COUNT" -gt 3 ]; then
+          echo -e ">>> \033[1;34mRemoving old releases...\033[0m"
+          find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {} || { echo -e "\033[1;31mFailed to remove old releases\033[0m"; exit 1; }
+          echo -e "\033[1;32mOld releases removed successfully\033[0m"
         fi
