@@ -2,26 +2,29 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 
-// Utility function to validate input
-const validateInput = (input: any, type: string): string | null => {
-    if (type === 'id') {
-        if (!input || isNaN(Number(input))) {
-            return 'Invalid ID';
-        }
-    } else if (type === 'string') {
-        if (!input || typeof input !== 'string' || input.trim() === '') {
-            return 'Invalid string';
+// Helper Functions
+const validateRequiredFields = (fields: string[], body: any) => {
+    for (const field of fields) {
+        if (!body[field]) {
+            return `Field ${field} is required.`;
         }
     }
     return null;
 };
 
-// Utility function to handle errors
-const handleError = (res: NextApiResponse, error: any, message: string) => {
-    logger.error(`${message}: ${error.message}`);
-    res.status(500).json({ error: message });
+const validateId = (id: any) => {
+    if (isNaN(Number(id))) {
+        return 'Invalid ID.';
+    }
+    return null;
 };
 
+const handleError = (res: NextApiResponse, error: any) => {
+    logger.error(`Internal Server Error: ${error.message}`);
+    res.status(500).json({ error: 'Internal Server Error' });
+};
+
+// API Handler
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
@@ -30,101 +33,84 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (body) {
         queryLog = { ...query, body };
     }
-    let log = `\n${method} /api/tags\nRequest: ${JSON.stringify({ query: queryLog })}`;
-    switch (method) {
-        case 'GET':
-            // Fetch categories with optional select and where parameters
-            try {
-                const { select, where } = query;
+    let log = `\n${method} /api/categories\nRequest: ${JSON.stringify({ query: queryLog })}`;
+
+    try {
+        switch (method) {
+            case 'GET':
                 const categories = await prisma.category.findMany({
-                    select: select ? JSON.parse(select as string) : undefined,
-                    where: where ? JSON.parse(where as string) : undefined,
+                    where: query.where ? JSON.parse(query.where as string) : undefined,
+                    ...(query.include ? { include: JSON.parse(query.include as string) } : {}),
+                    ...(query.select ? { select: JSON.parse(query.select as string) } : {}),
                 });
                 res.status(200).json(categories);
-            } catch (error) {
-                handleError(res, error, 'Failed to fetch categories');
-            }
-            break;
+                log += `\nResponse Status: 200 OK`;
+                break;
 
-        case 'POST':
-            // Create a new category
-            const { name, slug, description } = body;
+            case 'POST':
+                const postValidationError = validateRequiredFields(['name', 'slug'], body);
+                if (postValidationError) {
+                    log += `\nResponse Status: 400 ${postValidationError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: postValidationError });
+                }
 
-            const nameError = validateInput(name, 'string');
-            const slugError = validateInput(slug, 'string');
-
-            if (nameError || slugError) {
-                return res.status(400).json({ error: nameError || slugError });
-            }
-
-            try {
                 const newCategory = await prisma.category.create({
-                    data: {
-                        name,
-                        slug,
-                        description: description || '',
-                    },
+                    data: body,
                 });
                 res.status(201).json(newCategory);
                 await res.revalidate('/categories');
-            } catch (error) {
-                handleError(res, error, 'Failed to create category');
-            }
-            break;
+                log += `\nResponse Status: 201 Created`;
+                break;
 
-        case 'PUT':
-            // Update a category by ID
-            const { id, newName, newSlug, newDescription } = body;
+            case 'PUT':
+                const putValidationError = validateRequiredFields(['id', 'data'], body);
+                if (putValidationError) {
+                    log += `\nResponse Status: 400 ${putValidationError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: putValidationError });
+                }
 
-            const idError = validateInput(id, 'id');
-            const newNameError = validateInput(newName, 'string');
-            const newSlugError = validateInput(newSlug, 'string');
+                const idError = validateId(body.id);
+                if (idError) {
+                    log += `\nResponse Status: 400 ${idError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: idError });
+                }
 
-            if (idError || newNameError || newSlugError) {
-                return res.status(400).json({ error: idError || newNameError || newSlugError });
-            }
-
-            try {
                 const updatedCategory = await prisma.category.update({
-                    where: { id: Number(id) },
-                    data: {
-                        name: newName,
-                        slug: newSlug,
-                        description: newDescription || '',
-                    },
+                    where: { id: Number(body.id) },
+                    data: body.data,
                 });
                 res.status(200).json(updatedCategory);
                 await res.revalidate('/categories');
-            } catch (error) {
-                handleError(res, error, 'Failed to update category');
-            }
-            break;
+                log += `\nResponse Status: 200 OK`;
+                break;
 
-        case 'DELETE':
-            
-            const deleteIdError = validateInput(query.id, 'id');
+            case 'DELETE':
+                const deleteIdError = validateId(query.id);
+                if (deleteIdError) {
+                    log += `\nResponse Status: 400 ${deleteIdError}`;
+                    logger.info(log);
+                    return res.status(400).json({ error: deleteIdError });
+                }
 
-            if (deleteIdError) {
-                log += `\nResponse Status: 400 ${deleteIdError}`;
-                logger.info(log);
-                return res.status(400).json({ error: deleteIdError });
-            }
-
-            try {
-                const deletedCategory = await prisma.category.delete({
+                await prisma.category.delete({
                     where: { id: Number(query.id) },
                 });
-                res.status(200).json(deletedCategory);
+                res.status(200).json({ message: 'Category deleted' });
                 await res.revalidate('/categories');
-            } catch (error) {
-                handleError(res, error, 'Failed to delete category');
-            }
-            break;
+                log += `\nResponse Status: 200 OK`;
+                break;
 
-        default:
-            res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-            res.status(405).end(`Method ${method} Not Allowed`);
+            default:
+                res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+                log += `\nResponse Status: 405 Method ${method} Not Allowed`;
+                res.status(405).end(`Method ${method} Not Allowed`);
+        }
+    } catch (error) {
+        handleError(res, error);
     }
-    log += `\nResponse Status: ${res.statusCode} ${res.statusMessage}`;
+
     logger.info(log);
 }

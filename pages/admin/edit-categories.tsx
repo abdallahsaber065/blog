@@ -4,7 +4,9 @@ import CategoryList from '@/components/Admin/Categories/CategoryList';
 import TagForm from '@/components/Admin/Categories/TagForm';
 import CategoryForm from '@/components/Admin/Categories/CategoryForm';
 import { Tag, Category } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 interface DashboardProps {
     tags: (Tag & { postCount: number })[];
@@ -18,15 +20,13 @@ export default function Dashboard({ tags, categories }: DashboardProps) {
     const [confirmType, setConfirmType] = useState<'tags' | 'categories' | null>(null);
 
     const refreshTags = async () => {
-        const response = await fetch('/api/tags');
-        const data = await response.json();
-        setTagList(data);
+        const Tags = await getTags();
+        setTagList(Tags);
     };
 
     const refreshCategories = async () => {
-        const response = await fetch('/api/categories');
-        const data = await response.json();
-        setCategoryList(data);
+        const Categories = await getCategories();
+        setCategoryList(Categories);
     };
 
     const handleDeleteZeroCount = async (type: 'tags' | 'categories') => {
@@ -96,29 +96,35 @@ export default function Dashboard({ tags, categories }: DashboardProps) {
     );
 }
 
+// Get tags with post count
+const getTags = async () => {
+    console.log(process.env.NEXT_PUBLIC_BASE_URL);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tags?include={"_count":{"select":{"posts":true}}}`);
+    let data = await response.json();
+    data = (data.map((tag: any) => ({ ...tag, postCount: tag._count.posts })));
+    return data;
+}
+
+// Get categories with post count
+const getCategories = async () => {
+    console.log(process.env.NEXT_PUBLIC_BASE_URL);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/categories?include={"_count":{"select":{"posts":true}}}`);
+    let data = await response.json();
+    data = (data.map((category: any) => ({ ...category, postCount: category._count.posts })));
+    return data;
+};
+
+
+
+
 export async function getServerSideProps() {
-    const tags = await prisma.tag.findMany({
-        include: {
-            _count: {
-                select: { posts: true },
-            },
-        },
-    });
-
-    const categories = await prisma.category.findMany({
-        include: {
-            _count: {
-                select: { posts: true },
-            },
-        },
-    });
-
-    await prisma.$disconnect();
+    const tags = await getTags();
+    const categories = await getCategories();
 
     return {
         props: {
-            tags: tags.map(tag => ({ ...tag, postCount: tag._count.posts })),
-            categories: categories.map(category => ({ ...category, postCount: category._count.posts })),
+            tags: tags,
+            categories: categories,
         },
     };
 }
