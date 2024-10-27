@@ -9,42 +9,27 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      
     - name: Trigger Git Fetch
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin || exit"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
-        fi
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin || exit"}'
 
     - name: Reset to Main
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
-        fi
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main || exit 1"}'
 
     - name: Install Dependencies
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
-        fi
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install || exit 1"}'
 
     - name: Build & Deploy the new release
       run: |
-        response=$(curl -s -w "%{http_code}" -o response.txt -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        curl -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
-        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh || exit 1"}')
-        cat response.txt
-        if [ "$response" -ne 200 ]; then
-          exit 1
-        fi
+        -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh || exit 1"}'
