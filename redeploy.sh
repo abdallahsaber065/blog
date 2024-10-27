@@ -6,6 +6,12 @@ set -e  # Exit immediately if a command exits with a non-zero status
 CURRENT_RELEASE=$(readlink .next)
 echo -e ">>> \033[1;34mCurrent release:\033[0m $CURRENT_RELEASE"
 
+# Clean up old temp directory if exists
+if [ -d "temp" ]; then
+    echo -e ">>> \033[1;34mCleaning up old temp directory...\033[0m"
+    rm -rf temp
+fi
+
 # Build the project in temp directory
 echo -e ">>> \033[1;34mBuilding the project in temp directory...\033[0m"
 BUILD_DIR=temp npm run build || { echo -e "\033[1;31mBuild failed\033[0m"; exit 1; }
