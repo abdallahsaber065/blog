@@ -11,60 +11,78 @@ jobs:
     steps:
     - name: Trigger Git Fetch
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git fetch origin || exit"}')
-        if [ "$response" -ne 200 ]; then
-          echo "Git fetch failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "Git fetch failed with status code $status_code"
           exit 1
         fi
 
     - name: Reset to Main
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "git reset --hard origin/main || exit"}')
-        if [ "$response" -ne 200 ]; then
-          echo "Git reset failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "Git reset failed with status code $status_code"
           exit 1
         fi
 
     - name: Install Dependencies
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "npm install"}')
-        if [ "$response" -ne 200 ]; then
-          echo "Dependency installation failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "Dependency installation failed with status code $status_code"
           exit 1
         fi
 
     - name: Build Project in temporary folder
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "BUILD_DIR=temp npm run build || exit"}')
-        if [ "$response" -ne 200 ]; then
-          echo "Build failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "Build failed with status code $status_code"
           exit 1
         fi
 
     - name: Copy build to main folder (redeploy.sh)
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "chmod +x redeploy.sh && ./redeploy.sh || exit"}')
-        if [ "$response" -ne 200 ]; then
-          echo "Build and redeploy failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "Build and redeploy failed with status code $status_code"
           exit 1
         fi
 
     - name: Reload PM2
       run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
+        response=$(curl -s -w "%{http_code}" -X POST https://deploy.api.devtrend.tech/deploy-nextjs-blog/execute \
         -H "Content-Type: application/json" \
         -d '{"redeploy_secret": "${{ secrets.REDEPLOY_SECRET }}", "command": "pm2 reload devtrend-tech --update-env || exit"}')
-        if [ "$response" -ne 200 ]; then
-          echo "PM2 reload failed with status code $response"
+        status_code=$(echo $response | tail -c 4)
+        response_body=$(echo $response | head -c -4)
+        echo "Response: $response_body"
+        if [ "$status_code" -ne 200 ]; then
+          echo "PM2 reload failed with status code $status_code"
           exit 1
         fi
