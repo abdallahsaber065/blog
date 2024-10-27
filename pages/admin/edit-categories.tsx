@@ -4,15 +4,18 @@ import CategoryList from '@/components/Admin/Categories/CategoryList';
 import TagForm from '@/components/Admin/Categories/TagForm';
 import CategoryForm from '@/components/Admin/Categories/CategoryForm';
 import { Tag, Category } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
 interface DashboardProps {
-    tags: Tag[];
-    categories: Category[];
+    tags: (Tag & { postCount: number })[];
+    categories: (Category & { postCount: number })[];
 }
 
 export default function Dashboard({ tags, categories }: DashboardProps) {
     const [tagList, setTagList] = useState(tags);
     const [categoryList, setCategoryList] = useState(categories);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [confirmType, setConfirmType] = useState<'tags' | 'categories' | null>(null);
 
     const refreshTags = async () => {
         const response = await fetch('/api/tags');
@@ -26,36 +29,96 @@ export default function Dashboard({ tags, categories }: DashboardProps) {
         setCategoryList(data);
     };
 
+    const handleDeleteZeroCount = async (type: 'tags' | 'categories') => {
+        setShowConfirm(false);
+        if (type === 'tags') {
+            await fetch('/api/tags/delete-zero', { method: 'DELETE' });
+            refreshTags();
+        } else {
+            await fetch('/api/categories/delete-zero', { method: 'DELETE' });
+            refreshCategories();
+        }
+    };
+
     return (
         <div className="container mx-auto p-4 dark:bg-dark dark:text-white">
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <h2 className="text-xl font-semibold mb-2">Tags</h2>
+                    <div className="flex justify-between items-center mb-2">
+                        <h2 className="text-xl font-semibold">Tags</h2>
+                        <button
+                            onClick={() => { setShowConfirm(true); setConfirmType('tags'); }}
+                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
+                        >
+                            Delete Tags with 0 Posts
+                        </button>
+                    </div>
                     <TagForm refreshTags={refreshTags} />
                     <TagList tags={tagList} refreshTags={refreshTags} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-semibold mb-2">Categories</h2>
+                    <div className="flex justify-between items-center mb-2">
+                        <h2 className="text-xl font-semibold">Categories</h2>
+                        <button
+                            onClick={() => { setShowConfirm(true); setConfirmType('categories'); }}
+                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
+                        >
+                            Delete Categories with 0 Posts
+                        </button>
+                    </div>
                     <CategoryForm refreshCategories={refreshCategories} />
                     <CategoryList categories={categoryList} refreshCategories={refreshCategories} />
                 </div>
             </div>
+            {showConfirm && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white dark:bg-dark p-4 rounded shadow-lg">
+                        <h3 className="text-lg font-semibold mb-4">Are you sure you want to delete all {confirmType} with 0 posts?</h3>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setShowConfirm(false)}
+                                className="bg-gray-500 text-white p-2 rounded mr-2 hover:bg-gray-600 active:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-900"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleDeleteZeroCount(confirmType!)}
+                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
 export async function getServerSideProps() {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const tagResponse = await fetch(`${baseUrl}/api/tags`);
-    const tags = await tagResponse.json();
-    const categoryResponse = await fetch(`${baseUrl}/api/categories`);
-    const categories = await categoryResponse.json();
+    const tags = await prisma.tag.findMany({
+        include: {
+            _count: {
+                select: { posts: true },
+            },
+        },
+    });
+
+    const categories = await prisma.category.findMany({
+        include: {
+            _count: {
+                select: { posts: true },
+            },
+        },
+    });
+
+    await prisma.$disconnect();
 
     return {
         props: {
-            tags,
-            categories,
+            tags: tags.map(tag => ({ ...tag, postCount: tag._count.posts })),
+            categories: categories.map(category => ({ ...category, postCount: category._count.posts })),
         },
     };
 }

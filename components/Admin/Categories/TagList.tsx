@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Tag } from '@prisma/client';
 import { ClipLoader } from 'react-spinners';
+import { Tag } from '@prisma/client';
 
 interface TagListProps {
-    tags: Tag[];
+    tags: (Tag & { postCount: number })[];
     refreshTags: () => void;
 }
 
@@ -27,11 +27,14 @@ export default function TagList({ tags, refreshTags }: TagListProps) {
         }
     };
 
+    // Sort tags by postCount in descending order
+    const sortedTags = [...tags].sort((a, b) => b.postCount - a.postCount);
+
     return (
         <ul>
-            {tags.map(tag => (
+            {sortedTags.map(tag => (
                 <li key={tag.id} className="flex justify-between items-center mb-2 text-dark dark:text-white">
-                    <span>{tag.name}</span>
+                    <span>{tag.name} <span className="text-blue-500">({tag.postCount})</span></span>
                     <button
                         onClick={() => handleDelete(tag.id)}
                         className="text-red-500"
