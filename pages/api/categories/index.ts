@@ -101,18 +101,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             break;
 
         case 'DELETE':
-            // Delete a category by ID
-            const { deleteId } = body;
-
-            const deleteIdError = validateInput(deleteId, 'id');
+            
+            const deleteIdError = validateInput(query.id, 'id');
 
             if (deleteIdError) {
+                log += `\nResponse Status: 400 ${deleteIdError}`;
+                logger.info(log);
                 return res.status(400).json({ error: deleteIdError });
             }
 
             try {
                 const deletedCategory = await prisma.category.delete({
-                    where: { id: Number(deleteId) },
+                    where: { id: Number(query.id) },
                 });
                 res.status(200).json(deletedCategory);
                 await res.revalidate('/categories');
