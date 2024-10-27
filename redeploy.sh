@@ -64,5 +64,3 @@ if [ "$RELEASES_COUNT" -gt 3 ]; then
     find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {} || { echo -e "\033[1;31mFailed to remove old releases\033[0m"; exit 1; }
     echo -e "\033[1;32mOld releases removed successfully\033[0m"
 fi
-
-echo -e "\033[1;32mDeployment successful\033[0m"
