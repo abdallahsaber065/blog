@@ -15,6 +15,15 @@ jobs:
         echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
+    - name: Export all local environment variables to GitHub Actions environment
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mExporting all local environment variables...\033[0m"
+        env | while IFS= read -r line; do
+          echo "$line"
+          echo "$line" >> $GITHUB_ENV
+        done
+
     - name: Clean up old temp directory if exists
       working-directory: /var/www/devtrend.tech
       run: |
