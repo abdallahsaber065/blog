@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Category } from '@prisma/client';
 import { ClipLoader } from 'react-spinners';
+import { Category } from '@prisma/client';
 
 interface CategoryListProps {
-    categories: Category[];
+    categories: (Category & { postCount: number })[];
     refreshCategories: () => void;
 }
 
@@ -27,11 +27,14 @@ export default function CategoryList({ categories, refreshCategories }: Category
         }
     };
 
+    // Sort categories by postCount in descending order
+    const sortedCategories = [...categories].sort((a, b) => b.postCount - a.postCount);
+
     return (
         <ul>
-            {categories.map(category => (
+            {sortedCategories.map(category => (
                 <li key={category.id} className="flex justify-between items-center mb-2 text-dark dark:text-white">
-                    <span>{category.name}</span>
+                    <span>{category.name} <span className="text-blue-500">({category.postCount})</span></span>
                     <button
                         onClick={() => handleDelete(category.id)}
                         className="text-red-500"
