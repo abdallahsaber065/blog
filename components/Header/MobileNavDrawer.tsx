@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { CloseIcon} from '@/components/Icons';
-
+import { CloseIcon } from '@/components/Icons';
 
 interface MobileNavDrawerProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const RoleList = ['admin', 'moderator', 'editor'];
+
 const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) => {
     const { data: session } = useSession();
     const [mounted, setMounted] = useState(false);
+    const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -39,24 +41,50 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             Contact
                         </Link>
                     </li>
-                    {session && session.user.role === 'admin' && (
-                        <>
-                            <li>
-                                <Link href="/admin/categories" className="hover:text-primary" onClick={onClose}>
-                                    Edit Categories
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/admin/create-post" className="hover:text-primary" onClick={onClose}>
-                                    Create Post
-                                </Link>
-                            </li>
-                        </>
+                    <li>
+                        <Link href="/categories/all" className="hover:text-primary" onClick={onClose}>
+                            Categories
+                        </Link>
+                    </li>
+                    {session && RoleList.includes(session.user.role) && (
+                        <li className="mt-4">
+                            <button
+                                className="text-lg font-semibold flex justify-between items-center w-full"
+                                onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                            >
+                                Admin
+                                <span>{isAdminMenuOpen ? '-' : '+'}</span>
+                            </button>
+                            {isAdminMenuOpen && (
+                                <ul className="mt-2 space-y-2">
+                                    <li>
+                                        <Link href="/admin" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
+                                            Dashboard
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/admin/categories" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
+                                            Edit Categories
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/admin/create-post" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
+                                            Create Post
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link href="/admin/edit-post" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
+                                            Edit Post
+                                        </Link>
+                                    </li>
+                                </ul>
+                            )}
+                        </li>
                     )}
                     {session ? (
                         <>
                             <li>
-                                <Link href="/profile" onClick={onClose}>
+                                <Link href="/profile" onClick={onClose} className='text-lg font-semibold'>
                                     Profile
                                     {session.user.role === 'admin' && (
                                         <span className="badge badge-primary ml-2">Admin</span>
@@ -64,7 +92,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                                 </Link>
                             </li>
                             <li>
-                                <button onClick={() => { signOut(); onClose(); }} className="text-red-600">
+                                <button onClick={() => { signOut(); onClose(); }} className="text-red-600 text-lg font-semibold">
                                     Logout
                                 </button>
                             </li>

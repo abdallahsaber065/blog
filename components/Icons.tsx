@@ -12,7 +12,7 @@ export const SunIcon = ({ className, ...rest }: IconProps & React.SVGProps<SVGSV
     height="24"
     viewBox="0 0 24 24"
     {...rest}
-    className={cx("w-full h-auto", className)}
+    className={className}
   >
     <rect x="0" y="0" width="24" height="24" fill="rgba(255, 255, 255, 0)" />
     <g
@@ -168,7 +168,7 @@ export const MoonIcon = ({ className, ...rest }: IconProps & React.SVGProps<SVGS
     height="24"
     viewBox="0 0 24 24"
     {...rest}
-    className={cx("w-full h-auto", className)}
+    className={className}
   >
     <g
       fill="none"
@@ -346,7 +346,7 @@ export const LinkedinIcon = ({ className, ...rest }: IconProps & React.SVGProps<
       width={42}
       height={43}
       viewBox="0 0 42 43"
-      className={cx("w-full h-auto", className)}
+      className={className}
       {...rest}
     >
       <g clipPath="url(#a)">
@@ -375,7 +375,7 @@ export const TwitterIcon = ({ className, ...rest }: IconProps & React.SVGProps<S
       width={42}
       height={43}
       viewBox="0 0 42 43"
-      className={cx("w-full h-auto", className)}
+      className={className}
       {...rest}
     >
       <g clipPath="url(#a)">
@@ -400,7 +400,7 @@ export const GithubIcon = ({ className, ...rest }: IconProps & React.SVGProps<SV
       width={42}
       height={44}
       viewBox="0 0 42 44"
-      className={cx("w-full h-auto", className)}
+      className={className}
       {...rest}
     >
       <path
@@ -420,7 +420,7 @@ export const SearchIcon = ({ className, ...rest }: IconProps & React.SVGProps<SV
     height="24"
     viewBox="0 0 24 24"
     {...rest}
-    className={cx("w-auto h-auto", className)}
+    className={className}
   >
     <path
       fill="none"
@@ -440,7 +440,7 @@ export const CloseIcon = ({ className, ...rest }: IconProps & React.SVGProps<SVG
     height="24"
     viewBox="0 0 24 24"
     {...rest}
-    className={cx("w-full h-auto", className)}
+    className={className}
   >
     <path
       fill="none"
@@ -460,7 +460,7 @@ export const MenuIcon = ({ className, ...rest }: IconProps & React.SVGProps<SVGS
     viewBox="0 0 24 24"
     stroke="currentColor"
     {...rest}
-    className={cx("h-6 w-6", className)}
+    className={className}
 
   >
     <path
