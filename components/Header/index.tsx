@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = () => {
       <div className="navbar-start">
         {/* Mobile Navigation Drawer */}
         <button className="btn btn-ghost lg:hidden" aria-label="Open Menu" onClick={() => setIsDrawerOpen(true)}>
-          {!isDrawerOpen && <MenuIcon className='w-6 h-6' />}
+          {!isDrawerOpen && <MenuIcon className='w-6 h-6 text-slate-800 dark:text-light font-bold' />}
         </button>
         <MobileNavDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
         {/* Logo */}
@@ -63,15 +63,21 @@ const Header: React.FC<HeaderProps> = () => {
             </Link>
           </li>
           <li>
-            <Link href="/resources" className={`hover:text-primary dark:hover:text-accent ${pathname === '/resources' ? 'font-bold text-primary dark:text-accent' : ''}`}>
-              Resources
+            <Link href="/categories/all" className={`hover:text-primary dark:hover:text-accent ${pathname === '/categories/all' ? 'font-bold text-primary dark:text-accent' : ''}`}>
+              Categories
             </Link>
           </li>
-          {session?.user.role === 'admin' && (
+          {session && RoleList.includes(session.user.role) && (
             <li>
               <details>
                 <summary className="hover:text-primary dark:hover:text-accent">Admin</summary>
                 <ul className="bg-light dark:bg-dark rounded-t-none p-2">
+                  <li>
+                    <Link href="/admin" className="hover:text-primary dark:hover:text-accent">
+                      Dashboard
+                    </Link>
+                  </li>
+
                   <li>
                     <Link href="/admin/categories" className="hover:text-primary dark:hover:text-accent">
                       Edit Categories
@@ -95,17 +101,14 @@ const Header: React.FC<HeaderProps> = () => {
       </div>
 
       {/* Navbar End */}
-      <div className="navbar-end flex items-center space-x-4">
+      <div className="navbar-end flex items-center space-x-2">
         <SearchBar />
 
         {/* Notification Icon */}
-        {/* <NotificationIcon /> */}
 
         {/* Dark Mode Toggle */}
-        <ThemeSwitcher /> {/* Use ThemeSwitcher component */}
+        <ThemeSwitcher />
 
-        {/* Subscribe Button */}
-        {/* <SubscribeButton /> */}
 
         {/* User Dropdown */}
         <div className="dropdown dropdown-end">
@@ -116,31 +119,35 @@ const Header: React.FC<HeaderProps> = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-light dark:bg-dark rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow-lg bg-light dark:bg-dark rounded-box w-52"
           >
             {status === 'authenticated' ? (
               <>
-                <li>
-                  <Link href="/profile">
-                    Profile
+                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                  <Link href="/profile" className="flex items-center space-x-2 p-2">
+                    <span>Profile</span>
                     {RoleList.includes(session?.user.role) && (
                       <span className="badge badge-primary dark:badge-accent ml-2">{session?.user.role.toUpperCase()}</span>
                     )}
                   </Link>
                 </li>
-                <li>
-                  <button onClick={() => signOut()} className="text-danger dark:text-warning">
-                    Logout
+                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                  <button onClick={() => signOut()} className="flex items-center space-x-2 p-2 text-danger dark:text-warning">
+                    <span>Logout</span>
                   </button>
                 </li>
               </>
             ) : (
               <>
-                <li>
-                  <Link href="/login">Login</Link>
+                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                  <Link href="/login" className="flex items-center space-x-2 p-2">
+                    <span>Login</span>
+                  </Link>
                 </li>
-                <li>
-                  <Link href="/signup">Sign Up</Link>
+                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                  <Link href="/signup" className="flex items-center space-x-2 p-2">
+                    <span>Sign Up</span>
+                  </Link>
                 </li>
               </>
             )}
