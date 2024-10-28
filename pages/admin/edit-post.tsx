@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/Admin/PostEditor';
 import Tag from '@prisma/client';
-import withAdminAuth from '@/components/Admin/withAdminAuth';
+import withAuth from '@/components/Admin/withAuth';
 import readingTime from "reading-time"
 
 interface Post {
@@ -164,4 +164,4 @@ const PostEditorPage: React.FC = () => {
     );
 };
 
-export default withAdminAuth(PostEditorPage);
+export default withAuth(PostEditorPage, ['admin', "moderator", "editor"]);

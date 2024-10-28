@@ -4,14 +4,15 @@ import toast, { Toaster } from 'react-hot-toast';
 import Papa from 'papaparse';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus, FaFileExport, FaFileImport } from 'react-icons/fa';
+import withAuth from '@/components/Admin/withAuth';
 
-const Subscriptions = () => {
-    interface Subscription {
-        id: number;
-        email: string;
-        subscribed: boolean;
-    }
+interface Subscription {
+    id: number;
+    email: string;
+    subscribed: boolean;
+}
 
+const Subscriptions: React.FC = () => {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [loading, setLoading] = useState(false);
     const [newEmail, setNewEmail] = useState('');
@@ -223,4 +224,4 @@ const Subscriptions = () => {
     );
 };
 
-export default Subscriptions;
+export default withAuth(Subscriptions,['admin']);

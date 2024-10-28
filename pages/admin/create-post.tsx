@@ -10,8 +10,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import JSONEditorComponent from '@/components/Admin/JSONEditor';
 import LogViewer from '@/components/Admin/CreatePost/LogViewer';
-import withAdminAuth from '@/components/Admin/withAdminAuth';
-import { headers } from 'next/headers';
+import withAuth from '@/components/Admin/withAuth';
 
 const animatedComponents = makeAnimated();
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
@@ -190,7 +189,7 @@ const CreatePost: React.FC = () => {
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
-            }, { 
+            }, {
                 timeout: 600000,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -507,4 +506,4 @@ const CreatePost: React.FC = () => {
     );
 };
 
-export default withAdminAuth(CreatePost);
+export default withAuth(CreatePost, ['admin', "moderator", "editor"]);

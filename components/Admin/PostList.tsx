@@ -1,5 +1,7 @@
 // components/PostList.tsx
+import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 
 interface Post {
@@ -28,6 +30,9 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
     const [advancedSearch, setAdvancedSearch] = useState(false);
     const [authorFilter, setAuthorFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
+    const { data: session, status } = useSession();
+
+    const deleteRoles = ['admin'];
 
     if (!Array.isArray(posts)) {
         return <div>Error: posts is not an array</div>;
@@ -135,12 +140,20 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                             >
                                 <FaEdit />
                             </button>
+
                             <button
                                 className="text-red-500"
-                                onClick={() => onDeletePost(post.id)}
+                                onClick={() => {
+                                    if ((session?.user?.role && deleteRoles.includes(session.user.role)) || Number(session?.user?.id) === post.author.id) {
+                                        onDeletePost(post.id);
+                                    } else {
+                                        toast.error('You do not have permission to delete this post.');
+                                    }
+                                }}
                             >
                                 <FaTrash />
                             </button>
+                            
                         </div>
                     </li>
                 ))}

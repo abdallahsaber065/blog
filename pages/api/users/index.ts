@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import bcrypt from 'bcryptjs';
 
 // Utility function to validate input
 const validateInput = (input: any, type: string): string | null => {
@@ -11,6 +12,11 @@ const validateInput = (input: any, type: string): string | null => {
     } else if (type === 'string') {
         if (!input || typeof input !== 'string' || input.trim() === '') {
             return 'Invalid string';
+        }
+    } else if (type === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!input || !emailRegex.test(input)) {
+            return 'Invalid email';
         }
     }
     return null;
@@ -30,73 +36,111 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (body) {
         queryLog = { ...query, body };
     }
-    let log = `\n${method} /api/tags\nRequest: ${JSON.stringify({ query: queryLog }, null, 2)}`;
+    let log = `\n${method} /api/users\nRequest: ${JSON.stringify({ query: queryLog }, null, 2)}`;
 
     try {
         switch (method) {
             case 'GET':
-                // Fetch tags with optional select and where parameters
+                // Fetch users with optional select and where parameters
                 const { select, where } = query;
-                const tags = await prisma.tag.findMany({
+                const users = await prisma.user.findMany({
                     select: select ? JSON.parse(select as string) : undefined,
                     where: where ? JSON.parse(where as string) : undefined,
                 });
-                res.status(200).json(tags);
+                res.status(200).json(users);
                 log += `\nResponse Status: 200 OK`;
                 break;
 
             case 'POST':
-                // Create a new tag
-                const { name, slug } = body;
+                // Create a new user
+                const { username, email, password, first_name, last_name } = body;
 
-                const nameError = validateInput(name, 'string');
-                const slugError = validateInput(slug, 'string');
+                const usernameError = validateInput(username, 'string');
+                const emailError = validateInput(email, 'email');
+                const passwordError = validateInput(password, 'string');
 
-                if (nameError || slugError) {
-                    log += `\nResponse Status: 400 ${nameError || slugError}`;
+                if (usernameError || emailError || passwordError) {
+                    log += `\nResponse Status: 400 ${usernameError || emailError || passwordError}`;
                     logger.info(log);
-                    return res.status(400).json({ error: nameError || slugError });
+                    return res.status(400).json({ error: usernameError || emailError || passwordError });
                 }
 
-                const newTag = await prisma.tag.create({
+                const hashedPassword = await bcrypt.hash(password, 10);
+
+                const newUser = await prisma.user.create({
                     data: {
-                        name,
-                        slug,
+                        username,
+                        email,
+                        password: hashedPassword,
+                        first_name,
+                        last_name,
                     },
                 });
-                res.status(201).json(newTag);
-                await res.revalidate('/tags');
+                res.status(201).json(newUser);
                 log += `\nResponse Status: 201 Created`;
                 break;
 
             case 'PUT':
-                // Update a tag by ID
-                const { id, newName, newSlug } = body;
-
+                // Update a user by ID
+                const { id, data } = body;
+            
                 const idError = validateInput(id, 'id');
-                const newNameError = validateInput(newName, 'string');
-                const newSlugError = validateInput(newSlug, 'string');
-
-                if (idError || newNameError || newSlugError) {
-                    log += `\nResponse Status: 400 ${idError || newNameError || newSlugError}`;
+                if (idError) {
+                    log += `\nResponse Status: 400 ${idError}`;
                     logger.info(log);
-                    return res.status(400).json({ error: idError || newNameError || newSlugError });
+                    return res.status(400).json({ error: idError });
                 }
-
-                const updatedTag = await prisma.tag.update({
-                    where: { id: Number(id) },
-                    data: {
-                        name: newName,
-                        slug: newSlug,
-                    },
-                });
-                res.status(200).json(updatedTag);
-                await res.revalidate('/tags');
-                log += `\nResponse Status: 200 OK`;
+            
+                const updatedData: any = {};
+            
+                // Validate and prepare update data
+                for (const [key, value] of Object.entries(data)) {
+                    if (key === 'username' || key === 'first_name' || key === 'last_name') {
+                        const error = validateInput(value, 'string');
+                        if (error) {
+                            log += `\nResponse Status: 400 ${error}`;
+                            logger.info(log);
+                            return res.status(400).json({ error });
+                        }
+                        updatedData[key] = value;
+                    } else if (key === 'email') {
+                        const error = validateInput(value, 'email');
+                        if (error) {
+                            log += `\nResponse Status: 400 ${error}`;
+                            logger.info(log);
+                            return res.status(400).json({ error });
+                        }
+                        updatedData[key] = value;
+                    } else if (key === 'password') {
+                        const error = validateInput(value, 'string');
+                        if (error) {
+                            log += `\nResponse Status: 400 ${error}`;
+                            logger.info(log);
+                            return res.status(400).json({ error });
+                        }
+                        updatedData[key] = await bcrypt.hash(value as string, 10);
+                    } else {
+                        // add all other fields to updatedData
+                        updatedData[key] = value;
+                    }
+                }
+            
+                try{
+                    const updatedUser = await prisma.user.update({
+                        where: { id: Number(id) },
+                        data: updatedData,
+                    });
+                    res.status(200).json(updatedUser);
+                    log += `\nResponse Status: 200 OK`;
+                }
+                catch (error : any) {
+                    handleError(res, error, 'Internal Server Error');
+                }
                 break;
-
-            case 'DELETE':
-                // Delete a tag by ID
+            
+            
+                case 'DELETE':
+                // Delete a user by ID
                 const { deleteId } = body;
 
                 const deleteIdError = validateInput(deleteId, 'id');
@@ -107,11 +151,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                const deletedTag = await prisma.tag.delete({
+                const deletedUser = await prisma.user.delete({
                     where: { id: Number(deleteId) },
                 });
-                res.status(200).json(deletedTag);
-                await res.revalidate('/tags');
+                res.status(200).json(deletedUser);
                 log += `\nResponse Status: 200 OK`;
                 break;
 

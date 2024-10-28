@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostList from '@/components/Admin/PostList';
 import { useSession } from 'next-auth/react';
-import withAdminAuth from '@/components/Admin/withAdminAuth';
+import withAuth from '@/components/Admin/withAuth';
 
 interface Post {
     id: number;
@@ -21,13 +21,7 @@ const DashboardPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const { data: session, status } = useSession();
 
-    useEffect(() => {
-        if (status === 'authenticated' && session?.user?.role !== 'admin') {
-            router.push('/');
-        }
-    }, [status, session]);
 
     useEffect(() => {
         loadPosts();
@@ -110,4 +104,4 @@ const DashboardPage: React.FC = () => {
     );
 };
 
-export default withAdminAuth(DashboardPage);
+export default withAuth(DashboardPage, ['admin', "moderator", "editor"]);
