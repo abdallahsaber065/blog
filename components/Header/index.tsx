@@ -147,7 +147,7 @@ const Header = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/admin/create-post" className="block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-white">
+                      <Link href="/admin/posts/create" className="block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-white">
                         Create Post
                       </Link>
                     </li>
