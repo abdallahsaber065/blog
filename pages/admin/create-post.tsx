@@ -189,7 +189,7 @@ const CreatePost: React.FC = () => {
                 num_of_terms: numOfTerms === 0 ? null : numOfTerms,
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
-                num_of_points: numOfPoints === 0 ? null : numOfPoints,
+                num_of_points: enableNumOfPoints ? numOfPoints : null,
             }, { 
                 timeout: 600000,
                 headers: {
