@@ -111,7 +111,8 @@ const CreatePost: React.FC = () => {
             status: isDraft ? 'draft' : 'published',
             published_at: isDraft ? null : new Date(),
             reading_time: Math.round(readingTime(content).minutes),
-            outline: outline,
+            // convert outline to JSON string
+            outline: JSON.stringify(outline),
         };
         return postData;
     };
