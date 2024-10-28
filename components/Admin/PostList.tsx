@@ -1,4 +1,3 @@
-// components/PostList.tsx
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -6,7 +5,7 @@ import { FaTrash, FaEdit } from 'react-icons/fa';
 
 interface Post {
     id: number;
-    slug: string
+    slug: string;
     tags: string[];
     title: string;
     category: { id: number; name: string };
@@ -63,18 +62,18 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
 
     return (
         <div className="p-4 bg-white dark:bg-dark rounded shadow-md">
-            <div className="mb-4 flex justify-between items-center">
+            <div className="mb-4 flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
                 <input
                     type="text"
                     placeholder="Search posts..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 />
                 <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 >
                     <option value="All">All Categories</option>
                     {Array.from(new Set(posts.map(post => post.category.name))).map(category => (
@@ -83,20 +82,21 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 </select>
                 <button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="p-2 bg-blue-500  text-white rounded"
+                    // highliht the text color
+                    className="p-2 bg-zinc-600 text-white rounded w-full md:w-auto dark:text-slate-300 font-bold"
                 >
                     Sort {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
                 </button>
                 <button
                     onClick={() => setShowAll(!showAll)}
-                    className="p-2 bg-green-500 text-white rounded"
+                    className="p-2 bg-slate-600 text-white rounded w-full md:w-auto dark:text-slate-300 font-bold"
                 >
                     {showAll ? 'Show Paginated' : 'Show All'}
                 </button>
                 <select
                     value={postsPerPage}
                     onChange={(e) => setPostsPerPage(Number(e.target.value))}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 >
                     {[5, 10, 20, 50].map(number => (
                         <option key={number} value={number}>{number} per page</option>
@@ -104,43 +104,42 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 </select>
                 <button
                     onClick={() => setAdvancedSearch(!advancedSearch)}
-                    className="p-2 bg-yellow-500  text-white rounded"
+                    className="p-2 bg-amber-600 text-white rounded w-full md:w-auto dark:text-slate-200 font-bold"
                 >
                     {advancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
                 </button>
             </div>
             {advancedSearch && (
-                <div className="mb-4 p-4 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray">
+                <div className="mb-4 p-4 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray space-y-2">
                     <input
                         type="text"
                         placeholder="Filter by author..."
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded mb-2 bg-light dark:bg-gray text-dark dark:text-light"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
                     <input
                         type="date"
                         placeholder="Filter by date..."
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
                 </div>
             )}
-            <ul className="mb-4">
+            <ul className="mb-4 space-y-2">
                 {paginatedPosts.map((post) => (
-                    <li key={post.id} className="mb-2 flex justify-between items-center">
-                        <a className="text-blue-500 cursor-pointer" href={`/blogs/${post.slug}`} target="_blank">
+                    <li key={post.id} className="flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
+                        <a className="text-blue-500 cursor-pointer w-full md:w-auto" href={`/blogs/${post.slug}`} target="_blank">
                             {post.title}
                         </a>
-                        <div>
+                        <div className="flex space-x-2 w-full md:w-auto">
                             <button
-                                className="text-green-500 mr-2"
+                                className="text-green-500"
                                 onClick={() => onSelectPost(post.id)}
                             >
                                 <FaEdit />
                             </button>
-
                             <button
                                 className="text-red-500"
                                 onClick={() => {
@@ -153,27 +152,26 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                             >
                                 <FaTrash />
                             </button>
-                            
                         </div>
                     </li>
                 ))}
             </ul>
             {!showAll && (
-                <div className="flex justify-between items-center">
+                <div className="flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
                     <button
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50"
+                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50 w-full md:w-auto"
                     >
                         Previous
                     </button>
-                    <span className="text-dark dark:text-light">
+                    <span className="text-dark dark:text-light w-full md:w-auto text-center">
                         Page {currentPage} of {totalPages}
                     </span>
                     <button
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50"
+                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50 w-full md:w-auto"
                     >
                         Next
                     </button>

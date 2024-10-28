@@ -80,16 +80,17 @@ const DashboardPage: React.FC = () => {
     };
 
     const handleEdit = (id: number) => {
-        router.push(`/admin/edit-post?id=${id}`);
+        router.push(`/admin/posts/edit?id=${id}`);
     };
 
     const handleCreate = () => {
-        router.push('/admin/create-post');
+        router.push('/admin/posts/create');
     };
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+            <h1 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-400
+            ">Dashboard</h1>
             <div className="mb-4">
                 <button
                     className="bg-blue-500 text-white p-2 rounded"

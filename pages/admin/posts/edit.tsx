@@ -1,4 +1,4 @@
-// pages/admin/edit-post.tsx
+// pages/admin/posts/edit.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';

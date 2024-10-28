@@ -68,13 +68,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/admin/create-post" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
+                                        <Link href="/admin/posts/create" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
                                             Create Post
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/admin/edit-post" className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={onClose}>
-                                            Edit Post
                                         </Link>
                                     </li>
                                 </ul>
