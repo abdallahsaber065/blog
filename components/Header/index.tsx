@@ -84,13 +84,8 @@ const Header: React.FC<HeaderProps> = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/admin/create-post" className="hover:text-primary dark:hover:text-accent">
+                    <Link href="/admin/posts/create" className="hover:text-primary dark:hover:text-accent">
                       Create Post
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/admin/edit-post" className="hover:text-primary dark:hover:text-accent">
-                      Edit Post
                     </Link>
                   </li>
                 </ul>
