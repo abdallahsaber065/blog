@@ -15,6 +15,8 @@ const Header = () => {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
+  const adminRoles = ["admin", "moderator", "editor"];
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -106,7 +108,7 @@ const Header = () => {
         {/* make splitter between contact and admin */}
         <span className="mx-2">|</span>
         {
-          session?.user.role === "admin" && (
+          status === "authenticated" && adminRoles.includes(session?.user?.role) && (
             <div className="relative">
               <button
                 id="dropdownDefaultButton"

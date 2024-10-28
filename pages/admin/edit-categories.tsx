@@ -5,6 +5,7 @@ import TagForm from '@/components/Admin/Categories/TagForm';
 import CategoryForm from '@/components/Admin/Categories/CategoryForm';
 import { Tag, Category } from '@prisma/client';
 import dotenv from 'dotenv';
+import withAuth from '@/components/Admin/withAuth';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ interface DashboardProps {
     categories: (Category & { postCount: number })[];
 }
 
-export default function Dashboard({ tags, categories }: DashboardProps) {
+const Dashboard: React.FC<DashboardProps> = ({ tags, categories }) => {
     const [tagList, setTagList] = useState(tags);
     const [categoryList, setCategoryList] = useState(categories);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -128,3 +129,5 @@ export async function getServerSideProps() {
         },
     };
 }
+
+export default withAuth(Dashboard, ['admin', 'moderator']);
