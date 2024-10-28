@@ -16,7 +16,21 @@ jobs:
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         # add HOME as /root to fix npm permission issue
         echo "HOME=/root" >> $GITHUB_ENV
-    
+
+    - name: Fetch the latest changes
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mFetching the latest changes...\033[0m"
+        git fetch origin main || { echo -e "\033[1;31mFailed to fetch the latest changes\033[0m"; exit 1; }
+        echo -e "\033[1;32mLatest changes fetched successfully\033[0m"
+
+    - name: Reset to Main branch
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mResetting to main branch...\033[0m"
+        git reset --hard origin/main || { echo -e "\033[1;31mFailed to reset to main branch\033[0m"; exit 1; }
+        echo -e "\033[1;32mReset to main branch successfully\033[0m" 
+
     - name: Clean up old temp directory if exists
       working-directory: /var/www/devtrend.tech
       run: |
