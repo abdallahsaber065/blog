@@ -62,7 +62,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 });
                 res.status(201).json(newPost);
                 await res.revalidate("/");
-                await res.revalidate('/categories');
+                await res.revalidate('/categories/all');
+                for (const tag of body.tags.connectOrCreate) {
+                    const slug = tag.where.slug;
+                    await res.revalidate(`/categories/${slug}`);
+                }
+
                 log += `\nResponse Status: 201 Created`;
                 break;
 
