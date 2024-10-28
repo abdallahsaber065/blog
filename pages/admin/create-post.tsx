@@ -38,8 +38,9 @@ const CreatePost: React.FC = () => {
 
     const [numOfTerms, setNumOfTerms] = useState(3);
     const [numOfKeywords, setNumOfKeywords] = useState(20);
-    const [userCustomInstructions, setUserCustomInstructions] = useState('');
     const [numOfPoints, setNumOfPoints] = useState(5);
+    const [enableNumOfPoints, setEnableNumOfPoints] = useState(false);
+    const [userCustomInstructions, setUserCustomInstructions] = useState('');
 
     const [outline, setOutline] = useState<any>(null);
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
@@ -185,10 +186,10 @@ const CreatePost: React.FC = () => {
 
             const outlineResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_outline`, {
                 topic,
-                num_of_terms: numOfTerms,
+                num_of_terms: numOfTerms === 0 ? null : numOfTerms,
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
-                num_of_points: numOfPoints,
+                num_of_points: numOfPoints === 0 ? null : numOfPoints,
             }, { 
                 timeout: 600000,
                 headers: {
@@ -316,7 +317,20 @@ const CreatePost: React.FC = () => {
                                     className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
                                     value={numOfPoints}
                                     onChange={(e) => setNumOfPoints(Number(e.target.value))}
+                                    disabled={!enableNumOfPoints}
                                 />
+                                <div className="flex items-center mt-2">
+                                    <input
+                                        type="checkbox"
+                                        className="mr-2"
+                                        checked={enableNumOfPoints}
+                                        onChange={() => {
+                                            setEnableNumOfPoints(!enableNumOfPoints);
+                                            if (!enableNumOfPoints) setNumOfPoints(0);
+                                        }}
+                                    />
+                                    <label className="text-gray dark:text-lightgray">Enable</label>
+                                </div>
                             </div>
                         </div>
                         <div className="mb-4">
