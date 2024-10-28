@@ -48,9 +48,17 @@ const Home = ({ allBlogs }: { allBlogs: any[] }) => {
 
   return (
     <main className="flex flex-col items-center justify-center">
-      <HomeCoverSection posts={deserializedBlogs} />
-      <FeaturedPosts posts={deserializedBlogs} />
-      <RecentPosts posts={deserializedBlogs} />
+      {deserializedBlogs.length < 4 ? (
+        <div className="flex items-center justify-center h-screen">
+          <h1 className="text-4xl font-bold">Coming Soon...</h1>
+        </div>
+      ) : (
+        <>
+          <HomeCoverSection posts={deserializedBlogs} />
+          <FeaturedPosts posts={deserializedBlogs} />
+          <RecentPosts posts={deserializedBlogs} />
+        </>
+      )}
     </main>
   );
 };
