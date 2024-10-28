@@ -11,6 +11,7 @@ import makeAnimated from 'react-select/animated';
 import JSONEditorComponent from '@/components/Admin/JSONEditor';
 import LogViewer from '@/components/Admin/CreatePost/LogViewer';
 import withAdminAuth from '@/components/Admin/withAdminAuth';
+import { headers } from 'next/headers';
 
 const animatedComponents = makeAnimated();
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
@@ -188,7 +189,13 @@ const CreatePost: React.FC = () => {
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: numOfPoints,
-            }, { timeout: 300000 });
+            }, { 
+                timeout: 600000,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+                }
+            });
 
             const outline = outlineResponse.data?.outline;
             setSearchTerms(outlineResponse.data?.search_terms);
@@ -222,7 +229,7 @@ const CreatePost: React.FC = () => {
                 outline,
                 search_terms: searchTerms,
                 user_custom_instructions: userCustomInstructions,
-            }, { timeout: 300000 });
+            }, { timeout: 600000 });
 
             const generatedContent = contentResponse.data?.content;
             console.log('Generated Content:', generatedContent);
@@ -238,7 +245,7 @@ const CreatePost: React.FC = () => {
                 content: generatedContent,
                 old_tags: oldTags.map(tag => tag.value),
                 old_categories: oldCategories.map(category => category.value),
-            }, { timeout: 300000 });
+            }, { timeout: 600000 });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
 
