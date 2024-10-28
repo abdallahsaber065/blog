@@ -149,6 +149,11 @@ const Header = () => {
                         Create Post
                       </Link>
                     </li>
+                      <li>
+                      <Link href="/admin/edit-categories" className="block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Edit Categories
+                      </Link>
+                    </li>
                     <li>
                       <Link href="/admin/subscriptions" className="block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-white">
                         Newsletter Subscriptions
