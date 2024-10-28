@@ -1,8 +1,9 @@
+
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { cx } from "@/lib";
 import { MoonIcon, SunIcon } from "../Icons";
 
-const ThemeSwitcher = () => {   
+const ThemeSwitcher = () => {
   const [mode, setMode] = useThemeSwitch();
 
   return (
