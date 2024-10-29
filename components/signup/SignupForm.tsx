@@ -66,7 +66,7 @@ const SignupForm = () => {
     const handlePrevStep = () => setStep(step - 1);
 
     return (
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
             {step === 1 && (
                 <StepOne
                     username={username}
