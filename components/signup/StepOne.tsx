@@ -72,7 +72,7 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
         <div className="rounded-md shadow-sm -space-y-px">
             <div className="form-control">
                 <label className="label">
-                    <span className="label-text text-secondary">Username</span>
+                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Username</span>
                 </label>
                 <input
                     title="username"
@@ -80,13 +80,13 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Username"
                 />
             </div>
             <div className="form-control">
                 <label className="label">
-                    <span className="label-text text-secondary">Email</span>
+                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Email</span>
                 </label>
                 <input
                     title="email"
@@ -94,13 +94,13 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Email address"
                 />
             </div>
             <div className="form-control">
                 <label className="label">
-                    <span className="label-text text-secondary">Password</span>
+                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Password</span>
                 </label>
                 <input
                     title="password"
@@ -108,7 +108,7 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Password"
                 />
             </div>
@@ -116,7 +116,7 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
             <div className="flex justify-between mt-4">
                 <button
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-primary mt-4 space-y-4"
                     onClick={handleNext}
                     disabled={loading}
                 >
