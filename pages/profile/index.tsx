@@ -31,12 +31,12 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const handleDeleteAccount = async () => {
         if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
             try {
-                const response = await fetch('/api/users', {
+                const response = await fetch(`/api/users`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ id: user?.id }),
+                    body: JSON.stringify({ targetId: user?.id }),
                 });
 
                 if (response.ok) {
@@ -57,10 +57,10 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     if (status === 'unauthenticated') {
         return (
-            <main className="container mx-auto py-16 px-4 flex-1">
-                <div className="max-w-md mx-auto bg-base-200 p-8 rounded-lg shadow-lg">
-                    <h1 className="text-4xl font-bold text-center mb-8">Profile</h1>
-                    <p>You need to be signed in to view your profile.</p>
+            <main className="container mx-auto py-16 px-4 flex-1 text-slate-900">
+                <div className="max-w-md mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg">
+                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
+                    <p className="text-gray-800 dark:text-light">You need to be signed in to view your profile.</p>
                     <button
                         onClick={() => signIn()}
                         className="block w-full font-bold py-2 px-4 rounded mt-8 btn btn-primary"
@@ -73,30 +73,31 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col justify-between bg-base-100">
+        <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
+            
             <main className="container mx-auto py-16 px-4 flex-1">
-                <div className="max-w-4xl mx-auto bg-base-200 p-8 rounded-lg shadow-lg">
-                    <h1 className="text-4xl font-bold text-center mb-8">Profile</h1>
+                <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
+                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
                     {user ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <section className="space-y-4">
-                                <h2 className="text-2xl font-bold mb-4">Personal Information</h2>
-                                <div>
+                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Personal Information</h2>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Username:</strong> {user.username}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Email:</strong> {user.email}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>First Name:</strong> {user.first_name}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Last Name:</strong> {user.last_name}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Bio:</strong> {user.bio}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Profile Image:</strong>
                                     {user.profile_image_url && (
                                         <img src={user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
@@ -104,23 +105,23 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 </div>
                             </section>
                             <section className="space-y-4">
-                                <h2 className="text-2xl font-bold mb-4">Account Details</h2>
-                                <div>
+                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Role:</strong> {user.role}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Email Verified:</strong> {user.email_verified ? 'Yes' : 'No'}
                                     {!user.email_verified && <RequestVerification />}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}
                                 </div>
-                                <div>
+                                <div className="text-gray-800 dark:text-light">
                                     <strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}
                                 </div>
                             </section>
                             <section className="col-span-1 md:col-span-2 space-y-4">
-                                <h2 className="text-2xl font-bold mb-4">Actions</h2>
+                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Actions</h2>
                                 <button
                                     onClick={() => router.push('/profile/edit')}
                                     className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
@@ -136,7 +137,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                             </section>
                         </div>
                     ) : (
-                        <p>Loading user data...</p>
+                        <p className="text-gray-800 dark:text-light">Loading user data...</p>
                     )}
                 </div>
             </main>

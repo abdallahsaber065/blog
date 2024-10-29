@@ -139,13 +139,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                await prisma.post.delete({
-                    where: { id: Number(query.id) },
-                });
-                res.status(200).json({ message: 'Post deleted successfully' });
-                await res.revalidate("/");
-                await res.revalidate('/categories');
-                log += `\nResponse Status: 200 OK`;
+                try {
+                    await prisma.post.delete({
+                        where: { id: Number(query.id) },
+                    });
+                    res.status(200).json({ message: 'Post deleted successfully' });
+                    await res.revalidate("/");
+                    await res.revalidate('/categories');
+                    log += `\nResponse Status: 200 OK`;
+                }
+                catch (error) {
+                    handleError(res, error, 'Failed to delete post');
+                }
+                
                 break;
 
             default:
