@@ -139,11 +139,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 break;
             
             
-                case 'DELETE':
+            case 'DELETE':
                 // Delete a user by ID
-                const { deleteId } = body;
+                const { targetId } = body;
 
-                const deleteIdError = validateInput(deleteId, 'id');
+                const deleteIdError = validateInput(targetId, 'id');
 
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
@@ -152,7 +152,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 const deletedUser = await prisma.user.delete({
-                    where: { id: Number(deleteId) },
+                    where: { id: Number(targetId) },
                 });
                 res.status(200).json(deletedUser);
                 log += `\nResponse Status: 200 OK`;

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { ClipLoader } from 'react-spinners';
+import toast from 'react-hot-toast';
 
 const RequestVerification = () => {
     const { data: session } = useSession();
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
 
     const handleRequestVerification = async () => {
         setLoading(true);
-        setMessage('');
 
         const res = await fetch('/api/auth/request-verification', {
             method: 'POST',
@@ -23,9 +22,9 @@ const RequestVerification = () => {
         setLoading(false);
 
         if (res.ok) {
-            setMessage('Verification email sent successfully.');
+            toast.success('Verification email sent successfully.');
         } else {
-            setMessage(data.error);
+            toast.error(data.error || 'Failed to send verification email.');
         }
     };
 
@@ -38,7 +37,6 @@ const RequestVerification = () => {
             >
                 {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Request Verification Email'}
             </button>
-            {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}
         </div>
     );
 };
