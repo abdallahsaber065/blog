@@ -6,7 +6,7 @@ const siteMetadata = {
   description: ' Dev Trend is your go-to source for the latest in web development, programming, and tech news. Our mission is to empower developers and tech enthusiasts with insightful articles, tutorials, and resources.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://create-blog-with-nextjs.vercel.app', // your website URL
+  siteUrl: 'https://devtrend.tech/', // your website URL
   siteLogo: '/logo.png',
   socialBanner: '/social-banner.png', // add social banner in the public folder
   email: 'abdallahsaber065@gmail.com',
