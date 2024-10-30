@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { sendEmail } from '@/lib/email';
 import siteMetadata from '@/lib/siteMetaData';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -39,15 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { verification_token: verificationToken },
         });
 
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.mailgun.org',
-            port: 587,
-            auth: {
-                user: process.env.MAILGUN_USER,
-                pass: process.env.MAILGUN_PASS,
-            },
-        });
-
         const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${verificationToken}`;
 
         const htmlContent = `
@@ -75,14 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `;
         const textContent = `Verify your email by clicking the link below:\n\n${verificationUrl}`;
 
-        await transporter.sendMail({
-            from: siteMetadata.email,
-            to: email,
-            subject: 'Verify your email',
-            html: htmlContent,
-            alternatives: [{ contentType: 'text/plain', content: textContent }],
-            
-        });
+        await sendEmail(email, 'Verify your email', htmlContent, textContent);
 
         res.status(200).json({ message: 'Verification email sent successfully' });
     } catch (error) {
