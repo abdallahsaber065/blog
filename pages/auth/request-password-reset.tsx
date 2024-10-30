@@ -32,11 +32,11 @@ const RequestPasswordResetPage = () => {
     return (
         <div className="bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray dark:text-primary">
+                <div className="text-center">
+                    <h2 className="mt-6 text-2xl sm:text-3xl font-extrabold text-gray dark:text-primary">
                         Request Password Reset
                     </h2>
-                    <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+                    <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
                         Or{' '}
                         <Link href="/login" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
                             Back to login
@@ -48,7 +48,7 @@ const RequestPasswordResetPage = () => {
                         <label className="label">
                             <span className="label-text text-slate-900 font-bold dark:text-slate-300">Email</span>
                         </label>
-   
+
                         <input
                             title="email"
                             type="email"
