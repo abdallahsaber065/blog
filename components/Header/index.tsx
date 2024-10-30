@@ -46,7 +46,9 @@ const Header: React.FC<HeaderProps> = () => {
         </button>
         <MobileNavDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
         {/* Logo */}
-        <Logo />
+        <div className="hidden lg:block">
+          <Logo />
+        </div>
       </div>
 
       {/* Navbar Center */}
@@ -141,12 +143,12 @@ const Header: React.FC<HeaderProps> = () => {
               <>
                 <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
                   <Link href="/login" className="flex items-center space-x-2 p-2">
-                      <span className="text-slate-800 dark:text-light font-bold">Login</span>
+                    <span className="text-slate-800 dark:text-light font-bold">Login</span>
                   </Link>
                 </li>
                 <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
                   <Link href="/signup" className="flex items-center space-x-2 p-2">
-                      <span className="text-slate-800 dark:text-light font-bold">Sign Up</span>
+                    <span className="text-slate-800 dark:text-light font-bold">Sign Up</span>
                   </Link>
                 </li>
               </>
