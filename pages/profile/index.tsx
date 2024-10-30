@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { getSession, signIn, signOut, useSession } from 'next-auth/react';
-import RequestVerification from '@/components/signup/RequestVerification';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
+import { useState } from 'react';
+import RequestVerification from '@/components/signup/RequestVerification';
 
 interface User {
     id: string;
@@ -26,6 +27,7 @@ interface ProfilePageProps {
 const ProfilePage = ({ user }: ProfilePageProps) => {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const handleDeleteAccount = async () => {
         if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
@@ -47,6 +49,38 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             } catch (error) {
                 toast.error('An error occurred. Please try again.');
             }
+        }
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const handleUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!selectedFile) {
+            toast.error('Please select a file to upload.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('userId', user?.id.toString() || '');
+
+        const res = await fetch('/api/upload-profile-image', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (res.ok) {
+            toast.success('Profile image updated successfully.');
+            router.reload();
+        } else {
+            const data = await res.json();
+            toast.error(data.error || 'Something went wrong');
         }
     };
 
@@ -101,6 +135,12 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                         <img src={user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
                                     )}
                                 </div>
+                                <form onSubmit={handleUpload} className="space-y-4">
+                                    <input type="file" onChange={handleFileChange} className="block w-full text-gray-800 dark:text-light" />
+                                    <button type="submit" className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-primary">
+                                        Upload New Profile Image
+                                    </button>
+                                </form>
                             </section>
                             <section className="space-y-4">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
