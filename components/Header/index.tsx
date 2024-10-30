@@ -53,6 +53,11 @@ const Header: React.FC<HeaderProps> = () => {
       <div className="navbar-center hidden lg:flex text-slate-800 font-bold dark:text-light">
         <ul className="menu menu-horizontal px-1">
           <li>
+            <Link href="/" className={`hover:text-primary dark:hover:text-accent ${pathname === '/' ? 'font-bold text-primary dark:text-accent' : ''}`}>
+              Home
+            </Link>
+          </li>
+          <li>
             <Link href="/about" className={`hover:text-primary dark:hover:text-accent ${pathname === '/about' ? 'font-bold text-primary dark:text-accent' : ''}`}>
               About
             </Link>

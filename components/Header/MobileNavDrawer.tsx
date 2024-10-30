@@ -34,17 +34,20 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                 </button>
                 <ul className="menu menu-vertical">
                     <li>
-                        <Link href="/about" className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent ${pathname === '/about' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                        <Link href="/about" className={
+                            `hover:text-primary font-semibold dark:hover:text-accent
+                            ${pathname === '/about' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                             About
                         </Link>
                     </li>
                     <li>
-                        <Link href="/contact" className={`hover:text-primary dark:text-slate-100 dark:hover:text-accent ${pathname === '/contact' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                        <Link href="/contact" className={`hover:text-primary font-semibold dark:hover:text-accent
+                            ${pathname === '/contact' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                             Contact
                         </Link>
                     </li>
                     <li>
-                        <Link href="/categories/all" className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent ${pathname === '/categories/all' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                        <Link href="/categories/all" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/categories/all' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                             Categories
                         </Link>
                     </li>
@@ -60,17 +63,17 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             {isAdminMenuOpen && (
                                 <ul className="mt-2 space-y-2">
                                     <li>
-                                        <Link href="/admin" className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent ${pathname === '/admin' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                                        <Link href="/admin" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                                             Dashboard
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/admin/categories" className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent ${pathname === '/admin/categories' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                                        <Link href="/admin/categories" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/categories' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                                             Edit Categories
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/admin/posts/create" className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent ${pathname === '/admin/posts/create' ? 'font-bold text-primary dark:text-accent' : ''}`} onClick={onClose}>
+                                        <Link href="/admin/posts/create" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/posts/create' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-slate-300'}`} onClick={onClose}>
                                             Create Post
                                         </Link>
                                     </li>
@@ -81,8 +84,9 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                     {session ? (
                         <>
                             <li>
-                                <Link href="/profile" onClick={onClose} className={`hover:text-primary text-lg font-semibold dark:hover:text-accent ${pathname === '/profile' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-white'}`}>
-                                
+                                <Link href="/profile" onClick={onClose} className={`hover:text-primary text-lg font-semibold dark:hover:text-accent 
+                                    ${pathname === '/profile' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-white'}`}>
+
                                     Profile
                                     {session.user.role === 'admin' && (
                                         <span className="badge badge-primary ml-2">Admin</span>
@@ -98,10 +102,10 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                     ) : (
                         <>
                             <li>
-                                <Link href="/login" onClick={onClose} className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent text-lg ${pathname === '/login' ? 'font-bold text-primary dark:text-accent' : ''}`}>Login</Link>
+                                <Link href="/login" onClick={onClose} className={`hover:text-primary font-semibold dark:hover:text-accent text-lg ${pathname === '/login' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-white'}`}>Login</Link>
                             </li>
                             <li>
-                                <Link href="/signup" onClick={onClose} className={`hover:text-primary dark:text-slate-100  dark:hover:text-accent text-lg ${pathname === '/signup' ? 'font-bold text-primary dark:text-accent' : ''}`}>Sign Up</Link>
+                                <Link href="/signup" onClick={onClose} className={`hover:text-primary font-semibold dark:hover:text-accent text-lg ${pathname === '/signup' ? 'font-bold text-primary dark:text-accent' : 'text-gray-800 dark:text-white'}`}>Sign Up</Link>
                             </li>
                         </>
                     )}
