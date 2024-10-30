@@ -109,6 +109,11 @@ const LoginPage = () => {
                         </button>
                     </div>
                 </form>
+                <div className="mt-4 text-center">
+                    <Link href="/auth/request-password-reset" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
+                        Forgot your password?
+                    </Link>
+                </div>
             </div>
         </div>
     );
