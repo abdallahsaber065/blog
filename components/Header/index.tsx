@@ -116,7 +116,7 @@ const Header: React.FC<HeaderProps> = () => {
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar" aria-label="User Menu">
             <div className="w-10 rounded-full">
-              <img src='/static/images/profile.jpg' alt="User Avatar" className="rounded-full" />
+              <img src={session?.user.profile_image_url ? session?.user.profile_image_url :'/static/images/profile.jpg'} alt="User Avatar" className="rounded-full" />
             </div>
           </div>
           <ul

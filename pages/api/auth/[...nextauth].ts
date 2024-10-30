@@ -12,6 +12,7 @@ declare module 'next-auth' {
         email_verified: boolean | null;
         role: string;
         name: string;
+        profile_image_url: string | null;
 
     }
 
@@ -22,6 +23,7 @@ declare module 'next-auth' {
             email_verified: boolean | null;
             role: string;
             name: string;
+            profile_image_url: string 
         };
     }
 
@@ -31,6 +33,7 @@ declare module 'next-auth' {
         email_verified: boolean | null;
         role: string;
         name: string;
+        profile_image_url: string;
     }
 }
 
@@ -58,6 +61,7 @@ const options: NextAuthOptions = {
                         email_verified: user.email_verified,
                         role: user.role,
                         name: user.first_name + ' ' + user.last_name,
+                        profile_image_url: user.profile_image_url,
                     };
                 } else {
                     return null;
@@ -81,6 +85,7 @@ const options: NextAuthOptions = {
                     email_verified: token.email_verified as boolean | null,
                     role: token.role as string,
                     name: token.name as string,
+                    profile_image_url: token.profile_image_url as string,
                 };
             }
             return session;
@@ -91,6 +96,7 @@ const options: NextAuthOptions = {
                 token.email_verified = user.email_verified;
                 token.role = user.role;
                 token.name = user.name;
+                token.profile_image_url = user.profile_image_url;
             }
             return token;
         },
