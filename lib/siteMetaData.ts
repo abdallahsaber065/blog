@@ -16,6 +16,8 @@ const siteMetadata = {
   linkedin: 'https://www.linkedin.com/in/abdallah-saber065/',
   dribbble: 'https://abdallah-saber.vercel.app/',
   locale: 'en-US',
+  logo: 'https://devtrend.tech/static/images/logo.png',
+  dark_logo: 'https://devtrend.tech/static/images/logo-dark.png',
 }
 
 export default siteMetadata;

@@ -1,9 +1,9 @@
-// pages/api/auth/request-verification.ts
+// pages/api/auth/request-password-reset.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { sendEmail } from '@/lib/email';
-import createEmailConfirmationForm from '@/lib/html_forms/EmailConfirmationForm';
+import createPasswordResetForm from '@/lib/html_forms/PasswordResetForm';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
@@ -28,25 +28,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'User not found' });
         }
 
-        if (user.email_verified) {
-            return res.status(400).json({ error: 'Email already verified' });
-        }
-
-        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour
 
         await prisma.user.update({
             where: { id: user.id },
-            data: { verification_token: verificationToken },
+            data: { reset_token: resetToken, reset_token_expires: resetTokenExpires },
         });
 
-        const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email?token=${verificationToken}`;
+        const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${resetToken}`;
 
-        const htmlContent = createEmailConfirmationForm(verificationUrl, user?.first_name ?? '', user.email);
-        const textContent = `Verify your email by clicking the link below:\n\n${verificationUrl}`;
+        const htmlContent = createPasswordResetForm(resetUrl, user?.first_name ?? '', user.email);
+        const textContent = `Reset your password by clicking the link below:\n\n${resetUrl}`;
 
-        await sendEmail(email, 'Verify your email', htmlContent, textContent);
+        await sendEmail(email, 'Reset your password', htmlContent, textContent);
 
-        res.status(200).json({ message: 'Verification email sent successfully' });
+        res.status(200).json({ message: 'Password reset email sent successfully' });
     } catch (error) {
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });

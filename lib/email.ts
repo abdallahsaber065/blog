@@ -18,7 +18,7 @@ export async function sendEmail(to: string, subject: string, htmlContent: string
             to,
             subject,
             html: htmlContent,
-            alternatives: [{ contentType: 'text/plain', content: textContent }],
+            // alternatives: [{ contentType: 'text/plain', content: textContent }],
         });
     } catch (error) {
         console.error('Error sending email:', error);
