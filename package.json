@@ -40,6 +40,7 @@
     "formidable": "^3.5.1",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
+    "highlight.js": "^11.10.0",
     "jsonwebtoken": "^9.0.2",
     "markdown-it": "^14.1.0",
     "next-auth": "^4.24.8",
