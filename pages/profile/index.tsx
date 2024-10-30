@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import { getSession, signIn, signOut, useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import RequestVerification from '@/components/signup/RequestVerification';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
@@ -74,7 +73,6 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     return (
         <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
-            
             <main className="container mx-auto py-16 px-4 flex-1">
                 <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
                     <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
@@ -127,6 +125,12 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                     className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
                                 >
                                     Edit Profile
+                                </button>
+                                <button
+                                    onClick={() => router.push('/auth/request-password-reset')}
+                                    className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-warning"
+                                >
+                                    Reset Password
                                 </button>
                                 <button
                                     onClick={handleDeleteAccount}

@@ -77,21 +77,21 @@ const Header: React.FC<HeaderProps> = () => {
           {session && RoleList.includes(session.user.role) && (
             <li>
               <details>
-                <summary className="hover:text-primary dark:hover:text-accent">Admin</summary>
+                <summary className={`${pathname?.startsWith("/admin") ? "text-primary dark:text-accent " :"hover:text-primary dark:hover:text-accent"}`}>Admin</summary>
                 <ul className="bg-light dark:bg-dark rounded-t-none p-2">
                   <li>
-                    <Link href="/admin" className="hover:text-primary dark:hover:text-accent">
+                    <Link href="/admin" className={` ${pathname === "/admin" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
                       Dashboard
                     </Link>
                   </li>
 
                   <li>
-                    <Link href="/admin/categories" className="hover:text-primary dark:hover:text-accent">
+                    <Link href="/admin/categories" className={` ${pathname === "/admin/categories" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
                       Edit Categories
                     </Link>
                   </li>
                   <li>
-                    <Link href="/admin/posts/create" className="hover:text-primary dark:hover:text-accent">
+                    <Link href="/admin/posts/create" className={` ${pathname === "/admin/posts/create" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
                       Create Post
                     </Link>
                   </li>
