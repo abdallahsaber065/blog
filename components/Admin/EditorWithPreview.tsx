@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdx';
 import CustomImage from '@/components/CustomImage';
-import toast from 'react-hot-toast';
+
 
 interface EditorWithPreviewProps {
     markdownText: string;
