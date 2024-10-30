@@ -1,14 +1,19 @@
 import Image from "next/image"
 import Link from "next/link"
-import profileImg from "public/profile-img.png"
+import lightLogo from "public/static/images/logo.png"
+import darkLogo from "public/static/images/logo-dark.png"
 
 const Logo = () => {
   return (
     <Link href="/" className="flex items-center text-dark dark:text-light">
-      <div className=" w-12 md:w-16 rounded-full overflow-hidden border border-solid border-dark dark:border-gray  mr-2 md:mr-4 hidden lg:block">
+
+      <div className="hidden sm:block">
+        <Image src={lightLogo} alt="Dev Trend logo" width={30} height={30} className="hidden dark:block" />
+
+        <Image src={darkLogo} alt="Dev Trend logo" width={30} height={30} className="block dark:hidden" />
       </div>
-      {/* <Image src={profileImg} alt="Dev Trend logo" className="w-full h-auto rounded-full" sizes="20vw" priority /> */}
-        <span className="font-bold dark:font-semibold text-lg md:text-2xl">Dev Trend</span>
+
+      <span className="font-bold dark:font-semibold text-lg xs:text-2xl ml-2">Dev Trend</span>
     </Link>
   )
 }
