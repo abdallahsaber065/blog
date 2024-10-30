@@ -48,9 +48,26 @@ const Editor = ({ markdown, onChange, parseMarkdown , onScroll} : EditorProps) =
 
         // lite editor
         <MdEditor
+            className='dark-editor'
             onScroll={onScroll}
             style={{ height: "500px" }}
             renderHTML={(text) => (parseMarkdown ? parseMarkdown(text) : mdParser.render(text))}
+            canView={
+                {
+                    menu: true,
+                    md: true,
+                    html: true,
+                    fullScreen: true,
+                    hideMenu: false,
+                    both: false,
+                }
+            }
+            view={{
+                menu: true,
+                md: true,
+                html: false,
+                
+            }}
             onChange={({ text }) => onChange(text)}
             value={markdown}
         />
