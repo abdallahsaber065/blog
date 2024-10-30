@@ -13,6 +13,7 @@ interface EditorWithPreviewProps {
 const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onContentChange }) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [view, setView] = useState<'editor' | 'preview'>('editor');
     const previewRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -61,8 +62,20 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     });
 
     return (
-        <div className="flex">
-            <div className="w-1/2 pr-2">
+        <div className="flex flex-col sm:flex-row">
+            <div className="sm:hidden flex justify-center my-1">
+                <label className="flex cursor-pointer gap-2 items-center">
+                    <span className="label-text text-lg">Editor</span>
+                    <input
+                        type="checkbox"
+                        className="toggle toggle-primary custom-toggle"
+                        checked={view === 'preview'}
+                        onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
+                    />
+                    <span className="label-text text-lg">Preview</span>
+                </label>
+            </div>
+            <div className={`w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
                 <label className="block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
                 <Editor
                     markdown={markdownText}
@@ -70,7 +83,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     onScroll={(e) => handleEditorScroll(e, 'md')}
                 />
             </div>
-            <div className="w-1/2 pl-2">
+            <div className={`w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
                 <h2 className="text-xl font-bold my-4">Preview</h2>
                 <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }}>
                     {error ? (
