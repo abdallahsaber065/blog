@@ -101,7 +101,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                 if (response.ok) {
                     toast.success('Profile image updated successfully.');
                     update({ profile_image_url: media.file_url });
-                    router.reload();
+                    // scroll to top
                 } else {
                     toast.error('Failed to update profile image.');
                 }

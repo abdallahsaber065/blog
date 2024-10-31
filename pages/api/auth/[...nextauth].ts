@@ -23,7 +23,7 @@ declare module 'next-auth' {
             email_verified: boolean | null;
             role: string;
             name: string;
-            profile_image_url: string 
+            profile_image_url: string
         };
     }
 
@@ -92,7 +92,24 @@ const options: NextAuthOptions = {
         },
         async jwt({ token, user, trigger, session }) {
             if (trigger === "update" && session) {
-                token.profile_image_url = session.profile_image_url || token.profile_image_url
+                console.log('session', session)
+                if (session.id) {
+                    token.id = session.id;
+                } if (session.email) {
+                    token.email = session.email;
+                }
+                if (session.email_verified) {
+                    token.email_verified = session.email_verified;
+                }
+                if (session.role) {
+                    token.role = session.role;
+                }
+                if (session.name) {
+                    token.name = session.name;
+                }
+                if (session.profile_image_url) {
+                    token.profile_image_url = session.profile_image_url;
+                }
             }
             if (user) {
                 token.id = user.id;

@@ -98,8 +98,8 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
         return (
             <main className="container mx-auto py-16 px-4 flex-1 text-slate-900">
                 <div className="max-w-md mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Edit Profile</h1>
-                    <p className="text-gray-800 dark:text-light">You need to be signed in to edit your profile.</p>
+                    <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-light">Edit Profile</h1>
+                    <p className="text-slate-800 dark:text-light">You need to be signed in to edit your profile.</p>
                 </div>
             </main>
         );
@@ -109,11 +109,11 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
         <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
             <main className="container mx-auto py-16 px-4 flex-1">
                 <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Edit Profile</h1>
+                    <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-light">Edit Profile</h1>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="form-control">
                             <label className="label" htmlFor="username">
-                                <span className="label-text  block mb-1 text-gray-800 dark:text-light font-bold text-lg">Username</span>
+                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Username</span>
                             </label>
                             <input
                                 type="text"
@@ -127,7 +127,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="email">
-                                <span className="label-text  block mb-1 text-gray-800 dark:text-light font-bold text-lg">Email</span>
+                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Email</span>
                             </label>
                             <input
                                 type="email"
@@ -141,7 +141,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="first_name">
-                                <span className="label-text  block mb-1 text-gray-800 dark:text-light font-bold text-lg">First Name</span>
+                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">First Name</span>
                             </label>
                             <input
                                 type="text"
@@ -154,7 +154,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="last_name">
-                                <span className="label-text  block mb-1 text-gray-800 dark:text-light font-bold text-lg">Last Name</span>
+                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Last Name</span>
                             </label>
                             <input
                                 type="text"
@@ -167,7 +167,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="bio">
-                                <span className="label-text  block mb-1 text-gray-800 dark:text-light font-bold text-lg">Bio</span>
+                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Bio</span>
                             </label>
                             <textarea
                                 id="bio"
