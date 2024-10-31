@@ -141,7 +141,21 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                 <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
                     <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
                     {user ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <>
+                            <div className="text-gray-800 dark:text-light text-center">
+                                <strong>Profile Image:</strong>
+                                {user.profile_image_url && (
+                                    <img src={currentImage || user.profile_image_url} alt="" className="w-24 h-24 rounded-full mx-auto" />
+                                )}
+                            </div>
+                            <div className="flex justify-center items-center space-x-4">
+                                <input type="file" onChange={handleFileChange} className="block text-gray-800 dark:text-light" />
+                                <button onClick={handleUpload} className="font-bold py-2 px-4 rounded btn btn-primary">
+                                    Upload New Profile Image
+                                </button>
+                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+                            
                             <section className="space-y-4">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Personal Information</h2>
                                 <div className="text-gray-800 dark:text-light">
@@ -159,16 +173,6 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 <div className="text-gray-800 dark:text-light">
                                     <strong>Bio:</strong> {user.bio}
                                 </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Profile Image:</strong>
-                                    {user.profile_image_url && (
-                                        <img src={currentImage || user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
-                                    )}
-                                </div>
-                                <input type="file" onChange={handleFileChange} className="block w-full text-gray-800 dark:text-light" />
-                                <button onClick={handleUpload} className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-primary">
-                                    Upload New Profile Image
-                                </button>
                             </section>
                             <section className="space-y-4">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
@@ -207,7 +211,8 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                     Delete Account
                                 </button>
                             </section>
-                        </div>
+                            </div>
+                        </>
                     ) : (
                         <p className="text-gray-800 dark:text-light">Loading user data...</p>
                     )}
