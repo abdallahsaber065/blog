@@ -26,7 +26,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage = ({ user }: ProfilePageProps) => {
-    const { data: session, status , update} = useSession();
+    const { data: session, status, update } = useSession();
     const router = useRouter();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
@@ -65,27 +65,27 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             toast.error('Please select a file to upload.');
             return;
         }
-    
+
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('userId', user?.id.toString() || '');
         formData.append('saveDir', 'profile-images');
-    
+
         const res = await fetch('/api/upload-image', {
             method: 'POST',
             body: formData,
         });
-    
+
         if (res.ok) {
             toast.success('File uploaded successfully.');
             const responsejson = await res.json();
             const media: MediaLibrary = responsejson.media;
-    
+
             try {
                 const data = {
                     profile_image_url: media.file_url,
                 };
-    
+
                 const response = await fetch('/api/users', {
                     method: 'PUT',
                     headers: {
@@ -95,7 +95,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                         id: session?.user.id, data
                     }),
                 });
-    
+
                 if (response.ok) {
                     toast.success('Profile image updated successfully.');
                     const scrollPosition = window.scrollY; // Save the current scroll position
@@ -148,69 +148,69 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                     <img src={currentImage || user.profile_image_url} alt="" className="w-24 h-24 rounded-full mx-auto" />
                                 )}
                             </div>
-                            <div className="flex justify-center items-center space-x-4">
+                            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
                                 <input type="file" onChange={handleFileChange} className="block text-gray-800 dark:text-light" />
                                 <button onClick={handleUpload} className="font-bold py-2 px-4 rounded btn btn-primary">
                                     Upload New Profile Image
                                 </button>
                             </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
-                            
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Personal Information</h2>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Username:</strong> {user.username}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Email:</strong> {user.email}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>First Name:</strong> {user.first_name}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Last Name:</strong> {user.last_name}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Bio:</strong> {user.bio}
-                                </div>
-                            </section>
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Role:</strong> {user.role}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Email Verified:</strong> {user.email_verified ? 'Yes' : 'No'}
-                                    {!user.email_verified && <RequestVerification />}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}
-                                </div>
-                                <div className="text-gray-800 dark:text-light">
-                                    <strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}
-                                </div>
-                            </section>
-                            <section className="col-span-1 md:col-span-2 space-y-4">
-                                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Actions</h2>
-                                <button
-                                    onClick={() => router.push('/profile/edit')}
-                                    className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
-                                >
-                                    Edit Profile
-                                </button>
-                                <button
-                                    onClick={() => router.push('/auth/request-password-reset')}
-                                    className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-warning"
-                                >
-                                    Reset Password
-                                </button>
-                                <button
-                                    onClick={handleDeleteAccount}
-                                    className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-error"
-                                >
-                                    Delete Account
-                                </button>
-                            </section>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+
+                                <section className="space-y-4">
+                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Personal Information</h2>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Username:</strong> {user.username}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Email:</strong> {user.email}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>First Name:</strong> {user.first_name}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Last Name:</strong> {user.last_name}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Bio:</strong> {user.bio}
+                                    </div>
+                                </section>
+                                <section className="space-y-4">
+                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Role:</strong> {user.role}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Email Verified:</strong> {user.email_verified ? 'Yes' : 'No'}
+                                        {!user.email_verified && <RequestVerification />}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}
+                                    </div>
+                                    <div className="text-gray-800 dark:text-light">
+                                        <strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}
+                                    </div>
+                                </section>
+                                <section className="col-span-1 md:col-span-2 space-y-4">
+                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Actions</h2>
+                                    <button
+                                        onClick={() => router.push('/profile/edit')}
+                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
+                                    >
+                                        Edit Profile
+                                    </button>
+                                    <button
+                                        onClick={() => router.push('/auth/request-password-reset')}
+                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-warning"
+                                    >
+                                        Reset Password
+                                    </button>
+                                    <button
+                                        onClick={handleDeleteAccount}
+                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-error"
+                                    >
+                                        Delete Account
+                                    </button>
+                                </section>
                             </div>
                         </>
                     ) : (
