@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import RequestVerification from '@/components/signup/RequestVerification';
+import { MediaLibrary } from "@prisma/client";
 
 interface User {
     id: string;
@@ -25,10 +26,10 @@ interface ProfilePageProps {
 }
 
 const ProfilePage = ({ user }: ProfilePageProps) => {
-    const { data: session, status } = useSession();
+    const { data: session, status , update} = useSession();
     const router = useRouter();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+    const [currentImage, setCurrentImage] = useState<string | null>(null);
     const handleDeleteAccount = async () => {
         if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
             try {
@@ -55,6 +56,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
+            setCurrentImage(URL.createObjectURL(e.target.files[0]));
         }
     };
 
@@ -69,15 +71,43 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('userId', user?.id.toString() || '');
+        formData.append('saveDir', 'profile-images');
 
-        const res = await fetch('/api/upload-profile-image', {
+        const res = await fetch('/api/upload-image', {
             method: 'POST',
             body: formData,
         });
 
         if (res.ok) {
-            toast.success('Profile image updated successfully.');
-            router.reload();
+            toast.success('File uploaded successfully.');
+            const responsejson = await res.json();
+            const media: MediaLibrary = responsejson.media;
+
+            try {
+                const data = {
+                    profile_image_url: media.file_url,
+                };
+
+                const response = await fetch('/api/users', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: session?.user.id, data
+                    }),
+                });
+
+                if (response.ok) {
+                    toast.success('Profile image updated successfully.');
+                    update({ profile_image_url: media.file_url });
+                    router.reload();
+                } else {
+                    toast.error('Failed to update profile image.');
+                }
+            } catch (error) {
+                toast.error('An error occurred. Please try again.');
+            }
         } else {
             const data = await res.json();
             toast.error(data.error || 'Something went wrong');
@@ -132,7 +162,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 <div className="text-gray-800 dark:text-light">
                                     <strong>Profile Image:</strong>
                                     {user.profile_image_url && (
-                                        <img src={user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
+                                        <img src={currentImage || user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
                                     )}
                                 </div>
                                 <form onSubmit={handleUpload} className="space-y-4">

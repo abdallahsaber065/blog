@@ -80,8 +80,8 @@ const options: NextAuthOptions = {
         async session({ session, token }) {
             if (token) {
                 session.user = {
-                    ...session.user,
                     id: token.id as string,
+                    email: token.email as string,
                     email_verified: token.email_verified as boolean | null,
                     role: token.role as string,
                     name: token.name as string,
@@ -90,9 +90,13 @@ const options: NextAuthOptions = {
             }
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            if (trigger === "update" && session) {
+                token.profile_image_url = session.profile_image_url || token.profile_image_url
+            }
             if (user) {
                 token.id = user.id;
+                token.email = user.email;
                 token.email_verified = user.email_verified;
                 token.role = user.role;
                 token.name = user.name;

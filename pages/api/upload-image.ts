@@ -11,7 +11,7 @@ export const config = {
     },
 };
 
-const uploadDir = path.join(process.cwd(), 'public/uploads/profile-images');
+const uploadDir = path.join(process.cwd(), 'public/uploads/temp');
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
-
+    console.log(req.body);
     const form = new Formidable({
         uploadDir,
         keepExtensions: true,
@@ -30,27 +30,49 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     form.parse(req, async (err, fields, files) => {
+        console.log(fields);
         if (err) {
             return res.status(500).json({ error: 'Error parsing the files' });
         }
 
         const userId = Array.isArray(fields.userId) ? fields.userId[0] : fields.userId;
         const file = Array.isArray(files.file) ? files.file[0] : files.file;
+        const saveDir = Array.isArray(fields.saveDir) ? fields.saveDir[0] : fields.saveDir;
+
+        // make sure the saveDir exists
+        if (!saveDir) {
+            return res.status(400).json({ error: 'Save directory is required' });
+        }
+        const saveDirPath = path.join(process.cwd(), 'public/uploads', saveDir);
+        const localImageUploadPath = path.join('uploads', saveDir);
+
+        if (!fs.existsSync(saveDirPath)) {
+            fs.mkdirSync(saveDirPath, { recursive: true });
+        }
 
         if (!userId || !file) {
             return res.status(400).json({ error: 'User ID and file are required' });
         }
 
-        const filePath = path.join(uploadDir, file.newFilename);
+        const localImageFilePath = path.join(localImageUploadPath, file.newFilename);
 
         try {
-            // Update the user's profile image URL in the database
-            const updatedUser = await prisma.user.update({
-                where: { id: parseInt(userId, 10) },
-                data: { profile_image_url: `/uploads/profile-images/${file.newFilename}` },
+            // Save the uploaded image to the MediaLibrary table
+            const mediaEntry = await prisma.mediaLibrary.create({
+                data: {
+                    file_name: file.newFilename,
+                    file_type: file.mimetype,
+                    file_size: file.size,
+                    file_url: localImageFilePath,
+                    uploaded_by_id: parseInt(userId, 10),
+                },
             });
+            fs.renameSync(file.filepath, path.join(saveDirPath, file.newFilename));
 
-            return res.status(200).json({ message: 'Profile image updated successfully', user: updatedUser });
+
+            console.log(mediaEntry);
+
+            return res.status(200).json({ message: 'Profile image updated successfully', media: mediaEntry });
         } catch (error) {
             return res.status(500).json({ error: 'Error updating profile image' });
         }

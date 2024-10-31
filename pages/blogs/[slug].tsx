@@ -8,7 +8,7 @@ import { Options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
 import React, { useEffect } from "react";
-import CustomImage from '@/components/CustomImage';
+import CustomImage from '@/components/Image/CustomImage';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import axios from "axios";
