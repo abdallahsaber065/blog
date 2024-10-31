@@ -60,34 +60,32 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         }
     };
 
-    const handleUpload = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleUpload = async () => {
         if (!selectedFile) {
             toast.error('Please select a file to upload.');
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('userId', user?.id.toString() || '');
         formData.append('saveDir', 'profile-images');
-
+    
         const res = await fetch('/api/upload-image', {
             method: 'POST',
             body: formData,
         });
-
+    
         if (res.ok) {
             toast.success('File uploaded successfully.');
             const responsejson = await res.json();
             const media: MediaLibrary = responsejson.media;
-
+    
             try {
                 const data = {
                     profile_image_url: media.file_url,
                 };
-
+    
                 const response = await fetch('/api/users', {
                     method: 'PUT',
                     headers: {
@@ -97,11 +95,13 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                         id: session?.user.id, data
                     }),
                 });
-
+    
                 if (response.ok) {
                     toast.success('Profile image updated successfully.');
-                    update({ profile_image_url: media.file_url });
-                    // scroll to top
+                    const scrollPosition = window.scrollY; // Save the current scroll position
+                    update({ profile_image_url: media.file_url }).then(() => {
+                        window.scrollTo(0, 40); // Restore the scroll position
+                    });
                 } else {
                     toast.error('Failed to update profile image.');
                 }
@@ -165,12 +165,10 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                         <img src={currentImage || user.profile_image_url} alt="Profile" className="w-24 h-24 rounded-full" />
                                     )}
                                 </div>
-                                <form onSubmit={handleUpload} className="space-y-4">
-                                    <input type="file" onChange={handleFileChange} className="block w-full text-gray-800 dark:text-light" />
-                                    <button type="submit" className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-primary">
-                                        Upload New Profile Image
-                                    </button>
-                                </form>
+                                <input type="file" onChange={handleFileChange} className="block w-full text-gray-800 dark:text-light" />
+                                <button onClick={handleUpload} className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-primary">
+                                    Upload New Profile Image
+                                </button>
                             </section>
                             <section className="space-y-4">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
