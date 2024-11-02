@@ -1,0 +1,110 @@
+// components/Admin/CreatePost/OutlineSettings.tsx
+import React from 'react';
+
+interface OutlineSettingsProps {
+    topic: string;
+    setTopic: (value: string) => void;
+    numOfTerms: number;
+    setNumOfTerms: (value: number) => void;
+    numOfKeywords: number;
+    setNumOfKeywords: (value: number) => void;
+    numOfPoints: number;
+    setNumOfPoints: (value: number) => void;
+    enableNumOfPoints: boolean;
+    setEnableNumOfPoints: (value: boolean) => void;
+    userCustomInstructions: string;
+    setUserCustomInstructions: (value: string) => void;
+    showOutlineSettings: boolean;
+    setShowOutlineSettings: (value: boolean) => void;
+}
+
+const OutlineSettings: React.FC<OutlineSettingsProps> = ({
+    topic,
+    setTopic,
+    numOfTerms,
+    setNumOfTerms,
+    numOfKeywords,
+    setNumOfKeywords,
+    numOfPoints,
+    setNumOfPoints,
+    enableNumOfPoints,
+    setEnableNumOfPoints,
+    userCustomInstructions,
+    setUserCustomInstructions,
+    showOutlineSettings,
+    setShowOutlineSettings,
+}) => {
+    return (
+        <div className="mb-4">
+            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Topic</label>
+            <input
+                type="text"
+                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+            />
+            <button
+                className="text-blue-500 underline"
+                onClick={() => setShowOutlineSettings(!showOutlineSettings)}
+            >
+                {showOutlineSettings ? 'Hide' : 'Show'} Outline Advanced Settings
+            </button>
+            {showOutlineSettings && (
+                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray">
+                    <div className="flex space-x-4 mb-4">
+                        <div className="flex-1">
+                            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Terms</label>
+                            <input
+                                type="number"
+                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                value={numOfTerms}
+                                onChange={(e) => setNumOfTerms(Number(e.target.value))}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Keywords</label>
+                            <input
+                                type="number"
+                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                value={numOfKeywords}
+                                onChange={(e) => setNumOfKeywords(Number(e.target.value))}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Points</label>
+                            <input
+                                type="number"
+                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                                value={numOfPoints}
+                                onChange={(e) => setNumOfPoints(Number(e.target.value))}
+                                disabled={!enableNumOfPoints}
+                            />
+                            <div className="flex items-center mt-2">
+                                <input
+                                    type="checkbox"
+                                    className="mr-2"
+                                    checked={enableNumOfPoints}
+                                    onChange={() => {
+                                        setEnableNumOfPoints(!enableNumOfPoints);
+                                        if (!enableNumOfPoints) setNumOfPoints(0);
+                                    }}
+                                />
+                                <label className="text-gray dark:text-lightgray">Enable</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
+                        <textarea
+                            className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                            value={userCustomInstructions}
+                            onChange={(e) => setUserCustomInstructions(e.target.value)}
+                        />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default OutlineSettings;
