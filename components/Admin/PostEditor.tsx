@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import EditorWithPreview from "@/components/Admin/EditorWithPreview";
-import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+import makeAnimated from 'react-select/animated';
+import { ClipLoader } from 'react-spinners';
+
+const animatedComponents = makeAnimated();
 
 interface Post {
     id: number;
@@ -32,10 +36,27 @@ interface PostEditorProps {
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleContentChange = async (value: string) => {
         setMarkdownText(value);
         setCurrentPost({ ...currentPost, content: value });
+    };
+
+    const handleCreateTag = (inputValue: string) => {
+        const newTag = { id: -Date.now(), name: inputValue }; // Temporary negative ID for new tags
+        setCurrentPost({ 
+            ...currentPost, 
+            tags: [...currentPost.tags, newTag] 
+        });
+    };
+
+    const handleCreateCategory = (inputValue: string) => {
+        const newCategory = { id: -Date.now(), name: inputValue }; // Temporary negative ID for new category
+        setCurrentPost({ 
+            ...currentPost, 
+            category: newCategory 
+        });
     };
 
     const handleFieldChange = (field: keyof Post, value: any) => {
@@ -48,9 +69,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
         }
     };
 
-    const onSaveListener = () => {
-        onSave(currentPost);
-
+    const handleSave = async () => {
+        setLoading(true);
+        await onSave(currentPost);
+        setLoading(false);
     };
 
     return (
@@ -70,35 +92,41 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
             />
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
-                <Select
+                <CreatableSelect
                     isMulti
+                    components={animatedComponents}
                     className="my-react-select-container"
                     classNamePrefix="my-react-select"
                     value={currentPost.tags}
                     onChange={(selectedOptions) => handleFieldChange('tags', selectedOptions)}
                     options={tags}
+                    onCreateOption={handleCreateTag}
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => String(option.id)}
+                    formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
                 />
             </div>
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
-                <Select
+                <CreatableSelect
+                    components={animatedComponents}
                     className="my-react-select-container"
                     classNamePrefix="my-react-select"
                     value={currentPost.category}
                     onChange={(selectedOption) => handleFieldChange('category', selectedOption)}
                     options={categories}
+                    onCreateOption={handleCreateCategory}
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => String(option.id)}
+                    formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
                 />
             </div>
             <button
                 className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
-                onClick={onSaveListener}
+                onClick={handleSave}
+                disabled={loading}
             >
-                <FaSave className="inline mr-2" />
-                Save
+                {loading ? <ClipLoader size={20} color={"#fff"} /> : <><FaSave className="inline mr-2" /> Save</>}
             </button>
         </div>
     );

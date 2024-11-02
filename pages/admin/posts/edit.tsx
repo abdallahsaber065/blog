@@ -7,6 +7,7 @@ import PostEditor from '@/components/Admin/PostEditor';
 import Tag from '@prisma/client';
 import withAuth from '@/components/Admin/withAuth';
 import readingTime from "reading-time"
+import { slug } from 'github-slugger';
 
 interface Post {
     id: number;
@@ -101,46 +102,73 @@ const PostEditorPage: React.FC = () => {
         setLoading(false);
     };
 
+     // pages/admin/posts/edit.tsx - update handleSave function
     const handleSave = async (updatedPostRecieved: any) => {
         setLoading(true);
         let updatedPost = { ...updatedPostRecieved };
         try {
-            console.log(updatedPost.tags);
-            // serialize tags to match the API schema
-            updatedPost.tags = updatedPost.tags.map((tag: Tag) => (
-                {
-                    id: tag.id
-                }));
-
-            // serialize category to match the API schema
-            updatedPost.category = {
-                id: updatedPost.category.id
+            // Format tags - handle both existing and new tags
+            updatedPost.tags = {
+                set: [], // Clear existing connections
+                connectOrCreate: updatedPost.tags.map((tag: Tag) => {
+                    if (tag.id > 0) {
+                        // Existing tag
+                        return {
+                            where: { id: tag.id },
+                            create: { // Required even for existing tags
+                                name: tag.name,
+                                slug: slug(tag.name)
+                            }
+                        };
+                    } else {
+                        // New tag
+                        return {
+                            where: { slug: slug(tag.name) },
+                            create: {
+                                name: tag.name,
+                                slug: slug(tag.name)
+                            }
+                        };
+                    }
+                })
             };
-
-            // remove id from updatedPost
+    
+            // Format category
+            updatedPost.category = {
+                connectOrCreate: {
+                    where: {
+                        slug: slug(updatedPost.category.name)
+                    },
+                    create: {
+                        name: updatedPost.category.name,
+                        slug: slug(updatedPost.category.name)
+                    }
+                }
+            };
+    
             let finalPost = { ...updatedPost };
             delete finalPost.id;
-
-            // calculate reading time
             finalPost.reading_time = Math.round(readingTime(finalPost.content).minutes);
-
+    
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(
-                    {
-                        data: finalPost,
-                        id: updatedPost.id
-                    }),
+                body: JSON.stringify({
+                    data: finalPost,
+                    id: updatedPost.id
+                }),
             });
+    
             if (response.ok) {
                 toast.success('Post updated successfully');
             } else {
-                toast.error('Failed to update post');
+                const errorData = await response.json();
+                toast.error(`Failed to update post: ${errorData.error}`);
             }
         } catch (error) {
+            console.error('Save error:', error);
             toast.error('Failed to update post');
         } finally {
             setLoading(false);

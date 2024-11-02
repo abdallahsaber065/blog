@@ -87,20 +87,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 const updateData: any = {};
-
                 if (body.data.tags) {
-                    updateData.tags = {
-                        set: body.data.tags.map((tag: any) => ({ id: tag.id })),
-                    };
+                    updateData.tags = body.data.tags;  // Pass through the complete tags operation
                 }
 
                 if (body.data.category) {
-                    updateData.category = {
-                        connect: {
-                            id: body.data.category.id,
-                        },
-                    };
+                    updateData.category = body.data.category;  // Pass through the complete category operation
                 }
+
 
                 if (body.data.author) {
                     updateData.author = {
