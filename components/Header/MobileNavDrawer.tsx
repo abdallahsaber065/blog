@@ -79,6 +79,14 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                                             Create Post
                                         </Link>
                                     </li>
+
+                                    {session && "admin" === session.user.role && (
+                                        <li>
+                                            <Link href="/admin/users" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/users' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                                                Manage Users
+                                            </Link>
+                                        </li>
+                                    )}
                                 </ul>
                             )}
                         </li>
