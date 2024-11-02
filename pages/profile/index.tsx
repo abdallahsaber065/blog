@@ -4,10 +4,11 @@ import { getSession, signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ProfileInfo from '@/components/ProfileInfo';
 import AccountDetails from '@/components/AccountDetails';
 import ProfileActions from '@/components/ProfileActions';
+import { FaFileImage, FaFileUpload } from 'react-icons/fa';
 
 interface User {
     id: string;
@@ -32,6 +33,17 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const router = useRouter();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
+    const [imageError, setImageError] = useState(false);
+    const userName = session?.user.name || '';
+    const initials = userName.split(' ').map(name => name[0]).join('').substring(0, userName.includes(' ') ? 2 : 1);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
 
     const handleDeleteAccount = async () => {
         {
@@ -123,7 +135,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     if (status === 'unauthenticated') {
         return (
-            <main className="container mx-auto py-16 px-4 flex-1 text-slate-900">
+            <main className="container mx-auto pb-16 px-4 flex-1 text-slate-900">
                 <div className="max-w-md mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg">
                     <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
                     <p className="text-gray-800 dark:text-light">You need to be signed in to view your profile.</p>
@@ -140,21 +152,48 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     return (
         <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
-            <main className="container mx-auto py-16 px-4 flex-1">
+            <main className="container mx-auto pb-16 px-4 flex-1">
+                <h1 className="text-4xl font-bold text-center text-gray-800 pt-8 dark:text-light">Profile</h1>
+
                 <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
                     {user ? (
                         <>
                             <div className="text-gray-800 dark:text-light text-center">
-                                <strong>Profile Image:</strong>
-                                {user.profile_image_url && (
-                                    <img src={currentImage || user.profile_image_url} alt="" className="w-24 h-24 rounded-full mx-auto" />
-                                )}
+                                <div className="flex justify-center">
+                                    {!imageError ? (
+                                        <img
+                                            src={currentImage || user.profile_image_url}
+                                            alt="Profile Image"
+                                            className="rounded-full w-24 h-24 object-cover p-1"
+                                            onError={() => setImageError(true)}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center bg-slate-950 rounded-full w-24 h-24 object-cover text-white text-3xl font-bold">
+                                            {initials}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
-                                <input type="file" onChange={handleFileChange} className="block text-gray-800 dark:text-light" />
-                                <button onClick={handleUpload} className="font-bold py-2 px-4 rounded btn btn-primary">
-                                    Upload New Profile Image
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                />
+                                <button
+                                    onClick={handleButtonClick}
+                                    className="font-bold py-2 px-4 rounded flex items-center space-x-2 bg-blue-500 text-white"
+                                >
+                                    <FaFileImage />
+                                    <span>Choose Image</span>
+                                </button>
+                                <button
+                                    onClick={handleUpload}
+                                    className="font-bold py-2 px-4 rounded flex items-center space-x-2 bg-green-500 text-white"
+                                >
+                                    <FaFileUpload />
+                                    <span>Save</span>
                                 </button>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
