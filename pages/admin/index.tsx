@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import PostList from '@/components/Admin/PostList';
-import { useSession } from 'next-auth/react';
 import withAuth from '@/components/Admin/withAuth';
 
 interface Post {
@@ -15,6 +14,7 @@ interface Post {
     category: { id: number; name: string };
     author: { id: number; first_name: string; last_name: string };
     created_at: string;
+    status: string;
 }
 
 const DashboardPage: React.FC = () => {
@@ -22,17 +22,17 @@ const DashboardPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-
     useEffect(() => {
         loadPosts();
     }, []);
 
     const loadPosts = async () => {
         setLoading(true);
-        const selectString = JSON.stringify({
+        const blogPostSelectFields = JSON.stringify({
             id: true,
             slug: true,
             title: true,
+            status: true,
             tags: {
                 select: {
                     id: true,
@@ -55,7 +55,7 @@ const DashboardPage: React.FC = () => {
             },
         });
 
-        const postsData = await fetch('/api/posts?select=' + selectString).then((res) => res.json());
+        const postsData = await fetch('/api/posts?select=' + blogPostSelectFields).then((res) => res.json());
         setPosts(postsData);
         setLoading(false);
     };
@@ -89,8 +89,7 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-400
-            ">Dashboard</h1>
+            <h1 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-400">Dashboard</h1>
             <div className="mb-4">
                 <button
                     className="bg-blue-500 text-white p-2 rounded"
@@ -100,7 +99,7 @@ const DashboardPage: React.FC = () => {
                 </button>
             </div>
             {loading && <ClipLoader />}
-            <PostList posts={posts} onSelectPost={handleEdit} onDeletePost={handleDelete} />
+            <PostList posts={posts} onSelectPost={handleEdit} onDeletePost={handleDelete} setPosts={setPosts} />
         </div>
     );
 };
