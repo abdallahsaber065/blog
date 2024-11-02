@@ -75,28 +75,27 @@ const Header: React.FC<HeaderProps> = () => {
             </Link>
           </li>
           {session && RoleList.includes(session.user.role) && (
-            <li>
-              <details>
-                <summary className={`${pathname?.startsWith("/admin") ? "text-primary dark:text-accent " :"hover:text-primary dark:hover:text-accent"}`}>Admin</summary>
-                <ul className="bg-light dark:bg-dark rounded-t-none p-2">
-                  <li>
-                    <Link href="/admin" className={` ${pathname === "/admin" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
-                      Dashboard
-                    </Link>
-                  </li>
-
-                  <li>
-                    <Link href="/admin/categories" className={` ${pathname === "/admin/categories" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
-                      Edit Categories
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/admin/posts/create" className={` ${pathname === "/admin/posts/create" ? "dark:text-primary text-accent " :"hover:text-primary dark:hover:text-accent"}`}>
-                      Create Post
-                    </Link>
-                  </li>
-                </ul>
-              </details>
+            <li className="dropdown dropdown-hover">
+              <Link href="#" className={`${pathname?.startsWith("/admin") ? "text-primary dark:text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+              Admin
+              </Link>
+              <ul className="dropdown-content bg-light dark:bg-dark rounded-t-none p-2 left-1/2 transform -translate-x-1/2">
+              <li>
+                <Link href="/admin" className={`${pathname === "/admin" ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin/categories" className={`${pathname === "/admin/categories" ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                Edit Categories
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin/posts/create" className={`${pathname === "/admin/posts/create" ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                Create Post
+                </Link>
+              </li>
+              </ul>
             </li>
           )}
         </ul>
