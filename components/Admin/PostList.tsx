@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FaTrash, FaEdit } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
 interface Post {
     id: number;
@@ -11,15 +11,17 @@ interface Post {
     category: { id: number; name: string };
     author: { id: number; first_name: string; last_name: string };
     created_at: string;
+    status: string;
 }
 
 interface PostListProps {
     posts: Post[];
     onSelectPost: (id: number) => void;
     onDeletePost: (id: number) => void;
+    setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
 }
 
-const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }) => {
+const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, setPosts }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +31,8 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
     const [advancedSearch, setAdvancedSearch] = useState(false);
     const [authorFilter, setAuthorFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
+    const [editingPostId, setEditingPostId] = useState<number | null>(null);
+    const [editedStatus, setEditedStatus] = useState<string>('');
     const { data: session, status } = useSession();
 
     const deleteRoles = ['admin'];
@@ -60,6 +64,35 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
 
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
+    const handleSaveStatus = async (postId: number) => {
+        try {
+            const response = await fetch(`/api/posts?id=${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: { status: editedStatus },
+                    id: postId,
+                }),
+            });
+            if (response.ok) {
+                toast.success('Status updated successfully');
+                setEditingPostId(null);
+                setEditedStatus('');
+                // Update the posts state directly
+                const updatedPosts = posts.map(post => 
+                    post.id === postId ? { ...post, status: editedStatus } : post
+                );
+                setPosts(updatedPosts);
+            } else {
+                toast.error('Failed to update status');
+            }
+        } catch (error) {
+            toast.error('Failed to update status');
+        }
+    };
+
     return (
         <div className="p-4 bg-white dark:bg-dark rounded shadow-md">
             <div className="mb-4 flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
@@ -82,7 +115,6 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                 </select>
                 <button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    // highliht the text color
                     className="p-2 bg-zinc-600 text-white rounded w-full md:w-auto dark:text-slate-300 font-bold"
                 >
                     Sort {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
@@ -134,8 +166,50 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost }
                             {post.title}
                         </a>
                         <div className="flex space-x-2 w-full md:w-auto">
+                            {editingPostId === post.id ? (
+                                <>
+                                    <select
+                                        value={editedStatus}
+                                        onChange={(e) => setEditedStatus(e.target.value)}
+                                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                                    >
+                                        <option value="published">Published</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                    <button
+                                        className="text-green-500"
+                                        onClick={() => handleSaveStatus(post.id)}
+                                    >
+                                        <FaSave />
+                                    </button>
+                                    <button
+                                        className="text-red-500"
+                                        onClick={() => {
+                                            setEditingPostId(null);
+                                            setEditedStatus('');
+                                        }}
+                                    >
+                                        <FaTimes />
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <span>{post.status}</span>
+                                    <button
+                                        className="text-blue-500 pr-3"
+                                        onClick={() => {
+                                            setEditingPostId(post.id);
+                                            setEditedStatus(post.status);
+                                        }}
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                </>
+                            )}
+                            |
                             <button
-                                className="text-green-500"
+                                className="text-green-500 "
                                 onClick={() => onSelectPost(post.id)}
                             >
                                 <FaEdit />
