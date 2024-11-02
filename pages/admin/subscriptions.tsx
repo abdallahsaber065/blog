@@ -140,7 +140,6 @@ const Subscriptions: React.FC = () => {
 
     return (
         <div className="p-4 dark:bg-gray-800 dark:text-white">
-            <Toaster />
             <h1 className="text-2xl font-bold mb-4">Newsletter Subscriptions</h1>
             <div className="mb-4 flex items-center">
                 <input
