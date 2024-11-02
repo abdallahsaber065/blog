@@ -101,8 +101,9 @@ const PostEditorPage: React.FC = () => {
         setLoading(false);
     };
 
-    const handleSave = async (updatedPost: any) => {
+    const handleSave = async (updatedPostRecieved: any) => {
         setLoading(true);
+        let updatedPost = { ...updatedPostRecieved };
         try {
             console.log(updatedPost.tags);
             // serialize tags to match the API schema
@@ -136,8 +137,6 @@ const PostEditorPage: React.FC = () => {
             });
             if (response.ok) {
                 toast.success('Post updated successfully');
-                // reload the page to get the updated post
-                router.reload();
             } else {
                 toast.error('Failed to update post');
             }
