@@ -165,13 +165,17 @@ const Dashboard = () => {
       </div>
 
       {showDeleteConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded">
-            <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
-            <p>Are you sure you want to delete this user?</p>
-            <div className="mt-4">
-              <button className="btn btn-error mr-2" onClick={handleDelete}>Delete</button>
-              <button className="btn btn-secondary" onClick={closeDeleteConfirmation}>Cancel</button>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Confirm Deletion</h2>
+            <p className="text-slate-700 dark:text-slate-100 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
+            <div className="flex justify-end space-x-4">
+              <button className="btn btn-error" onClick={handleDelete}>
+                Delete
+              </button>
+              <button className="btn btn-secondary" onClick={closeDeleteConfirmation}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
