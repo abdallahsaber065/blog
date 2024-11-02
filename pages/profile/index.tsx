@@ -1,11 +1,13 @@
+// pages/admin/users/index.tsx
 /* eslint-disable @next/next/no-img-element */
 import { getSession, signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
-import RequestVerification from '@/components/signup/RequestVerification';
-import { MediaLibrary } from "@prisma/client";
+import ProfileInfo from '@/components/ProfileInfo';
+import AccountDetails from '@/components/AccountDetails';
+import ProfileActions from '@/components/ProfileActions';
 
 interface User {
     id: string;
@@ -30,8 +32,9 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const router = useRouter();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
+
     const handleDeleteAccount = async () => {
-        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        {
             try {
                 const response = await fetch(`/api/users`, {
                     method: 'DELETE',
@@ -79,7 +82,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         if (res.ok) {
             toast.success('File uploaded successfully.');
             const responsejson = await res.json();
-            const media: MediaLibrary = responsejson.media;
+            const media = responsejson.media;
 
             try {
                 const data = {
@@ -155,62 +158,9 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 </button>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
-
-                                <section className="space-y-4">
-                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Personal Information</h2>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Username:</strong> {user.username}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Email:</strong> {user.email}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>First Name:</strong> {user.first_name}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Last Name:</strong> {user.last_name}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Bio:</strong> {user.bio}
-                                    </div>
-                                </section>
-                                <section className="space-y-4">
-                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Account Details</h2>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Role:</strong> {user.role}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Email Verified:</strong> {user.email_verified ? 'Yes' : 'No'}
-                                        {!user.email_verified && <RequestVerification />}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Created At:</strong> {new Date(user.created_at).toLocaleString()}
-                                    </div>
-                                    <div className="text-gray-800 dark:text-light">
-                                        <strong>Updated At:</strong> {new Date(user.updated_at).toLocaleString()}
-                                    </div>
-                                </section>
-                                <section className="col-span-1 md:col-span-2 space-y-4">
-                                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Actions</h2>
-                                    <button
-                                        onClick={() => router.push('/profile/edit')}
-                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
-                                    >
-                                        Edit Profile
-                                    </button>
-                                    <button
-                                        onClick={() => router.push('/auth/request-password-reset')}
-                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-warning"
-                                    >
-                                        Reset Password
-                                    </button>
-                                    <button
-                                        onClick={handleDeleteAccount}
-                                        className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-error"
-                                    >
-                                        Delete Account
-                                    </button>
-                                </section>
+                                <ProfileInfo user={user} />
+                                <AccountDetails user={user} />
+                                <ProfileActions handleDeleteAccount={handleDeleteAccount} />
                             </div>
                         </>
                     ) : (
