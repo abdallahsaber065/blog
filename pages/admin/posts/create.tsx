@@ -279,7 +279,7 @@ const CreatePost: React.FC = () => {
 
             <div className="flex space-x-4">
                 <button
-                    className="bg-blue-500 text-white p-2 rounded"
+                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
                     onClick={handleSave}
                     disabled={loading}
                 >

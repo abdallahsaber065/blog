@@ -1,6 +1,6 @@
 // components/Admin/CreatePost/PostForm.tsx
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+import React from 'react';
+import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 
@@ -45,6 +45,16 @@ const PostForm: React.FC<PostFormProps> = ({
         setContent(value);
     };
 
+    const handleCreateTag = (inputValue: string) => {
+        const newTag = { label: inputValue, value: inputValue };
+        setTags([...tags, newTag]);
+    };
+
+    const handleCreateCategory = (inputValue: string) => {
+        const newCategory = { label: inputValue, value: inputValue };
+        setCategory(newCategory);
+    };
+
     return (
         <div>
             <div className="mb-4">
@@ -72,25 +82,31 @@ const PostForm: React.FC<PostFormProps> = ({
                 <>
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
-                        <Select
+                        <CreatableSelect
                             isMulti
                             components={animatedComponents}
                             options={oldTags}
                             value={tags}
                             onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                            onCreateOption={handleCreateTag}
                             className="my-react-select-container"
                             classNamePrefix="my-react-select"
+                            placeholder="Select or create tags..."
+                            formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
                         />
                     </div>
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
-                        <Select
+                        <CreatableSelect
                             components={animatedComponents}
                             options={oldCategories}
                             value={category}
                             onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
+                            onCreateOption={handleCreateCategory}
                             className="my-react-select-container"
                             classNamePrefix="my-react-select"
+                            placeholder="Select or create category..."
+                            formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
                         />
                     </div>
                 </>
