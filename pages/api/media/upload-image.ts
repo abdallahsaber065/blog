@@ -1,4 +1,4 @@
-// pages/api/upload-profile-image.ts
+// pages/api/upload-image.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Formidable, IncomingForm } from 'formidable';
 import fs from 'fs';
