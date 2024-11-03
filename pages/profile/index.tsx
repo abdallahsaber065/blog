@@ -86,7 +86,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         formData.append('userId', user?.id.toString() || '');
         formData.append('saveDir', 'profile-images');
 
-        const res = await fetch('/api/upload-image', {
+        const res = await fetch('/api/media/upload-image', {
             method: 'POST',
             body: formData,
         });
