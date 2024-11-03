@@ -63,9 +63,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(201).json(newPost);
                 await res.revalidate("/");
                 await res.revalidate('/categories/all');
-                for (const tag of body.tags.connectOrCreate) {
-                    const slug = tag.where.slug;
-                    await res.revalidate(`/categories/${slug}`);
+
+                // get all tags from api
+                const alltag = await prisma.tag.findMany();
+
+                for (const tag of alltag) {
+                    await res.revalidate(`/categories/${tag.slug}`);
                 }
 
                 log += `\nResponse Status: 201 Created`;
@@ -122,6 +125,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 res.status(200).json(updatedPost);
                 await res.revalidate("/");
                 await res.revalidate('/categories');
+                // get all tags from api
+                const allTags = await prisma.tag.findMany();
+
+                for (const tag of allTags) {
+                    await res.revalidate(`/categories/${tag.slug}`);
+                }
                 log += `\nResponse Status: 200 OK`;
                 break;
 
@@ -140,6 +149,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     res.status(200).json({ message: 'Post deleted successfully' });
                     await res.revalidate("/");
                     await res.revalidate('/categories');
+                    // get all tags from api
+                    const allTags = await prisma.tag.findMany();
+
+                    for (const tag of allTags) {
+                        await res.revalidate(`/categories/${tag.slug}`);
+                    }
                     log += `\nResponse Status: 200 OK`;
                 }
                 catch (error) {
