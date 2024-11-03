@@ -98,7 +98,7 @@ const CategoryPage = ({ slug, posts, categories }: { slug: string, posts: Post[]
   const deserializedPosts = deserializePosts(posts);
 
   return (
-    <article className="mt-12 flex flex-col text-dark dark:text-light">
+    <article className="mt-4 flex flex-col text-dark dark:text-light">
       <div className="px-5 sm:px-10 md:px-24 sxl:px-32 flex flex-col">
         <h1 className="mt-6 font-semibold text-2xl md:text-4xl lg:text-5xl">#{slug}</h1>
         <span className="mt-2 inline-block">
