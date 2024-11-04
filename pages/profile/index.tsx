@@ -1,6 +1,7 @@
 // pages/admin/users/index.tsx
 /* eslint-disable @next/next/no-img-element */
 import { getSession, signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
@@ -43,7 +44,6 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             fileInputRef.current.click();
         }
     };
-
 
     const handleDeleteAccount = async () => {
         {
@@ -161,11 +161,13 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                             <div className="text-gray-800 dark:text-light text-center">
                                 <div className="flex justify-center">
                                     {!imageError ? (
-                                        <img
-                                            src={currentImage || user.profile_image_url}
+                                        <Image
+                                            src={currentImage || `/api/media/get-image?imagePath=${user.profile_image_url}`}
                                             alt="Profile Image"
                                             className="rounded-full w-24 h-24 object-cover p-1"
                                             onError={() => setImageError(true)}
+                                            width={96}
+                                            height={96}
                                         />
                                     ) : (
                                         <div className="flex items-center justify-center bg-slate-950 rounded-full w-24 h-24 object-cover text-white text-3xl font-bold">
