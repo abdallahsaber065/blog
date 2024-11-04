@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = () => {
   const userName = session?.user.name || '';
   const initials = userName.split(' ').map(name => name[0]).join('').substring(0, userName.includes(' ') ? 2 : 1);
 
-
+  console.log("image", session?.user.profile_image_url);
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -124,23 +124,22 @@ const Header: React.FC<HeaderProps> = () => {
         {/* Dark Mode Toggle */}
         <ThemeSwitcher />
 
-
         {/* User Dropdown */}
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar" aria-label="User Menu">
             <div className="w-10 rounded-full">
-                {!imageError ? (
-                  <img
-                    src={session?.user.profile_image_url ? session?.user.profile_image_url : '/static/images/profile-holder.jpg'}
-                    alt={userName.split(" ")[0]}
+              {!imageError ? (
+                <img
+                  src={session?.user.profile_image_url ? `/api/media/get-image?imagePath=${session?.user.profile_image_url}` : '/static/images/profile-holder.jpg'}
+                  alt={userName.split(" ")[0]}
                   className="rounded-full w-full h-full object-cover p-1"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center bg-slate-950 rounded-full w-full h-full text-white text-xl font-bold ">
-                    {initials}
-                  </div>
-                )}
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="flex items-center justify-center bg-slate-950 rounded-full w-full h-full text-white text-xl font-bold ">
+                  {initials}
+                </div>
+              )}
             </div>
           </div>
           <ul

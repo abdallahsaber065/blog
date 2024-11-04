@@ -15,6 +15,9 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    minimumCacheTTL: 600,
+  },
 
   distDir: process.env.BUILD_DIR || '.next',
   transpilePackages: ['@mdxeditor/editor'],
@@ -41,6 +44,7 @@ const nextConfig = {
     MAILGUN_USER: process.env.MAILGUN_USER,
     MAILGUN_PASS: process.env.MAILGUN_PASS,
   }
+
 
 };
 
