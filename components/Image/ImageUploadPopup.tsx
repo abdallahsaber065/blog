@@ -33,7 +33,7 @@ const ImageUploadPopup = ({ onUpload, onClose }: ImageUploadPopupProps) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Upload New Profile Image</h2>
+                <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-light">Upload New Profile Image</h2>
                 <form onSubmit={handleUpload} className="space-y-4">
                     {previewImage && <Image src={previewImage} alt="Preview" className="w-24 h-24 rounded-full mx-auto" width={96} height={96} />}
                     {previewImage && <Image src={previewImage} alt="Preview" className="w-24 h-24 rounded-full mx-auto" width={96} height={96} />}

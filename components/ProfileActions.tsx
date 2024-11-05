@@ -25,7 +25,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({ handleDeleteAccount }) 
 
   return (
     <section className="col-span-1 md:col-span-2 space-y-4">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-light">Actions</h2>
+      <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-light">Actions</h2>
       <button
         onClick={() => router.push('/profile/edit')}
         className="block w-full font-bold py-2 px-4 rounded mt-4 btn btn-secondary"
