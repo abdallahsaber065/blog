@@ -137,8 +137,8 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         return (
             <main className="container mx-auto pb-16 px-4 flex-1 text-slate-900">
                 <div className="max-w-md mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-light">Profile</h1>
-                    <p className="text-gray-800 dark:text-light">You need to be signed in to view your profile.</p>
+                    <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-light">Profile</h1>
+                    <p className="text-slate-800 dark:text-light">You need to be signed in to view your profile.</p>
                     <button
                         onClick={() => signIn()}
                         className="block w-full font-bold py-2 px-4 rounded mt-8 btn btn-primary"
@@ -153,12 +153,12 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     return (
         <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
             <main className="container mx-auto pb-16 px-4 flex-1">
-                <h1 className="text-4xl font-bold text-center text-gray-800 pt-8 dark:text-light">Profile</h1>
+                <h1 className="text-4xl font-bold text-center text-slate-800 pt-8 dark:text-light">Profile</h1>
 
                 <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
                     {user ? (
                         <>
-                            <div className="text-gray-800 dark:text-light text-center">
+                            <div className="text-slate-800 dark:text-light text-center">
                                 <div className="flex justify-center">
                                     {!imageError ? (
                                         <Image
@@ -205,7 +205,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                             </div>
                         </>
                     ) : (
-                        <p className="text-gray-800 dark:text-light">Loading user data...</p>
+                        <p className="text-slate-800 dark:text-light">Loading user data...</p>
                     )}
                 </div>
             </main>
