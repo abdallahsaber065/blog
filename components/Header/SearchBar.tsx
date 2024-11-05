@@ -51,6 +51,10 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
         setResults([]);
     };
 
+    const handleBlur = () => {
+        setResults([]);
+    };
+
     useEffect(() => {
         if (isOverlayVisible && inputRef.current) {
             inputRef.current.focus();
@@ -69,6 +73,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                     placeholder="Search..."
                     value={query}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     className="input input-bordered w-full max-w-xs hidden lg:block text-slate-800 dark:text-light bg-light dark:bg-dark h-8 lg:h-10"
                 />
                 <button className="lg:hidden btn btn-ghost btn-circle p-0 m-0" aria-label="Search" onClick={handleOverlayOpen}>
@@ -77,7 +82,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                 {!isOverlayVisible && results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white dark:bg-dark shadow-lg rounded-lg z-10 shadow-slate-300 dark:shadow-slate-800">
                         {results.map((result) => (
-                            <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:border-red-300 dark:hover:border-emerald-900">
+                            <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-gray-700">
                                 <Link href={`/blogs/${result.slug}`} className="flex items-center w-full" onClick={handleResultClick}>
                                     <Image src={result.featured_image_url} alt={result.title} width={40} height={40} className="object-cover rounded-full mr-2" />
                                     <span className="text-slate-800 dark:text-light">{result.title}</span>
@@ -106,7 +111,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                         {results.length > 0 && (
                             <ul className="bg-white dark:bg-dark shadow-lg rounded-lg z-10 shadow-slate-300 dark:shadow-slate-800">
                                 {results.map((result) => (
-                                    <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:border-red-300 dark:hover:border-emerald-900">
+                                    <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-gray-700">
                                         <Link href={`/blogs/${result.slug}`} className="flex items-center w-full" onClick={handleResultClick}>
                                             <Image src={result.featured_image_url} alt={result.title} width={40} height={40} className="object-cover rounded-full mr-2" />
                                             <span className="text-slate-800 dark:text-light">{result.title}</span>
