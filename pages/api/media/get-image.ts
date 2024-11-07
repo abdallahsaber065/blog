@@ -2,19 +2,22 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const { imagePath } = req.query;
 
     if (!imagePath || typeof imagePath !== 'string') {
-        return res.status(400).json({ error: 'Image path is required' });
+        res.status(400).json({ error: 'Image path is required' });
+        return;
     }
 
     const fullPath = path.join(process.cwd(), 'public/', imagePath);
     console.log("fullPath", fullPath);
 
     if (!fs.existsSync(fullPath)) {
-        return res.status(404).json({ error: 'Image not found' });
+        res.status(404).json({ error: 'Image not found' });
+        return;
     }
 
     const imageBuffer = fs.readFileSync(fullPath);
@@ -29,11 +32,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Check if the client's cached version is still valid
     if (req.headers['if-none-match'] === etag) {
-        return res.status(304).end();
+        res.status(304).end();
+        return;
     }
 
     res.setHeader('Content-Type', `image/${ext}`);
     res.send(imageBuffer);
-};
+}
 
-export default handler;
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
+}

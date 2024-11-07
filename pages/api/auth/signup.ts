@@ -1,10 +1,11 @@
 // pages/api/auth/signup.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import {prisma} from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import formidable, { IncomingForm, Fields, Files } from 'formidable';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 interface SignupFields {
     username: string;
@@ -13,7 +14,7 @@ interface SignupFields {
     first_name: string;
     last_name: string;
     bio?: string;
-} 
+}
 
 interface SignupFiles {
     profile_image?: formidable.File[];
@@ -25,12 +26,12 @@ export const config = {
     },
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
     }
 
     const form = new IncomingForm();
@@ -125,4 +126,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(500).json({ error: 'Internal server error' });
         }
     });
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

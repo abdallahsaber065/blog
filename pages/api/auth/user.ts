@@ -2,8 +2,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import {prisma} from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({ req });
 
     if (!session || !session.user?.email) {
@@ -24,4 +25,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

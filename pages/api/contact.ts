@@ -3,8 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
 import { check, validationResult } from 'express-validator';
 import logger from '@/lib/logger';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, body } = req;
 
     // Log query and body if body is present
@@ -14,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.setHeader('Allow', ['POST']);
         log += `\nResponse Status: 405 Method ${method} Not Allowed`;
         logger.info(log);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
     }
 
     // Define validation rules
@@ -29,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!errors.isEmpty()) {
         log += `\nResponse Status: 400 Validation errors: ${JSON.stringify(errors.array(), null, 2)}`;
         logger.info(log);
-        return res.status(400).json({ errors: errors.array() });
+        res.status(400).json({ errors: errors.array() });
     }
 
     const { name, email, message } = req.body;
@@ -60,4 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         logger.info(log);
         res.status(500).json({ error: 'Failed to send email' });
     }
+}
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }
