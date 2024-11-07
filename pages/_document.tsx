@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -35,6 +36,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
+        <GoogleAnalytics gaId='G-HN8NHQL8NH' />
       </Html>
     );
   }
