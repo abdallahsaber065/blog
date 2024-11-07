@@ -1,19 +1,22 @@
 // pages/api/auth/check-uniqueness.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import {prisma} from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
+        return 
     }
 
     const { username, email } = req.body;
 
     if (!username || !email) {
-        return res.status(400).json({ error: 'Username and email are required' });
+        res.status(400).json({ error: 'Username and email are required' });
+        return 
     }
 
     try {
@@ -27,7 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (existingUser) {
-            return res.status(400).json({ error: 'Email or username already exists' });
+            res.status(400).json({ error: 'Email or username already exists' });
+            return 
         }
 
         res.status(200).json({ message: 'Username and email are unique' });
@@ -35,4 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

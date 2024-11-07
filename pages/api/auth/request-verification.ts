@@ -4,19 +4,22 @@ import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { sendEmail } from '@/lib/email';
 import createEmailConfirmationForm from '@/lib/html_forms/EmailConfirmationForm';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
+        return 
     }
 
     const { email } = req.body;
 
     if (!email || typeof email !== 'string') {
-        return res.status(400).json({ error: 'Invalid email' });
+        res.status(400).json({ error: 'Invalid email' });
+        return 
     }
 
     try {
@@ -25,11 +28,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!user) {
-            return res.status(400).json({ error: 'User not found' });
+            res.status(400).json({ error: 'User not found' });
+            return 
         }
 
         if (user.email_verified) {
-            return res.status(400).json({ error: 'Email already verified' });
+            res.status(400).json({ error: 'Email already verified' });
+            return 
         }
 
         const verificationToken = crypto.randomBytes(32).toString('hex');
@@ -51,4 +56,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

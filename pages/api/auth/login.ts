@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import rateLimit, { ValueDeterminingMiddleware } from 'express-rate-limit';
 import { Request, Response } from 'express';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key';
 
@@ -19,7 +20,7 @@ const limiter = rateLimit({
     keyGenerator,
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     await new Promise((resolve, reject) => {
         limiter(req as any, res as any, (result: any) => {
             if (result instanceof Error) {
@@ -33,31 +34,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
+        return 
     }
 
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        res.status(400).json({ error: 'Email and password are required' });
+        return 
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: 'Invalid email format' });
+        res.status(400).json({ error: 'Invalid email format' });
+        return 
     }
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            res.status(401).json({ error: 'Invalid email or password' });
+            return 
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            res.status(401).json({ error: 'Invalid email or password' });
+            return 
         }
 
         const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
@@ -74,4 +80,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

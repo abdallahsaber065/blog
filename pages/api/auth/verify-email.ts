@@ -1,19 +1,22 @@
 // pages/api/auth/verify-email.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import {prisma} from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const { method } = req;
 
     if (method !== 'GET') {
         res.setHeader('Allow', ['GET']);
-        return res.status(405).end(`Method ${method} Not Allowed`);
+        res.status(405).end(`Method ${method} Not Allowed`);
+        return;
     }
 
     const { token } = req.query;
 
     if (!token || typeof token !== 'string') {
-        return res.status(400).json({ error: 'Invalid or missing token' });
+        res.status(400).json({ error: 'Invalid or missing token' });
+        return;
     }
 
     try {
@@ -22,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!user) {
-            return res.status(400).json({ error: 'Invalid token' });
+            res.status(400).json({ error: 'Invalid token' });
+            return;
         }
 
         await prisma.user.update({
@@ -38,4 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Internal server error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

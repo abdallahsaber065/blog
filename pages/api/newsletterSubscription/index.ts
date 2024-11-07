@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 // Utility function to validate input
 const validateInput = (input: any, type: string): string | null => {
@@ -26,7 +27,7 @@ const handleError = (res: NextApiResponse, error: any, message: string) => {
     res.status(500).json({ error: message });
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
     // Log query and body if body is present
@@ -143,4 +144,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     logger.info(log);
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

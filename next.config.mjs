@@ -43,6 +43,7 @@ const nextConfig = {
     SECRET_KEY: process.env.SECRET_KEY,
     MAILGUN_USER: process.env.MAILGUN_USER,
     MAILGUN_PASS: process.env.MAILGUN_PASS,
+    NEXT_PUBLIC_CSRF_TOKEN: process.env.CSRF_SECRET,
   }
 
 

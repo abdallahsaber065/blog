@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 // Define a type for valid subscriptions
 type ValidSubscription = {
@@ -28,10 +29,11 @@ const handleError = (res: NextApiResponse, error: any, message: string) => {
     res.status(500).json({ error: message });
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse){
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
+        return;
     }
 
     const { data } = req.body;
@@ -70,4 +72,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
         handleError(res, error, 'Failed to import newsletter subscriptions');
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

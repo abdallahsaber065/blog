@@ -1,8 +1,9 @@
 // pages/api/search.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { query } = req;
     const searchQuery = query.query as string;
 
@@ -30,4 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
+}
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

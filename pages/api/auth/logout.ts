@@ -1,8 +1,9 @@
 // pages/api/auth/logout.ts
+import { authMiddleware } from '@/middleware/authMiddleware';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession, signOut } from 'next-auth/react';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({ req });
 
     if (session) {
@@ -11,4 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
         res.status(401).json({ error: 'Not authenticated' });
     }
+}
+
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
 }

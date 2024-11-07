@@ -4,6 +4,7 @@ import { Formidable, IncomingForm } from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import { prisma } from '@/lib/prisma';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 export const config = {
     api: {
@@ -18,7 +19,7 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -79,4 +80,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 };
 
-export default handler;
+
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+    return authMiddleware(req, res, handler);
+}
