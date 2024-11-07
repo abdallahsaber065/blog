@@ -39,6 +39,13 @@ jobs:
           rm -rf temp
         fi
 
+    - name: Install dependencies
+      working-directory: /var/www/devtrend.tech
+      run: |
+        echo -e ">>> \033[1;34mInstalling dependencies...\033[0m"
+        npm install || { echo -e "\033[1;31mFailed to install dependencies\033[0m"; exit 1; }
+        echo -e "\033[1;32mDependencies installed successfully\033[0m"
+
     - name: Build the project in temp directory
       working-directory: /var/www/devtrend.tech
       run: |
