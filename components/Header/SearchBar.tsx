@@ -2,8 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SearchIcon, CloseIcon } from '@/components/Icons';
-import { fetchAPI } from '@/lib/api';
-
+import axios from 'axios';
 export function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout;
     return (...args: any[]) => {
@@ -25,10 +24,10 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                 return;
             }
             try {
-                const data = await fetchAPI(`search?query=${searchQuery}`, {
+                const response = await axios(`/api/search?query=${searchQuery}`, {
                     method: 'GET',
                 });
-                setResults(data.slice(0, 4)); // Limit to 4 results
+                setResults(response.data.slice(0, 4)); // Limit to 4 results
             } catch (error) {
                 console.error("Search error:", error);
             }

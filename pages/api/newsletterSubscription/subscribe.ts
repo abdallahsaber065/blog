@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import logger from '@/lib/logger';
-import { authMiddleware } from '@/middleware/authMiddleware';
 
 const prisma = new PrismaClient();
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, body } = req;
 
     let log = `\n${method} /api/subscribe\nBody: ${JSON.stringify(body, null, 2)}`;
@@ -59,9 +58,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         logger.info(log);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
-}
-
-
-export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
-    return authMiddleware(req, res, handler);
 }

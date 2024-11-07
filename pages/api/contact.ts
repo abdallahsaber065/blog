@@ -3,9 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
 import { check, validationResult } from 'express-validator';
 import logger from '@/lib/logger';
-import { authMiddleware } from '@/middleware/authMiddleware';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default  async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, body } = req;
 
     // Log query and body if body is present
@@ -63,6 +62,3 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 }
 
-export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
-    return authMiddleware(req, res, handler);
-}

@@ -121,19 +121,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
-    useEffect(() => {
-        const recordPostView = async () => {
-            try {
-                await axios.post('/api/posts/post-view', { post_id: post.id });
-            } catch (error) {
-                console.error('Error recording post view:', error);
-            }
-        };
-
-        recordPostView();
-    }, [post.id]);
-
-
 
     // Convert strings back to Date objects
     const deserializedPost = {
