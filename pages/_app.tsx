@@ -1,22 +1,44 @@
 import type { AppProps } from 'next/app';
 import RootLayout from './_layout';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { SessionProvider } from 'next-auth/react';
-import { GoogleAnalytics } from '@next/third-parties/google'
-
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { useRouter } from 'next/router';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
-  return (
+  const router = useRouter();
+  const excludedRoutes = ['/login', '/signup', '/admin'];
+  const [isExcludedRoute, setIsExcludedRoute] = useState(false);
 
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      const isExcluded = excludedRoutes.some(route => url.startsWith(route));
+      setIsExcludedRoute(isExcluded);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    // Initial load
+    handleRouteChange(router.pathname);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events, excludedRoutes]);
+
+  return (
     <SessionProvider session={session}>
       <RootLayout>
         <StrictMode>
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
+          {!isExcludedRoute && (
+            <div id="google-analytics-container">
+              <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
+            </div>
+          )}
           <Component {...pageProps} />
         </StrictMode>
       </RootLayout>
-    </SessionProvider >
-
+    </SessionProvider>
   );
 }
 
