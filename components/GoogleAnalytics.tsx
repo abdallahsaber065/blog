@@ -1,28 +1,30 @@
-// GoogleAnalytics.tsx
+import { useEffect } from 'react';
 
-import React from 'react';
-import Script from 'next/script';
+const GoogleAnalytics = ({ gaId }: { gaId: string }) => {
+    useEffect(() => {
+        if (!gaId) return;
 
-const GoogleAnalytics = () => {
-    return (
-        <>
-            <Script
-                strategy='lazyOnload'
-                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_MEASUREMENT_ID}`}
-            />
+        const script1 = document.createElement('script');
+        script1.async = true;
+        script1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(script1);
 
-            <Script id='' strategy='lazyOnload'>
-                {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_MEASUREMENT_ID}', {
-              page_path: window.location.pathname,
-              });
-          `}
-            </Script>
-        </>
-    );
+        const script2 = document.createElement('script');
+        script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${gaId}');
+    `;
+        document.head.appendChild(script2);
+
+        return () => {
+            document.head.removeChild(script1);
+            document.head.removeChild(script2);
+        };
+    }, [gaId]);
+
+    return null;
 };
 
 export default GoogleAnalytics;
