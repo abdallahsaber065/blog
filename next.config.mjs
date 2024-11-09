@@ -17,6 +17,8 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   images: {
     minimumCacheTTL: 600,
+    domains: ['localhost', 'devtrend.tech'], // Add your trusted domains here
+
   },
 
   distDir: process.env.BUILD_DIR || '.next',

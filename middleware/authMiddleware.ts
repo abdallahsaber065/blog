@@ -7,13 +7,8 @@ export async function authMiddleware(
     res: NextApiResponse,
     handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>
 ) {
-    console.log('Headers:', req.headers); // Log headers
-    console.log('Cookies:', req.cookies); // Log cookies
-    
-    const session = await getServerSession(req, res, options);
-    
-    console.log('Session Data:', session); // Log full session data
 
+    const session = await getServerSession(req, res, options);
     if (!session) {
         console.log('No session found'); // Debug log
         return res.status(401).json({ error: 'Unauthorized' });
