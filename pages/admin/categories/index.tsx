@@ -21,23 +21,35 @@ const Dashboard: React.FC<DashboardProps> = ({ tags, categories }) => {
     const [confirmType, setConfirmType] = useState<'tags' | 'categories' | null>(null);
 
     const refreshTags = async () => {
-        const Tags = await getTags();
-        setTagList(Tags);
+        try {
+            const Tags = await getTags();
+            setTagList(Tags);
+        } catch (error) {
+            console.error('Failed to refresh tags:', error);
+        }
     };
 
     const refreshCategories = async () => {
-        const Categories = await getCategories();
-        setCategoryList(Categories);
+        try {
+            const Categories = await getCategories();
+            setCategoryList(Categories);
+        } catch (error) {
+            console.error('Failed to refresh categories:', error);
+        }
     };
 
     const handleDeleteZeroCount = async (type: 'tags' | 'categories') => {
         setShowConfirm(false);
-        if (type === 'tags') {
-            await fetch('/api/tags/delete-zero', { method: 'DELETE' });
-            refreshTags();
-        } else {
-            await fetch('/api/categories/delete-zero', { method: 'DELETE' });
-            refreshCategories();
+        try {
+            if (type === 'tags') {
+                await fetch('/api/tags/delete-zero', { method: 'DELETE' });
+                refreshTags();
+            } else {
+                await fetch('/api/categories/delete-zero', { method: 'DELETE' });
+                refreshCategories();
+            }
+        } catch (error) {
+            console.error(`Failed to delete ${type} with 0 posts:`, error);
         }
     };
 
@@ -99,35 +111,58 @@ const Dashboard: React.FC<DashboardProps> = ({ tags, categories }) => {
 
 // Get tags with post count
 const getTags = async () => {
-    console.log(process.env.NEXT_PUBLIC_BASE_URL);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tags?include={"_count":{"select":{"posts":true}}}`);
-    let data = await response.json();
-    data = (data.map((tag: any) => ({ ...tag, postCount: tag._count.posts })));
-    return data;
+    try {
+        console.log(process.env.NEXT_PUBLIC_BASE_URL);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tags?include={"_count":{"select":{"posts":true}}}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch tags');
+        }
+        let data = await response.json();
+        data = (data.map((tag: any) => ({ ...tag, postCount: tag._count.posts })));
+        return data;
+    } catch (error) {
+        console.error('Failed to get tags:', error);
+        return [];
+    }
 }
 
 // Get categories with post count
 const getCategories = async () => {
-    console.log(process.env.NEXT_PUBLIC_BASE_URL);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/categories?include={"_count":{"select":{"posts":true}}}`);
-    let data = await response.json();
-    data = (data.map((category: any) => ({ ...category, postCount: category._count.posts })));
-    return data;
+    try {
+        console.log(process.env.NEXT_PUBLIC_BASE_URL);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/categories?include={"_count":{"select":{"posts":true}}}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch categories');
+        }
+        let data = await response.json();
+        data = (data.map((category: any) => ({ ...category, postCount: category._count.posts })));
+        return data;
+    } catch (error) {
+        console.error('Failed to get categories:', error);
+        return [];
+    }
 };
 
-
-
-
 export async function getServerSideProps() {
-    const tags = await getTags();
-    const categories = await getCategories();
+    try {
+        const tags = await getTags();
+        const categories = await getCategories();
 
-    return {
-        props: {
-            tags: tags,
-            categories: categories,
-        },
-    };
+        return {
+            props: {
+                tags: tags,
+                categories: categories,
+            },
+        };
+    } catch (error) {
+        console.error('Failed to get server side props:', error);
+        return {
+            props: {
+                tags: [],
+                categories: [],
+            },
+        };
+    }
 }
 
 export default withAuth(Dashboard, ['admin', 'moderator']);
