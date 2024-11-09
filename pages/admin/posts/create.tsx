@@ -79,7 +79,7 @@ const CreatePost: React.FC = () => {
 
             const outline = outlineResponse.data?.outline;
             setSearchTerms(outlineResponse.data?.search_terms);
-            
+
             if (!outline) {
                 throw new Error("No outline generated. Please try again.");
             }
@@ -190,7 +190,7 @@ const CreatePost: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
-            
+
             <OutlineSettings
                 topic={topic}
                 setTopic={setTopic}
@@ -214,8 +214,8 @@ const CreatePost: React.FC = () => {
                 showContentSettings={showContentSettings}
                 setShowContentSettings={setShowContentSettings}
             />
-
-            <div className="flex space-x-4 mb-4">
+            
+            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
                 <button
                     className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600"
                     onClick={handleGenerateOutline}
@@ -311,9 +311,9 @@ const CreatePost: React.FC = () => {
             )}
 
             {showLogViewer && (
-                <LogViewer 
-                    onClose={() => setShowLogViewer(false)} 
-                    link='https://generate.api.devtrend.tech/logs' 
+                <LogViewer
+                    onClose={() => setShowLogViewer(false)}
+                    link='https://generate.api.devtrend.tech/logs'
                 />
             )}
         </div>

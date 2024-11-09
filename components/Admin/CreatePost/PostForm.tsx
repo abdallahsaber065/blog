@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // components/Admin/CreatePost/PostForm.tsx
 import React, { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
@@ -60,7 +61,7 @@ const PostForm: React.FC<PostFormProps> = ({
     const [showImageSelector, setShowImageSelector] = useState(false);
 
     return (
-        <div>
+        <div className="p-4">
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
@@ -119,13 +120,7 @@ const PostForm: React.FC<PostFormProps> = ({
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">
                     Featured Image
                 </label>
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        className="flex-1 text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
-                        value={featuredImage}
-                        onChange={(e) => setFeaturedImage(e.target.value)}
-                    />
+                <div className="flex flex-col sm:flex-row gap-2">
                     <button
                         onClick={() => setShowImageSelector(true)}
                         className="bg-blue-500 text-white px-4 py-2 rounded"

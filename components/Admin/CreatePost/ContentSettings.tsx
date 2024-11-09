@@ -17,13 +17,13 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
     return (
         <div className="mb-4">
             <button
-                className="text-blue-500 underline"
+                className="text-blue-500 underline mt-2"
                 onClick={() => setShowContentSettings(!showContentSettings)}
             >
                 {showContentSettings ? 'Hide' : 'Show'} Content Generation Advanced Settings
             </button>
             {showContentSettings && (
-                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray">
+                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray mt-4">
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
                         <textarea

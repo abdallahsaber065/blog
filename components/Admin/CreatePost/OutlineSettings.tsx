@@ -44,15 +44,15 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                 onChange={(e) => setTopic(e.target.value)}
             />
             <button
-                className="text-blue-500 underline"
+                className="text-blue-500 underline mt-2"
                 onClick={() => setShowOutlineSettings(!showOutlineSettings)}
             >
                 {showOutlineSettings ? 'Hide' : 'Show'} Outline Advanced Settings
             </button>
             {showOutlineSettings && (
-                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray">
-                    <div className="flex space-x-4 mb-4">
-                        <div className="flex-1">
+                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray mt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Terms</label>
                             <input
                                 type="number"
@@ -61,7 +61,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                                 onChange={(e) => setNumOfTerms(Number(e.target.value))}
                             />
                         </div>
-                        <div className="flex-1">
+                        <div>
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Keywords</label>
                             <input
                                 type="number"
@@ -70,7 +70,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                                 onChange={(e) => setNumOfKeywords(Number(e.target.value))}
                             />
                         </div>
-                        <div className="flex-1">
+                        <div>
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Points</label>
                             <input
                                 type="number"
