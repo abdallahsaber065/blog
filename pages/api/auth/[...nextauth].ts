@@ -127,5 +127,6 @@ const options: NextAuthOptions = {
     },
 };
 
+export { options };
 export default NextAuth(options);
 
