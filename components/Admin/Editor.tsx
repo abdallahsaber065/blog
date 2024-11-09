@@ -1,6 +1,6 @@
 'use client';
 import '@mdxeditor/editor/style.css';
-import React from 'react';
+import React, { useState } from 'react';
 import 'react-markdown-editor-lite/lib/index.css';
 import MarkdownIt from 'markdown-it';
 import dynamic from 'next/dynamic';
@@ -32,29 +32,52 @@ interface EditorProps {
 }
 
 const Editor = ({ markdown, onChange, parseMarkdown, onScroll }: EditorProps) => {
+    const [error, setError] = useState<string | null>(null);
+
+    const handleChange = ({ text }: { text: string }) => {
+        try {
+            onChange(text);
+            setError(null); // Clear any previous errors
+        } catch (err) {
+            setError('Error while updating the content.');
+        }
+    };
+
+    const renderHTML = (text: string) => {
+        try {
+            return parseMarkdown ? parseMarkdown(text) : mdParser.render(text);
+        } catch (err) {
+            setError('Error while parsing the content.');
+            return '<p>Error while parsing the content.</p>';
+        }
+    };
+
     return (
-        <MdEditor
-            onScroll={onScroll}
-            style={{
-                height: "500px",
-            }}
-            renderHTML={(text) => (parseMarkdown ? parseMarkdown(text) : mdParser.render(text))}
-            canView={{
-                menu: true,
-                md: true,
-                html: true,
-                fullScreen: true,
-                hideMenu: false,
-                both: false,
-            }}
-            view={{
-                menu: true,
-                md: true,
-                html: false,
-            }}
-            onChange={({ text }) => onChange(text)}
-            value={markdown}
-        />
+        <div>
+            {error && <div className="text-red-500 mb-2">{error}</div>}
+            <MdEditor
+                onScroll={onScroll}
+                style={{
+                    height: "500px",
+                }}
+                renderHTML={renderHTML}
+                canView={{
+                    menu: true,
+                    md: true,
+                    html: true,
+                    fullScreen: true,
+                    hideMenu: false,
+                    both: false,
+                }}
+                view={{
+                    menu: true,
+                    md: true,
+                    html: false,
+                }}
+                onChange={handleChange}
+                value={markdown}
+            />
+        </div>
     );
 }
 
