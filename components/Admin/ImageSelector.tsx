@@ -24,6 +24,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const [uploadLoading, setUploadLoading] = useState(false);
     const [urlInput, setUrlInput] = useState('');
     const [selectedImage, setSelectedImage] = useState(currentImage);
+    const [selectedImageDetails, setSelectedImageDetails] = useState<any>(null);
     const { data: session } = useSession();
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
 
@@ -74,6 +75,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             };
             setImages([...images, mediaWithFullUrl]);
             setSelectedImage(mediaWithFullUrl.file_url);
+            setSelectedImageDetails(mediaWithFullUrl);
         } catch (error) {
             toast.error('Failed to upload image');
         }
@@ -101,6 +103,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             };
             setImages([...images, mediaWithFullUrl]);
             setSelectedImage(mediaWithFullUrl.file_url);
+            setSelectedImageDetails(mediaWithFullUrl);
             setUrlInput('');
         } catch (error) {
             toast.error('Failed to upload image from URL');
@@ -108,18 +111,23 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
         setUploadLoading(false);
     };
 
+    const handleImageSelect = (image: any) => {
+        setSelectedImage(image.file_url);
+        setSelectedImageDetails(image);
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white dark:bg-dark rounded-lg w-4/5 h-4/5 flex">
+            <div className="bg-white dark:bg-dark rounded-lg w-full max-w-4xl h-4/5 flex flex-col md:flex-row">
                 {/* Main Content */}
                 <div className="flex-1 p-4 overflow-y-auto">
                     <div className="mb-4">
                         <h2 className="text-xl font-bold mb-2">Select Image</h2>
 
                         {/* Upload Controls */}
-                        <div className="flex gap-2 mb-4">
+                        <div className="flex flex-col md:flex-row gap-2 mb-4">
                             <input
                                 type="file"
                                 accept="image/*"
@@ -157,13 +165,13 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                 <ClipLoader />
                             </div>
                         ) : (
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {images.map((image) => (
                                     <div
                                         key={image.id}
                                         className={`cursor-pointer border rounded p-2 ${selectedImage === image.file_url ? 'border-blue-500' : ''
                                             }`}
-                                        onClick={() => setSelectedImage(image.file_url)}
+                                        onClick={() => handleImageSelect(image)}
                                     >
                                         <Image
                                             src={image.file_url}
@@ -171,7 +179,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                             width={200}
                                             height={200}
                                             objectFit="contain"
-                                            className="w-full h-32 object-cover"
+                                            className="mt-2 max-h-40 object-cover"
                                         />
                                     </div>
                                 ))}
@@ -181,19 +189,26 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                 </div>
 
                 {/* Sidebar */}
-                <div className="w-1/3 border-l p-4">
+                <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l p-4">
                     <h3 className="text-lg font-bold mb-4">Selected Image</h3>
                     {selectedImage ? (
                         <div>
-                            <Image
-                                src={selectedImage}
-                                alt="Selected"
-                                width={400}
-                                height={400}
-                                objectFit="contain"
-                                className="w-full h-64 object-cover mb-4"
-                            />
-                            <p className="text-sm mb-4 break-all">{selectedImage}</p>
+                            <div className="relative w-full h-44 mb-4"> {/* Added mb-4 for margin-bottom */}
+                                <Image
+                                    src={selectedImage}
+                                    alt="Selected"
+                                    layout="fill"
+                                    objectFit="contain"
+                                    className="mt-2"
+                                />
+                            </div>
+                            <p className="text-sm mb-4 break-all">{selectedImage.split("/").pop()}</p>
+                            {selectedImageDetails && (
+                                <div className="text-sm">
+                                    <p>File Size: {(selectedImageDetails.file_size / 1024).toFixed(2)} KB</p>
+                                    <p>Dimensions: {selectedImageDetails.width} x {selectedImageDetails.height}</p>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <p>No image selected</p>

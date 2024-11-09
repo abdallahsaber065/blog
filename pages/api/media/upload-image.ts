@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Formidable, IncomingForm } from 'formidable';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
 
@@ -23,7 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
-    console.log(req.body);
+
     const form = new Formidable({
         uploadDir,
         keepExtensions: true,
@@ -31,7 +32,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     form.parse(req, async (err, fields, files) => {
-        console.log(fields);
         if (err) {
             return res.status(500).json({ error: 'Error parsing the files' });
         }
@@ -58,6 +58,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const localImageFilePath = path.join(localImageUploadPath, file.newFilename);
 
         try {
+            // Get image dimensions using sharp
+            const image = sharp(file.filepath);
+            const metadata = await image.metadata();
+            const { width, height } = metadata;
+
             // Save the uploaded image to the MediaLibrary table
             const mediaEntry = await prisma.mediaLibrary.create({
                 data: {
@@ -65,13 +70,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     file_type: file.mimetype,
                     file_size: file.size,
                     file_url: localImageFilePath,
+                    width: width || null,
+                    height: height || null,
                     uploaded_by_id: parseInt(userId, 10),
+
                 },
             });
             fs.renameSync(file.filepath, path.join(saveDirPath, file.newFilename));
-
-
-            console.log(mediaEntry);
 
             return res.status(200).json({ message: 'Profile image updated successfully', media: mediaEntry });
         } catch (error) {
@@ -79,7 +84,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         }
     });
 };
-
 
 export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
     return authMiddleware(req, res, handler);

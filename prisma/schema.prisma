@@ -106,6 +106,8 @@ model MediaLibrary {
   file_type      String?
   file_size      Int?
   file_url       String
+  width          Int?
+  height         Int?
   uploaded_at    DateTime @default(now())
   uploaded_by_id Int?
 
