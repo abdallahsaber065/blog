@@ -61,7 +61,7 @@ const PostForm: React.FC<PostFormProps> = ({
     const [showImageSelector, setShowImageSelector] = useState(false);
 
     return (
-        <div className="p-4">
+        <div className="">
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
