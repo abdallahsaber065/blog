@@ -1,8 +1,9 @@
 // components/Admin/CreatePost/PostForm.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
+import ImageSelector from '@/components/Admin/ImageSelector';
 
 const animatedComponents = makeAnimated();
 
@@ -54,6 +55,9 @@ const PostForm: React.FC<PostFormProps> = ({
         const newCategory = { label: inputValue, value: inputValue };
         setCategory(newCategory);
     };
+    
+    // Add state for image selector
+    const [showImageSelector, setShowImageSelector] = useState(false);
 
     return (
         <div>
@@ -112,12 +116,36 @@ const PostForm: React.FC<PostFormProps> = ({
                 </>
             )}
             <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Featured Image URL</label>
-                <input
-                    type="text"
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
-                    value={featuredImage}
-                    onChange={(e) => setFeaturedImage(e.target.value)}
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">
+                    Featured Image
+                </label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        className="flex-1 text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                        value={featuredImage}
+                        onChange={(e) => setFeaturedImage(e.target.value)}
+                    />
+                    <button
+                        onClick={() => setShowImageSelector(true)}
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                    >
+                        Browse
+                    </button>
+                </div>
+                {featuredImage && (
+                    <img
+                        src={featuredImage}
+                        alt="Featured"
+                        className="mt-2 max-h-40 object-cover"
+                    />
+                )}
+
+                <ImageSelector
+                    isOpen={showImageSelector}
+                    onClose={() => setShowImageSelector(false)}
+                    onSelect={setFeaturedImage}
+                    currentImage={featuredImage}
                 />
             </div>
         </div>
