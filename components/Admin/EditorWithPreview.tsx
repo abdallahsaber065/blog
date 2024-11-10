@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdx';
-import CustomImage from '@/components/Image/CustomImageView';
-
+import CustomImageUpload from '@/components/Image/CustomImageUpload';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -56,10 +55,15 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         }
     };
 
-    const mdxComponents = () => ({
-        Image: (props: any) => <CustomImage {...props} />,
-        img: (props: any) => <CustomImage {...props} />,
-    });
+    const handleImageChange = (newSrc: string, alt: string) => {
+        const updatedContent = markdownText.replace(/!\[.*?\]\(.*?\)/, `![${alt}](${newSrc})`);
+        onContentChange(updatedContent);
+    };
+
+    const mdxComponents = {
+        img: (props: any) => <CustomImageUpload {...props} onImageChange={(newSrc: string) => handleImageChange(newSrc, props.alt)} />,
+        Image: (props: any) => <CustomImageUpload {...props} onImageChange={(newSrc: string) => handleImageChange(newSrc, props.alt)} />,
+    };
 
     return (
         <div className="flex flex-col sm:flex-row">
@@ -89,7 +93,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : mdxSource ? (
-                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
+                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} />
                     ) : (
                         <p>No preview available</p>
                     )}
