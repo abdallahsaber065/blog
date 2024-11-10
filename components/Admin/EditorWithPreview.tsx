@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdx';
-import CustomImage from '@/components/Image/CustomImage';
+import CustomImage from '@/components/Image/CustomImageView';
 
 
 interface EditorWithPreviewProps {
