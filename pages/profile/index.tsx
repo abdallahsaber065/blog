@@ -1,15 +1,14 @@
-// pages/admin/users/index.tsx
-/* eslint-disable @next/next/no-img-element */
-import { getSession, signIn, signOut, useSession } from 'next-auth/react';
+import React, { useState, useRef } from 'react';
+import { useSession, signIn, signOut, getSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
-import { useRef, useState } from 'react';
 import ProfileInfo from '@/components/Profile/ProfileInfo';
 import AccountDetails from '@/components/Profile/AccountDetails';
 import ProfileActions from '@/components/Profile/ProfileActions';
 import { FaFileImage, FaFileUpload } from 'react-icons/fa';
+import ImageEditor from '@/components/Profile/ImageEditor';
 
 interface User {
     id: string;
@@ -35,6 +34,8 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
     const [imageError, setImageError] = useState(false);
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
     const userName = session?.user.name || '';
     const initials = userName.split(' ').map(name => name[0]).join('').substring(0, userName.includes(' ') ? 2 : 1);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,25 +47,23 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     };
 
     const handleDeleteAccount = async () => {
-        {
-            try {
-                const response = await fetch(`/api/users`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ targetId: user?.id }),
-                });
+        try {
+            const response = await fetch(`/api/users`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ targetId: user?.id }),
+            });
 
-                if (response.ok) {
-                    toast.success('Account deleted successfully.');
-                    signOut();
-                } else {
-                    toast.error('Failed to delete account.');
-                }
-            } catch (error) {
-                toast.error('An error occurred. Please try again.');
+            if (response.ok) {
+                toast.success('Account deleted successfully.');
+                signOut();
+            } else {
+                toast.error('Failed to delete account.');
             }
+        } catch (error) {
+            toast.error('An error occurred. Please try again.');
         }
     };
 
@@ -72,17 +71,25 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
             setCurrentImage(URL.createObjectURL(e.target.files[0]));
+            setIsEditorOpen(true);
         }
     };
 
+    const handleSave = (croppedImage: Blob) => {
+        setCurrentImage(URL.createObjectURL(croppedImage));
+        setCroppedBlob(croppedImage);
+        setIsEditorOpen(false);
+    };
+
     const handleUpload = async () => {
-        if (!selectedFile) {
+        if (!croppedBlob) {
             toast.error('Please select a file to upload.');
             return;
         }
 
         const formData = new FormData();
-        formData.append('file', selectedFile);
+        const file = new File([croppedBlob], selectedFile?.name || 'cropped-image.jpg', { type: 'image/jpeg' });
+        formData.append('file', file);
         formData.append('userId', user?.id.toString() || '');
         formData.append('saveDir', 'profile-images');
 
@@ -209,6 +216,13 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                     )}
                 </div>
             </main>
+            {isEditorOpen && currentImage && (
+                <ImageEditor
+                    imageSrc={currentImage}
+                    onClose={() => setIsEditorOpen(false)}
+                    onSave={handleSave}
+                />
+            )}
         </div>
     );
 };
