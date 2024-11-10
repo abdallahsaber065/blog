@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TagList from '@/components/Admin/Categories/TagList';
 import CategoryList from '@/components/Admin/Categories/CategoryList';
 import TagForm from '@/components/Admin/Categories/TagForm';
@@ -6,19 +6,30 @@ import CategoryForm from '@/components/Admin/Categories/CategoryForm';
 import { Tag, Category } from '@prisma/client';
 import dotenv from 'dotenv';
 import withAuth from '@/components/Admin/withAuth';
+import { getSession } from 'next-auth/react';
 
 dotenv.config();
 
-interface DashboardProps {
-    tags: (Tag & { postCount: number })[];
-    categories: (Category & { postCount: number })[];
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ tags, categories }) => {
-    const [tagList, setTagList] = useState(tags);
-    const [categoryList, setCategoryList] = useState(categories);
+const Dashboard: React.FC = () => {
+    const [tagList, setTagList] = useState<(Tag & { postCount: number })[]>([]);
+    const [categoryList, setCategoryList] = useState<(Category & { postCount: number })[]>([]);
     const [showConfirm, setShowConfirm] = useState(false);
     const [confirmType, setConfirmType] = useState<'tags' | 'categories' | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const tags = await getTags();
+                const categories = await getCategories();
+                setTagList(tags);
+                setCategoryList(categories);
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const refreshTags = async () => {
         try {
@@ -130,7 +141,7 @@ const getTags = async () => {
 const getCategories = async () => {
     try {
         console.log(process.env.NEXT_PUBLIC_BASE_URL);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/categories?include={"_count":{"select":{"posts":true}}}`);
+        const response = await fetch(`/api/categories?include={"_count":{"select":{"posts":true}}}`);
         if (!response.ok) {
             throw new Error('Failed to fetch categories');
         }
@@ -142,27 +153,5 @@ const getCategories = async () => {
         return [];
     }
 };
-
-export async function getServerSideProps() {
-    try {
-        const tags = await getTags();
-        const categories = await getCategories();
-
-        return {
-            props: {
-                tags: tags,
-                categories: categories,
-            },
-        };
-    } catch (error) {
-        console.error('Failed to get server side props:', error);
-        return {
-            props: {
-                tags: [],
-                categories: [],
-            },
-        };
-    }
-}
 
 export default withAuth(Dashboard, ['admin', 'moderator']);

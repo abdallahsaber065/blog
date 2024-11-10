@@ -29,14 +29,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
       <RootLayout>
-        <StrictMode>
           {!isExcludedRoute && (
             <div id="google-analytics-container">
               <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
             </div>
           )}
           <Component {...pageProps} />
-        </StrictMode>
       </RootLayout>
     </SessionProvider>
   );
