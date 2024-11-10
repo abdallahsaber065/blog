@@ -28,11 +28,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-4 relative w-full max-w-3xl">
-                <button onClick={onClose} className="absolute top-2 right-2 text-red-500">
-                    <FaTimes size={24} />
-                </button>
+        <div className="fixed inset-0 dark:bg-dark bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-dark rounded-lg p-4 relative w-full max-w-3xl shadow-lg">
                 <div className="relative w-full h-96">
                     <Cropper
                         image={imageSrc}
@@ -54,7 +51,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                         step={0.1}
                         value={zoom}
                         onChange={(e) => setZoom(Number(e.target.value))}
-                        className="w-1/3"
+                        className="w-1/3 bg-gray-200 dark:bg-gray-700"
                     />
                     <input
                         type="range"
@@ -63,9 +60,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                         step={1}
                         value={rotation}
                         onChange={(e) => setRotation(Number(e.target.value))}
-                        className="w-1/3"
+                        className="w-1/3 bg-gray-200 dark:bg-gray-700"
                     />
-                    <button onClick={handleSave} className="btn btn-primary">
+                    <button onClick={onClose} className="absolute top-2 right-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600 transition-colors m-5 text-2xl">
+                        <FaTimes />
+                    </button>
+                    <button onClick={handleSave} className="btn btn-primary bg-blue-500 dark:bg-blue-600 text-white shadow-md hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
                         Save
                     </button>
                 </div>
