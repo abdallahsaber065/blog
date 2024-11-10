@@ -6,9 +6,9 @@ import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 import { useRef, useState } from 'react';
-import ProfileInfo from '@/components/ProfileInfo';
-import AccountDetails from '@/components/AccountDetails';
-import ProfileActions from '@/components/ProfileActions';
+import ProfileInfo from '@/components/Profile/ProfileInfo';
+import AccountDetails from '@/components/Profile/AccountDetails';
+import ProfileActions from '@/components/Profile/ProfileActions';
 import { FaFileImage, FaFileUpload } from 'react-icons/fa';
 
 interface User {
