@@ -51,3 +51,4 @@ lib/dev
 logs
 temp
 releases
+public/uploads
