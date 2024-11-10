@@ -46,7 +46,6 @@
     "markdown-it": "^14.1.0",
     "next-auth": "^4.24.8",
     "next-mdx-remote": "^5.0.0",
-    "next-sitemap": "^4.2.3",
     "nodemailer": "^6.9.15",
     "papaparse": "^5.4.1",
     "postcss": "^8.4.47",
