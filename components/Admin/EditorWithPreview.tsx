@@ -8,6 +8,15 @@ interface EditorWithPreviewProps {
     onContentChange: (value: string) => void;
     className?: string;
 }
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
 
 const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onContentChange }) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
@@ -15,18 +24,74 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     const [view, setView] = useState<'editor' | 'preview'>('editor');
     const previewRef = useRef<HTMLDivElement>(null);
 
+    const replaceImagesInMarkdown = (text: string): string => {
+        // Create a list of all images in markdownText that do not have an id, whether in markdown, HTML, or JSX format
+        const imageRegexes = {
+            markdown: /!\[.*?\]\((?!.*#id=)[^\)]*\)/g,
+            html: /<img\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g,
+            jsx: /<Image\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g,
+        };
+        
+        const images = {
+            markdown: text.match(imageRegexes.markdown) || [],
+            html: text.match(imageRegexes.html) || [],
+            jsx: text.match(imageRegexes.jsx) || [],
+        };
+        console.log(images);
+
+        // Convert markdown and HTML images to JSX images
+        const convertToJsxImage = (img: string, type: 'markdown' | 'html' | 'jsx'): string => {
+            let alt: string, src: string;
+            if (type === 'markdown') {
+                alt = img.match(/!\[(.*?)\]/)?.[1] || '';
+                src = img.match(/\((.*?)\)/)?.[1] || '';
+            } else {
+                alt = img.match(/alt="(.*?)"/)?.[1] || '';
+                src = img.match(/src="(.*?)"/)?.[1] || '';
+            }
+            return `<Image src="${src}" alt="${alt}" />`;
+        };
+        
+        const jsxImagesFromMarkdown = images.markdown.map(img => convertToJsxImage(img, 'markdown'));
+        const jsxImagesFromHtml = images.html.map(img => convertToJsxImage(img, 'html'));
+        
+        // Update markdown text to replace markdown images with JSX images
+        let updatedMarkdownText = text;
+        jsxImagesFromMarkdown.forEach((img, index) => {
+            updatedMarkdownText = updatedMarkdownText.replace(images.markdown[index], img);
+        });
+
+        jsxImagesFromHtml.forEach((img, index) => {
+            updatedMarkdownText = updatedMarkdownText.replace(images.html[index], img);
+        });
+
+        // add ids to all jsx images
+        const jsxImages = updatedMarkdownText.match(imageRegexes.jsx) || [];
+        const updatedJsxImages = jsxImages.map((img, index) => {
+            return img.replace(' />', ` id="${index}" />`);
+        });
+        updatedJsxImages.forEach((img, index) => {
+            updatedMarkdownText = updatedMarkdownText.replace(jsxImages[index], img);
+        });
+        console.log(updatedMarkdownText);
+        
+        return updatedMarkdownText;
+    };
+
     useEffect(() => {
         const fetchSerializedContent = async () => {
             if (!markdownText) {
                 return;
             }
             try {
+                const updatedMarkdownText = replaceImagesInMarkdown(markdownText);
+
                 const response = await fetch('/api/serializeContent', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ content: markdownText }),
+                    body: JSON.stringify({ content: updatedMarkdownText }),
                 });
 
                 if (response.ok) {
@@ -55,14 +120,28 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         }
     };
 
-    const handleImageChange = (newSrc: string, alt: string) => {
-        const updatedContent = markdownText.replace(/!\[.*?\]\(.*?\)/, `![${alt}](${newSrc})`);
+    const handleImageChange = (image: ImageProps, alt: string, id: string) => {
+
+        const imageRegex = /(!\[.*?\]\(.*?\)|<img\s+[^>]*src=".*?"[^>]*>|<Image\s+[^>]*src=".*?"[^>]*>)/g;
+
+        const images = markdownText.match(imageRegex) || [];
+        console.log(images);
+
+        // id is the index of the image in the images array
+        const updatedContent = images.map((img, index) => {
+            if (index === Number(id)) {
+                return `<Image src="${image.file_url}" alt="${alt}" width={${image.width}} height={${image.height}} />`;
+            }
+            return img;
+        }).join('\n');
+        
+
+
         onContentChange(updatedContent);
     };
 
     const mdxComponents = {
-        img: (props: any) => <CustomImageUpload {...props} onImageChange={(newSrc: string) => handleImageChange(newSrc, props.alt)} />,
-        Image: (props: any) => <CustomImageUpload {...props} onImageChange={(newSrc: string) => handleImageChange(newSrc, props.alt)} />,
+        Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
     };
 
     return (
