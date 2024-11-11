@@ -4,7 +4,7 @@
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaExpand, FaCompress } from 'react-icons/fa';
 import BlogPreview from '@/components/Blog/BlogPreview';
 
@@ -20,6 +20,18 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
     const handleToggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
     };
+
+    useEffect(() => {
+        if (isFullScreen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isFullScreen]);
 
     return (
         <ErrorBoundary>

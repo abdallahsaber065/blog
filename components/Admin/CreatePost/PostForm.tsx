@@ -1,12 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 // components/Admin/CreatePost/PostForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import ImageSelector from '@/components/Admin/ImageSelector';
 
 const animatedComponents = makeAnimated();
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
 
 interface PostFormProps {
     title: string;
@@ -20,7 +29,7 @@ interface PostFormProps {
     category: { label: string; value: string } | null;
     setCategory: (value: { label: string; value: string } | null) => void;
     featuredImage: string;
-    setFeaturedImage: (value: string) => void;
+    setFeaturedImage: (image: ImageProps) => void;
     oldTags: { label: string; value: string }[];
     oldCategories: { label: string; value: string }[];
     isMounted: boolean;
@@ -59,6 +68,18 @@ const PostForm: React.FC<PostFormProps> = ({
     
     // Add state for image selector
     const [showImageSelector, setShowImageSelector] = useState(false);
+
+    useEffect(() => {
+        if (showImageSelector) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showImageSelector]);
 
     return (
         <div className="">
