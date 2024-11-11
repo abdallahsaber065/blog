@@ -73,7 +73,6 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         updatedJsxImages.forEach((img, index) => {
             updatedMarkdownText = updatedMarkdownText.replace(jsxImages[index], img);
         });
-        console.log(updatedMarkdownText);
         
         return updatedMarkdownText;
     };
@@ -121,25 +120,30 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     const handleImageChange = (image: ImageProps, alt: string, id: string) => {
-
         const imageRegex = /(!\[.*?\]\(.*?\)|<img\s+[^>]*src=".*?"[^>]*>|<Image\s+[^>]*src=".*?"[^>]*>)/g;
-
+    
         const images = markdownText.match(imageRegex) || [];
-        console.log(images);
-
+        console.log("images before", images);
+    
         // id is the index of the image in the images array
-        const updatedContent = images.map((img, index) => {
-            if (index === Number(id)) {
-                return `<Image src="${image.file_url}" alt="${alt}" width={${image.width}} height={${image.height}} />`;
-            }
-            return img;
-        }).join('\n');
-        
-
-
-        onContentChange(updatedContent);
+        if (images[Number(id)]) {
+            console.log([`images[${id}]`, images[Number(id)]]);
+            const updatedImage = `<Image src="${image.file_url}" alt="${alt}" width={${image.width}} height={${image.height}} />`;
+    
+            // Replace the i-th occurrence of the regex match
+            let matchIndex = 0;
+            const updatedContent = markdownText.replace(imageRegex, (match) => {
+                if (matchIndex === Number(id)) {
+                    matchIndex++;
+                    return updatedImage;
+                }
+                matchIndex++;
+                return match;
+            });
+    
+            onContentChange(updatedContent);
+        }
     };
-
     const mdxComponents = {
         Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
     };
