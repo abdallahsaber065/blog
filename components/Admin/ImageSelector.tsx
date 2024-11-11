@@ -21,13 +21,15 @@ interface ImageSelectorProps {
     onClose: () => void;
     onSelect: (image: ImageProps) => void;
     currentImage?: string;
+    folder?: string
 }
 
 const ImageSelector: React.FC<ImageSelectorProps> = ({
     isOpen,
     onClose,
     onSelect,
-    currentImage
+    currentImage,
+    folder='all'
 }) => {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -45,7 +47,12 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const fetchImages = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('/api/media');
+            let response;
+            if (folder === 'all') {
+                response = await axios.get('/api/media');
+            } else {
+                response = await axios.get(`/api/media?where={"file_url":{ "contains":"uploads/${folder}" }}`);
+            }
             const imagesWithFullUrls = await Promise.all(response.data.map(async (image: any) => {
                 const imageUrl = `${NEXT_PUBLIC_BASE_URL}/${image.file_url}`;
                 const exists = await checkImageExists(imageUrl);

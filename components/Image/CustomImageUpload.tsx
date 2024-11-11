@@ -70,6 +70,7 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImage
                     onClose={() => setShowSelector(false)}
                     onSelect={handleImageSelect}
                     currentImage={src}
+                    folder='blog'
                 />
             )}
         </div>
