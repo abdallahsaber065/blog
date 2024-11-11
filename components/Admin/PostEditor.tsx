@@ -30,7 +30,7 @@ interface PostEditorProps {
     post: Post;
     tags: Tag[];
     categories: Category[];
-    onSave: (post: Post) => void;
+    onSave: (post: Post, status: string) => void;
 }
 
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
@@ -69,9 +69,9 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
         }
     };
 
-    const handleSave = async () => {
+    const handleSave = async (status: string) => {
         setLoading(true);
-        await onSave(currentPost);
+        await onSave(currentPost, status);
         setLoading(false);
     };
 
@@ -121,13 +121,22 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                     formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
                 />
             </div>
-            <button
-                className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
-                onClick={handleSave}
-                disabled={loading}
-            >
-                {loading ? <ClipLoader size={20} color={"#fff"} /> : <><FaSave className="inline mr-2" /> Save</>}
-            </button>
+            <div className="flex space-x-4">
+                <button
+                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
+                    onClick={() => handleSave('published')}
+                    disabled={loading}
+                >
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
+                </button>
+                <button
+                    className="bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
+                    onClick={() => handleSave('draft')}
+                    disabled={loading}
+                >
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
+                </button>
+            </div>
         </div>
     );
 };

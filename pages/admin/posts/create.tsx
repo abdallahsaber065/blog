@@ -1,4 +1,3 @@
-// pages/admin/posts/create.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import readingTime from "reading-time";
@@ -12,6 +11,7 @@ import OutlineSettings from '@/components/Admin/CreatePost/OutlineSettings';
 import ContentSettings from '@/components/Admin/CreatePost/ContentSettings';
 import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
+import { useRouter } from 'next/router';
 
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
 
@@ -23,6 +23,19 @@ interface ImageProps {
     file_url: string;
     width: number;
     height: number;
+}
+
+const ApproveRoles = ['admin', 'moderator'];
+
+const getStatusByRole = (role: string, status: string) => {
+    if (status === 'draft') {
+        return 'draft';
+    } else
+        if (ApproveRoles.includes(role)) {
+            return status;
+    } else {
+        return 'pending';
+    }
 }
 
 const CreatePost: React.FC = () => {
@@ -52,6 +65,9 @@ const CreatePost: React.FC = () => {
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
     const [showLogViewer, setShowLogViewer] = useState(false);
+
+    // Inside the CreatePost component
+    const router = useRouter();
 
     const setFeaturedImageFromSelector = (image: ImageProps) => {
         setFeaturedImage(image.file_url);
@@ -147,7 +163,8 @@ const CreatePost: React.FC = () => {
         }
     };
 
-    const handleSave = async () => {
+
+    const handleSave = async (status: string = "published"): Promise<number | null> => {
         setLoading(true);
         try {
             const postData = {
@@ -171,8 +188,8 @@ const CreatePost: React.FC = () => {
                     connect: { id: parseInt(session?.user?.id || '5') }
                 },
                 featured_image_url: featuredImage,
-                status: 'published',
-                published_at: new Date(),
+                status: getStatusByRole(session?.user?.role || 'reader', status),
+                published_at: status === 'published' ? new Date() : null,
                 reading_time: Math.round(readingTime(content).minutes),
                 outline: JSON.stringify(outline),
             };
@@ -191,13 +208,26 @@ const CreatePost: React.FC = () => {
             }
 
             postData.slug = uniqueSlug;
-            await axios.post('/api/posts', postData);
-            toast.success('Post created successfully!');
+            const response = await axios.post('/api/posts', postData);
+            if (status === 'published') {
+                toast.success('Post created successfully!');
+            } else {
+                toast.success('Draft saved successfully!');
+            }
+            return response.data.id; // Return the ID of the saved post
         } catch (error: any) {
             console.error('Failed to create post:', error);
             toast.error(error.response?.data?.error || error.message);
+            return null;
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSaveDraft = async () => {
+        const postId = await handleSave('draft');
+        if (postId) {
+            router.push(`/admin/posts/edit?id=${postId}`);
         }
     };
 
@@ -293,11 +323,18 @@ const CreatePost: React.FC = () => {
 
             <div className="flex space-x-4">
                 <button
-                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray"
-                    onClick={handleSave}
+                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
+                    onClick={() => handleSave('published')}
                     disabled={loading}
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save'}
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
+                </button>
+                <button
+                    className="bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
+                    onClick={handleSaveDraft}
+                    disabled={loading}
+                >
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
                 </button>
             </div>
 

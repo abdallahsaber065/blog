@@ -8,6 +8,7 @@ import Tag from '@prisma/client';
 import withAuth from '@/components/Admin/withAuth';
 import readingTime from "reading-time"
 import { slug } from 'github-slugger';
+import { useSession } from 'next-auth/react';
 
 interface Post {
     id: number;
@@ -28,11 +29,26 @@ interface Category {
     name: string;
 }
 
+const ApproveRoles = ['admin', 'moderator'];
+
+const getStatusByRole = (role: string, status: string) => {
+    if (status === 'draft') {
+        return 'draft';
+    } else
+        if (ApproveRoles.includes(role)) {
+            return status;
+        } else {
+            return 'pending';
+        }
+};
+
 const PostEditorPage: React.FC = () => {
     const [post, setPost] = useState<Post | null>(null);
     const [tags, setTags] = useState<Tag[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
+    const { data: session } = useSession();
+
     const router = useRouter();
     const { id } = router.query;
 
@@ -102,10 +118,12 @@ const PostEditorPage: React.FC = () => {
         setLoading(false);
     };
 
-     // pages/admin/posts/edit.tsx - update handleSave function
-    const handleSave = async (updatedPostRecieved: any) => {
+    const handleSave = async (updatedPostRecieved: any, status: string) => {
         setLoading(true);
-        let updatedPost = { ...updatedPostRecieved };
+        // Get the status based on the user role
+        status = getStatusByRole(session?.user?.role || 'reader', status);
+
+        let updatedPost = { ...updatedPostRecieved, status };
         try {
             // Format tags - handle both existing and new tags
             updatedPost.tags = {
@@ -162,7 +180,11 @@ const PostEditorPage: React.FC = () => {
             });
     
             if (response.ok) {
-                toast.success('Post updated successfully');
+                if (status === 'published') {
+                    toast.success('Post updated successfully');
+                } else {
+                    toast.success('Draft saved successfully');
+                }
             } else {
                 const errorData = await response.json();
                 toast.error(`Failed to update post: ${errorData.error}`);
