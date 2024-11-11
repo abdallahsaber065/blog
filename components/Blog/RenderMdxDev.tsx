@@ -45,7 +45,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 }}
             >
                 <div
-                    className="sticky top-0 z-50 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark"
+                    className="sticky top-0 z-10 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
                     <button onClick={handleToggleFullScreen}>
