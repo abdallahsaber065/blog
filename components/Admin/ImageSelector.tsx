@@ -1,10 +1,10 @@
-// components/Admin/ImageSelector/index.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { FiUpload } from 'react-icons/fi';
 
 interface ImageProps {
     id: string;
@@ -15,7 +15,6 @@ interface ImageProps {
     width: number;
     height: number;
 }
-
 
 interface ImageSelectorProps {
     isOpen: boolean;
@@ -130,103 +129,109 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white dark:bg-dark rounded-lg w-full max-w-4xl h-4/5 flex flex-col md:flex-row">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-0 sm:px-2 ">
+            <div className="bg-white dark:bg-dark w-full h-full sm:h-auto sm:rounded-lg sm:max-w-4xl sm:max-h-[90vh] flex flex-col md:flex-row overflow-hidden">
                 {/* Main Content */}
-                <div className="flex-1 p-4 overflow-y-auto">
-                    <div className="mb-4">
-                        <h2 className="text-xl font-bold mb-2">Select Image</h2>
+                <div className="flex-1 px-2 pb-2 sm:px-4 sm:pb-4 overflow-y-auto">
+                    <div className="sticky top-0 bg-white dark:bg-dark z-10 px-2 pb-2 pt-1 sm:px-4 sm:pb-4">
+                        <h2 className="text-lg sm:text-xl font-bold mb-2 mt-2">Select Image</h2>
 
                         {/* Upload Controls */}
-                        <div className="flex flex-col md:flex-row gap-2 mb-4">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileUpload}
-                                className="hidden"
-                                id="image-upload"
-                            />
-                            <label
-                                htmlFor="image-upload"
-                                className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-                            >
-                                Upload Image
-                            </label>
-
-                            <div className="flex-1 flex gap-2">
+                        <div className="flex flex-col gap-2 mb-3">
+                            <div className="flex gap-2 items-center">
                                 <input
-                                    type="url"
-                                    value={urlInput}
-                                    onChange={(e) => setUrlInput(e.target.value)}
-                                    placeholder="Enter image URL"
-                                    className="flex-1 border rounded px-2"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                    id="image-upload"
                                 />
-                                <button
-                                    onClick={handleUrlUpload}
-                                    className="bg-green-500 text-white px-4 py-2 rounded"
+                                <label
+                                    htmlFor="image-upload"
+                                    className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm cursor-pointer flex-shrink-0"
                                 >
-                                    Add URL
-                                </button>
+                                    Upload Image
+                                </label>
+
+                                <div className="flex flex-1 gap-1">
+                                    <input
+                                        type="url"
+                                        value={urlInput}
+                                        onChange={(e) => setUrlInput(e.target.value)}
+                                        placeholder="Enter image URL"
+                                        className="flex-1 border rounded px-2 py-1.5 text-sm"
+                                    />
+                                    <button
+                                        onClick={handleUrlUpload}
+                                        className="bg-green-500 text-white p-1.5 rounded flex items-center gap-1 text-sm"
+                                        title="Upload from URL"
+                                    >
+                                        <FiUpload className="w-4 h-4" />
+                                        <span className="hidden sm:inline">URL</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Image Grid */}
-                        {loading ? (
-                            <div className="flex justify-center">
-                                <ClipLoader />
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {images.map((image) => (
-                                    <div
-                                        key={image.id}
-                                        className={`cursor-pointer border rounded p-2 ${selectedImage === image.file_url ? 'border-blue-500' : ''
-                                            }`}
-                                        onClick={() => handleImageSelect(image)}
-                                    >
+                    </div>
+                    {/* Image Grid */}
+                    {loading ? (
+                        <div className="flex justify-center p-2">
+                            <ClipLoader size={24} />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
+                            {images.map((image) => (
+                                <div
+                                    key={image.id}
+                                    className={`cursor-pointer border rounded p-1 sm:p-2 ${
+                                        selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                    }`}
+                                    onClick={() => handleImageSelect(image)}
+                                >
+                                    <div className="relative flex items-center justify-center h-32 mb-2 sm:mb-4 overflow-hidden">
                                         <Image
                                             src={image.file_url}
                                             alt={image.file_name}
-                                            width={200}
-                                            height={200}
+                                            layout="fill"
                                             objectFit="contain"
-                                            className="mt-2 max-h-40 object-cover"
                                         />
                                     </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Sidebar */}
-                <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l p-4">
-                    <h3 className="text-lg font-bold mb-4">Selected Image</h3>
-                    {selectedImage ? (
-                        <div>
-                            <div className="relative w-full h-44 mb-4"> {/* Added mb-4 for margin-bottom */}
-                                <Image
-                                    src={selectedImage}
-                                    alt="Selected"
-                                    layout="fill"
-                                    objectFit="contain"
-                                    className="mt-2"
-                                />
-                            </div>
-                            <p className="text-sm mb-4 break-all">{selectedImage.split("/").pop()}</p>
-                            {selectedImageDetails && (
-                                <div className="text-sm">
-                                    <p>File Size: {(selectedImageDetails.file_size / 1024).toFixed(2)} KB</p>
-                                    <p>Dimensions: {selectedImageDetails.width} x {selectedImageDetails.height}</p>
+                <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l p-2 sm:p-4 flex flex-col">
+                    <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-4">Selected Image</h3>
+                    <div className="flex-1 overflow-y-auto">
+                        {selectedImage ? (
+                            <div>
+                                <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden items-center justify-center hidden md:flex">
+                                    <Image
+                                        src={selectedImage}
+                                        alt="Selected"
+                                        layout="fill"
+                                        objectFit="contain"
+                                        className="h-full w-auto"
+                                    />
                                 </div>
-                            )}
-                        </div>
-                    ) : (
-                        <p>No image selected</p>
-                    )}
+                                <p className="text-xs sm:text-sm mb-2 sm:mb-4 break-all">{selectedImage.split("/").pop()}</p>
+                                {selectedImageDetails && (
+                                    <div className="text-xs sm:text-sm">
+                                        <p>File Size: {(selectedImageDetails.file_size / 1024).toFixed(2)} KB</p>
+                                        <p>Dim: {selectedImageDetails.width} x {selectedImageDetails.height}</p>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p className="text-sm">No image selected</p>
+                        )}
+                    </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-2 mt-2 sm:mt-4">
                         <button
                             onClick={() => {
                                 if (selectedImageDetails) {
@@ -234,14 +239,14 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                 }
                                 onClose();
                             }}
-                            className="bg-green-500 text-white px-4 py-2 rounded flex-1"
+                            className="bg-green-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
                             disabled={!selectedImage}
                         >
                             Select
                         </button>
                         <button
                             onClick={onClose}
-                            className="bg-gray-500 text-white px-4 py-2 rounded flex-1"
+                            className="bg-gray-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
                         >
                             Cancel
                         </button>
