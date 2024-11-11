@@ -11,7 +11,6 @@ import React, { useEffect } from "react";
 import CustomImage from '@/components/Image/CustomImageView';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
-import axios from "axios";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
