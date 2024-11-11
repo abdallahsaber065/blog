@@ -1,8 +1,7 @@
 // components/CustomImageUpload.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ImageSelector from '../Admin/ImageSelector';
-
 
 interface ImageProps {
     id: string;
@@ -24,11 +23,19 @@ interface CustomImageUploadProps {
 }
 
 const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImageChange, width = 800, height = 600 }) => {
-    console.log(src);
-    console.log(alt);
-    console.log(width);
-    console.log(height);
     const [showSelector, setShowSelector] = useState(false);
+
+    useEffect(() => {
+        if (showSelector) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showSelector]);
 
     const handleImageSelect = (image: ImageProps) => {
         onImageChange(image);

@@ -15,6 +15,16 @@ import withAuth from '@/components/Admin/withAuth';
 
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
 
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
+
 const CreatePost: React.FC = () => {
     const [topic, setTopic] = useState('');
     const [title, setTitle] = useState('');
@@ -42,6 +52,10 @@ const CreatePost: React.FC = () => {
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
     const [showLogViewer, setShowLogViewer] = useState(false);
+
+    const setFeaturedImageFromSelector = (image: ImageProps) => {
+        setFeaturedImage(image.file_url);
+    }
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
@@ -271,7 +285,7 @@ const CreatePost: React.FC = () => {
                 category={category}
                 setCategory={setCategory}
                 featuredImage={featuredImage}
-                setFeaturedImage={setFeaturedImage}
+                setFeaturedImage={setFeaturedImageFromSelector}
                 oldTags={oldTags}
                 oldCategories={oldCategories}
                 isMounted={isMounted}
