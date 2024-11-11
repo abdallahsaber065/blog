@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
-import RenderMdx from '@/components/Blog/RenderMdx';
+import RenderMdx from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/Image/CustomImageUpload';
 
 interface EditorWithPreviewProps {
@@ -172,7 +172,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : mdxSource ? (
-                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} />
+                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} />
                     ) : (
                         <p>No preview available</p>
                     )}
