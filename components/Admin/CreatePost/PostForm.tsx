@@ -162,6 +162,7 @@ const PostForm: React.FC<PostFormProps> = ({
                     onClose={() => setShowImageSelector(false)}
                     onSelect={setFeaturedImage}
                     currentImage={featuredImage}
+                    folder='blog'
                 />
             </div>
         </div>
