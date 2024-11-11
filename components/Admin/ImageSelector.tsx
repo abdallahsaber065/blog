@@ -6,10 +6,21 @@ import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
+
+
 interface ImageSelectorProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelect: (imageUrl: string) => void;
+    onSelect: (image: ImageProps) => void;
     currentImage?: string;
 }
 
@@ -24,7 +35,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const [uploadLoading, setUploadLoading] = useState(false);
     const [urlInput, setUrlInput] = useState('');
     const [selectedImage, setSelectedImage] = useState(currentImage);
-    const [selectedImageDetails, setSelectedImageDetails] = useState<any>(null);
+    const [selectedImageDetails, setSelectedImageDetails] = useState<ImageProps | null>(null);
     const { data: session } = useSession();
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
 
@@ -218,7 +229,9 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                     <div className="flex gap-2 mt-4">
                         <button
                             onClick={() => {
-                                onSelect(selectedImage || '');
+                                if (selectedImageDetails) {
+                                    onSelect(selectedImageDetails);
+                                }
                                 onClose();
                             }}
                             className="bg-green-500 text-white px-4 py-2 rounded flex-1"

@@ -3,19 +3,35 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import ImageSelector from '../Admin/ImageSelector';
 
+
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
+
 interface CustomImageUploadProps {
     src: string;
     alt: string;
-    onImageChange: (newSrc: string) => void;
+    id: string;
+    onImageChange: (image: ImageProps) => void;
     width?: number;
     height?: number;
 }
 
 const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImageChange, width = 800, height = 600 }) => {
+    console.log(src);
+    console.log(alt);
+    console.log(width);
+    console.log(height);
     const [showSelector, setShowSelector] = useState(false);
 
-    const handleImageSelect = (newSrc: string) => {
-        onImageChange(newSrc);
+    const handleImageSelect = (image: ImageProps) => {
+        onImageChange(image);
         setShowSelector(false);
     };
 
