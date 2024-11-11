@@ -1,6 +1,4 @@
 // components/RenderMdxDev.tsx
-'use client';
-
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -47,7 +45,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 }}
             >
                 <div
-                    className="sticky top-0 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark z-10"
+                    className="sticky top-0 z-50 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
                     <button onClick={handleToggleFullScreen}>
@@ -59,7 +57,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     </button>
                 </div>
                 {isFullScreen ? (
-                    <BlogPreview mdxText={mdxText} />
+                    <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
                 ) : (
                     <div
                         className={`

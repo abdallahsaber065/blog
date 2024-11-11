@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// components/Blog/BlogPreview.tsx
+import React from "react";
 import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
@@ -6,18 +7,15 @@ import CustomImage from '@/components/Image/CustomImageView';
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import { serialize } from 'next-mdx-remote/serialize';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
+import { Options } from "@/lib/articles/mdxconfig";
+import { GetServerSideProps } from 'next';
 
-const BlogPreview = ({ mdxText }: { mdxText: string }) => {
-    const [mdxSource, setMdxSource] = useState<any>(null);
+interface BlogPreviewProps {
+    mdxSource: any;
+    mdxText: string;
+}
 
-    useEffect(() => {
-        const fetchMdxSource = async () => {
-            const source = await serialize(mdxText, {} as SerializeOptions);
-            setMdxSource(source);
-        };
-        fetchMdxSource();
-    }, [mdxText]);
-
+const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
     const placeholderPost = {
         title: "Placeholder Title",
         tags: [{ name: "Placeholder Tag", slug: "placeholder-tag" }],
@@ -60,11 +58,31 @@ const BlogPreview = ({ mdxText }: { mdxText: string }) => {
             </div>
 
             <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-                <TableOfContent mdxContent={placeholderPost.content} />
-                {mdxSource && <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />}
+                <div className="col-span-12 lg:col-span-3">
+                    <div className="sticky top-20">
+                        <TableOfContent mdxContent={placeholderPost.content} />
+                    </div>
+                </div>
+                <div className="col-span-12 lg:col-span-9">
+                    {mdxSource && <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />}
+                </div>
             </div>
         </article>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const mdxText = "Your MDX content here"; // Replace with your actual MDX content
+
+    // Serialize the MDX content
+    const mdxSource = await serialize(mdxText, Options as SerializeOptions);
+
+    return {
+        props: {
+            mdxSource,
+            mdxText,
+        },
+    };
 };
 
 export default BlogPreview;
