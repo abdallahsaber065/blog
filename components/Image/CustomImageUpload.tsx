@@ -36,7 +36,7 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImage
     };
 
     return (
-        <div className="relative group">
+        <div className="relative group touch-none">
             <Image
                 src={src}
                 alt={alt}
@@ -44,10 +44,15 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImage
                 height={height}
                 className="object-cover"
             />
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div
+                onClick={() => setShowSelector(true)}
+                className="absolute inset-0 bg-black bg-opacity-20 lg:bg-opacity-0 lg:group-hover:bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"
+            >
+                <span className="text-white text-center lg:hidden">
+                    Click to change
+                </span>
                 <button
-                    onClick={() => setShowSelector(true)}
-                    className="btn btn-primary"
+                    className="btn btn-primary z-10 px-4 py-2 text-sm md:text-base hidden lg:group-hover:block"
                 >
                     Change Image
                 </button>
