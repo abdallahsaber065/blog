@@ -28,15 +28,15 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
 
     if (!author) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark text-slate-900">
+            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark text-slate-900 dark:text-light">
                 <p className="text-2xl text-slate-800 dark:text-light">Author not found</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-light dark:bg-dark text-slate-900">
-            <div className="max-w-2xl w-full bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-light dark:bg-dark text-slate-900 dark:text-light">
+            <div className="max-w-2xl w-full bg-white dark:bg-dark p-8 rounded-lg shadow-lg shadow-accent dark:shadow-accentDark">
                 <div className="flex flex-col items-center">
                     {author.profile_image_url ? (
                         <Image
@@ -58,7 +58,7 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
                     <p className="text-slate-800 dark:text-light mt-4">{author.bio}</p>
                 </div>
             </div>
-            <div className="max-w-2xl w-full bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg mt-8">
+            <div className="max-w-2xl w-full bg-white dark:bg-dark p-8 rounded-lg shadow-lg shadow-accent dark:shadow-accentDark mt-8">
                 <h2 className="text-2xl font-bold text-slate-800 dark:text-light mb-4">Posts by {author.username}</h2>
                 {author.posts.length > 0 ? (
                     <ul className="space-y-4">
@@ -69,10 +69,11 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
                                         {post.title}
                                     </a>
                                 </h3>
-                                <p className="text-slate-800 dark:text-light">{post.excerpt}</p>
+                                <p className="text-slate-600 dark:text-slate-400 mt-2">{post.excerpt}</p>
                                 {post.featured_image_url && (
                                     <Image
-                                        src={post.featured_image_url.startsWith('http') || post.featured_image_url.startsWith('/') ? post.featured_image_url : '/' + post.featured_image_url}                                        alt={post.title}
+                                        src={post.featured_image_url.startsWith('http') || post.featured_image_url.startsWith('/') ? post.featured_image_url : '/' + post.featured_image_url}
+                                        alt={post.title}
                                         className="rounded mt-2"
                                         width={600}
                                         height={400}
