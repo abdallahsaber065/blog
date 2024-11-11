@@ -56,7 +56,6 @@ const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource, additionalComponents }
       prose-a:text-accent
       dark:prose-a:text-accentDark
       '
-        style={{ height: '500px' }}
       >
         <MDXRemote
           {...mdxSource}
