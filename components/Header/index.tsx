@@ -80,12 +80,12 @@ const Header: React.FC<HeaderProps> = () => {
           </li>
           {session && RoleList.includes(session.user.role) && (
             <li className="dropdown dropdown-hover">
-              <Link href="#" className={`${pathname?.startsWith("/admin") ? "text-primary dark:text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+              <Link href="#" className={`${pathname?.startsWith("/admin/posts") ? "text-primary dark:text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
                 Admin
               </Link>
               <ul className="dropdown-content bg-light dark:bg-dark rounded-t-none p-2 left-1/2 transform -translate-x-1/2">
                 <li>
-                  <Link href="/admin" className={`${pathname === "/admin" ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                  <Link href="/admin/posts" className={`${pathname === "/admin/posts" ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
                     Dashboard
                   </Link>
                 </li>
@@ -148,7 +148,7 @@ const Header: React.FC<HeaderProps> = () => {
           >
             {status === 'authenticated' ? (
               <>
-                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                <li className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md">
                   <Link href="/profile" className="flex items-center space-x-2 p-2">
                     <span className="text-slate-800 dark:text-light font-bold">{session?.user.name.split(' ')[0]}</span>
                     {RoleList.includes(session?.user.role) && (
@@ -156,7 +156,7 @@ const Header: React.FC<HeaderProps> = () => {
                     )}
                   </Link>
                 </li>
-                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                <li className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md">
                   <button onClick={() => signOut()} className="flex items-center space-x-2 p-2 text-danger dark:text-warning">
                     <span>Logout</span>
                   </button>
@@ -164,12 +164,12 @@ const Header: React.FC<HeaderProps> = () => {
               </>
             ) : (
               <>
-                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                <li className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md">
                   <Link href="/login" className="flex items-center space-x-2 p-2">
                     <span className="text-slate-800 dark:text-light font-bold">Login</span>
                   </Link>
                 </li>
-                <li className="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
+                <li className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md">
                   <Link href="/signup" className="flex items-center space-x-2 p-2">
                     <span className="text-slate-800 dark:text-light font-bold">Sign Up</span>
                   </Link>

@@ -9,7 +9,7 @@ interface Post {
     tags: string[];
     title: string;
     category: { id: number; name: string };
-    author: { id: number; first_name: string; last_name: string };
+    author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
 }
@@ -20,6 +20,8 @@ interface PostListProps {
     onDeletePost: (id: number) => void;
     setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
 }
+
+const ApproveRoles = ['admin', 'moderator'];
 
 const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, setPosts }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +39,9 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
     const deleteRoles = ['admin'];
 
+    const hasApproveRights = session?.user?.role && ApproveRoles.includes(session.user.role);
+    const currentUserId = Number(session?.user?.id);
+
     if (!Array.isArray(posts)) {
         return <div>Error: posts is not an array</div>;
     }
@@ -50,6 +55,11 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     });
 
     const sortedPosts = filteredPosts.sort((a, b) => {
+        if (!hasApproveRights) {
+            if (a.author.id === currentUserId && b.author.id !== currentUserId) return -1;
+            if (a.author.id !== currentUserId && b.author.id === currentUserId) return 1;
+        }
+        
         if (sortOrder === 'asc') {
             return a.title.localeCompare(b.title);
         } else {
@@ -66,6 +76,11 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
     const handleSaveStatus = async (postId: number) => {
         try {
+            if (editedStatus === 'published' && !hasApproveRights) {
+                toast.error('You do not have permission to publish posts');
+                return;
+            }
+
             const response = await fetch(`/api/posts?id=${postId}`, {
                 method: 'PUT',
                 headers: {
@@ -101,12 +116,12 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                     placeholder="Search posts..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
+                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 />
                 <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
+                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 >
                     <option value="All">All Categories</option>
                     {Array.from(new Set(posts.map(post => post.category.name))).map(category => (
@@ -128,7 +143,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 <select
                     value={postsPerPage}
                     onChange={(e) => setPostsPerPage(Number(e.target.value))}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
+                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 >
                     {[5, 10, 20, 50].map(number => (
                         <option key={number} value={number}>{number} per page</option>
@@ -142,90 +157,132 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 </button>
             </div>
             {advancedSearch && (
-                <div className="mb-4 p-4 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray space-y-2">
+                <div className="mb-4 p-4 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray space-y-2">
                     <input
                         type="text"
                         placeholder="Filter by author..."
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
+                        className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
                     <input
                         type="date"
                         placeholder="Filter by date..."
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
+                        className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
                 </div>
             )}
             <ul className="mb-4 space-y-2">
                 {paginatedPosts.map((post) => (
-                    <li key={post.id} className="flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
-                        <a className="text-blue-500 cursor-pointer w-full md:w-auto" href={`/blogs/${post.slug}`} target="_blank">
-                            {post.title}
-                        </a>
-                        <div className="flex space-x-2 w-full md:w-auto">
-                            {editingPostId === post.id ? (
-                                <>
-                                    <select
-                                        value={editedStatus}
-                                        onChange={(e) => setEditedStatus(e.target.value)}
-                                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
-                                    >
-                                        <option value="published">Published</option>
-                                        <option value="pending">Pending</option>
-                                        <option value="draft">Draft</option>
-                                    </select>
+                    <li key={post.id} className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0 p-3 border border-slate-200 dark:border-slate-700 rounded">
+                        <div className="flex flex-col w-full md:w-1/2">
+                            <a className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium" 
+                               href={`/blogs/${post.slug}`} 
+                               target="_blank">
+                                {post.title}
+                            </a>
+                            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                by {post.author.first_name} {post.author.last_name} 
+                                <span className="text-slate-400 dark:text-slate-500">
+                                    (@{post.author.username})
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-4 w-full md:w-auto">
+                            <div className="text-sm text-slate-600 dark:text-slate-400">
+                                {editingPostId === post.id ? (
+                                    <>
+                                        {(hasApproveRights || post.author.id === currentUserId) && (
+                                            <>
+                                                <select
+                                                    value={editedStatus}
+                                                    onChange={(e) => setEditedStatus(e.target.value)}
+                                                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                                                >
+                                                    {hasApproveRights ? (
+                                                        <>
+                                                            <option value="published">Published</option>
+                                                            <option value="pending">Pending</option>
+                                                            <option value="draft">Draft</option>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <option value="pending">Request Approval</option>
+                                                            <option value="draft">Draft</option>
+                                                        </>
+                                                    )}
+                                                </select>
+                                                <button
+                                                    className="text-green-500 hover:text-green-600 ml-2"
+                                                    onClick={() => handleSaveStatus(post.id)}
+                                                >
+                                                    <FaSave />
+                                                </button>
+                                                <button
+                                                    className="text-red-500 hover:text-red-600 ml-2"
+                                                    onClick={() => {
+                                                        setEditingPostId(null);
+                                                        setEditedStatus('');
+                                                    }}
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="flex items-center space-x-4">
+                                        <span className={`px-2 py-1 rounded text-xs ${
+                                            post.status === 'published' 
+                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                : post.status === 'pending'
+                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                    : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                                        }`}>
+                                            {post.status === 'pending' && !hasApproveRights 
+                                                ? 'Waiting for Approval' 
+                                                : post.status}
+                                        </span>
+                                        {(hasApproveRights || post.author.id === currentUserId) && (
+                                            <button
+                                                className="text-blue-500 hover:text-blue-600"
+                                                onClick={() => {
+                                                    setEditingPostId(post.id);
+                                                    setEditedStatus(post.status);
+                                                }}
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {(hasApproveRights || post.author.id === currentUserId) && (
+                                <div className="flex items-center space-x-2">
                                     <button
-                                        className="text-green-500"
-                                        onClick={() => handleSaveStatus(post.id)}
-                                    >
-                                        <FaSave />
-                                    </button>
-                                    <button
-                                        className="text-red-500"
-                                        onClick={() => {
-                                            setEditingPostId(null);
-                                            setEditedStatus('');
-                                        }}
-                                    >
-                                        <FaTimes />
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <span>{post.status}</span>
-                                    <button
-                                        className="text-blue-500 pr-3"
-                                        onClick={() => {
-                                            setEditingPostId(post.id);
-                                            setEditedStatus(post.status);
-                                        }}
+                                        className="text-green-500 hover:text-green-600"
+                                        onClick={() => onSelectPost(post.id)}
                                     >
                                         <FaEdit />
                                     </button>
-                                </>
+                                    <button
+                                        className="text-red-500 hover:text-red-600"
+                                        onClick={() => {
+                                            if ((session?.user?.role && deleteRoles.includes(session.user.role)) || Number(session?.user?.id) === post.author.id) {
+                                                onDeletePost(post.id);
+                                            } else {
+                                                toast.error('You do not have permission to delete this post.');
+                                            }
+                                        }}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </div>
                             )}
-                            |
-                            <button
-                                className="text-green-500 "
-                                onClick={() => onSelectPost(post.id)}
-                            >
-                                <FaEdit />
-                            </button>
-                            <button
-                                className="text-red-500"
-                                onClick={() => {
-                                    if ((session?.user?.role && deleteRoles.includes(session.user.role)) || Number(session?.user?.id) === post.author.id) {
-                                        onDeletePost(post.id);
-                                    } else {
-                                        toast.error('You do not have permission to delete this post.');
-                                    }
-                                }}
-                            >
-                                <FaTrash />
-                            </button>
                         </div>
                     </li>
                 ))}
@@ -235,7 +292,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                     <button
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50 w-full md:w-auto"
+                        className="p-2 bg-slate-300 dark:bg-slate-600 rounded disabled:opacity-50 w-full md:w-auto"
                     >
                         Previous
                     </button>
@@ -245,7 +302,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                     <button
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 bg-gray-300 dark:bg-gray-600 rounded disabled:opacity-50 w-full md:w-auto"
+                        className="p-2 bg-slate-300 dark:bg-slate-600 rounded disabled:opacity-50 w-full md:w-auto"
                     >
                         Next
                     </button>

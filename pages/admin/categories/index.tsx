@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-end">
                             <button
                                 onClick={() => setShowConfirm(false)}
-                                className="bg-gray-500 text-white p-2 rounded mr-2 hover:bg-gray-600 active:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-900"
+                                className="bg-slate-500 text-white p-2 rounded mr-2 hover:bg-slate-600 active:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-900"
                             >
                                 Cancel
                             </button>

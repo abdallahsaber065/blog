@@ -65,7 +65,7 @@ const PostForm: React.FC<PostFormProps> = ({
         const newCategory = { label: inputValue, value: inputValue };
         setCategory(newCategory);
     };
-    
+
     // Add state for image selector
     const [showImageSelector, setShowImageSelector] = useState(false);
 
@@ -87,7 +87,7 @@ const PostForm: React.FC<PostFormProps> = ({
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
                     type="text"
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
@@ -95,7 +95,7 @@ const PostForm: React.FC<PostFormProps> = ({
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Excerpt</label>
                 <textarea
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
                 />

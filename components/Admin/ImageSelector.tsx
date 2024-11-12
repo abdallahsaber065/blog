@@ -29,7 +29,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     onClose,
     onSelect,
     currentImage,
-    folder='all'
+    folder = 'all'
 }) => {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -190,9 +190,8 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                             {images.map((image) => (
                                 <div
                                     key={image.id}
-                                    className={`cursor-pointer border rounded p-1 sm:p-2 ${
-                                        selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
-                                    }`}
+                                    className={`cursor-pointer border rounded p-1 sm:p-2 ${selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                        }`}
                                     onClick={() => handleImageSelect(image)}
                                 >
                                     <div className="relative flex items-center justify-center h-32 mb-2 sm:mb-4 overflow-hidden">
@@ -253,7 +252,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                         </button>
                         <button
                             onClick={onClose}
-                            className="bg-gray-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
+                            className="bg-slate-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
                         >
                             Cancel
                         </button>

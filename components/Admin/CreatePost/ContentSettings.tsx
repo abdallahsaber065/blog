@@ -23,11 +23,11 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
                 {showContentSettings ? 'Hide' : 'Show'} Content Generation Advanced Settings
             </button>
             {showContentSettings && (
-                <div className="p-4 border border-gray-300 rounded bg-light dark:bg-gray mt-4">
+                <div className="p-4 border border-slate-300 rounded bg-light dark:bg-gray mt-4">
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
                         <textarea
-                            className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                            className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                             value={userCustomInstructions}
                             onChange={(e) => setUserCustomInstructions(e.target.value)}
                         />
