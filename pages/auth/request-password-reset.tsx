@@ -21,10 +21,12 @@ const RequestPasswordResetPage = () => {
         setLoading(false);
 
         if (res.ok) {
+            toast.dismiss();
             toast.success('Password reset email sent successfully');
             router.push('/login');
         } else {
             const data = await res.json();
+            toast.dismiss();
             toast.error(data.error || 'Something went wrong');
         }
     };

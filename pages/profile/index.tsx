@@ -57,12 +57,15 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             });
 
             if (response.ok) {
+                toast.dismiss();
                 toast.success('Account deleted successfully.');
                 signOut();
             } else {
+                toast.dismiss();
                 toast.error('Failed to delete account.');
             }
         } catch (error) {
+            toast.dismiss();
             toast.error('An error occurred. Please try again.');
         }
     };
@@ -83,6 +86,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     const handleUpload = async () => {
         if (!croppedBlob) {
+            toast.dismiss();
             toast.error('Please select a file to upload.');
             return;
         }
@@ -99,6 +103,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         });
 
         if (res.ok) {
+            toast.dismiss();
             toast.success('File uploaded successfully.');
             const responsejson = await res.json();
             const media = responsejson.media;
@@ -119,19 +124,23 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                 });
 
                 if (response.ok) {
+                    toast.dismiss();
                     toast.success('Profile image updated successfully.');
-                    const scrollPosition = window.scrollY; // Save the current scroll position
+                    const scrollPosition = window.scrollY;
                     update({ profile_image_url: media.file_url }).then(() => {
-                        window.scrollTo(0, 40); // Restore the scroll position
+                        window.scrollTo(0, 40);
                     });
                 } else {
+                    toast.dismiss();
                     toast.error('Failed to update profile image.');
                 }
             } catch (error) {
+                toast.dismiss();
                 toast.error('An error occurred. Please try again.');
             }
         } else {
             const data = await res.json();
+            toast.dismiss();
             toast.error(data.error || 'Something went wrong');
         }
     };

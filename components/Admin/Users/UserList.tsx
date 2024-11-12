@@ -38,8 +38,10 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
         try {
             await axios.put('/api/users', { id: userId, data: editedUser });
             setUsers(users.map(user => (user.id === userId ? { ...user, ...editedUser } : user)));
+            toast.dismiss();
             toast.success('User updated successfully');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to update user');
         } finally {
             setEditingUserId(null);
@@ -62,8 +64,10 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             try {
                 await axios.delete('/api/users', { data: { targetId: userToDelete } });
                 setUsers(users.filter(user => user.id !== userToDelete));
+                toast.dismiss();
                 toast.success('User deleted successfully');
             } catch (error) {
+                toast.dismiss();
                 toast.error('Failed to delete user');
             } finally {
                 setShowDeleteConfirmation(false);

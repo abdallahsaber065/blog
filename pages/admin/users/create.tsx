@@ -27,9 +27,11 @@ const CreateUser = () => {
         e.preventDefault();
         try {
             await axios.post('/api/users', formData);
+            toast.dismiss();
             toast.success('User created successfully');
             router.push('/admin/users');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to create user');
         }
     };

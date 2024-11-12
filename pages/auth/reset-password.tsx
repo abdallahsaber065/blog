@@ -13,6 +13,7 @@ const ResetPasswordPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
+            toast.dismiss();
             toast.error('Passwords do not match');
             return;
         }
@@ -28,10 +29,12 @@ const ResetPasswordPage = () => {
         setLoading(false);
 
         if (res.ok) {
+            toast.dismiss();
             toast.success('Password reset successfully');
             router.push('/login');
         } else {
             const data = await res.json();
+            toast.dismiss();
             toast.error(data.error || 'Something went wrong');
         }
     };

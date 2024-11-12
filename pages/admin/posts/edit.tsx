@@ -139,6 +139,7 @@ const PostEditorPage: React.FC = () => {
             let post = postData[0];
 
             if (!post) {
+                toast.dismiss();
                 toast.error('Post not found');
                 return;
             }
@@ -165,6 +166,7 @@ const PostEditorPage: React.FC = () => {
             setLoading(false);
         } catch (error) {
             console.error('Error loading post:', error);
+            toast.dismiss();
             toast.error('Failed to load post');
         } finally {
             setLoadingPost(false);
@@ -175,6 +177,7 @@ const PostEditorPage: React.FC = () => {
         // Add permission check
         if (!ApproveRoles.includes(session?.user?.role || '') && 
             author?.id !== Number(session?.user?.id)) {
+            toast.dismiss();
             toast.error('You do not have permission to edit this post');
             return;
         }
@@ -243,6 +246,7 @@ const PostEditorPage: React.FC = () => {
             });
     
             if (response.ok) {
+                toast.dismiss();
                 if (status === 'published') {
                     toast.success('Post updated successfully');
                 } else {
@@ -250,10 +254,12 @@ const PostEditorPage: React.FC = () => {
                 }
             } else {
                 const errorData = await response.json();
+                toast.dismiss();
                 toast.error(`Failed to update post: ${errorData.error}`);
             }
         } catch (error) {
             console.error('Save error:', error);
+            toast.dismiss();
             toast.error('Failed to update post');
         } finally {
             setLoading(false);
@@ -299,6 +305,7 @@ const PostEditorPage: React.FC = () => {
                     tags={tags}
                     categories={categories}
                     onSave={handleSave}
+                    isLoading={loading}
                 />
             )}
         </div>

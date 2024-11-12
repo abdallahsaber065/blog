@@ -39,9 +39,11 @@ const EditUser = () => {
                 if (response.data.length > 0) {
                     setUser(response.data[0]);
                 } else {
+                    toast.dismiss();
                     toast.error('User not found');
                 }
             } catch (error) {
+                toast.dismiss();
                 toast.error('Failed to fetch user');
             } finally {
                 setLoading(false);
@@ -62,9 +64,11 @@ const EditUser = () => {
         e.preventDefault();
         try {
             await axios.put('/api/users', { id, data: user });
+            toast.dismiss();
             toast.success('User updated successfully');
             router.push('/admin/users');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to update user');
         }
     };

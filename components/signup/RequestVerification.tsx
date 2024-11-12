@@ -22,8 +22,10 @@ const RequestVerification = () => {
         setLoading(false);
 
         if (res.ok) {
+            toast.dismiss();
             toast.success('Verification email sent successfully.');
         } else {
+            toast.dismiss();
             toast.error(data.error || 'Failed to send verification email.');
         }
     };
