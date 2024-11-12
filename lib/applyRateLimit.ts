@@ -10,6 +10,7 @@ interface ExtendedNextApiRequest extends NextApiRequest {
 export const applyRateLimit = async (req: ExtendedNextApiRequest, res: NextApiResponse, limiter: RequestHandler, clientIp: string) => {
     // Manually set the request.ip property
     req.ip = clientIp;
+    console.log('req.ip:', req.ip);
 
     return new Promise((resolve, reject) => {
         limiter(req as any, res as any, (result: any) => {
