@@ -35,6 +35,8 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     const [dateFilter, setDateFilter] = useState('');
     const [editingPostId, setEditingPostId] = useState<number | null>(null);
     const [editedStatus, setEditedStatus] = useState<string>('');
+    const [savingPostIds, setSavingPostIds] = useState<Set<number>>(new Set());
+    const [deletingPostIds, setDeletingPostIds] = useState<Set<number>>(new Set());
     const { data: session, status } = useSession();
 
     const deleteRoles = ['admin'];
@@ -81,6 +83,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 return;
             }
 
+            setSavingPostIds(prev => new Set(prev).add(postId));
             const response = await fetch(`/api/posts?id=${postId}`, {
                 method: 'PUT',
                 headers: {
@@ -95,7 +98,6 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 toast.success('Status updated successfully');
                 setEditingPostId(null);
                 setEditedStatus('');
-                // Update the posts state directly
                 const updatedPosts = posts.map(post => 
                     post.id === postId ? { ...post, status: editedStatus } : post
                 );
@@ -105,7 +107,40 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
             }
         } catch (error) {
             toast.error('Failed to update status');
+        } finally {
+            setSavingPostIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(postId);
+                return newSet;
+            });
         }
+    };
+
+    const handleDeletePost = async (postId: number) => {
+        if (!((session?.user?.role && deleteRoles.includes(session.user.role)) || 
+            Number(session?.user?.id) === posts.find(p => p.id === postId)?.author.id)) {
+            toast.error('You do not have permission to delete this post.');
+            return;
+        }
+
+        try {
+            setDeletingPostIds(prev => new Set(prev).add(postId));
+            await onDeletePost(postId);
+            toast.success('Post deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete post');
+        } finally {
+            setDeletingPostIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(postId);
+                return newSet;
+            });
+        }
+    };
+
+    // Helper function to check if a post is being processed
+    const isPostProcessing = (postId: number) => {
+        return savingPostIds.has(postId) || deletingPostIds.has(postId);
     };
 
     return (
@@ -201,6 +236,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     value={editedStatus}
                                                     onChange={(e) => setEditedStatus(e.target.value)}
                                                     className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                                                    disabled={isPostProcessing(post.id)}
                                                 >
                                                     {hasApproveRights ? (
                                                         <>
@@ -216,17 +252,19 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     )}
                                                 </select>
                                                 <button
-                                                    className="text-green-500 hover:text-green-600 ml-2"
+                                                    className="text-green-500 hover:text-green-600 ml-2 disabled:opacity-50"
                                                     onClick={() => handleSaveStatus(post.id)}
+                                                    disabled={isPostProcessing(post.id)}
                                                 >
-                                                    <FaSave />
+                                                    {savingPostIds.has(post.id) ? 'Saving...' : <FaSave />}
                                                 </button>
                                                 <button
-                                                    className="text-red-500 hover:text-red-600 ml-2"
+                                                    className="text-red-500 hover:text-red-600 ml-2 disabled:opacity-50"
                                                     onClick={() => {
                                                         setEditingPostId(null);
                                                         setEditedStatus('');
                                                     }}
+                                                    disabled={isPostProcessing(post.id)}
                                                 >
                                                     <FaTimes />
                                                 </button>
@@ -248,11 +286,12 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                         </span>
                                         {(hasApproveRights || post.author.id === currentUserId) && (
                                             <button
-                                                className="text-blue-500 hover:text-blue-600"
+                                                className="text-blue-500 hover:text-blue-600 disabled:opacity-50"
                                                 onClick={() => {
                                                     setEditingPostId(post.id);
                                                     setEditedStatus(post.status);
                                                 }}
+                                                disabled={isPostProcessing(post.id)}
                                             >
                                                 <FaEdit />
                                             </button>
@@ -264,22 +303,22 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                             {(hasApproveRights || post.author.id === currentUserId) && (
                                 <div className="flex items-center space-x-2">
                                     <button
-                                        className="text-green-500 hover:text-green-600"
+                                        className="text-green-500 hover:text-green-600 disabled:opacity-50"
                                         onClick={() => onSelectPost(post.id)}
+                                        disabled={isPostProcessing(post.id)}
                                     >
                                         <FaEdit />
                                     </button>
                                     <button
-                                        className="text-red-500 hover:text-red-600"
-                                        onClick={() => {
-                                            if ((session?.user?.role && deleteRoles.includes(session.user.role)) || Number(session?.user?.id) === post.author.id) {
-                                                onDeletePost(post.id);
-                                            } else {
-                                                toast.error('You do not have permission to delete this post.');
-                                            }
-                                        }}
+                                        className="text-red-500 hover:text-red-600 disabled:opacity-50"
+                                        onClick={() => handleDeletePost(post.id)}
+                                        disabled={isPostProcessing(post.id)}
                                     >
-                                        <FaTrash />
+                                        {deletingPostIds.has(post.id) ? (
+                                            <span className="text-sm">Deleting...</span>
+                                        ) : (
+                                            <FaTrash />
+                                        )}
                                     </button>
                                 </div>
                             )}
