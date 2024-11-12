@@ -16,6 +16,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
       featured_image_url: true,
       tags: true,
     },
+    where: {
+      status: 'published',
+    },
     orderBy: {
       published_at: 'desc',
     },
