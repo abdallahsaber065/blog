@@ -16,6 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await applyRateLimit(req, res, rateLimiters[apiRoute as keyof typeof rateLimiters], clientIp);
         res.status(200).json({ message: 'Rate limit check passed' });
     } catch (error: any)  {
-        res.status(429).json({ message: error.message || 'Too many requests, please try again later' });
+        res.status(429).json({ message: error.message + String(clientIp) || 'Too many requests, please try again later' + String(clientIp) });
     }
 }
