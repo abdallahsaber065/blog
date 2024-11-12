@@ -1,9 +1,8 @@
-// please update required information
 const siteMetadata = {
-  title: 'Next.js Blog With Tailwind CSS, Prisma ORM and Postgres',
+  title: 'Dev Trend - Your Source for Web Development and Tech News',
   author: 'Abdallah Saber',
-  headerTitle: 'Dev Trend Blog',
-  description: ' Dev Trend is your go-to source for the latest in web development, programming, and tech news. Our mission is to empower developers and tech enthusiasts with insightful articles, tutorials, and resources.',
+  headerTitle: 'Dev Trend',
+  description: 'Dev Trend is your go-to source for the latest in web development, programming, and tech news. Our mission is to empower developers and tech enthusiasts with insightful articles, tutorials, and resources.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://devtrend.tech/', // your website URL
