@@ -16,6 +16,16 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true);
 
+        // check rate limit
+        const rateLimitCheck = await fetch(`/api/auth/rate-limit?apiRoute=login`);
+        
+        if (!rateLimitCheck.ok) {
+            const errorText = await rateLimitCheck.text();
+            console.error(errorText);
+            setError(errorText);
+            setLoading(false);
+            return;
+        }
         const result = await signIn('credentials', {
             redirect: false,
             email,
