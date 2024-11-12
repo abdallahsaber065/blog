@@ -62,7 +62,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             if (emailError || subscribedError) {
                 log += `\nResponse Status: 400 ${emailError || subscribedError}`;
-                logger.info(log);
+
                 return res.status(400).json({ error: emailError || subscribedError });
             }
 
@@ -92,7 +92,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             if (idError || newEmailError || newSubscribedError) {
                 log += `\nResponse Status: 400 ${idError || newEmailError || newSubscribedError}`;
-                logger.info(log);
+
                 return res.status(400).json({ error: idError || newEmailError || newSubscribedError });
             }
 
@@ -121,7 +121,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             if (deleteIdError) {
                 log += `\nResponse Status: 400 ${deleteIdError}`;
-                logger.info(log);
+
                 return res.status(400).json({ error: deleteIdError });
             }
 
@@ -143,7 +143,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             res.status(405).end(`Method ${method} Not Allowed`);
     }
 
-    logger.info(log);
+
 }
 
 

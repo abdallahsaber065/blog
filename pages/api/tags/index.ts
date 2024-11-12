@@ -53,7 +53,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postValidationError = validateRequiredFields(['name', 'slug'], body);
                 if (postValidationError) {
                     log += `\nResponse Status: 400 ${postValidationError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -69,14 +69,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const putValidationError = validateRequiredFields(['id', 'data'], body);
                 if (putValidationError) {
                     log += `\nResponse Status: 400 ${putValidationError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: putValidationError });
                 }
 
                 const idError = validateId(body.id);
                 if (idError) {
                     log += `\nResponse Status: 400 ${idError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: idError });
                 }
 
@@ -107,7 +107,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: deleteIdError });
                 }
 
@@ -121,17 +121,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     where: { id: Number(query.id) },
                 });
                 res.status(200).json({ message: 'Tag deleted' });
-                
+
                 const deleteRoutesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
                     REVALIDATE_PATHS.CATEGORIES,
                     REVALIDATE_PATHS.CATEGORIES_ALL
                 ];
-                
+
                 if (tagToDelete?.slug) {
                     deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tagToDelete.slug));
                 }
-                
+
                 await revalidateRoutes(res, deleteRoutesToRevalidate);
                 log += `\nResponse Status: 200 OK`;
                 break;
@@ -145,7 +145,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         handleError(res, error);
     }
 
-    logger.info(log);
+
 }
 
 

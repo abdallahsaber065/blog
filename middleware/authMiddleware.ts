@@ -16,8 +16,6 @@ export async function authMiddleware(
 ) {
 
     const session = await getServerSession(req, res, options);
-    console.log("session", session);
-
     if (publicEndpoints.includes(req.url || '')) {
         return handler(req, res);
     }
