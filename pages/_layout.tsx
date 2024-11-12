@@ -81,7 +81,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
       </Head>
       <Header />
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          top: '5rem', // This will position it below the header
+          right: '1rem',
+        }}
+      />
       {children}
       <Footer />
     </div>
