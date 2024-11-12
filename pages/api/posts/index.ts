@@ -59,31 +59,54 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     return res.status(400).json({ error: postValidationError });
                 }
 
+                // Check for similar titles
+                const existingPost = await prisma.post.findFirst({
+                    where: {
+                        title: {
+                            equals: body.title,
+                            mode: 'insensitive' // Case-insensitive comparison
+                        }
+                    }
+                });
+
+                if (existingPost) {
+                    log += `\nResponse Status: 400 Duplicate title`;
+                    logger.info(log);
+                    return res.status(400).json({
+                        error: 'A post with this title already exists. Please choose a different title.'
+                    });
+                }
+
                 const newPost = await prisma.post.create({
                     data: body,
                 });
 
-                const routesToRevalidate = [
-                    REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
-                ];
+                // Only revalidate routes if the post is published
+                if (body.status === 'published') {
+                    const routesToRevalidate = [
+                        REVALIDATE_PATHS.HOME,
+                        REVALIDATE_PATHS.CATEGORIES_ALL
+                    ];
 
-                const allTags = await prisma.tag.findMany();
-                allTags.forEach(tag => {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
-                });
-
-                if (body.author) {
-                    const author = await prisma.user.findUnique({
-                        where: { id: body.author.id },
-                        select: { username: true }
+                    const allTags = await prisma.tag.findMany();
+                    allTags.forEach(tag => {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
                     });
-                    if (author) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(author.username));
+
+                    // Only fetch and revalidate author path if there's an author
+                    if (body.author?.id) {
+                        const author = await prisma.user.findUnique({
+                            where: { id: body.author.id },
+                            select: { username: true }
+                        });
+                        if (author?.username) {
+                            routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(author.username));
+                        }
                     }
+
+                    await revalidateRoutes(res, routesToRevalidate);
                 }
 
-                await revalidateRoutes(res, routesToRevalidate);
                 res.status(201).json(newPost);
                 log += `\nResponse Status: 201 Created`;
                 break;
@@ -174,7 +197,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 catch (error) {
                     handleError(res, error, 'Failed to delete post');
                 }
-                
+
                 break;
 
             default:
