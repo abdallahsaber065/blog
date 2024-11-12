@@ -7,7 +7,9 @@ import siteMetadata from "@/lib/siteMetaData";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 
+
 const Footer = () => {
+
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -40,73 +42,93 @@ const Footer = () => {
   };
 
   return (
-    <footer className="mt-16 rounded-2xl bg-dark dark:bg-accentDark/90 m-2 sm:m-10 flex flex-col items-center text-light dark:text-dark">
-      <h3 className="mt-16 font-medium dark:font-bold text-center capitalize text-2xl sm:text-3xl lg:text-4xl px-4">
-        Interesting Stories | Updates | Guides
-      </h3>
-      <p className="mt-5 px-4 text-center w-full sm:w-3/5 font-light dark:font-medium text-sm sm:text-base">
-        Subscribe to learn about new technology and updates. Join over 5000+
-        members community to stay up to date with latest news.
-      </p>
+    <footer className="mt-8 bg-dark/95 text-slate-200 dark:text-slate-100
+      relative before:absolute before:top-0 before:left-0 before:right-0 before:h-px
+      before:bg-gradient-to-r before:from-transparent before:via-slate-700 before:to-transparent
+      dark:shadow-[0_-1px_10px_rgba(0,0,0,0.3)]">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Newsletter Section */}
+        <div className="max-w-3xl mx-auto text-center mb-6">
+          <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-white dark:text-white">
+            Stay Updated with Dev Trends
+          </h3>
+          <p className="text-sm sm:text-base text-slate-300 dark:text-slate-300 mb-4">
+            Join our community to receive the latest tech updates and guides
+          </p>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mt-6 w-fit sm:min-w-[384px] flex items-stretch bg-light dark:bg-dark p-1 sm:p-2 rounded mx04"
-      >
-        <input
-          type="email"
-          placeholder="Enter your email"
-          {...register("email", { required: true, maxLength: 80 })}
-          className="w-full bg-transparent pl-2 sm:pl-0 text-dark focus:border-dark focus:ring-0 border-0 border-b mr-2 pb-1"
-        />
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              {...register("email", { required: true, maxLength: 80 })}
+              className="flex-1 px-4 py-2 rounded-lg 
+                bg-slate-800/50 dark:bg-slate-800 
+                text-white dark:text-white
+                border border-slate-700 dark:border-slate-600 
+                focus:ring-2 focus:ring-primary/50 focus:border-transparent
+                placeholder-slate-400 dark:placeholder-slate-400"
+            />
+            <button
+              type="submit"
+              className="px-6 py-2 rounded-lg bg-primary hover:bg-primary/90 
+                text-white font-medium transition-colors disabled:opacity-70
+                hover:shadow-lg"
+              disabled={loading}
+            >
+              {loading ? <ClipLoader size={20} color={"#fff"} /> : "Subscribe"}
+            </button>
+          </form>
+        </div>
 
-        <button
-          type="submit"
-          className="bg-dark text-light dark:text-dark dark:bg-light cursor-pointer font-medium rounded px-3 sm:px-5 py-1"
-          disabled={loading}
-        >
-          {loading ? <ClipLoader size={20} color={"#fff"} /> : "Subscribe"}
-        </button>
-      </form>
-      <div className="flex items-center mt-8">
-        <a
-          href={siteMetadata.linkedin}
-          className="inline-block w-6 h-6 mr-4"
-          aria-label="Reach out to me via LinkedIn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.twitter}
-          className="inline-block w-6 h-6 mr-4"
-          aria-label="Reach out to me via Twitter"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <TwitterIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.github}
-          className="inline-block w-6 h-6 mr-4 fill-light"
-          aria-label="Check my profile on Github"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GithubIcon className="fill-light dark:fill-dark  hover:scale-125 transition-all ease duration-200" />
-        </a>
-      </div>
-
-      <div className="w-full  mt-16 md:mt-24 relative font-medium border-t border-solid border-light py-6 px-8 flex  flex-col md:flex-row items-center justify-between">
-        <span className="text-center">
-          &copy;2024 Dev Trend. All rights reserved.
-        </span>
-        <div className="text-center">
-          Made with &hearts; by{" "}
-          <a href="https://abdallah-saber.vercel.app/" className="underline" target="_blank">
-            Abdallah Saber
+        {/* Social Links */}
+        <div className="flex justify-center space-x-6 mb-6">
+          <a
+            href={siteMetadata.linkedin}
+            className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
+            aria-label="LinkedIn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <LinkedinIcon className="w-5 h-5" />
           </a>
+          <a
+            href={siteMetadata.twitter}
+            className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
+            aria-label="Twitter"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <TwitterIcon className="w-5 h-5" />
+          </a>
+          <a
+            href={siteMetadata.github}
+            className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
+            aria-label="GitHub"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GithubIcon className="w-5 h-5" />
+          </a>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-4 border-t border-slate-800 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400 dark:text-slate-400">
+            <span>&copy; 2024 Dev Trend. All rights reserved.</span>
+            <div>
+              Made with ❤️ by{" "}
+              <a
+                href="https://abdallah-saber.vercel.app/"
+                className="underline hover:text-primary transition-colors"
+                target="_blank"
+              >
+                Abdallah Saber
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
