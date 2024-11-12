@@ -30,13 +30,13 @@ interface PostEditorProps {
     post: Post;
     tags: Tag[];
     categories: Category[];
-    onSave: (post: Post, status: string) => void;
+    onSave: (updatedPost: any, status: string) => Promise<void>;
+    isLoading: boolean;
 }
 
-const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave }) => {
+const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave, isLoading }) => {
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
-    const [loading, setLoading] = useState<boolean>(false);
 
     const handleContentChange = async (value: string) => {
         setMarkdownText(value);
@@ -70,9 +70,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
     };
 
     const handleSave = async (status: string) => {
-        setLoading(true);
         await onSave(currentPost, status);
-        setLoading(false);
     };
 
     return (
@@ -125,16 +123,16 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 <button
                     className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
                     onClick={() => handleSave('published')}
-                    disabled={loading}
+                    disabled={isLoading}
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
+                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
                 </button>
                 <button
                     className="bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
                     onClick={() => handleSave('draft')}
-                    disabled={loading}
+                    disabled={isLoading}
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
+                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
                 </button>
             </div>
         </div>

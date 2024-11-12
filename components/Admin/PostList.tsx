@@ -79,6 +79,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     const handleSaveStatus = async (postId: number) => {
         try {
             if (editedStatus === 'published' && !hasApproveRights) {
+                toast.dismiss();
                 toast.error('You do not have permission to publish posts');
                 return;
             }
@@ -95,6 +96,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 }),
             });
             if (response.ok) {
+                toast.dismiss();
                 toast.success('Status updated successfully');
                 setEditingPostId(null);
                 setEditedStatus('');
@@ -103,9 +105,11 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 );
                 setPosts(updatedPosts);
             } else {
+                toast.dismiss();
                 toast.error('Failed to update status');
             }
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to update status');
         } finally {
             setSavingPostIds(prev => {
@@ -119,6 +123,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     const handleDeletePost = async (postId: number) => {
         if (!((session?.user?.role && deleteRoles.includes(session.user.role)) || 
             Number(session?.user?.id) === posts.find(p => p.id === postId)?.author.id)) {
+            toast.dismiss();
             toast.error('You do not have permission to delete this post.');
             return;
         }
@@ -126,8 +131,10 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
         try {
             setDeletingPostIds(prev => new Set(prev).add(postId));
             await onDeletePost(postId);
+            toast.dismiss();
             toast.success('Post deleted successfully');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to delete post');
         } finally {
             setDeletingPostIds(prev => {

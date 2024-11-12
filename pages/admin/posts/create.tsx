@@ -96,6 +96,7 @@ const CreatePost: React.FC = () => {
         setLoading(true);
         try {
             if (!topic) {
+                toast.dismiss();
                 throw new Error("Please enter a topic to generate content.");
             }
 
@@ -111,6 +112,7 @@ const CreatePost: React.FC = () => {
             setSearchTerms(outlineResponse.data?.search_terms);
 
             if (!outline) {
+                toast.dismiss();
                 throw new Error("No outline generated. Please try again.");
             }
 
@@ -118,6 +120,7 @@ const CreatePost: React.FC = () => {
             setShowJSONEditor(true);
         } catch (error: any) {
             console.error('Error during outline generation:', error);
+            toast.dismiss();
             toast.error(error.message);
         } finally {
             setLoading(false);
@@ -157,6 +160,7 @@ const CreatePost: React.FC = () => {
             setFeaturedImage('/blogs/placeholder.jpg');
         } catch (error: any) {
             console.error('Error during content generation:', error);
+            toast.dismiss();
             toast.error(error.message);
         } finally {
             setLoading(false);
@@ -195,6 +199,7 @@ const CreatePost: React.FC = () => {
             };
 
             const response = await axios.post('/api/posts', postData);
+            toast.dismiss();
             if (status === 'published') {
                 toast.success('Post published successfully!');
             } else {
@@ -204,6 +209,7 @@ const CreatePost: React.FC = () => {
         } catch (error: any) {
             console.error('Failed to create post:', error);
             const errorMessage = error.response?.data?.error || error.message;
+            toast.dismiss();
             toast.error(errorMessage);
             return null;
         } finally {

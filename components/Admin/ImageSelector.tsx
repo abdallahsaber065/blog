@@ -60,6 +60,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             }));
             setImages(imagesWithFullUrls.filter(Boolean));
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to fetch images');
         }
         setLoading(false);
@@ -94,6 +95,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             setSelectedImage(mediaWithFullUrl.file_url);
             setSelectedImageDetails(mediaWithFullUrl);
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to upload image');
         }
         setUploadLoading(false);
@@ -123,6 +125,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             setSelectedImageDetails(mediaWithFullUrl);
             setUrlInput('');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to upload image from URL');
         }
         setUploadLoading(false);

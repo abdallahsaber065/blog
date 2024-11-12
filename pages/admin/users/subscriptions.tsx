@@ -35,6 +35,7 @@ const Subscriptions: React.FC = () => {
             const response = await axios.get('/api/newsletterSubscription');
             setSubscriptions(response.data);
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to fetch subscriptions');
         } finally {
             setLoading(false);
@@ -43,6 +44,7 @@ const Subscriptions: React.FC = () => {
 
     const addSubscription = async () => {
         if (!newEmail) {
+            toast.dismiss();
             toast.error('Email is required');
             return;
         }
@@ -55,8 +57,10 @@ const Subscriptions: React.FC = () => {
             });
             setSubscriptions([...subscriptions, response.data]);
             setNewEmail('');
+            toast.dismiss();
             toast.success('Subscription added');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to add subscription');
         } finally {
             setLoading(false);
@@ -68,8 +72,10 @@ const Subscriptions: React.FC = () => {
         try {
             await axios.delete('/api/newsletterSubscription', { data: { deleteId: id } });
             setSubscriptions(subscriptions.filter(sub => sub.id !== id));
+            toast.dismiss();
             toast.success('Subscription deleted');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to delete subscription');
         } finally {
             setLoading(false);
@@ -97,8 +103,10 @@ const Subscriptions: React.FC = () => {
             setEditId(null);
             setEditEmail('');
             setEditSubscribed(false);
+            toast.dismiss();
             toast.success('Subscription updated');
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to update subscription');
         } finally {
             setLoading(false);
@@ -130,8 +138,10 @@ const Subscriptions: React.FC = () => {
                         }));
                         await axios.post('/api/newsletterSubscription/import', { data });
                         fetchSubscriptions();
+                        toast.dismiss();
                         toast.success('Subscriptions imported');
                     } catch (error) {
+                        toast.dismiss();
                         toast.error('Failed to import subscriptions');
                     } finally {
                         setLoading(false);

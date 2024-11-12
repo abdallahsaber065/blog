@@ -68,12 +68,15 @@ const DashboardPage: React.FC = () => {
                 method: 'DELETE',
             });
             if (response.ok) {
+                toast.dismiss();
                 toast.success('Post deleted successfully');
                 loadPosts();
             } else {
+                toast.dismiss();
                 toast.error('Failed to delete post');
             }
         } catch (error) {
+            toast.dismiss();
             toast.error('Failed to delete post');
         } finally {
             setLoading(false);

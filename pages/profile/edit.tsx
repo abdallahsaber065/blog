@@ -48,7 +48,6 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
         e.preventDefault();
 
         try {
-
             const data = {
                 ...formData,
             }
@@ -62,6 +61,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
             });
 
             if (response.ok) {
+                toast.dismiss();
                 toast.success('Profile updated successfully.');
                 // if email is updated send verification email
                 if (formData.email !== user.email) {
@@ -74,8 +74,10 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                     });
                     const data = await res.json();
                     if (res.ok) {
+                        toast.dismiss();
                         toast.success('Verification email sent successfully.');
                     } else {
+                        toast.dismiss();
                         toast.error(data.error);
                     }
                     // sign out user if email is updated
@@ -83,9 +85,11 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                 }
                 router.push('/profile');
             } else {
+                toast.dismiss();
                 toast.error('Failed to update profile.');
             }
         } catch (error) {
+            toast.dismiss();
             toast.error('An error occurred. Please try again.');
         }
     };

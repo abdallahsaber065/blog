@@ -42,6 +42,7 @@ const Dashboard = () => {
         const response = await axios.get(`/api/users?select=${userSelect}`);
         setUsers(response.data);
       } catch (error) {
+        toast.dismiss();
         toast.error('Failed to fetch users');
       } finally {
         setLoading(false);
@@ -64,8 +65,10 @@ const Dashboard = () => {
       try {
         await axios.delete('/api/users', { data: { targetId: userToDelete } });
         setUsers(users.filter(user => user.id !== userToDelete));
+        toast.dismiss();
         toast.success('User deleted successfully');
       } catch (error) {
+        toast.dismiss();
         toast.error('Failed to delete user');
       } finally {
         setShowDeleteConfirmation(false);
