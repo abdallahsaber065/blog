@@ -1,6 +1,6 @@
 // pages/authors/[username].tsx
 import React from 'react';
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
@@ -88,36 +88,6 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
             </div>
         </div>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { username } = context.params || {};
-
-    const author = await prisma.user.findUnique({
-        where: { username: username as string },
-        select: {
-            username: true,
-            first_name: true,
-            last_name: true,
-            bio: true,
-            profile_image_url: true,
-            posts: {
-                select: {
-                    id: true,
-                    title: true,
-                    slug: true,
-                    excerpt: true,
-                    featured_image_url: true,
-                },
-            },
-        },
-    });
-
-    return {
-        props: {
-            author,
-        },
-    };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
