@@ -2,14 +2,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import rateLimiters from '@/lib/rateLimit';
 import { applyRateLimit } from '@/lib/applyRateLimit';
+import requestIp from 'request-ip'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { apiRoute = 'login' } = req.query;
 
-    // Extract client's IP address using external service
-    const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const ipData = await ipResponse.json();
-    const clientIp = ipData.ip;
+
+    const clientIp = requestIp.getClientIp(req) || 'unknown';
     console.log('clientIp', clientIp);
 
     try {
