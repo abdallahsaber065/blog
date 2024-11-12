@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
 import { ClipLoader } from 'react-spinners'; // Import the spinner
 
+// Add this social links data array
+const socialLinks = [
+  { url: 'https://twitter.com/yourtwitterhandle', platform: 'twitter', color: '#1DA1F2' },
+  { url: 'https://linkedin.com/in/yourlinkedinhandle', platform: 'linkedin', color: '#0077B5' },
+  { url: 'https://github.com/yourgithubhandle', platform: 'github', color: '#333333' },
+  { url: 'https://facebook.com/yourfacebookhandle', platform: 'facebook', color: '#3b5998' },
+  { url: 'https://instagram.com/yourinstagramhandle', platform: 'instagram', color: '#E1306C' },
+];
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [success, setSuccess] = useState(false);
@@ -44,15 +53,15 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark">
-      <main className="container mx-auto py-16 px-4 flex-1">
-        <section className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-accent dark:text-accentDark mb-4">Contact Us</h1>
-          <p className="text-lg text-gray dark:text-light max-w-2xl mx-auto">
+      <main className="container mx-auto py-8 md:py-16 px-4 flex-1">
+        <section className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-accent dark:text-accentDark mb-4">Contact Us</h1>
+          <p className="text-base md:text-lg text-gray dark:text-light max-w-2xl mx-auto px-4">
             Have questions, feedback, or want to contribute to Dev Trend? Get in touch with us using the form below or connect with us on social media!
           </p>
         </section>
-        <section className="max-w-2xl mx-auto">
-          <form className="bg-light dark:bg-dark p-8 rounded-lg shadow-lg space-y-6" onSubmit={handleSubmit}>
+        <section className="max-w-2xl mx-auto px-4">
+          <form className="bg-light dark:bg-dark p-4 md:p-8 rounded-lg shadow-lg space-y-4 md:space-y-6" onSubmit={handleSubmit}>
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-accent dark:text-accentDark">Your Name</span>
@@ -102,17 +111,23 @@ const ContactPage = () => {
             {error && <p className="text-red-500 mt-4">{error}</p>}
           </form>
         </section>
-        <section className="mt-16 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-accent dark:text-accentDark">Connect with Us</h2>
-          <p className="text-lg text-gray dark:text-light mb-8">
+        <section className="mt-8 md:mt-16 text-center px-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-accent dark:text-accentDark">Connect with Us</h2>
+          <p className="text-base md:text-lg text-gray dark:text-light mb-6 md:mb-8">
             Follow us on social media to stay updated with the latest articles, news, and more!
           </p>
-          <div className="flex justify-center space-x-4">
-            <SocialIcon url="https://twitter.com/yourtwitterhandle" fgColor="#ffffff" bgColor="#1DA1F2" />
-            <SocialIcon url="https://linkedin.com/in/yourlinkedinhandle" fgColor="#ffffff" bgColor="#0077B5" />
-            <SocialIcon url="https://github.com/yourgithubhandle" fgColor="#ffffff" bgColor="#333333" />
-            <SocialIcon url="https://facebook.com/yourfacebookhandle" fgColor="#ffffff" bgColor="#3b5998" />
-            <SocialIcon url="https://instagram.com/yourinstagramhandle" fgColor="#ffffff" bgColor="#E1306C" />
+          <div className="flex flex-wrap justify-center gap-4">
+            {socialLinks.map((social, index) => (
+              <SocialIcon
+                key={index}
+                url={social.url}
+                fgColor="#ffffff"
+                bgColor={social.color}
+                className="transition-transform hover:scale-110"
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            ))}
           </div>
         </section>
       </main>
