@@ -14,6 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const ipResponse = await fetch('https://api.ipify.org?format=json');
         const ipData = await ipResponse.json();
         const ip = ipData.ip;
+        console.log('ip of subscriber:', ip);
 
         logger.info(`Email: ${email}\nIP: ${ip}`);
 
