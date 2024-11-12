@@ -1,6 +1,6 @@
 // pages/authors/[username].tsx
 import React from 'react';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
@@ -117,6 +117,54 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         props: {
             author,
         },
+    };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    const authors = await prisma.user.findMany({
+        select: { username: true }
+    });
+
+    return {
+        paths: authors.map(author => ({
+            params: { username: author.username }
+        })),
+        fallback: 'blocking'
+    };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    const { username } = params as { username: string };
+    
+    const author = await prisma.user.findUnique({
+        where: { username },
+        select: {
+            username: true,
+            first_name: true,
+            last_name: true,
+            bio: true,
+            profile_image_url: true,
+            posts: {
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    excerpt: true,
+                    featured_image_url: true,
+                },
+            },
+        },
+    });
+
+    if (!author) {
+        return {
+            notFound: true
+        };
+    }
+
+    return {
+        props: { author },
+        revalidate: false
     };
 };
 

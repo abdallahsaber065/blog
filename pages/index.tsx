@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma";
 import HomeCoverSection from "@/components/Home/HomeCoverSection";
 import FeaturedPosts from "@/components/Home/FeaturedPosts";
 import RecentPosts from "@/components/Home/RecentPosts";
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps = async () => {
   const allBlogs = await prisma.post.findMany({
     select: {
       slug: true,
@@ -25,7 +25,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     take: 10,
   });
 
-  // Convert Date objects to strings for serialization
   const serializedBlogs = allBlogs.map(blog => ({
     ...blog,
     created_at: blog.created_at.toISOString(),
@@ -37,6 +36,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     props: {
       allBlogs: serializedBlogs,
     },
+    revalidate: false
   };
 };
 

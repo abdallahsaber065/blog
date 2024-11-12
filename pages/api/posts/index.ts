@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { revalidateRoutes, REVALIDATE_PATHS } from '@/lib/revalidate';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -61,17 +62,29 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const newPost = await prisma.post.create({
                     data: body,
                 });
-                res.status(201).json(newPost);
-                await res.revalidate("/");
-                await res.revalidate('/categories/all');
 
-                // get all tags from api
-                const alltag = await prisma.tag.findMany();
+                const routesToRevalidate = [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
 
-                for (const tag of alltag) {
-                    await res.revalidate(`/categories/${tag.slug}`);
+                const allTags = await prisma.tag.findMany();
+                allTags.forEach(tag => {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
+                });
+
+                if (body.author) {
+                    const author = await prisma.user.findUnique({
+                        where: { id: body.author.id },
+                        select: { username: true }
+                    });
+                    if (author) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(author.username));
+                    }
                 }
 
+                await revalidateRoutes(res, routesToRevalidate);
+                res.status(201).json(newPost);
                 log += `\nResponse Status: 201 Created`;
                 break;
 
@@ -127,9 +140,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 await res.revalidate("/");
                 await res.revalidate('/categories');
                 // get all tags from api
-                const allTags = await prisma.tag.findMany();
+                const tagsForPut = await prisma.tag.findMany();
 
-                for (const tag of allTags) {
+                for (const tag of tagsForPut) {
                     await res.revalidate(`/categories/${tag.slug}`);
                 }
                 log += `\nResponse Status: 200 OK`;
@@ -151,9 +164,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     await res.revalidate("/");
                     await res.revalidate('/categories');
                     // get all tags from api
-                    const allTags = await prisma.tag.findMany();
+                    const tagsForDelete = await prisma.tag.findMany();
 
-                    for (const tag of allTags) {
+                    for (const tag of tagsForDelete) {
                         await res.revalidate(`/categories/${tag.slug}`);
                     }
                     log += `\nResponse Status: 200 OK`;

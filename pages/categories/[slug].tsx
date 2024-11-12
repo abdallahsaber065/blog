@@ -82,7 +82,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       posts: serializedPosts,
       categories: allCategories,
     },
-    revalidate: 3600, // Revalidate every hour
+    revalidate: false // Only revalidate on-demand
   };
 };
 
