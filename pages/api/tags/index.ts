@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -84,7 +85,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body.data,
                 });
                 res.status(200).json(updatedTag);
-                await res.revalidate('/categories');
+                const routesToRevalidate = [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
+                if (body.id) {
+                    const tag = await prisma.tag.findUnique({
+                        where: { id: Number(body.id) },
+                        select: { slug: true }
+                    });
+                    if (tag) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
+                    }
+                }
+                await revalidateRoutes(res, routesToRevalidate);
                 log += `\nResponse Status: 200 OK`;
                 break;
 
@@ -96,11 +111,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     return res.status(400).json({ error: deleteIdError });
                 }
 
+                // Get the tag before deletion to have access to the slug
+                const tagToDelete = await prisma.tag.findUnique({
+                    where: { id: Number(query.id) },
+                    select: { slug: true }
+                });
+
                 await prisma.tag.delete({
                     where: { id: Number(query.id) },
                 });
                 res.status(200).json({ message: 'Tag deleted' });
-                await res.revalidate('/categories');
+                
+                const deleteRoutesToRevalidate = [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
+                
+                if (tagToDelete?.slug) {
+                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tagToDelete.slug));
+                }
+                
+                await revalidateRoutes(res, deleteRoutesToRevalidate);
                 log += `\nResponse Status: 200 OK`;
                 break;
 

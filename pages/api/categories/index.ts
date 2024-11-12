@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import logger from '@/lib/logger';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { REVALIDATE_PATHS } from '@/lib/revalidate';
+import { revalidateRoutes } from '@/lib/revalidate';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -60,7 +62,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body,
                 });
                 res.status(201).json(newCategory);
-                await res.revalidate('/categories');
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ]);
                 log += `\nResponse Status: 201 Created`;
                 break;
 
@@ -84,7 +90,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body.data,
                 });
                 res.status(200).json(updatedCategory);
-                await res.revalidate('/categories');
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ]);
                 log += `\nResponse Status: 200 OK`;
                 break;
 
@@ -100,7 +110,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     where: { id: Number(query.id) },
                 });
                 res.status(200).json({ message: 'Category deleted' });
-                await res.revalidate('/categories');
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ]);
                 log += `\nResponse Status: 200 OK`;
                 break;
 
