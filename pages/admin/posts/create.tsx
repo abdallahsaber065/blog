@@ -194,30 +194,17 @@ const CreatePost: React.FC = () => {
                 outline: JSON.stringify(outline),
             };
 
-            let uniqueSlug = postData.slug;
-            let isUnique = false;
-
-            while (!isUnique) {
-                const response = await axios.get(`/api/posts?where=${JSON.stringify({ slug: uniqueSlug })}`);
-                if (response.data.length === 0) {
-                    isUnique = true;
-                } else {
-                    uniqueSlug = `${postData.slug}-${Date.now()}`;
-                    toast.error('Title is not unique. Changing slug to make it unique.');
-                }
-            }
-
-            postData.slug = uniqueSlug;
             const response = await axios.post('/api/posts', postData);
             if (status === 'published') {
-                toast.success('Post created successfully!');
+                toast.success('Post published successfully!');
             } else {
                 toast.success('Draft saved successfully!');
             }
-            return response.data.id; // Return the ID of the saved post
+            return response.data.id;
         } catch (error: any) {
             console.error('Failed to create post:', error);
-            toast.error(error.response?.data?.error || error.message);
+            const errorMessage = error.response?.data?.error || error.message;
+            toast.error(errorMessage);
             return null;
         } finally {
             setLoading(false);
@@ -225,9 +212,13 @@ const CreatePost: React.FC = () => {
     };
 
     const handleSaveDraft = async () => {
-        const postId = await handleSave('draft');
-        if (postId) {
-            router.push(`/admin/posts/edit?id=${postId}`);
+        try {
+            const postId = await handleSave('draft');
+            if (postId) {
+                router.push(`/admin/posts/edit?id=${postId}`);
+            }
+        } catch (error) {
+            console.error('Error saving draft:', error);
         }
     };
 
