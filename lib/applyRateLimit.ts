@@ -1,28 +1,15 @@
 // lib/applyRateLimit.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { RequestHandler } from 'express';
-import axios from 'axios';
 
 // Extend NextApiRequest to include the ip property
 interface ExtendedNextApiRequest extends NextApiRequest {
     ip?: string;
 }
 
-export const applyRateLimit = async (req: ExtendedNextApiRequest, res: NextApiResponse, limiter: RequestHandler) => {
+export const applyRateLimit = async (req: ExtendedNextApiRequest, res: NextApiResponse, limiter: RequestHandler, clientIp: string) => {
     // Manually set the request.ip property
-    if (!req.ip) {
-
-        try {
-            const response = await axios.get('https://api64.ipify.org?format=json');
-            req.ip = response.data.ip;
-        } catch (error) {
-            console.error('Failed to fetch IP address:', error);
-            req.ip = '';
-        }
-
-        console.log('req.ip', req.ip);
-
-    }
+    req.ip = clientIp;
 
     return new Promise((resolve, reject) => {
         limiter(req as any, res as any, (result: any) => {
