@@ -7,24 +7,15 @@ const getRateLimitMessage = (max: number, windowMs: number) => {
     return `Too many requests, please try again after ${windowMs / 60000} minutes`;
 }
 
-const keyGenerator = async (req: Request) => {
-    const ipAddress = req.headers['x-forwarded-for']?.toString() || req.socket.remoteAddress || '';
-    if (!ipAddress) {
-        try {
-            const response = await axios.get('https://api64.ipify.org?format=json');
-            return response.data.ip;
-        } catch (error) {
-            console.error('Failed to fetch IP address:', error);
-            return '';
-        }
-    }
+const keyGenerator = (req: Request) => {
+    const ipAddress = req.ip || req.headers['x-forwarded-for']?.toString() || req.socket.remoteAddress || '';
     return ipAddress;
 };
 
 const rateLimiterConfig = {
-    login: { max: 10, windowMs: 15 * 60 * 1000 }, // 5 requests per 15 minutes
-    signup: { max: 30, windowMs: 60 * 60 * 1000 }, // 3 requests per hour
-    checkUniqueness: { max: 30, windowMs: 15 * 60 * 1000 }, // 15 requests per 15 minutes
+    login: { max: 10, windowMs: 15 * 60 * 1000 }, // 10 requests per 15 minutes
+    signup: { max: 30, windowMs: 60 * 60 * 1000 }, // 30 requests per hour
+    checkUniqueness: { max: 30, windowMs: 15 * 60 * 1000 }, // 30 requests per 15 minutes
 };
 
 const rateLimiters = {
