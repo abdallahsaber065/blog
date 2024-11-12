@@ -51,7 +51,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                         step={0.1}
                         value={zoom}
                         onChange={(e) => setZoom(Number(e.target.value))}
-                        className="w-1/3 bg-gray-200 dark:bg-gray-700"
+                        className="w-1/3 bg-slate-200 dark:bg-slate-700"
                     />
                     <input
                         type="range"
@@ -60,7 +60,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                         step={1}
                         value={rotation}
                         onChange={(e) => setRotation(Number(e.target.value))}
-                        className="w-1/3 bg-gray-200 dark:bg-gray-700"
+                        className="w-1/3 bg-slate-200 dark:bg-slate-700"
                     />
                     <button onClick={onClose} className="absolute top-2 right-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600 transition-colors m-5 text-2xl">
                         <FaTimes />

@@ -20,7 +20,7 @@ const Subscriptions: React.FC = () => {
     const [editEmail, setEditEmail] = useState('');
     const [editSubscribed, setEditSubscribed] = useState(false);
 
-    const commonClassNames = "py-2 text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded";
+    const commonClassNames = "py-2 text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded";
 
     useEffect(() => {
         fetchSubscriptions();
@@ -139,7 +139,7 @@ const Subscriptions: React.FC = () => {
     };
 
     return (
-        <div className="p-4 dark:bg-gray-800 dark:text-white">
+        <div className="p-4 dark:bg-slate-800 dark:text-white">
             <h1 className="text-2xl font-bold mb-4">Newsletter Subscriptions</h1>
             <div className="mb-4 flex items-center">
                 <input
@@ -176,7 +176,7 @@ const Subscriptions: React.FC = () => {
                     </thead>
                     <tbody>
                         {subscriptions.map((sub) => (
-                            <tr key={sub.id} className="border-b dark:border-gray-600">
+                            <tr key={sub.id} className="border-b dark:border-slate-600">
                                 <td className={commonClassNames}>{sub.id}</td>
                                 <td className={commonClassNames}>{sub.email}</td>
                                 <td className={commonClassNames}>{sub.subscribed ? 'Yes' : 'No'}</td>
@@ -214,7 +214,7 @@ const Subscriptions: React.FC = () => {
                     <button onClick={updateSubscription} className="bg-blue-500 text-white p-2 rounded ml-2 hover:bg-blue-600">
                         Update
                     </button>
-                    <button onClick={() => setEditId(null)} className="bg-gray-500 text-white p-2 rounded ml-2 hover:bg-gray-600">
+                    <button onClick={() => setEditId(null)} className="bg-slate-500 text-white p-2 rounded ml-2 hover:bg-slate-600">
                         Cancel
                     </button>
                 </div>
@@ -223,4 +223,4 @@ const Subscriptions: React.FC = () => {
     );
 };
 
-export default withAuth(Subscriptions,['admin']);
+export default withAuth(Subscriptions, ['admin']);

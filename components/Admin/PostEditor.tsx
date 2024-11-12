@@ -45,17 +45,17 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
 
     const handleCreateTag = (inputValue: string) => {
         const newTag = { id: -Date.now(), name: inputValue }; // Temporary negative ID for new tags
-        setCurrentPost({ 
-            ...currentPost, 
-            tags: [...currentPost.tags, newTag] 
+        setCurrentPost({
+            ...currentPost,
+            tags: [...currentPost.tags, newTag]
         });
     };
 
     const handleCreateCategory = (inputValue: string) => {
         const newCategory = { id: -Date.now(), name: inputValue }; // Temporary negative ID for new category
-        setCurrentPost({ 
-            ...currentPost, 
-            category: newCategory 
+        setCurrentPost({
+            ...currentPost,
+            category: newCategory
         });
     };
 
@@ -81,7 +81,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave 
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
                     type="text"
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-gray-300 rounded"
+                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                 />

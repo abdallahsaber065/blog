@@ -145,7 +145,7 @@ const Dashboard = () => {
               </button>
             </div>
             {expandedUserId === user.id && (
-              <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md mt-2">
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg shadow-md mt-2">
                 <p><strong>Full Name:</strong> {`${user.first_name} ${user.last_name}`}</p>
                 <p><strong>Email:</strong> {user.email}</p>
                 <p><strong>Role:</strong> {user.role}</p>

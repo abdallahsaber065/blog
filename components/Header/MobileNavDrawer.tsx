@@ -56,7 +56,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             <button
                                 className={`text-lg font-semibold flex justify-between items-center w-full focus:ring-2 
                                     
-                                ${isAdminMenuOpen || pathname?.startsWith("/admin") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
+                                ${isAdminMenuOpen || pathname?.startsWith("/admin/posts") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
                                 onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
                             >
                                 Admin
@@ -65,7 +65,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             {isAdminMenuOpen && (
                                 <ul className="mt-2 space-y-2">
                                     <li>
-                                        <Link href="/admin" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                                        <Link href="/admin/posts" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
                                             Dashboard
                                         </Link>
                                     </li>

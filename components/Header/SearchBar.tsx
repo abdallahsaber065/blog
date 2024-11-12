@@ -84,7 +84,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                 {!isOverlayVisible && results.length > 0 && (
                     <ul className="absolute top-full mt-2 w-full bg-white dark:bg-dark shadow-lg rounded-lg z-10 shadow-slate-300 dark:shadow-slate-800">
                         {results.map((result) => (
-                            <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700">
                                 <Link href={`/blogs/${result.slug}`} className="flex items-center w-full" onMouseDown={(e) => e.preventDefault()} onClick={handleResultClick}>
                                     <Image src={result.featured_image_url} alt={result.title} width={40} height={40} className="object-cover rounded-full mr-2" />
                                     <span className="text-slate-800 dark:text-light">{result.title}</span>
@@ -113,7 +113,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                         {results.length > 0 && (
                             <ul className="bg-white dark:bg-dark shadow-lg rounded-lg z-10 shadow-slate-300 dark:shadow-slate-800">
                                 {results.map((result) => (
-                                    <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                    <li key={result.id} className="flex items-center p-2 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700">
                                         <Link href={`/blogs/${result.slug}`} className="flex items-center w-full" onMouseDown={(e) => e.preventDefault()} onClick={handleResultClick}>
                                             <Image src={result.featured_image_url} alt={result.title} width={40} height={40} className="object-cover rounded-full mr-2" />
                                             <span className="text-slate-800 dark:text-light">{result.title}</span>

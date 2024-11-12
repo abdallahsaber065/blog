@@ -49,7 +49,7 @@ export default function TagForm({ refreshTags }: TagFormProps) {
                 placeholder="Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="border p-2 mb-2 w-full dark:bg-dark dark:text-white dark:border-gray-700 dark:placeholder-gray-400 dark:hover:bg-gray-800 dark:focus:bg-gray-900 dark:active:bg-gray-900 hover:bg-gray-100 focus:bg-gray-200 active:bg-gray-200"
+                className="border p-2 mb-2 w-full dark:bg-dark dark:text-white dark:border-slate-700 dark:placeholder-slate-400 dark:hover:bg-slate-800 dark:focus:bg-slate-900 dark:active:bg-slate-900 hover:bg-slate-100 focus:bg-slate-200 active:bg-slate-200"
             />
             <button type="submit" className="bg-blue-500 text-white p-2 w-full hover:bg-blue-600 active:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 dark:active:bg-blue-900">
                 {loading ? <ClipLoader size={20} color="#fff" /> : 'Add Tag'}

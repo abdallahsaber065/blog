@@ -84,7 +84,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, link }) => {
                         className="dark:bg-zinc-700"
                     />
                 </div>
-                <div className="flex-1 overflow-y-auto bg-gray-100 p-2 rounded dark:bg-zinc-900">
+                <div className="flex-1 overflow-y-auto bg-slate-100 p-2 rounded dark:bg-zinc-900">
                     {loading ? (
                         <div className="flex justify-center items-center h-full">
                             <ClipLoader size={50} color={"#000"} />

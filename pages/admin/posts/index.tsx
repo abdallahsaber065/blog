@@ -12,7 +12,7 @@ interface Post {
     tags: string[];
     title: string;
     category: { id: number; name: string };
-    author: { id: number; first_name: string; last_name: string };
+    author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
 }
@@ -43,6 +43,7 @@ const DashboardPage: React.FC = () => {
             author: {
                 select: {
                     id: true,
+                    username: true,
                     first_name: true,
                     last_name: true,
                 },
