@@ -33,7 +33,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
     "lib/dev/updateImagePaths.js",
     "lib/dev/extractAndAddCategories.js",
     "lib/dev/test.js"
