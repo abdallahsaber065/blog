@@ -1,6 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
-import { options } from '@/pages/api/auth/[...nextauth]'; // Import your auth options
+import { options } from '@/pages/api/auth/[...nextauth]';
+
+const publicEndpoints = [
+    '/api/auth/signup',
+    '/api/auth/reset-password',
+    '/api/auth/request-password-reset',
+    '/api/auth/check-uniqueness'
+];
 
 export async function authMiddleware(
     req: NextApiRequest,
@@ -9,8 +16,13 @@ export async function authMiddleware(
 ) {
 
     const session = await getServerSession(req, res, options);
+    console.log("session", session);
+
+    if (publicEndpoints.includes(req.url || '')) {
+        return handler(req, res);
+    }
+
     if (!session) {
-        console.log('No session found'); // Debug log
         return res.status(401).json({ error: 'Unauthorized' });
     }
 

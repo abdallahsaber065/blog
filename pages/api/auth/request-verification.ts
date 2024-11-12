@@ -47,9 +47,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email?token=${verificationToken}`;
 
         const htmlContent = createEmailConfirmationForm(verificationUrl, user?.first_name ?? '', user.email);
-        const textContent = `Verify your email by clicking the link below:\n\n${verificationUrl}`;
 
-        await sendEmail(email, 'Verify your email', htmlContent, textContent);
+        await sendEmail(email, 'Verify your email', htmlContent);
 
         res.status(200).json({ message: 'Verification email sent successfully' });
     } catch (error) {

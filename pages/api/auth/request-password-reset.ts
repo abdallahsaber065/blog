@@ -43,9 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${resetToken}`;
 
         const htmlContent = createPasswordResetForm(resetUrl, user?.first_name ?? '', user.email);
-        const textContent = `Reset your password by clicking the link below:\n\n${resetUrl}`;
-
-        await sendEmail(email, 'Reset your password', htmlContent, textContent);
+        await sendEmail(email, 'Reset your password', htmlContent);
 
         res.status(200).json({ message: 'Password reset email sent successfully' });
     } catch (error) {
