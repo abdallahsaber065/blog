@@ -102,20 +102,43 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-
                     return res.status(400).json({ error: deleteIdError });
                 }
 
+                // Get category and its associated posts before deletion
+                const categoryToDelete = await prisma.category.findUnique({
+                    where: { id: Number(query.id) },
+                    include: {
+                        posts: {
+                            select: { slug: true }
+                        }
+                    }
+                });
+
+                if (!categoryToDelete) {
+                    return res.status(404).json({ error: 'Category not found' });
+                }
+
+                // Delete the category
                 await prisma.category.delete({
                     where: { id: Number(query.id) },
                 });
-                res.status(200).json({ message: 'Category deleted' });
-                await revalidateRoutes(res, [
+
+                // Prepare routes for revalidation
+                const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
                     REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
-                ]);
-                log += `\nResponse Status: 200 OK`;
+                    REVALIDATE_PATHS.CATEGORIES_ALL,
+                    REVALIDATE_PATHS.getCategoryPath(categoryToDelete.slug)
+                ];
+
+                // Add all associated post paths
+                categoryToDelete.posts.forEach(post => {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(post.slug));
+                });
+
+                await revalidateRoutes(res, routesToRevalidate);
+                res.status(200).json({ message: 'Category deleted successfully' });
                 break;
 
             default:

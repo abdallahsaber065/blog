@@ -107,33 +107,42 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                // Get the tag before deletion to have access to the slug
+                // Get tag and its associated posts before deletion
                 const tagToDelete = await prisma.tag.findUnique({
                     where: { id: Number(query.id) },
-                    select: { slug: true }
+                    include: {
+                        posts: {
+                            select: { slug: true }
+                        }
+                    }
                 });
 
+                if (!tagToDelete) {
+                    return res.status(404).json({ error: 'Tag not found' });
+                }
+
+                // Delete the tag
                 await prisma.tag.delete({
                     where: { id: Number(query.id) },
                 });
-                res.status(200).json({ message: 'Tag deleted' });
-
-                const deleteRoutesToRevalidate = [
+                // Prepare routes for revalidation
+                const routesToRevalidateForDelete = [
                     REVALIDATE_PATHS.HOME,
                     REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.CATEGORIES_ALL,
+                    REVALIDATE_PATHS.getCategoryPath(tagToDelete.slug)
                 ];
 
-                if (tagToDelete?.slug) {
-                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tagToDelete.slug));
-                }
+                // Add all associated post paths
+                tagToDelete.posts.forEach(post => {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(post.slug));
+                });
 
-                await revalidateRoutes(res, deleteRoutesToRevalidate);
-                log += `\nResponse Status: 200 OK`;
+                await revalidateRoutes(res, routesToRevalidateForDelete);
+                res.status(200).json({ message: 'Tag deleted successfully' });
                 break;
 
             default:
