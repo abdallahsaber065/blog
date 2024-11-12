@@ -6,6 +6,16 @@ import { authMiddleware } from '@/middleware/authMiddleware';
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
+    // check rate limit
+    const rateLimitCheck = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/rate-limit?apiRoute=checkUniqueness`);
+
+    if (!rateLimitCheck.ok) {
+        const errorText = await rateLimitCheck.text();
+        console.error('Rate limit error:', errorText);
+        res.status(429).json({ error: errorText });
+        return;
+    }
+
     if (method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         res.status(405).end(`Method ${method} Not Allowed`);

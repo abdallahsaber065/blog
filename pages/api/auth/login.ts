@@ -5,11 +5,12 @@ import jwt from 'jsonwebtoken';
 import rateLimit, { ValueDeterminingMiddleware } from 'express-rate-limit';
 import { Request, Response } from 'express';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import axios from 'axios';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key';
 
 const keyGenerator: ValueDeterminingMiddleware<string> = (req: Request) => {
-    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+    const ipAddress = axios.get('https://api64.ipify.org?format=json').then((response) => response.data.ip);
     return Array.isArray(ipAddress) ? ipAddress[0] : ipAddress;
 };
 
