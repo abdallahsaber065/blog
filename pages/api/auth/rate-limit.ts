@@ -7,9 +7,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { apiRoute = 'login' } = req.query;
 
     // Extract client's IP address using external service
-    const response = await fetch('https://api64.ipify.org?format=json');
-    const data = await response.json();
-    const clientIp = data.ip;
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+    const clientIp = ipData.ip;
     console.log('clientIp', clientIp);
 
     try {
