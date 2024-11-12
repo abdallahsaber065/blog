@@ -62,7 +62,7 @@ model Post {
   outline           String?
 
   author     User?      @relation(fields: [author_id], references: [id])
-  category   Category?  @relation(fields: [category_id], references: [id])
+  category   Category?  @relation(fields: [category_id], references: [id], onDelete: SetNull)
   comments   Comment[]
   tags       Tag[]
   post_views PostView[] // Add this line to establish the relation
