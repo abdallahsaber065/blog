@@ -12,6 +12,7 @@ import ContentSettings from '@/components/Admin/CreatePost/ContentSettings';
 import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
+import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
 
@@ -39,6 +40,7 @@ const getStatusByRole = (role: string, status: string) => {
 }
 
 const CreatePost: React.FC = () => {
+    const [showAIGenerator, setShowAIGenerator] = useState(false);
     const [topic, setTopic] = useState('');
     const [title, setTitle] = useState('');
     const [excerpt, setExcerpt] = useState('');
@@ -232,73 +234,56 @@ const CreatePost: React.FC = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
 
-            <OutlineSettings
-                topic={topic}
-                setTopic={setTopic}
-                numOfTerms={numOfTerms}
-                setNumOfTerms={setNumOfTerms}
-                numOfKeywords={numOfKeywords}
-                setNumOfKeywords={setNumOfKeywords}
-                numOfPoints={numOfPoints}
-                setNumOfPoints={setNumOfPoints}
-                enableNumOfPoints={enableNumOfPoints}
-                setEnableNumOfPoints={setEnableNumOfPoints}
-                userCustomInstructions={userCustomInstructions}
-                setUserCustomInstructions={setUserCustomInstructions}
-                showOutlineSettings={showOutlineSettings}
-                setShowOutlineSettings={setShowOutlineSettings}
-            />
-
-            <ContentSettings
-                userCustomInstructions={userCustomInstructions}
-                setUserCustomInstructions={setUserCustomInstructions}
-                showContentSettings={showContentSettings}
-                setShowContentSettings={setShowContentSettings}
-            />
-            
-            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
+            <div className="mb-6">
                 <button
-                    className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600"
-                    onClick={handleGenerateOutline}
-                    disabled={loading}
+                    onClick={() => setShowAIGenerator(!showAIGenerator)}
+                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-200"
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Outline'}
+                    {showAIGenerator ? (
+                        <>
+                            <span className="text-lg">✕</span> Hide AI Generator
+                        </>
+                    ) : (
+                        <>
+                            <span className="text-lg">✨</span> Generate Content with AI
+                        </>
+                    )}
                 </button>
-
-                <button
-                    className="bg-yellow-500 text-white font-bold p-2 rounded hover:bg-yellow-600"
-                    onClick={() => setShowJSONEditor(true)}
-                >
-                    Edit Outline
-                </button>
-
-                {outline && (
-                    <button
-                        className="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600"
-                        onClick={handleAcceptOutline}
-                        disabled={loading}
-                    >
-                        {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
-                    </button>
-                )}
-
-                <button
-                    className="bg-slate-500 text-white font-bold p-2 rounded hover:bg-slate-600"
-                    onClick={() => setShowLogViewer(true)}
-                >
-                    View Logs
-                </button>
-
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        className="mr-2"
-                        checked={includeSearchTerms}
-                        onChange={() => setIncludeSearchTerms(!includeSearchTerms)}
-                    />
-                    <label className="text-gray dark:text-lightgray">Include Search Terms</label>
-                </div>
             </div>
+
+            {showAIGenerator && (
+                <AIContentGenerator
+                    topic={topic}
+                    setTopic={setTopic}
+                    numOfTerms={numOfTerms}
+                    setNumOfTerms={setNumOfTerms}
+                    numOfKeywords={numOfKeywords}
+                    setNumOfKeywords={setNumOfKeywords}
+                    numOfPoints={numOfPoints}
+                    setNumOfPoints={setNumOfPoints}
+                    enableNumOfPoints={enableNumOfPoints}
+                    setEnableNumOfPoints={setEnableNumOfPoints}
+                    userCustomInstructions={userCustomInstructions}
+                    setUserCustomInstructions={setUserCustomInstructions}
+                    showOutlineSettings={showOutlineSettings}
+                    setShowOutlineSettings={setShowOutlineSettings}
+                    showContentSettings={showContentSettings}
+                    setShowContentSettings={setShowContentSettings}
+                    loading={loading}
+                    outline={outline}
+                    outlineDraft={outlineDraft}
+                    setOutlineDraft={setOutlineDraft}
+                    showJSONEditor={showJSONEditor}
+                    setShowJSONEditor={setShowJSONEditor}
+                    showLogViewer={showLogViewer}
+                    setShowLogViewer={setShowLogViewer}
+                    includeSearchTerms={includeSearchTerms}
+                    setIncludeSearchTerms={setIncludeSearchTerms}
+                    handleGenerateOutline={handleGenerateOutline}
+                    handleAcceptOutline={handleAcceptOutline}
+                    handleSaveOutline={handleSaveOutline}
+                />
+            )}
 
             <PostForm
                 title={title}
@@ -336,9 +321,9 @@ const CreatePost: React.FC = () => {
             </div>
 
             {showJSONEditor && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-4 rounded shadow-lg w-3/4">
-                        <h2 className="text-xl font-bold mb-4">Edit Outline</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white dark:bg-dark p-4 rounded shadow-lg w-3/4">
+                        <h2 className="text-xl font-bold mb-4 text-gray dark:text-lightgray">Edit Outline</h2>
                         <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
                         <div className="flex justify-end space-x-4 mt-4">
                             <button
