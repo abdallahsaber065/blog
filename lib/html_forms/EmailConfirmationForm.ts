@@ -102,7 +102,7 @@ function createEmailConfirmationForm(verificationUrl: string, username: string =
                     <tr>
                         <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                             <p style="margin: 0;">Hello ${username},</p>
-                            <p style="margin: 0;">Thank you for registering at ${siteMetadata.title}. Please confirm your email address by clicking the button below. If you didn't create an account, you can safely delete this email.</p>
+                            <p style="margin: 0;">Thank you for registering at ${siteMetadata.headerTitle}. Please confirm your email address by clicking the button below. If you didn't create an account, you can safely delete this email.</p>
                         </td>
                     </tr>
                     <tr>
@@ -141,7 +141,7 @@ function createEmailConfirmationForm(verificationUrl: string, username: string =
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                            <p style="margin: 0;">You received this email because you registered at ${siteMetadata.title}. If you didn't register, you can safely delete this email.</p>
+                            <p style="margin: 0;">You received this email because you registered at ${siteMetadata.headerTitle}. If you didn't register, you can safely delete this email.</p>
                         </td>
                     </tr>
                 </table>
