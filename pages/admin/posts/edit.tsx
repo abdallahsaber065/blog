@@ -54,6 +54,7 @@ const PostEditorPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
+    const [loadingPost, setLoadingPost] = useState(false);
     const [author, setAuthor] = useState<Author | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const { data: session } = useSession();
@@ -68,7 +69,7 @@ const PostEditorPage: React.FC = () => {
     }, [id]);
 
     const loadData = async (postId: number) => {
-        setLoading(true);
+        setLoadingPost(true);
         try {
             // First, fetch just the post's author to check permissions
             const authorCheckWhere = JSON.stringify({ id: postId });
@@ -166,7 +167,7 @@ const PostEditorPage: React.FC = () => {
             console.error('Error loading post:', error);
             toast.error('Failed to load post');
         } finally {
-            setLoading(false);
+            setLoadingPost(false);
         }
     };
 
@@ -226,6 +227,9 @@ const PostEditorPage: React.FC = () => {
             let finalPost = { ...updatedPost };
             delete finalPost.id;
             finalPost.reading_time = Math.round(readingTime(finalPost.content).minutes);
+            // add slug to finalPost
+            finalPost.slug = slug(finalPost.title);
+
     
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
@@ -260,14 +264,14 @@ const PostEditorPage: React.FC = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Edit Post</h1>
             
-            {loading && (
+            {loadingPost && (
                 <div className="flex items-center justify-center p-4">
                     <ClipLoader />
                     <span className="ml-2">Loading post...</span>
                 </div>
             )}
 
-            {!loading && hasPermission === false && (
+            {!loadingPost && hasPermission === false && (
                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
                     <div className="flex">
                         <div className="py-1">
@@ -289,7 +293,7 @@ const PostEditorPage: React.FC = () => {
                 </div>
             )}
 
-            {!loading && hasPermission && post && (
+            {!loadingPost && hasPermission && post && (
                 <PostEditor
                     post={post}
                     tags={tags}

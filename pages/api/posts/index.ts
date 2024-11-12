@@ -55,7 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postValidationError = validateRequiredFields(['title', 'content'], body);
                 if (postValidationError) {
                     log += `\nResponse Status: 400 ${postValidationError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -71,7 +71,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (existingPost) {
                     log += `\nResponse Status: 400 Duplicate title`;
-                    logger.info(log);
+
                     return res.status(400).json({
                         error: 'A post with this title already exists. Please choose a different title.'
                     });
@@ -81,93 +81,127 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body,
                 });
 
-                // Only revalidate routes if the post is published
-                if (body.status === 'published') {
-                    const routesToRevalidate = [
-                        REVALIDATE_PATHS.HOME,
-                        REVALIDATE_PATHS.CATEGORIES_ALL
-                    ];
+                const postRoutesToRevalidate = [
+                    REVALIDATE_PATHS.getBlogPath(newPost.slug),
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
 
-                    const allTags = await prisma.tag.findMany();
-                    allTags.forEach(tag => {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
+                if (body.category?.value) {
+                    postRoutesToRevalidate.push(
+                        REVALIDATE_PATHS.getCategoryPath(body.category.value)
+                    );
+                }
+                if (body.tags?.length > 0) {
+                    body.tags.forEach((tag: { value: string }) => {
+                        postRoutesToRevalidate.push(
+                            REVALIDATE_PATHS.getCategoryPath(tag.value)
+                        );
                     });
-
-                    // Only fetch and revalidate author path if there's an author
-                    if (body.author?.id) {
-                        const author = await prisma.user.findUnique({
-                            where: { id: body.author.id },
-                            select: { username: true }
-                        });
-                        if (author?.username) {
-                            routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(author.username));
-                        }
-                    }
-
-                    await revalidateRoutes(res, routesToRevalidate);
                 }
 
+                await revalidateRoutes(res, postRoutesToRevalidate);
                 res.status(201).json(newPost);
                 log += `\nResponse Status: 201 Created`;
                 break;
 
             case 'PUT':
-                const putValidationError = validateRequiredFields(['id', 'data'], body);
-                if (putValidationError) {
-                    log += `\nResponse Status: 400 ${putValidationError}`;
-                    logger.info(log);
-                    return res.status(400).json({ error: putValidationError });
+                const updateIdError = validateId(body.id);
+                if (updateIdError) {
+                    log += `\nResponse Status: 400 ${updateIdError}`;
+
+                    return res.status(400).json({ error: updateIdError });
                 }
 
-                const idError = validateId(body.id);
-                if (idError) {
-                    log += `\nResponse Status: 400 ${idError}`;
-                    logger.info(log);
-                    return res.status(400).json({ error: idError });
-                }
-
-                const updateData: any = {};
-                if (body.data.tags) {
-                    updateData.tags = body.data.tags;  // Pass through the complete tags operation
-                }
-
-                if (body.data.category) {
-                    updateData.category = body.data.category;  // Pass through the complete category operation
-                }
-
-
-                if (body.data.author) {
-                    updateData.author = {
-                        connect: {
-                            id: body.data.author.id,
+                const oldPost = await prisma.post.findUnique({
+                    where: { id: Number(body.id) },
+                    select: { 
+                        slug: true, 
+                        status: true,
+                        category: {
+                            select: {
+                                slug: true
+                            }
                         },
-                    };
+                        tags: {
+                            select: {
+                                slug: true
+                            }
+                        }
+                    }
+                });
+
+                if (!oldPost) {
+                    log += `\nResponse Status: 404 Post not found`;
+
+                    return res.status(404).json({ error: 'Post not found' });
                 }
 
-                // Get all remaining linear data in one object by removing the above data from the body
-                let linearData = { ...body.data };
-                delete linearData.tags;
-                delete linearData.category;
-                delete linearData.author;
-
-                // Add each remaining linear data to the updateData object
-                for (const key in linearData) {
-                    updateData[key] = linearData[key];
+                // Transform the author data to use connect instead of direct assignment
+                const updateData = { ...body.data };
+                if (updateData.author) {
+                    updateData.author = {
+                        connect: { id: updateData.author.id }
+                    };
                 }
 
                 const updatedPost = await prisma.post.update({
                     where: { id: Number(body.id) },
                     data: updateData,
+                    select: {
+                        slug: true,
+                        status: true,
+                        category: {
+                            select: {
+                                slug: true
+                            }
+                        },
+                        tags: {
+                            select: {
+                                slug: true
+                            }
+                        }
+                    }
                 });
-                res.status(200).json(updatedPost);
-                await res.revalidate("/");
-                await res.revalidate('/categories');
-                // get all tags from api
-                const tagsForPut = await prisma.tag.findMany();
 
-                for (const tag of tagsForPut) {
-                    await res.revalidate(`/categories/${tag.slug}`);
+                // Revalidate if post is or was published
+                if (updateData.status === 'published' || oldPost.status === 'published') {
+                    const routesToRevalidate = [
+                        REVALIDATE_PATHS.HOME,
+                        REVALIDATE_PATHS.CATEGORIES,
+                        REVALIDATE_PATHS.CATEGORIES_ALL
+                    ];
+
+                    // Add both old and new paths
+                    if (oldPost.slug) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(oldPost.slug));
+                    }
+                    if (updatedPost.slug && oldPost.slug !== updatedPost.slug) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(updatedPost.slug));
+                    }
+
+                    // Add category paths
+                    if (oldPost.category?.slug) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
+                    }
+                    if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
+                    }
+
+                    // Add tag paths
+                    const oldTags = oldPost.tags.map(tag => tag.slug);
+                    const newTags = updatedPost.tags.map(tag => tag.slug);
+                    [...oldTags, ...newTags].forEach(slug => {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(slug));
+                    });
+
+                    await revalidateRoutes(res, routesToRevalidate);
+                } else {
+                    console.log('Skipping revalidation - post is not published');
                 }
+
+                res.status(200).json(updatedPost);
                 log += `\nResponse Status: 200 OK`;
                 break;
 
@@ -175,29 +209,45 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                try {
-                    await prisma.post.delete({
-                        where: { id: Number(query.id) },
-                    });
-                    res.status(200).json({ message: 'Post deleted successfully' });
-                    await res.revalidate("/");
-                    await res.revalidate('/categories');
-                    // get all tags from api
-                    const tagsForDelete = await prisma.tag.findMany();
-
-                    for (const tag of tagsForDelete) {
-                        await res.revalidate(`/categories/${tag.slug}`);
+                // Get post details before deletion
+                const postToDelete = await prisma.post.findUnique({
+                    where: { id: Number(query.id) },
+                    include: {
+                        category: true,
+                        tags: true
                     }
-                    log += `\nResponse Status: 200 OK`;
-                }
-                catch (error) {
-                    handleError(res, error, 'Failed to delete post');
+                });
+
+                await prisma.post.delete({
+                    where: { id: Number(query.id) },
+                });
+
+                const deleteRoutesToRevalidate = [
+                    REVALIDATE_PATHS.getBlogPath(postToDelete?.slug || ''),
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
+
+                if (postToDelete?.category?.slug) {
+                    deleteRoutesToRevalidate.push(
+                        REVALIDATE_PATHS.getCategoryPath(postToDelete.category.slug)
+                    );
                 }
 
+                postToDelete?.tags.forEach(tag => {
+                    deleteRoutesToRevalidate.push(
+                        REVALIDATE_PATHS.getCategoryPath(tag.slug)
+                    );
+                });
+
+                await revalidateRoutes(res, deleteRoutesToRevalidate);
+                res.status(200).json({ message: 'Post deleted successfully' });
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             default:
@@ -208,10 +258,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     } catch (error) {
         handleError(res, error, 'Internal Server Error');
     }
-
-    logger.info(log);
 }
-
 
 export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
     return authMiddleware(req, res, handler);

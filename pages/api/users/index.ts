@@ -62,7 +62,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (usernameError || emailError || passwordError) {
                     log += `\nResponse Status: 400 ${usernameError || emailError || passwordError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: usernameError || emailError || passwordError });
                 }
 
@@ -84,23 +84,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             case 'PUT':
                 // Update a user by ID
                 const { id, data } = body;
-            
+
                 const idError = validateInput(id, 'id');
                 if (idError) {
                     log += `\nResponse Status: 400 ${idError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: idError });
                 }
-            
+
                 const updatedData: any = {};
-            
+
                 // Validate and prepare update data
                 for (const [key, value] of Object.entries(data)) {
                     if (key === 'username' || key === 'first_name' || key === 'last_name') {
                         const error = validateInput(value, 'string');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-                            logger.info(log);
+
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = value;
@@ -108,7 +108,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         const error = validateInput(value, 'email');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-                            logger.info(log);
+
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = value;
@@ -116,7 +116,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         const error = validateInput(value, 'string');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-                            logger.info(log);
+
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = await bcrypt.hash(value as string, 10);
@@ -125,8 +125,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         updatedData[key] = value;
                     }
                 }
-            
-                try{
+
+                try {
                     const updatedUser = await prisma.user.update({
                         where: { id: Number(id) },
                         data: updatedData,
@@ -134,12 +134,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     res.status(200).json(updatedUser);
                     log += `\nResponse Status: 200 OK`;
                 }
-                catch (error : any) {
+                catch (error: any) {
                     handleError(res, error, 'Internal Server Error');
                 }
                 break;
-            
-            
+
+
             case 'DELETE':
                 // Delete a user by ID
                 const { targetId } = body;
@@ -148,7 +148,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: deleteIdError });
                 }
 
@@ -168,7 +168,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         handleError(res, error, 'Internal Server Error');
     }
 
-    logger.info(log);
+
 }
 
 

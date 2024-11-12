@@ -52,7 +52,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postValidationError = validateRequiredFields(['file_name', 'file_url'], body);
                 if (postValidationError) {
                     log += `\nResponse Status: 400 ${postValidationError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -67,14 +67,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const putValidationError = validateRequiredFields(['id'], body);
                 if (putValidationError) {
                     log += `\nResponse Status: 400 ${putValidationError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: putValidationError });
                 }
 
                 const idError = validateId(body.id);
                 if (idError) {
                     log += `\nResponse Status: 400 ${idError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: idError });
                 }
 
@@ -90,7 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-                    logger.info(log);
+
                     return res.status(400).json({ error: deleteIdError });
                 }
 
@@ -110,7 +110,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         handleError(res, error);
     }
 
-    logger.info(log);
+
 }
 
 

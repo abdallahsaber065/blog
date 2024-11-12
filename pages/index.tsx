@@ -14,7 +14,12 @@ export const getStaticProps = async () => {
       updated_at: true,
       published_at: true,
       featured_image_url: true,
-      tags: true,
+      tags: {
+        select: {
+          name: true,
+          slug: true
+        }
+      },
     },
     where: {
       status: 'published',
