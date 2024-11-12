@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUserFriends, FaEnvelope } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
 import withAuth from '@/components/Admin/withAuth';
+import Link from 'next/link';
 
 const RoleList = ['admin', 'moderator', 'editor', 'user', 'reader'];
 
@@ -97,10 +98,35 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto p-4 text-slate-800 dark:text-slate-200">
-      <h1 className="text-2xl font-bold mb-4">User Management Dashboard</h1>
-      <button className="btn btn-primary mb-4" onClick={handleCreateUser}>
-        Create New User
-      </button>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold">User Management</h1>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Link 
+            href="/admin/users/subscriptions" 
+            className="flex items-center justify-center gap-2 btn btn-secondary w-full sm:w-auto"
+          >
+            <FaEnvelope className="shrink-0" />
+            <span className="whitespace-nowrap">Newsletter Subscriptions</span>
+          </Link>
+          
+          <button 
+            className="flex items-center justify-center gap-2 btn btn-primary w-full sm:w-auto"
+            onClick={handleCreateUser}
+          >
+            <FaUserFriends className="shrink-0" />
+            <span className="whitespace-nowrap">Create New User</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="text-sm breadcrumbs mb-4 overflow-x-auto whitespace-nowrap">
+        <ul className="flex flex-wrap gap-2">
+          <li><Link href="/admin">Admin</Link></li>
+          <li>Users</li>
+        </ul>
+      </div>
+
       <div className="hidden md:block overflow-x-auto">
         <table className="table w-full">
           <thead>
@@ -115,7 +141,7 @@ const Dashboard = () => {
           </thead>
           <tbody>
             {users.map(user => (
-              <tr key={user.id}>
+              <tr key={user.id} >
                 <td>{`${user.first_name} ${user.last_name}`}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
@@ -137,29 +163,30 @@ const Dashboard = () => {
 
       <div className="block md:hidden">
         {users.map(user => (
-          <div key={user.id} className="mb-4">
-            <div className="flex justify-between items-center p-4 bg-white dark:bg-dark rounded-lg shadow-md">
-              <span className="font-bold">{user.username}</span>
-              <button className="btn btn-sm btn-primary" onClick={() => toggleExpandUser(user.id)}>
-                {expandedUserId === user.id ? 'Hide' : 'Show'}
-              </button>
-            </div>
-            {expandedUserId === user.id && (
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg shadow-md mt-2">
-                <p><strong>Full Name:</strong> {`${user.first_name} ${user.last_name}`}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Role:</strong> {user.role}</p>
-                <p><strong>Posts:</strong> {user.posts}</p>
-                <div className="mt-2 flex justify-end">
-                  <button className="btn btn-secondary mr-2" onClick={() => handleEditUser(user.id)}>
-                    <FaEdit />
-                  </button>
-                  <button className="btn btn-error" onClick={() => openDeleteConfirmation(user.id)}>
-                    <FaTrash />
-                  </button>
-                </div>
+          <div key={user.id} className="mb-4 bg-white dark:bg-dark rounded-lg shadow p-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-bold">{user.username}</h3>
+              <div className="flex gap-2">
+                <button 
+                  className="btn btn-sm btn-secondary"
+                  onClick={() => handleEditUser(user.id)}
+                >
+                  <FaEdit />
+                </button>
+                <button 
+                  className="btn btn-sm btn-error"
+                  onClick={() => openDeleteConfirmation(user.id)}
+                >
+                  <FaTrash />
+                </button>
               </div>
-            )}
+            </div>
+            <div className="space-y-1 text-sm">
+              <p><span className="font-medium">Name:</span> {`${user.first_name} ${user.last_name}`}</p>
+              <p><span className="font-medium">Email:</span> {user.email}</p>
+              <p><span className="font-medium">Role:</span> {user.role}</p>
+              <p><span className="font-medium">Posts:</span> {user.posts}</p>
+            </div>
           </div>
         ))}
       </div>
