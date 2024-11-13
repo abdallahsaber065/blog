@@ -3,7 +3,7 @@ import React from "react";
 import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
-import CustomImage from '@/components/Image/CustomImageView';
+import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import { serialize } from 'next-mdx-remote/serialize';
 import { SerializeOptions } from "next-mdx-remote/dist/types";

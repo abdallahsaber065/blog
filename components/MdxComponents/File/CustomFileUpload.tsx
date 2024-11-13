@@ -1,15 +1,16 @@
 // components/FileDisplay/CustomFileDisplay.tsx
 import React, { useState, useEffect } from 'react';
-import FileSelector from '../Admin/FileSelector';
+import FileSelector from '../../Admin/FileSelector';
 import { FiDownload, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { ClipLoader } from 'react-spinners';
+import RenderMdx from '../../Blog/RenderMdx';
 
 // Add cache object outside component for persistence
 const fileContentCache: { [key: string]: string } = {};
 
 interface FileProps {
     id: string;
-    file_name: string; 
+    file_name: string;
     file_type: string;
     file_size: number;
     file_url: string;
@@ -28,6 +29,8 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     const [fileContent, setFileContent] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [mdxSource, setMdxSource] = useState<any>(null);
+
 
     const fetchFileContent = async (url: string) => {
         // Check cache first
@@ -44,14 +47,45 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
             if (!response.ok) {
                 throw new Error('Failed to load file content');
             }
-            
+
             const content = await response.text();
-            
+            setFileContent(content);
+
+            // make it mdx and add lang to code blocks
+            const lang = filename.split('.').pop();
+
+            const codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
+
+
+            try {
+                const response = await fetch('/api/serializeContent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content: codeAsMdx }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setMdxSource(data.mdxSource);
+                    setError(null);
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData.error);
+                    setMdxSource(null);
+                }
+
+            } catch (err) {
+                fileContentCache[url] = content;
+                setIsLoading(false);
+            }
             // Cache the content
             fileContentCache[url] = content;
             setFileContent(content);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to load file');
+            setIsLoading(false);
         } finally {
             setIsLoading(false);
         }
@@ -76,7 +110,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
 
     const renderContent = () => {
         if (!isExpanded) return null;
-        
+
         if (isLoading) {
             return (
                 <div className="flex justify-center p-4">
@@ -95,16 +129,14 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
 
         return (
             <div className="p-4">
-                <pre className="overflow-x-auto bg-gray-50 dark:bg-gray-900 p-4 rounded">
-                    <code>{fileContent}</code>
-                </pre>
+                {mdxSource && <RenderMdx mdxSource={mdxSource} />}
             </div>
         );
     };
 
     return (
         <div className="my-4 border rounded-lg overflow-hidden">
-            <div 
+            <div
                 className="bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => isProgrammingFile(filename) && setIsExpanded(!isExpanded)}
             >
@@ -115,9 +147,9 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                         </button>
                     ) : (
-                        <a 
-                            href={src} 
-                            download 
+                        <a
+                            href={src}
+                            download
                             className="text-blue-500 hover:text-blue-600"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -135,7 +167,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
                     Change File
                 </button>
             </div>
-            
+
             {isProgrammingFile(filename) && renderContent()}
 
             {showSelector && (
