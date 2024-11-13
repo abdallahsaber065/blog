@@ -8,7 +8,6 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-// Add cache object outside component for persistence
 const fileContentCache: { [key: string]: string } = {};
 
 interface CustomFileViewProps {
@@ -24,6 +23,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [numPages, setNumPages] = useState<number | null>(null);
     const [isCopied, setIsCopied] = useState(false);
+    const [width, setWidth] = useState<number>(0);
 
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
@@ -42,7 +42,6 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const fetchFileContent = async () => {
         if (!isProgrammingFile(filename) && !isPdfFile(filename)) return;
         
-        // Check cache first
         if (fileContentCache[src]) {
             setFileContent(fileContentCache[src]);
             return;
@@ -58,14 +57,34 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
             }
 
             const content = await response.text();
-            fileContentCache[src] = content; // Cache the content
+            fileContentCache[src] = content;
             setFileContent(content);
 
-            // If it's a markdown file, prepare it for rendering
-            if (filename.toLowerCase().endsWith('.md') || filename.toLowerCase().endsWith('.mdx')) {
-                // You'll need to implement your MDX processing logic here
-                // This is just a placeholder
-                setMdxSource(content);
+            if (isProgrammingFile(filename)) {
+                const lang = filename.split('.').pop();
+                const codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
+
+                try {
+                    const response = await fetch('/api/serializeContent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ content: codeAsMdx }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        setMdxSource(data.mdxSource);
+                        setError(null);
+                    } else {
+                        const errorData = await response.json();
+                        setError(errorData.error);
+                        setMdxSource(null);
+                    }
+                } catch (err) {
+                    setError(err instanceof Error ? err.message : 'Failed to process code');
+                }
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
@@ -88,6 +107,19 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         }
     }, [isExpanded]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const container = document.querySelector('.pdf-container');
+            if (container) {
+                setWidth(container.clientWidth - 32);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const renderContent = () => {
         if (!isExpanded) return null;
 
@@ -109,17 +141,28 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
 
         if (isPdfFile(filename)) {
             return (
-                <div className="p-4 max-h-[500px] overflow-y-auto">
+                <div className="pdf-container p-4 max-h-[80vh] overflow-y-auto">
                     <Document
                         file={src}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                         error="Failed to load PDF"
+                        loading={
+                            <div className="flex justify-center p-4">
+                                <ClipLoader size={24} />
+                            </div>
+                        }
                     >
                         {Array.from(new Array(numPages), (el, index) => (
                             <Page 
                                 key={`page_${index + 1}`}
                                 pageNumber={index + 1}
-                                className="mb-4"
+                                width={width || undefined}
+                                className="mb-4 shadow-lg rounded-lg overflow-hidden"
+                                loading={
+                                    <div className="flex justify-center p-4">
+                                        <ClipLoader size={24} />
+                                    </div>
+                                }
                             />
                         ))}
                     </Document>
@@ -129,43 +172,59 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
 
         if (isProgrammingFile(filename)) {
             return (
-                <div className="p-4 max-h-[500px] overflow-y-auto">
-                    <pre className="whitespace-pre-wrap break-words">
-                        <code>{fileContent}</code>
-                    </pre>
+                <div className="relative">
+                    <div className="p-4 max-h-[80vh] overflow-y-auto overflow-x-auto">
+                        {mdxSource ? (
+                            <div className="min-w-full">
+                                <RenderMdx mdxSource={mdxSource} />
+                            </div>
+                        ) : (
+                            <pre className="whitespace-pre-wrap break-words overflow-x-auto">
+                                <code className="text-sm md:text-base">{fileContent}</code>
+                            </pre>
+                        )}
+                    </div>
+                    <div className="absolute bottom-4 right-4 flex gap-2">
+                        <button
+                            onClick={handleCopyContent}
+                            className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                            title="Copy code"
+                        >
+                            {isCopied ? <FiCheck /> : <FiCopy />}
+                        </button>
+                    </div>
                 </div>
             );
         }
 
-        return (
-            <div className="p-4 max-h-[500px] overflow-y-auto">
-                {mdxSource && <RenderMdx mdxSource={mdxSource} />}
-            </div>
-        );
+        return null;
     };
 
     return (
-        <div className="my-4 border rounded-lg overflow-hidden">
+        <div className="my-4 border rounded-lg overflow-hidden shadow-md">
             <div
-                className="bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-between cursor-pointer"
+                className="bg-slate-100 dark:bg-dark p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-2">
-                    <span className="font-medium">{filename}</span>
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="font-medium truncate">{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
-                        <button className="text-blue-500 hover:text-blue-600">
+                        <button 
+                            className="text-blue-500 hover:text-blue-600 flex-shrink-0"
+                            aria-label={isExpanded ? "Collapse" : "Expand"}
+                        >
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                         </button>
                     )}
                 </div>
-                <div className="flex items-center gap-2">
-                    {isProgrammingFile(filename) && (
+                <div className="flex items-center gap-2 ml-2">
+                    {isProgrammingFile(filename) && !isExpanded && (
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleCopyContent();
                             }}
-                            className="text-blue-500 hover:text-blue-600 p-2"
+                            className="p-2 text-blue-500 hover:text-blue-600"
                             title="Copy code"
                         >
                             {isCopied ? <FiCheck /> : <FiCopy />}
@@ -174,7 +233,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     <a
                         href={src}
                         download
-                        className="text-blue-500 hover:text-blue-600 p-2"
+                        className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
