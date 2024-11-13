@@ -1,7 +1,7 @@
 // pages/api/posts/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import logger from '@/lib/logger';
+
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { revalidateRoutes, REVALIDATE_PATHS } from '@/lib/revalidate';
 
@@ -23,7 +23,7 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-    logger.error(`${message}: ${error.message}`);
+
     res.status(500).json({ error: message });
 };
 
@@ -116,8 +116,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 const oldPost = await prisma.post.findUnique({
                     where: { id: Number(body.id) },
-                    select: { 
-                        slug: true, 
+                    select: {
+                        slug: true,
                         status: true,
                         category: {
                             select: {

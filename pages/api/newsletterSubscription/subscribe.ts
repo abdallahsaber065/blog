@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import logger from '@/lib/logger';
+
 
 const prisma = new PrismaClient();
 
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(200).json({ message: 'Subscribed successfully' });
         } catch (error: any) {
-            logger.error(`Internal server error: ${error.message}`);
+
             log += `\nResponse Status: 500 Internal server error`;
 
             return res.status(500).json({ error: 'Internal server error' });

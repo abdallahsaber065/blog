@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import logger from '@/lib/logger';
+
 import bcrypt from 'bcryptjs';
 import { authMiddleware } from '@/middleware/authMiddleware';
 
@@ -25,7 +25,7 @@ const validateInput = (input: any, type: string): string | null => {
 
 // Utility function to handle errors
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-    logger.error(`${message}: ${error.message}`);
+
     res.status(500).json({ error: message });
 };
 
