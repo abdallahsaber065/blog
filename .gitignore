@@ -52,3 +52,5 @@ logs
 temp
 releases
 public/uploads
+
+/logs
