@@ -7,8 +7,6 @@ import { slug } from "github-slugger";
 import { useSession } from 'next-auth/react';
 import JSONEditorComponent from '@/components/Admin/JSONEditor';
 import LogViewer from '@/components/Admin/CreatePost/LogViewer';
-import OutlineSettings from '@/components/Admin/CreatePost/OutlineSettings';
-import ContentSettings from '@/components/Admin/CreatePost/ContentSettings';
 import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';

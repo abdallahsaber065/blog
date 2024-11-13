@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/Image/CustomImageUpload';
+import CustomFileDisplay from '@/components/FileDisplay/CustomFileDisplay';
 
 interface EditorWithPreviewProps {
     markdownText: string;
