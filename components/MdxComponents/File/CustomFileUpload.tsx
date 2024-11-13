@@ -4,6 +4,11 @@ import FileSelector from '../../Admin/FileSelector';
 import { FiDownload, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+// Set worker directly
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 // Add cache object outside component for persistence
 const fileContentCache: { [key: string]: string } = {};
@@ -30,7 +35,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [mdxSource, setMdxSource] = useState<any>(null);
-
+    const [numPages, setNumPages] = useState<number | null>(null);
 
     const fetchFileContent = async (url: string) => {
         // Check cache first
@@ -108,6 +113,10 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
         return ['.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'].includes(ext);
     };
 
+    const isPdfFile = (fileName: string) => {
+        return fileName.toLowerCase().endsWith('.pdf');
+    };
+
     const renderContent = () => {
         if (!isExpanded) return null;
 
@@ -127,6 +136,26 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
             );
         }
 
+        if (isPdfFile(filename)) {
+            return (
+                <div className="p-4">
+                    <Document
+                        file={src}
+                        onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                        error="Failed to load PDF"
+                    >
+                        {Array.from(new Array(numPages), (el, index) => (
+                            <Page 
+                                key={`page_${index + 1}`}
+                                pageNumber={index + 1}
+                                className="mb-4"
+                            />
+                        ))}
+                    </Document>
+                </div>
+            );
+        }
+
         return (
             <div className="p-4">
                 {mdxSource && <RenderMdx mdxSource={mdxSource} />}
@@ -138,11 +167,11 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
         <div className="my-4 border rounded-lg overflow-hidden">
             <div
                 className="bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-between cursor-pointer"
-                onClick={() => isProgrammingFile(filename) && setIsExpanded(!isExpanded)}
+                onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-2">
                     <span className="font-medium">{filename}</span>
-                    {isProgrammingFile(filename) ? (
+                    {(isProgrammingFile(filename) || isPdfFile(filename)) ? (
                         <button className="text-blue-500 hover:text-blue-600">
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                         </button>
@@ -168,7 +197,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
                 </button>
             </div>
 
-            {isProgrammingFile(filename) && renderContent()}
+            {(isProgrammingFile(filename) || isPdfFile(filename)) && renderContent()}
 
             {showSelector && (
                 <FileSelector
