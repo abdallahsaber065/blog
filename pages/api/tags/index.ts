@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import logger from '@/lib/logger';
+
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 
@@ -22,7 +22,7 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any) => {
-    logger.error(`Internal Server Error: ${error.message}`);
+
     res.status(500).json({ error: 'Internal Server Error' });
 };
 

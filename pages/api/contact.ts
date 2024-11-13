@@ -2,7 +2,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
 import { check, validationResult } from 'express-validator';
-import logger from '@/lib/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, body } = req;
@@ -55,7 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({ message: 'Email sent successfully' });
     } catch (error: any) {
-        logger.error(`Error sending email: ${error.message}`);
         log += `\nResponse Status: 500 Failed to send email`;
 
         res.status(500).json({ error: 'Failed to send email' });
