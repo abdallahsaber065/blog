@@ -11,6 +11,7 @@ import React, { useEffect } from "react";
 import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
+import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -132,6 +133,8 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
     const mdxComponents = () => ({
         Image: (props: any) => <CustomImage {...props} />,
         img: (props: any) => <CustomImage {...props} />,
+        File: (props: any) => <CustomFileView {...props} />,
+        file: (props: any) => <CustomFileView {...props} />
     });
 
     return (
