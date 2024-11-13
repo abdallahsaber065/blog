@@ -4,6 +4,7 @@ import RenderMdx from "@/components/Blog/RenderMdx";
 import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
 import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
+import CustomFileView from '@/components/MdxComponents/File/CustomFileView';
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import { serialize } from 'next-mdx-remote/serialize';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
@@ -26,6 +27,8 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
     const mdxComponents = () => ({
         Image: (props: any) => <CustomImage {...props} />,
         img: (props: any) => <CustomImage {...props} />,
+        File: (props: any) => <CustomFileView {...props} />,
+        file: (props: any) => <CustomFileView {...props} />
     });
 
     return (
