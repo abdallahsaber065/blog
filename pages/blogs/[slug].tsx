@@ -116,7 +116,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             mdxSource,
             jsonLd,
         },
-        revalidate: 3600, // Revalidate every hour (1 hour = 3600 seconds)
+        revalidate: false, // Revalidate on demand
     };
 };
 

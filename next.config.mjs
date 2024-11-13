@@ -2,6 +2,7 @@ import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import TerserPlugin from 'terser-webpack-plugin';
 // dotenv
 import dotenv from 'dotenv';
 
@@ -15,6 +16,7 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  swcMinify: true,
   experimental: {
     instrumentationHook: true,
   },
@@ -30,6 +32,15 @@ const nextConfig = {
   webpack: (config) => {
     config.experiments = { ...config.experiments, topLevelAwait: true };
     config.resolve.alias['public'] = path.join(__dirname, 'public');
+    config.optimization.minimizer = [
+      new TerserPlugin({
+        terserOptions: {
+          output: {
+            ascii_only: true,
+          },
+        },
+      }),
+    ];
     return config;
   },
   // Configure `pageExtensions` to include MDX files
