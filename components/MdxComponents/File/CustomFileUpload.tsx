@@ -109,8 +109,13 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     };
 
     const isProgrammingFile = (fileName: string) => {
-        const ext = `.${fileName.split('.').pop()?.toLowerCase()}`;
-        return ['.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'].includes(ext);
+        const programmingExtensions = [
+            '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c',
+            '.html', '.css', '.scss', '.php', '.rb', '.go', '.rs', '.swift',
+            '.kt', '.cs', '.sql', '.sh', '.bash', '.ps1', '.r', '.m',
+            '.json', '.xml', '.yaml', '.yml', '.toml', '.md', '.mdx'
+        ];
+        return programmingExtensions.some(ext => filename.toLowerCase().endsWith(ext));
     };
 
     const isPdfFile = (fileName: string) => {
@@ -138,7 +143,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
 
         if (isPdfFile(filename)) {
             return (
-                <div className="p-4">
+                <div className="p-4 max-h-[500px] overflow-y-auto">
                     <Document
                         file={src}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
@@ -157,7 +162,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
         }
 
         return (
-            <div className="p-4">
+            <div className="p-4 max-h-[500px] overflow-y-auto">
                 {mdxSource && <RenderMdx mdxSource={mdxSource} />}
             </div>
         );
