@@ -17,6 +17,13 @@ interface ImageProps {
     width: number;
     height: number;
 }
+interface FileProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+}
 
 const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onContentChange }) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
@@ -144,8 +151,28 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             onContentChange(updatedContent);
         }
     };
+
+    const handleFileChange = (file: FileProps, id: string) => {
+        // For programming files, create a collapsible code block
+        const ext = `.${file.file_name.split('.').pop()?.toLowerCase()}`;
+        const isProgrammingFile = ['.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'].includes(ext);
+        
+        const fileComponent = isProgrammingFile 
+            ? `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`
+            : `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
+    
+        // Replace existing file component or add new one
+        const regex = new RegExp(`<File[^>]*id="${id}"[^>]*>`, 'g');
+        if (markdownText.match(regex)) {
+            onContentChange(markdownText.replace(regex, fileComponent));
+        } else {
+            onContentChange(markdownText + '\n\n' + fileComponent);
+        }
+    };
+
     const mdxComponents = {
         Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
+        File: (props: any) => <CustomFileDisplay {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id)} />,
     };
 
     return (
