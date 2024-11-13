@@ -153,20 +153,20 @@ const Subscriptions: React.FC = () => {
 
     const truncateEmail = (email: string, maxLength: number = 25) => {
         if (email.length <= maxLength) return email;
-        
+
         const atIndex = email.indexOf('@');
         if (atIndex === -1) return email; // If no @ found, return full email
-        
+
         const localPart = email.slice(0, atIndex);
         const domain = email.slice(atIndex);
-        
+
         // Calculate how many characters we can show from the local part
         const localPartVisibleLength = Math.floor((maxLength - 3 - domain.length) / 2);
         if (localPartVisibleLength < 1) return email; // If too short, show full email
-        
+
         const firstPart = localPart.slice(0, localPartVisibleLength);
         const lastPart = localPart.slice(-localPartVisibleLength);
-        
+
         return `${firstPart}...${lastPart}${domain}`;
     };
 
@@ -175,10 +175,10 @@ const Subscriptions: React.FC = () => {
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <h1 className="text-2xl font-bold">Newsletter Subscriptions</h1>
-                
+
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <Link 
-                        href="/admin/users" 
+                    <Link
+                        href="/admin/users"
                         className="flex items-center justify-center gap-2 btn btn-secondary w-full sm:w-auto"
                     >
                         <FaUserFriends className="shrink-0" />
@@ -206,14 +206,14 @@ const Subscriptions: React.FC = () => {
                     className={`flex-grow ${commonClassNames}`}
                 />
                 <div className="flex gap-2">
-                    <button 
-                        onClick={addSubscription} 
+                    <button
+                        onClick={addSubscription}
                         className={`${buttonClassNames} bg-blue-500 hover:bg-blue-600 text-white`}
                     >
                         <FaPlus /> <span className="hidden sm:inline">Add</span>
                     </button>
-                    <button 
-                        onClick={exportToCSV} 
+                    <button
+                        onClick={exportToCSV}
                         className={`${buttonClassNames} bg-green-500 hover:bg-green-600 text-white`}
                     >
                         <FaFileExport /> <span className="hidden sm:inline">Export</span>
@@ -235,7 +235,7 @@ const Subscriptions: React.FC = () => {
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full border-collapse">
                             <thead>
-                                <tr className="bg-gray-100 dark:bg-gray-800">
+                                <tr className="bg-slate-100 dark:bg-slate-800">
                                     <th className="px-4 py-2 text-left text-slate-800 dark:text-white">ID</th>
                                     <th className="px-4 py-2 text-left text-slate-800 dark:text-white">Email</th>
                                     <th className="px-4 py-2 text-left text-slate-800 dark:text-white">Subscribed</th>
@@ -244,7 +244,7 @@ const Subscriptions: React.FC = () => {
                             </thead>
                             <tbody>
                                 {subscriptions.map((sub) => (
-                                    <tr key={sub.id} className="border-b dark:border-gray-700">
+                                    <tr key={sub.id} className="border-b dark:border-slate-700">
                                         <td className="px-4 py-2 text-slate-800 dark:text-white">{sub.id}</td>
                                         <td className="px-4 py-2 text-slate-800 dark:text-white">
                                             {editId === sub.id ? (
@@ -275,29 +275,29 @@ const Subscriptions: React.FC = () => {
                                         <td className="px-4 py-2">
                                             {editId === sub.id ? (
                                                 <div className="flex gap-2">
-                                                    <button 
+                                                    <button
                                                         onClick={updateSubscription}
                                                         className="text-green-500 hover:text-green-600"
                                                     >
                                                         Save
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         onClick={() => setEditId(null)}
-                                                        className="text-gray-500 hover:text-gray-600"
+                                                        className="text-slate-500 hover:text-slate-600"
                                                     >
                                                         Cancel
                                                     </button>
                                                 </div>
                                             ) : (
                                                 <div className="flex gap-2">
-                                                    <button 
-                                                        onClick={() => editSubscription(sub)} 
+                                                    <button
+                                                        onClick={() => editSubscription(sub)}
                                                         className="text-blue-500 hover:text-blue-600"
                                                     >
                                                         <FaEdit />
                                                     </button>
-                                                    <button 
-                                                        onClick={() => deleteSubscription(sub.id)} 
+                                                    <button
+                                                        onClick={() => deleteSubscription(sub.id)}
                                                         className="text-red-500 hover:text-red-600"
                                                     >
                                                         <FaTrash />
@@ -314,8 +314,8 @@ const Subscriptions: React.FC = () => {
                     {/* Mobile Card View */}
                     <div className="md:hidden space-y-4">
                         {subscriptions.map((sub) => (
-                            <div key={sub.id} 
-                                 className="bg-white dark:bg-dark rounded-lg shadow-md 
+                            <div key={sub.id}
+                                className="bg-white dark:bg-dark rounded-lg shadow-md 
                                           border border-slate-200 dark:border-slate-700 p-4 space-y-2"
                             >
                                 {/* Header with ID */}
@@ -327,14 +327,14 @@ const Subscriptions: React.FC = () => {
                                     <div className="flex gap-2">
                                         {editId === sub.id ? (
                                             <>
-                                                <button 
+                                                <button
                                                     onClick={updateSubscription}
                                                     className="text-green-500 hover:text-green-600 
                                                              transition-colors duration-200"
                                                 >
                                                     Save
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => setEditId(null)}
                                                     className="text-slate-500 hover:text-slate-600 
                                                              dark:text-slate-400 dark:hover:text-slate-300 
@@ -345,15 +345,15 @@ const Subscriptions: React.FC = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <button 
-                                                    onClick={() => editSubscription(sub)} 
+                                                <button
+                                                    onClick={() => editSubscription(sub)}
                                                     className="text-blue-500 hover:text-blue-600 
                                                              transition-colors duration-200"
                                                 >
                                                     <FaEdit />
                                                 </button>
-                                                <button 
-                                                    onClick={() => deleteSubscription(sub.id)} 
+                                                <button
+                                                    onClick={() => deleteSubscription(sub.id)}
                                                     className="text-red-500 hover:text-red-600 
                                                              transition-colors duration-200"
                                                 >
@@ -363,7 +363,7 @@ const Subscriptions: React.FC = () => {
                                         )}
                                     </div>
                                 </div>
-                                
+
                                 <div className="space-y-3">
                                     {/* Email Section */}
                                     <div>
@@ -382,15 +382,15 @@ const Subscriptions: React.FC = () => {
                                                   focus:border-transparent transition-all duration-200`}
                                             />
                                         ) : (
-                                            <div 
-                                                className="text-slate-800 dark:text-white font-medium break-words" 
+                                            <div
+                                                className="text-slate-800 dark:text-white font-medium break-words"
                                                 title={sub.email.length > 40 ? sub.email : undefined}
                                             >
                                                 {sub.email.length > 40 ? truncateEmail(sub.email, 40) : sub.email}
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     {/* Subscribed Status Section */}
                                     <div>
                                         <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">

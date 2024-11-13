@@ -88,10 +88,10 @@ const FileSelector: React.FC<FileSelectorProps> = ({
 
     const handleSelect = (file: FileProps) => {
         // Add file URL processing
-        const fileUrl = file.file_url.startsWith('http') 
-            ? file.file_url 
+        const fileUrl = file.file_url.startsWith('http')
+            ? file.file_url
             : `${NEXT_PUBLIC_BASE_URL}/${file.file_url}`;
-        
+
         onSelect({
             ...file,
             file_url: fileUrl
@@ -107,7 +107,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                 <div className="p-4">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Select File</h2>
-                        <button onClick={onClose} className="text-gray-500">&times;</button>
+                        <button onClick={onClose} className="text-slate-500">&times;</button>
                     </div>
 
                     <div className="mb-4">
@@ -137,9 +137,8 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                                 <div
                                     key={file.id}
                                     onClick={() => setSelectedFile(file)}
-                                    className={`p-3 border rounded cursor-pointer flex items-center justify-between ${
-                                        selectedFile?.id === file.id ? 'border-blue-500 bg-blue-50' : ''
-                                    }`}
+                                    className={`p-3 border rounded cursor-pointer flex items-center justify-between ${selectedFile?.id === file.id ? 'border-blue-500 bg-blue-50' : ''
+                                        }`}
                                 >
                                     <div className="flex items-center gap-2">
                                         {isProgrammingFile(file.file_name) ? (
@@ -149,7 +148,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                                         )}
                                         <span>{file.file_name}</span>
                                     </div>
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-slate-500">
                                         {(file.file_size / 1024).toFixed(2)} KB
                                     </span>
                                 </div>
@@ -167,7 +166,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                         </button>
                         <button
                             onClick={onClose}
-                            className="bg-gray-500 text-white px-4 py-2 rounded"
+                            className="bg-slate-500 text-white px-4 py-2 rounded"
                         >
                             Cancel
                         </button>

@@ -150,7 +150,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
                         error="Failed to load PDF"
                     >
                         {Array.from(new Array(numPages), (el, index) => (
-                            <Page 
+                            <Page
                                 key={`page_${index + 1}`}
                                 pageNumber={index + 1}
                                 className="mb-4"
@@ -171,7 +171,7 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     return (
         <div className="my-4 border rounded-lg overflow-hidden">
             <div
-                className="bg-gray-100 dark:bg-gray-800 p-4 flex items-center justify-between cursor-pointer"
+                className="bg-slate-100 dark:bg-slate-800 p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-2">
