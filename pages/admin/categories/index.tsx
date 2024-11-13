@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 dark:bg-dark dark:text-white">
+        <div className="container mx-auto p-4 bg-white dark:bg-dark dark:text-white text-slate-900 ">
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -73,9 +73,9 @@ const Dashboard: React.FC = () => {
                         <h2 className="text-xl font-semibold">Tags</h2>
                         <button
                             onClick={() => { setShowConfirm(true); setConfirmType('tags'); }}
-                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
+                            className="bg-red-500 text-white px-2 py-1 text-sm rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
                         >
-                            Delete Tags with 0 Posts
+                            Delete <span className="font-bold">0</span> Tags
                         </button>
                     </div>
                     <TagForm refreshTags={refreshTags} />
@@ -86,9 +86,9 @@ const Dashboard: React.FC = () => {
                         <h2 className="text-xl font-semibold">Categories</h2>
                         <button
                             onClick={() => { setShowConfirm(true); setConfirmType('categories'); }}
-                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
+                            className="bg-red-500 text-white px-2 py-1 text-sm rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
                         >
-                            Delete Categories with 0 Posts
+                            Delete <span className="font-bold">0</span> Categories
                         </button>
                     </div>
                     <CategoryForm refreshCategories={refreshCategories} />

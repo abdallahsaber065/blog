@@ -176,17 +176,17 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     return (
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-col sm:flex-row text-slate-900 dark:text-slate-300">
             <div className="sm:hidden flex justify-center my-1">
                 <label className="flex cursor-pointer gap-2 items-center">
-                    <span className="label-text text-lg">Editor</span>
+                    <span className="label-text text-lg text-sky-900 dark:text-sky-300">Editor</span>
                     <input
                         type="checkbox"
-                        className="toggle toggle-primary custom-toggle"
+                        className="toggle border-blue-500 bg-blue-500 [--tglbg:yellow] hover:bg-blue-700"
                         checked={view === 'preview'}
                         onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
                     />
-                    <span className="label-text text-lg">Preview</span>
+                    <span className="label-text text-lg text-lime-950 dark:text-lime-300">Preview</span>
                 </label>
             </div>
             <div className={`w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>

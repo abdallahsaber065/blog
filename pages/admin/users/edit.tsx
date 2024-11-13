@@ -90,7 +90,7 @@ const EditUser = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="form-control">
                             <label className="label" htmlFor="username">
-                                <span className="label-text block mb-1 text-slate-800 dark:text-light font-bold text-lg">Username</span>
+                                <span className="label-text block mb-1 text-slate-600 dark:text-slate-400 font-semibold text-sm uppercase tracking-wider">Username</span>
                             </label>
                             <input
                                 type="text"
@@ -98,13 +98,13 @@ const EditUser = () => {
                                 name="username"
                                 value={user.username || ''}
                                 onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
+                                className="input input-bordered w-full bg-slate-200 dark:bg-gray text-slate-900 dark:text-slate-100 font-medium"
                                 required
                             />
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="email">
-                                <span className="label-text block mb-1 text-slate-800 dark:text-light font-bold text-lg">Email</span>
+                                <span className="label-text block mb-1 text-slate-600 dark:text-slate-400 font-semibold text-sm uppercase tracking-wider">Email</span>
                             </label>
                             <input
                                 type="email"
@@ -112,13 +112,13 @@ const EditUser = () => {
                                 name="email"
                                 value={user.email || ''}
                                 onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
+                                className="input input-bordered w-full bg-slate-200 dark:bg-gray text-slate-900 dark:text-slate-100 font-medium"
                                 required
                             />
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="first_name">
-                                <span className="label-text block mb-1 text-slate-800 dark:text-light font-bold text-lg">First Name</span>
+                                <span className="label-text block mb-1 text-slate-600 dark:text-slate-400 font-semibold text-sm uppercase tracking-wider">First Name</span>
                             </label>
                             <input
                                 type="text"
@@ -126,12 +126,12 @@ const EditUser = () => {
                                 name="first_name"
                                 value={user.first_name || ''}
                                 onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
+                                className="input input-bordered w-full bg-slate-200 dark:bg-gray text-slate-900 dark:text-slate-100 font-medium"
                             />
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="last_name">
-                                <span className="label-text block mb-1 text-slate-800 dark:text-light font-bold text-lg">Last Name</span>
+                                <span className="label-text block mb-1 text-slate-600 dark:text-slate-400 font-semibold text-sm uppercase tracking-wider">Last Name</span>
                             </label>
                             <input
                                 type="text"
@@ -139,19 +139,19 @@ const EditUser = () => {
                                 name="last_name"
                                 value={user.last_name || ''}
                                 onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
+                                className="input input-bordered w-full bg-slate-200 dark:bg-gray text-slate-900 dark:text-slate-100 font-medium"
                             />
                         </div>
                         <div className="form-control">
                             <label className="label" htmlFor="role">
-                                <span className="label-text block mb-1 text-slate-800 dark:text-light font-bold text-lg">Role</span>
+                                <span className="label-text block mb-1 text-slate-600 dark:text-slate-400 font-semibold text-sm uppercase tracking-wider">Role</span>
                             </label>
                             <select
                                 id="role"
                                 name="role"
                                 value={user.role || ''}
                                 onChange={handleChange}
-                                className="select select-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
+                                className="select select-bordered w-full bg-slate-300 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium"
                             >
                                 {RoleList.map(role => (
                                     <option key={role} value={role}>

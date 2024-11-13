@@ -185,10 +185,22 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="space-y-1 text-sm">
-              <p><span className="font-medium">Name:</span> {`${user.first_name} ${user.last_name}`}</p>
-              <p><span className="font-medium">Email:</span> {user.email}</p>
-              <p><span className="font-medium">Role:</span> {user.role}</p>
-              <p><span className="font-medium">Posts:</span> {user.posts}</p>
+              <p>
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Name:</span>
+                <span className="ml-2 text-slate-900 dark:text-slate-100">{`${user.first_name} ${user.last_name}`}</span>
+              </p>
+              <p>
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Email:</span>
+                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.email}</span>
+              </p>
+              <p>
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Role:</span>
+                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.role}</span>
+              </p>
+              <p>
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Posts:</span>
+                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.posts}</span>
+              </p>
             </div>
           </div>
         ))}
