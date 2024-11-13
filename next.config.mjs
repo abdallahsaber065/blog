@@ -15,6 +15,9 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    instrumentationHook: true,
+  },
   images: {
     minimumCacheTTL: 600,
     domains: ['localhost', 'devtrend.tech'], // Add your trusted domains here

@@ -31,7 +31,6 @@ const Header: React.FC<HeaderProps> = () => {
   const userName = session?.user.name || '';
   const initials = userName.split(' ').map(name => name[0]).join('').substring(0, userName.includes(' ') ? 2 : 1);
 
-  console.log("image", session?.user.profile_image_url);
   useEffect(() => {
     setIsMounted(true);
   }, []);

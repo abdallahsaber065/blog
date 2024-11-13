@@ -48,10 +48,12 @@
     "jsonwebtoken": "^9.0.2",
     "markdown-it": "^14.1.0",
     "next-auth": "^4.24.8",
+    "next-logger": "^5.0.1",
     "next-mdx-remote": "^5.0.0",
     "nodemailer": "^6.9.15",
     "papaparse": "^5.4.1",
     "pdfjs-dist": "^4.8.69",
+    "pino": "^9.5.0",
     "postcss": "^8.4.47",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -80,7 +82,8 @@
     "typescript": "5.6.2",
     "uuid": "^11.0.3",
     "vanilla-jsoneditor": "^1.0.8",
-    "winston": "^3.15.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -89,6 +92,7 @@
     "@types/next-auth": "^3.13.0",
     "@types/nodemailer": "^6.4.16",
     "@types/papaparse": "^5.3.15",
+    "@types/pino": "^7.0.4",
     "@types/request-ip": "^0.0.41",
     "next": "^14.2.15",
     "prisma": "^5.21.1"
