@@ -16,7 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const ip = ipData.ip;
         console.log('ip of subscriber:', ip);
 
-        logger.info(`Email: ${email}\nIP: ${ip}`);
 
         if (!email) {
             log += `\nResponse Status: 400 Email is required`;
