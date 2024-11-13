@@ -1,7 +1,7 @@
 // components/CustomImageUpload.tsx
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import ImageSelector from '../Admin/ImageSelector';
+import ImageSelector from '../../Admin/ImageSelector';
 
 interface ImageProps {
     id: string;

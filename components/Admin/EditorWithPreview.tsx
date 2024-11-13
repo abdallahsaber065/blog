@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdxDev';
-import CustomImageUpload from '@/components/Image/CustomImageUpload';
-import CustomFileDisplay from '@/components/FileDisplay/CustomFileDisplay';
-
+import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
+import CustomFileUpload from '../MdxComponents/File/CustomFileUpload';
 interface EditorWithPreviewProps {
     markdownText: string;
     onContentChange: (value: string) => void;
@@ -39,7 +38,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             html: /<img\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g,
             jsx: /<Image\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g,
         };
-        
+
         const images = {
             markdown: text.match(imageRegexes.markdown) || [],
             html: text.match(imageRegexes.html) || [],
@@ -59,10 +58,10 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             }
             return `<Image src="${src}" alt="${alt}" />`;
         };
-        
+
         const jsxImagesFromMarkdown = images.markdown.map(img => convertToJsxImage(img, 'markdown'));
         const jsxImagesFromHtml = images.html.map(img => convertToJsxImage(img, 'html'));
-        
+
         // Update markdown text to replace markdown images with JSX images
         let updatedMarkdownText = text;
         jsxImagesFromMarkdown.forEach((img, index) => {
@@ -81,7 +80,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         updatedJsxImages.forEach((img, index) => {
             updatedMarkdownText = updatedMarkdownText.replace(jsxImages[index], img);
         });
-        
+
         return updatedMarkdownText;
     };
 
@@ -129,15 +128,15 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     const handleImageChange = (image: ImageProps, alt: string, id: string) => {
         const imageRegex = /(!\[.*?\]\(.*?\)|<img\s+[^>]*src=".*?"[^>]*>|<Image\s+[^>]*src=".*?"[^>]*>)/g;
-    
+
         const images = markdownText.match(imageRegex) || [];
         console.log("images before", images);
-    
+
         // id is the index of the image in the images array
         if (images[Number(id)]) {
             console.log([`images[${id}]`, images[Number(id)]]);
             const updatedImage = `<Image src="${image.file_url}" alt="${alt}" width={${image.width}} height={${image.height}} />`;
-    
+
             // Replace the i-th occurrence of the regex match
             let matchIndex = 0;
             const updatedContent = markdownText.replace(imageRegex, (match) => {
@@ -148,7 +147,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                 matchIndex++;
                 return match;
             });
-    
+
             onContentChange(updatedContent);
         }
     };
@@ -157,11 +156,11 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         // For programming files, create a collapsible code block
         const ext = `.${file.file_name.split('.').pop()?.toLowerCase()}`;
         const isProgrammingFile = ['.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'].includes(ext);
-        
-        const fileComponent = isProgrammingFile 
+
+        const fileComponent = isProgrammingFile
             ? `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`
             : `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
-    
+
         // Replace existing file component or add new one
         const regex = new RegExp(`<File[^>]*id="${id}"[^>]*>`, 'g');
         if (markdownText.match(regex)) {
@@ -173,7 +172,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     const mdxComponents = {
         Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
-        File: (props: any) => <CustomFileDisplay {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id)} />,
+        File: (props: any) => <CustomFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id)} />,
     };
 
     return (
