@@ -1,7 +1,6 @@
 import React from 'react';
 import { ClipLoader } from 'react-spinners';
 import OutlineSettings from './OutlineSettings';
-import ContentSettings from './ContentSettings';
 import JSONEditorComponent from '../JSONEditor';
 import LogViewer from './LogViewer';
 
