@@ -6,6 +6,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import e from 'express';
+import { getFileIcon } from '@/components/Admin/FileIcons';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
 
@@ -229,7 +230,8 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                 onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="font-medium truncate">{filename}</span>
+                    {getFileIcon(filename)}
+                    <span className="font-medium truncate" title={filename}>{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
                         <button 
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"

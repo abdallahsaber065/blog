@@ -3,6 +3,7 @@ import { FiDownload, FiChevronDown, FiChevronUp, FiCopy, FiCheck } from 'react-i
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import FileSelector from '../../Admin/FileSelector';
+import { getFileIcon } from '@/components/Admin/FileIcons';
 
 interface FileProps {
     id: string;
@@ -132,7 +133,8 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                 onClick={() => isProgrammingFile(filename) && setIsExpanded(!isExpanded)}
             >
                 <span className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="font-medium truncate">{filename}</span>
+                    {getFileIcon(filename)}
+                    <span className="font-medium truncate" title={filename}>{filename}</span>
                     {isProgrammingFile(filename) && (
                         <button 
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
