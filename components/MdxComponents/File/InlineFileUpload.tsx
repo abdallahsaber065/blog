@@ -126,7 +126,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
     }
 
     return (
-        <span className="inline-block my-2 border rounded-lg overflow-hidden shadow-md align-middle">
+        <span className="inline-block my-2 border rounded-lg overflow-hidden shadow-md align-middle max-w-full">
             <span
                 className="bg-slate-100 dark:bg-dark p-2 flex items-center justify-between cursor-pointer"
                 onClick={() => isProgrammingFile(filename) && setIsExpanded(!isExpanded)}
@@ -177,7 +177,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
             </span>
 
             {isExpanded && (
-                <span className="block p-4 max-h-[80vh] overflow-y-auto overflow-x-auto">
+                <span className="block p-4 max-h-[80vh] overflow-y-auto overflow-x-auto max-w-full">
                     {isLoading ? (
                         <div className="flex justify-center p-4">
                             <ClipLoader size={24} />

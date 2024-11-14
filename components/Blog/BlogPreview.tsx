@@ -10,6 +10,7 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetServerSideProps } from 'next';
+import InlineFileView from "../MdxComponents/File/InlineFileView";
 
 interface BlogPreviewProps {
     mdxSource: any;
@@ -28,7 +29,8 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
         Image: (props: any) => <CustomImage {...props} />,
         img: (props: any) => <CustomImage {...props} />,
         File: (props: any) => <CustomFileView {...props} />,
-        file: (props: any) => <CustomFileView {...props} />
+        file: (props: any) => <CustomFileView {...props} />,
+        InlineFile: (props: any) => <InlineFileView {...props} />
     });
 
     return (
