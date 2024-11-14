@@ -5,6 +5,7 @@ import RenderMdx from '../../Blog/RenderMdx';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
+import e from 'express';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
 
@@ -24,6 +25,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const [numPages, setNumPages] = useState<number | null>(null);
     const [isCopied, setIsCopied] = useState(false);
     const [width, setWidth] = useState<number>(0);
+    const [triedToFetch, setTriedToFetch] = useState(false);
 
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
@@ -40,6 +42,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     };
 
     const fetchFileContent = async () => {
+        setTriedToFetch(true);
         if (!isProgrammingFile(filename) && !isPdfFile(filename)) return;
         
         if (fileContentCache[src]) {
@@ -98,6 +101,17 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
             await navigator.clipboard.writeText(fileContent);
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
+        } else if (!error && !isLoading && !triedToFetch) {
+            setTriedToFetch(true);
+            fetchFileContent();
+            setTimeout(() => {
+                if (fileContent) {
+                    navigator.clipboard.writeText(fileContent);
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 2000);
+                }
+            }, 1000);
+
         }
     };
 
