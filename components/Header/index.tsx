@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = () => {
   }
 
   return (
-    <header className="navbar bg-light dark:bg-dark shadow-md sticky top-0 z-50">
+    <header className="navbar bg-light dark:bg-dark shadow-md sticky top-0 z-[49]">
       {/* Navbar Start */}
       <div className="navbar-start">
         {/* Mobile Navigation Drawer */}
