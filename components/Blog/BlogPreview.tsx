@@ -12,6 +12,8 @@ import { Options } from "@/lib/articles/mdxconfig";
 import { GetServerSideProps } from 'next';
 import InlineFileView from "../MdxComponents/File/InlineFileView";
 import FileResource from "../MdxComponents/File/FileResource";
+import Embed from '@/components/MdxComponents/Embed/Embed';
+
 
 interface BlogPreviewProps {
     mdxSource: any;
@@ -33,6 +35,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
         file: (props: any) => <CustomFileView {...props} />,
         InlineFile: (props: any) => <InlineFileView {...props} />,
         FileResource: (props: any) => <FileResource {...props} />,
+        Embed: (props: any) => <Embed {...props} />,
     });
 
     return (

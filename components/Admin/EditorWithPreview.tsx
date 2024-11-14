@@ -5,6 +5,7 @@ import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUploa
 import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
 import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
 import FileResource from '../MdxComponents/File/FileResource';
+import Embed from '@/components/MdxComponents/Embed/Embed';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -202,7 +203,8 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
         File: (props: any) => <CustomFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id, "File")} />,
         InlineFile: (props: any) => <InlineFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id, "InlineFile")} />,
-        FileResource: (props: any) => <FileResource {...props} />,  
+        FileResource: (props: any) => <FileResource {...props} />,
+        Embed: (props: any) => <Embed {...props} />,
     };
 
     return (
