@@ -6,11 +6,15 @@ import RenderMdx from '../../Blog/RenderMdx';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
+import { getFileIcon } from '@/components/Admin/FileIcons';
 // Set worker directly
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
 
 // Add cache object outside component for persistence
 const fileContentCache: { [key: string]: string } = {};
+
+// Add this constant at the top with other constants
+const MAX_FILE_SIZE_FOR_PREVIEW = 50000; // 100KB limit
 
 interface FileProps {
     id: string;
@@ -60,6 +64,14 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to load file content');
+            }
+
+            // Check content length from headers
+            const contentLength = response.headers.get('content-length');
+            if (contentLength && parseInt(contentLength) > MAX_FILE_SIZE_FOR_PREVIEW) {
+                setError('File is too large to preview. Please download to view contents.');
+                setIsLoading(false);
+                return;
             }
 
             const content = await response.text();
@@ -183,7 +195,8 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                 onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="font-medium truncate">{filename}</span>
+                    {getFileIcon(filename)}
+                    <span className="font-medium truncate" title={filename}>{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
                         <button className="text-blue-500 hover:text-blue-600 flex-shrink-0">
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
@@ -215,12 +228,16 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
             {(isProgrammingFile(filename) || isPdfFile(filename)) && renderContent()}
 
             {showSelector && (
-                <FileSelector
-                    isOpen={showSelector}
-                    onClose={() => setShowSelector(false)}
-                    onSelect={handleFileSelect}
-                    currentFile={src}
-                />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white dark:bg-dark rounded-lg shadow-xl max-h-[90vh] w-[90vw] max-w-2xl overflow-hidden">
+                        <FileSelector
+                            isOpen={showSelector}
+                            onClose={() => setShowSelector(false)}
+                            onSelect={handleFileSelect}
+                            currentFile={src}
+                        />
+                    </div>
+                </div>
             )}
         </div>
     );
