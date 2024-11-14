@@ -129,7 +129,7 @@ const Header: React.FC<HeaderProps> = () => {
             <div className="w-10 rounded-full">
               {!imageError ? (
                 <img
-                  src={session?.user.profile_image_url ? `/api/media/get-image?imagePath=${session?.user.profile_image_url}` : '/static/images/profile-holder.jpg'}
+                  src={session?.user.profile_image_url ? `/${session?.user.profile_image_url}` : '/static/images/profile-holder.jpg'}
                   alt={userName.split(" ")[0]}
                   className="rounded-full w-full h-full object-cover p-1"
                   onError={() => setImageError(true)}
