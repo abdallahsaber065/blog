@@ -14,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/l
 const fileContentCache: { [key: string]: string } = {};
 
 // Add this constant at the top with other constants
-const MAX_FILE_SIZE_FOR_PREVIEW = 50000; // 100KB limit
+const MAX_FILE_SIZE_FOR_PREVIEW = 100 * 1024; // 100KB in bytes
 
 interface FileProps {
     id: string;
