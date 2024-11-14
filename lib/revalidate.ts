@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next';
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 
 export const REVALIDATE_PATHS = {
   HOME: '/',
@@ -17,8 +17,8 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
     console.log('Revalidating paths:', paths);
 
     // If paths include any category-related paths, fetch all category slugs
-    const shouldRevalidateAllCategories = paths.some(path => 
-      path === REVALIDATE_PATHS.CATEGORIES || 
+    const shouldRevalidateAllCategories = paths.some(path =>
+      path === REVALIDATE_PATHS.CATEGORIES ||
       path === REVALIDATE_PATHS.CATEGORIES_ALL ||
       path.startsWith('/categories/')
     );
@@ -45,7 +45,7 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
 
     const results = await Promise.allSettled(paths.map(path => res.revalidate(path)));
     const failures = results.filter(result => result.status === 'rejected');
-    
+
     if (failures.length > 0) {
       console.error('Some paths failed to revalidate:', failures);
       return false;
