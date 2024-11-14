@@ -5,12 +5,12 @@ import RenderMdx from '../../Blog/RenderMdx';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-import e from 'express';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
 
 const fileContentCache: { [key: string]: string } = {};
+const MAX_PREVIEW_SIZE = 100 * 1024; // 100KB in bytes
 
 interface CustomFileViewProps {
     src: string;
@@ -27,6 +27,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const [isCopied, setIsCopied] = useState(false);
     const [width, setWidth] = useState<number>(0);
     const [triedToFetch, setTriedToFetch] = useState(false);
+    const [fileSize, setFileSize] = useState<number>(0);
 
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
@@ -58,6 +59,15 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
             const response = await fetch(src);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
+            }
+
+            const size = parseInt(response.headers.get('content-length') || '0');
+            setFileSize(size);
+
+            if (size > MAX_PREVIEW_SIZE && isProgrammingFile(filename)) {
+                setError(`File is too large to preview (${(size / 1024).toFixed(1)}KB). Please download to view.`);
+                setIsLoading(false);
+                return;
             }
 
             const content = await response.text();
@@ -148,8 +158,17 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
 
         if (error) {
             return (
-                <div className="p-4 text-red-500">
-                    {error}
+                <div className="p-4 flex flex-col items-center gap-4 text-center">
+                    <p className="text-red-500">{error}</p>
+                    {fileSize > MAX_PREVIEW_SIZE && (
+                        <a
+                            href={src}
+                            download
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center gap-2"
+                        >
+                            <FiDownload /> Download File
+                        </a>
+                    )}
                 </div>
             );
         }

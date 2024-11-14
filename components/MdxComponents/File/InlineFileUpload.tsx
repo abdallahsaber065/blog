@@ -29,6 +29,8 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
     const [isCopied, setIsCopied] = useState(false);
     const [triedToFetch, setTriedToFetch] = useState(false);
 
+    const MAX_FILE_SIZE = 100 * 1024; // 100KB in bytes
+
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
             '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c',
@@ -50,6 +52,11 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
+            }
+
+            const fileSize = parseInt(response.headers.get('Content-Length') || '0');
+            if (fileSize > MAX_FILE_SIZE) {
+                throw new Error('File is too large to preview. Please download to view contents.');
             }
 
             const content = await response.text();
