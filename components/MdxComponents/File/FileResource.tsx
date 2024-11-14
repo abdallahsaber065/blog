@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiDownload } from 'react-icons/fi';
+import { getFileIcon } from '@/components/Admin/FileIcons';
 
 interface FileResourceProps {
     src: string;
@@ -19,7 +20,8 @@ const FileResource: React.FC<FileResourceProps> = ({ src, filename }) => {
         <div className="my-2 border rounded-lg overflow-hidden shadow-md inline-block">
             <div className="bg-slate-100 dark:bg-dark p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="font-medium truncate">{filename}</span>
+                    {getFileIcon(filename)}
+                    <span className="font-medium truncate" title={filename}>{filename}</span>
                 </div>
                 <div className="flex items-center gap-2 ml-2">
                     <a

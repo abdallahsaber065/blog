@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiDownload, FiChevronDown, FiChevronUp, FiCopy, FiCheck } from 'react-icons/fi';
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
+import { getFileIcon } from '@/components/Admin/FileIcons';
 
 interface InlineFileProps {
     src: string;
@@ -178,7 +179,8 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                         onClick={() => isProgrammingFile(filename) && setIsExpanded(true)}
                     >
                         <span className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="font-medium truncate">{filename}</span>
+                            {getFileIcon(filename)}
+                            <span className="font-medium truncate" title={filename}>{filename}</span>
                             {isProgrammingFile(filename) && (
                                 <button
                                     className="text-blue-500 hover:text-blue-600 flex-shrink-0"
@@ -225,7 +227,8 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                 onClick={() => isProgrammingFile(filename) && setIsExpanded(false)}
             >
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="font-medium truncate">{filename}</span>
+                    {getFileIcon(filename)}
+                    <span className="font-medium truncate" title={filename}>{filename}</span>
                     {isProgrammingFile(filename) && (
                         <button 
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
