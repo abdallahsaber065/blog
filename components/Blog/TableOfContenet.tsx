@@ -115,7 +115,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
     return (
         <div className="col-span-12 lg:col-span-4">
             <details
-                className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
+                className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg sticky top-[88px] max-h-[calc(100vh-120px)] overflow-hidden overflow-y-auto"
                 open
             >
                 <summary
