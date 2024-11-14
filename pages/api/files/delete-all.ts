@@ -9,7 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     try {
         // Delete all media records
-        await prisma.mediaLibrary.deleteMany({});
+        await prisma.fileLibrary.deleteMany({});
 
         return res.status(200).json({ message: 'All media files deleted successfully' });
     } catch (error) {
