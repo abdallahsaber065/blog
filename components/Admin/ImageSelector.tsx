@@ -4,7 +4,7 @@ import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiTrash2 } from 'react-icons/fi';
 
 interface ImageProps {
     id: string;
@@ -24,6 +24,43 @@ interface ImageSelectorProps {
     folder?: string
 }
 
+interface ConfirmDialogProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    imageName: string;
+}
+
+const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfirm, imageName }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
+            <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
+                <h3 className="text-lg font-semibold mb-4">Delete Image</h3>
+                <p className="mb-6">
+                    Are you sure you want to delete <span className="font-semibold break-all">{imageName}</span>? 
+                    This action cannot be undone.
+                </p>
+                <div className="flex justify-end gap-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 text-sm rounded bg-red-500 text-white hover:bg-red-600"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ImageSelector: React.FC<ImageSelectorProps> = ({
     isOpen,
     onClose,
@@ -39,6 +76,13 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const [selectedImageDetails, setSelectedImageDetails] = useState<ImageProps | null>(null);
     const { data: session } = useSession();
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
+    const [confirmDialog, setConfirmDialog] = useState<{
+        isOpen: boolean;
+        image: ImageProps | null;
+    }>({
+        isOpen: false,
+        image: null
+    });
 
     useEffect(() => {
         fetchImages();
@@ -136,133 +180,190 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
         setSelectedImageDetails(image);
     };
 
+    const handleDeleteImage = async (image: ImageProps, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setConfirmDialog({ isOpen: true, image });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDialog.image) return;
+        
+        try {
+            await axios.delete(`/api/media?id=${confirmDialog.image.id}`);
+            setImages(images.filter(img => img.id !== confirmDialog.image!.id));
+            
+            if (selectedImage === confirmDialog.image.file_url) {
+                setSelectedImage(undefined);
+                setSelectedImageDetails(null);
+            }
+            
+            toast.success('Image deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete image');
+        } finally {
+            setConfirmDialog({ isOpen: false, image: null });
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-0 sm:px-2 ">
-            <div className="bg-white dark:bg-dark w-full h-full sm:h-auto sm:rounded-lg sm:max-w-4xl sm:max-h-[90vh] flex flex-col md:flex-row overflow-hidden">
-                {/* Main Content */}
-                <div className="flex-1 px-2 pb-2 sm:px-4 sm:pb-4 overflow-y-auto">
-                    <div className="sticky top-0 bg-white dark:bg-dark z-10 px-2 pb-2 pt-1 sm:px-4 sm:pb-4">
-                        <h2 className="text-lg sm:text-xl font-bold mb-2 mt-2">Select Image</h2>
+        <>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-0 sm:px-2">
+                <div className="bg-white dark:bg-dark w-full h-full sm:h-auto sm:rounded-lg sm:max-w-4xl sm:max-h-[90vh] flex flex-col md:flex-row overflow-hidden">
+                    {/* Main Content */}
+                    <div className="flex-1 px-2 pb-2 sm:px-4 sm:pb-4 overflow-y-auto">
+                        <div className="sticky top-0 bg-white dark:bg-dark z-10 px-2 pb-2 pt-1 sm:px-4 sm:pb-4">
+                            <h2 className="text-lg sm:text-xl font-bold mb-2 mt-2">Select Image</h2>
 
-                        {/* Upload Controls */}
-                        <div className="flex flex-col gap-2 mb-3">
-                            <div className="flex gap-2 items-center">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileUpload}
-                                    className="hidden"
-                                    id="image-upload"
-                                />
-                                <label
-                                    htmlFor="image-upload"
-                                    className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm cursor-pointer flex-shrink-0"
-                                >
-                                    Upload Image
-                                </label>
-
-                                <div className="flex flex-1 gap-1">
+                            {/* Upload Controls */}
+                            <div className="flex flex-col gap-2 mb-3">
+                                {/* File Upload Button Row */}
+                                <div className="flex flex-col sm:flex-row gap-2">
                                     <input
-                                        type="url"
-                                        value={urlInput}
-                                        onChange={(e) => setUrlInput(e.target.value)}
-                                        placeholder="Enter image URL"
-                                        className="flex-1 border rounded px-2 py-1.5 text-sm"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleFileUpload}
+                                        className="hidden"
+                                        id="image-upload"
                                     />
-                                    <button
-                                        onClick={handleUrlUpload}
-                                        className="bg-green-500 text-white p-1.5 rounded flex items-center gap-1 text-sm"
-                                        title="Upload from URL"
+                                    <label
+                                        htmlFor="image-upload"
+                                        className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm cursor-pointer flex items-center justify-center sm:w-auto"
                                     >
-                                        <FiUpload className="w-4 h-4" />
-                                        <span className="hidden sm:inline">URL</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* Image Grid */}
-                    {loading ? (
-                        <div className="flex justify-center p-2">
-                            <ClipLoader size={24} />
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
-                            {images.map((image) => (
-                                <div
-                                    key={image.id}
-                                    className={`cursor-pointer border rounded p-1 sm:p-2 ${selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
-                                        }`}
-                                    onClick={() => handleImageSelect(image)}
-                                >
-                                    <div className="relative flex items-center justify-center h-32 mb-2 sm:mb-4 overflow-hidden">
-                                        <Image
-                                            src={image.file_url}
-                                            alt={image.file_name}
-                                            layout="fill"
-                                            objectFit="contain"
+                                        <FiUpload className="w-4 h-4 mr-2" />
+                                        Upload Image
+                                    </label>
+
+                                    {/* URL Input Row */}
+                                    <div className="flex flex-1 gap-2">
+                                        <input
+                                            type="url"
+                                            value={urlInput}
+                                            onChange={(e) => setUrlInput(e.target.value)}
+                                            placeholder="Enter image URL"
+                                            className="flex-1 min-w-0 border rounded px-2 py-1.5 text-sm dark:bg-gray-800 dark:border-gray-700"
                                         />
+                                        <button
+                                            onClick={handleUrlUpload}
+                                            disabled={!urlInput || uploadLoading}
+                                            className="bg-green-500 text-white px-3 py-1.5 rounded flex items-center gap-1.5 text-sm whitespace-nowrap disabled:opacity-50"
+                                            title="Upload from URL"
+                                        >
+                                            <FiUpload className="w-4 h-4" />
+                                            <span className="hidden sm:inline">Upload URL</span>
+                                        </button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
 
-                {/* Sidebar */}
-                <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l p-2 sm:p-4 flex flex-col">
-                    <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-4">Selected Image</h3>
-                    <div className="flex-1 overflow-y-auto">
-                        {selectedImage ? (
-                            <div>
-                                <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden items-center justify-center hidden md:flex">
-                                    <Image
-                                        src={selectedImage}
-                                        alt="Selected"
-                                        layout="fill"
-                                        objectFit="contain"
-                                        className="h-full w-auto"
-                                    />
-                                </div>
-                                <p className="text-xs sm:text-sm mb-2 sm:mb-4 break-all">{selectedImage.split("/").pop()}</p>
-                                {selectedImageDetails && (
-                                    <div className="text-xs sm:text-sm">
-                                        <p>File Size: {(selectedImageDetails.file_size / 1024).toFixed(2)} KB</p>
-                                        <p>Dim: {selectedImageDetails.width} x {selectedImageDetails.height}</p>
+                                {/* Loading Indicator */}
+                                {uploadLoading && (
+                                    <div className="flex items-center justify-center py-1">
+                                        <ClipLoader size={20} />
+                                        <span className="ml-2 text-sm">Uploading...</span>
                                     </div>
                                 )}
                             </div>
+                        </div>
+                        {/* Image Grid */}
+                        {loading ? (
+                            <div className="flex justify-center p-2">
+                                <ClipLoader size={24} />
+                            </div>
                         ) : (
-                            <p className="text-sm">No image selected</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+                                {images.map((image) => (
+                                    <div
+                                        key={image.id}
+                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${
+                                            selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                        }`}
+                                        onClick={() => handleImageSelect(image)}
+                                    >
+                                        <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden">
+                                            <Image
+                                                src={image.file_url}
+                                                alt={image.file_name}
+                                                layout="fill"
+                                                objectFit="contain"
+                                                className="w-full h-full"
+                                            />
+                                            <button
+                                                onClick={(e) => handleDeleteImage(image, e)}
+                                                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                                title="Delete image"
+                                            >
+                                                <FiTrash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <p className="text-xs truncate" title={image.file_name}>
+                                            {image.file_name}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 mt-2 sm:mt-4">
-                        <button
-                            onClick={() => {
-                                if (selectedImageDetails) {
-                                    onSelect(selectedImageDetails);
-                                }
-                                onClose();
-                            }}
-                            className="bg-green-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
-                            disabled={!selectedImage}
-                        >
-                            Select
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="bg-slate-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
-                        >
-                            Cancel
-                        </button>
+                    {/* Sidebar */}
+                    <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l p-2 sm:p-4 flex flex-col">
+                        <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-4">Selected Image</h3>
+                        <div className="flex-1 overflow-y-auto">
+                            {selectedImage ? (
+                                <div>
+                                    <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden items-center justify-center hidden md:flex">
+                                        <Image
+                                            src={selectedImage}
+                                            alt="Selected"
+                                            layout="fill"
+                                            objectFit="contain"
+                                            className="h-full w-auto"
+                                        />
+                                    </div>
+                                    <p className="text-xs sm:text-sm mb-2 sm:mb-4 break-all">{selectedImage.split("/").pop()}</p>
+                                    {selectedImageDetails && (
+                                        <div className="text-xs sm:text-sm">
+                                            <p>File Size: {(selectedImageDetails.file_size / 1024).toFixed(2)} KB</p>
+                                            <p>Dim: {selectedImageDetails.width} x {selectedImageDetails.height}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <p className="text-sm">No image selected</p>
+                            )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 mt-2 sm:mt-4">
+                            <button
+                                onClick={() => {
+                                    if (selectedImageDetails) {
+                                        onSelect(selectedImageDetails);
+                                    }
+                                    onClose();
+                                }}
+                                className="bg-green-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
+                                disabled={!selectedImage}
+                            >
+                                Select
+                            </button>
+                            <button
+                                onClick={onClose}
+                                className="bg-slate-500 text-white px-3 py-1.5 rounded flex-1 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                onClose={() => setConfirmDialog({ isOpen: false, image: null })}
+                onConfirm={handleConfirmDelete}
+                imageName={confirmDialog.image?.file_name || ''}
+            />
+        </>
     );
 };
 
