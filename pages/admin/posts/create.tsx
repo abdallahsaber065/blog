@@ -106,22 +106,30 @@ const CreatePost: React.FC = () => {
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
+            }, {
+                timeout: 1000000 // 5 minutes
             });
 
             const outline = outlineResponse.data?.outline;
             setSearchTerms(outlineResponse.data?.search_terms);
-
+    
             if (!outline) {
                 toast.dismiss();
                 throw new Error("No outline generated. Please try again.");
             }
-
+    
             setOutline(outline);
             setShowJSONEditor(true);
         } catch (error: any) {
             console.error('Error during outline generation:', error);
             toast.dismiss();
-            toast.error(error.message);
+            if (error.response?.status === 500) {
+                toast.error("Server error. Please try again later.");
+            } else if (error.message.includes("timeout")) {
+                toast.error("Request timed out. Please try again.");
+            } else {
+                toast.error(error.message);
+            }
         } finally {
             setLoading(false);
         }
@@ -135,6 +143,8 @@ const CreatePost: React.FC = () => {
                 outline,
                 search_terms: searchTerms,
                 user_custom_instructions: userCustomInstructions,
+            }, {
+                timeout: 1000000 // 5 minutes
             });
 
             const generatedContent = contentResponse.data?.content;
@@ -149,6 +159,8 @@ const CreatePost: React.FC = () => {
                 content: generatedContent,
                 old_tags: oldTags.map(tag => tag.value),
                 old_categories: oldCategories.map(category => category.value),
+            }, {
+                timeout: 1000000 // 5 minutes
             });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
