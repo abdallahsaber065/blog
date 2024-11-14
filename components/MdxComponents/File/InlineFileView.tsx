@@ -59,8 +59,15 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
 
             if (isProgrammingFile(filename)) {
                 const lang = filename.split('.').pop();
-                const codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
-
+                const isMarkdown = lang === 'md' || lang === 'mdx';
+                let codeAsMdx = '';
+                if (isMarkdown) {
+                    // use 4 backticks for code blocks
+                    codeAsMdx = `\`\`\`\`${lang}\n${content}\n\`\`\`\`\``;
+                } else {
+                    codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
+                }
+                
                 try {
                     const response = await fetch('/api/serializeContent', {
                         method: 'POST',
