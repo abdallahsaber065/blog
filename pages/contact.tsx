@@ -4,10 +4,11 @@ import { ClipLoader } from 'react-spinners'; // Import the spinner
 
 // Add this social links data array
 const socialLinks = [
-  { url: 'https://twitter.com/yourtwitterhandle', platform: 'twitter', color: '#1DA1F2' },
-  { url: 'https://linkedin.com/in/yourlinkedinhandle', platform: 'linkedin', color: '#0077B5' },
-  { url: 'https://github.com/yourgithubhandle', platform: 'github', color: '#333333' },
-  { url: 'https://facebook.com/yourfacebookhandle', platform: 'facebook', color: '#3b5998' },
+  { url: 'https://x.com/DevTrend0', platform: 'twitter', color: '#1DA1F2' },
+  { url: 'https://www.linkedin.com/in/abdallah-saber065', platform: 'linkedin', color: '#0077B5' },
+  { url: 'https://github.com/abdallah065', platform: 'github', color: '#333333' },
+
+  { url: 'https://www.facebook.com/devtrends', platform: 'facebook', color: '#3b5998' },
   { url: 'https://instagram.com/yourinstagramhandle', platform: 'instagram', color: '#E1306C' },
 ];
 
