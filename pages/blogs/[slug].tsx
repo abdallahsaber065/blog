@@ -14,7 +14,7 @@ import TableOfContent from "@/components/Blog/TableOfContenet";
 import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
 import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
 import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
-
+import Embed from "@/components/MdxComponents/Embed/Embed";
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
         where: {
@@ -51,6 +51,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             updated_at: true,
             published_at: true,
             reading_time: true,
+            status: true,
             author: {
                 select: {
                     username: true,
@@ -67,7 +68,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         },
     });
 
-    if (!post) {
+    if (!post || post?.status !== 'published') {
         return { notFound: true };
     }
 
@@ -169,7 +170,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
         file: (props: any) => <CustomFileView {...props} />,
         ResourcesSection: (props: any) => <ResourcesSection {...props} />,
         InlineFile: (props: any) => <InlineFileView {...props} />,
-
+        Embed: (props: any) => <Embed {...props} />,
     });
 
     return (
