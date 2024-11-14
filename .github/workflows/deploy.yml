@@ -14,9 +14,6 @@ jobs:
       with:
         node-version: '22.7.0'
 
-    - name: nvm use
-      run: nvm use 22.7.0
-
     - name: Set up environment variables
       working-directory: /var/www/devtrend.tech
       run: |
@@ -24,6 +21,10 @@ jobs:
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         # add HOME as /root to fix npm permission issue
         echo "HOME=/root" >> $GITHUB_ENV
+
+    - name: nvm 
+      working-directory: /var/www/devtrend.tech
+      run: nvm use 22.7.0
 
     - name: Fetch the latest changes
       working-directory: /var/www/devtrend.tech
