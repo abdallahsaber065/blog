@@ -82,6 +82,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         isOpen: false,
         file: null
     });
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         fetchFiles();
@@ -190,96 +191,112 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         }
     };
 
+    const filteredFiles = files.filter(file => 
+        file.file_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (!isOpen) return null;
 
     return (
         <>
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-                <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                    <div className="p-6">
-                        <div className="flex justify-between items-center mb-6">
+                <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-xl shadow-2xl flex flex-col h-[85vh]">
+                    <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div className="flex justify-between items-center">
                             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Select File</h2>
-                            <button 
-                                onClick={onClose} 
-                                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
-                            >
+                            <button onClick={onClose} className="text-slate-500 hover:text-slate-700">
                                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
+                    </div>
 
-                        <div className="mb-6">
-                            <input
-                                type="file"
-                                accept={allowedTypes.join(',')}
-                                onChange={handleFileUpload}
-                                className="hidden"
-                                id="file-upload"
-                            />
-                            <label
-                                htmlFor="file-upload"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer inline-flex items-center gap-2 transition-colors shadow-sm"
-                            >
+                    <div className="p-6 pb-0 flex justify-between items-center gap-4">
+                        <div className="flex-shrink-0">
+                            <input type="file" accept={allowedTypes.join(',')} onChange={handleFileUpload} className="hidden" id="file-upload" />
+                            <label htmlFor="file-upload" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer inline-flex items-center gap-2">
                                 <FiUpload className="text-lg" />
                                 Upload File
                             </label>
                         </div>
+                        <div className="flex-1 max-w-md">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search files..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div className="flex-1 overflow-hidden p-6">
                         {loading ? (
                             <div className="flex justify-center p-8">
                                 <ClipLoader color="#3B82F6" size={32} />
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 gap-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                                {files.map((file) => (
-                                    <div
-                                        key={file.id}
-                                        onClick={() => setSelectedFile(file)}
-                                        className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
-                                            ${selectedFile?.id === file.id 
-                                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
-                                                : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                            }`}
-                                    >
-                                        <div className="flex flex-1 gap-2 min-w-0">
-                                            <div className="flex-shrink-0 mt-1">
-                                                {getFileIcon(file.file_name)}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="text-sm font-medium break-all">
-                                                    {file.file_name}
+                            <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="grid grid-cols-1 gap-3">
+                                    {filteredFiles.map((file) => (
+                                        <div
+                                            key={file.id}
+                                            onClick={() => setSelectedFile(file)}
+                                            className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
+                                                ${selectedFile?.id === file.id 
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+                                                    : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                                }`}
+                                        >
+                                            <div className="flex flex-1 gap-2 min-w-0">
+                                                <div className="flex-shrink-0 mt-1">
+                                                    {getFileIcon(file.file_name)}
                                                 </div>
-                                                <span className="text-xs text-slate-500 block mt-0.5">
-                                                    {(file.file_size / 1024).toFixed(2)} KB
-                                                </span>
-                                            </div>
-                                            <div className="flex-shrink-0 ml-2">
-                                                <button
-                                                    onClick={(e) => handleDeleteFile(file, e)}
-                                                    className="p-1.5 text-red-500 hover:text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
-                                                    title="Delete file"
-                                                >
-                                                    <FiTrash2 className="w-4 h-4" />
-                                                </button>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="text-sm font-medium break-all">
+                                                        {file.file_name}
+                                                    </div>
+                                                    <span className="text-xs text-slate-500 block mt-0.5">
+                                                        {(file.file_size / 1024).toFixed(2)} KB
+                                                    </span>
+                                                </div>
+                                                <div className="flex-shrink-0 ml-2">
+                                                    <button
+                                                        onClick={(e) => handleDeleteFile(file, e)}
+                                                        className="p-1.5 text-red-500 hover:text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                                                        title="Delete file"
+                                                    >
+                                                        <FiTrash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         )}
+                    </div>
 
-                        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div className="p-6 border-t border-slate-200 dark:border-slate-700 mt-auto">
+                        <div className="flex justify-end gap-3">
                             <button
                                 onClick={onClose}
-                                className="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                className="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={() => selectedFile && handleSelect(selectedFile)}
                                 disabled={!selectedFile}
-                                className="px-6 py-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="px-6 py-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Select
                             </button>
