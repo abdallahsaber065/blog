@@ -28,7 +28,7 @@ interface CustomFileDisplayProps {
     filename: string;
 }
 
-const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange, filename, id }) => {
+const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange, filename}) => {
     const [showSelector, setShowSelector] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [fileContent, setFileContent] = useState<string | null>(null);
@@ -36,6 +36,14 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     const [error, setError] = useState<string | null>(null);
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [numPages, setNumPages] = useState<number | null>(null);
+    
+    if (!filename && !src) {
+        filename = "No file selected";
+        src = "";
+    }
+    if (!src) {
+        src = "";
+    }
 
     const fetchFileContent = async (url: string) => {
         // Check cache first
