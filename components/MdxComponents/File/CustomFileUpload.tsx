@@ -21,14 +21,14 @@ interface FileProps {
     file_url: string;
 }
 
-interface CustomFileDisplayProps {
+interface CustomFileUploadProps {
     src: string;
     id: string;
     onFileChange: (file: FileProps) => void;
     filename: string;
 }
 
-const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange, filename}) => {
+const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, filename}) => {
     const [showSelector, setShowSelector] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [fileContent, setFileContent] = useState<string | null>(null);
@@ -224,4 +224,4 @@ const CustomFileDisplay: React.FC<CustomFileDisplayProps> = ({ src, onFileChange
     );
 };
 
-export default CustomFileDisplay;
+export default CustomFileUpload;

@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
-import CustomFileUpload from '../MdxComponents/File/CustomFileUpload';
+import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
+import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -84,15 +85,25 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     const replaceFilesInMarkdown = (text: string): string => {
         const fileRegex = /<File\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g;
+        const inlineFileRegex = /<InlineFile\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g;
         const files = text.match(fileRegex) || [];
+        const inlineFiles = text.match(inlineFileRegex) || [];
 
         const updatedFiles = files.map((file, index) => {
+            return file.replace(' />', ` id="${index}" />`);
+        });
+
+        const updatedInlineFiles = inlineFiles.map((file, index) => {
             return file.replace(' />', ` id="${index}" />`);
         });
 
         let updatedMarkdownText = text;
         updatedFiles.forEach((file, index) => {
             updatedMarkdownText = updatedMarkdownText.replace(files[index], file);
+        });
+
+        updatedInlineFiles.forEach((file, index) => {
+            updatedMarkdownText = updatedMarkdownText.replace(inlineFiles[index], file);
         });
 
         return updatedMarkdownText;
@@ -163,12 +174,14 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         }
     };
 
-    const handleFileChange = (file: FileProps, id: string) => {
-        const fileRegex = /<File\s+[^>]*src=".*?"[^>]*>/g;
+    const handleFileChange = (file: FileProps, id: string, type: string = "File") => {
+        const fileRegex = type === "File" ? /<File\s+[^>]*src=".*?"[^>]*>/g : /<InlineFile\s+[^>]*src=".*?"[^>]*>/g;
         const files = markdownText.match(fileRegex) || [];
 
         if (files[Number(id)]) {
-            const updatedFile = `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
+            const updatedFile = type === "File"
+                ? `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`
+                : `<InlineFile src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
 
             let matchIndex = 0;
             const updatedContent = markdownText.replace(fileRegex, (match) => {
@@ -186,7 +199,8 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     const mdxComponents = {
         Image: (props: any) => <CustomImageUpload {...props} onImageChange={(image: ImageProps) => handleImageChange(image, props.alt, props.id)} />,
-        File: (props: any) => <CustomFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id)} />,
+        File: (props: any) => <CustomFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id, "File")} />,
+        InlineFile: (props: any) => <InlineFileUpload {...props} onFileChange={(file: FileProps) => handleFileChange(file, props.id, "InlineFile")} />,
     };
 
     return (
