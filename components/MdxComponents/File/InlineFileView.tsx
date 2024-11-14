@@ -115,6 +115,51 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, [isExpanded]);
 
+    const renderContent = () => {
+        if (!isExpanded) return null;
+
+        if (isLoading) {
+            return (
+                <div className="flex justify-center p-4">
+                    <ClipLoader size={24} />
+                </div>
+            );
+        }
+
+        if (error) {
+            return (
+                <div className="p-4 text-red-500">
+                    {error}
+                </div>
+            );
+        }
+
+        return (
+            <div className="relative">
+                <div className="p-4 max-h-[80vh] overflow-y-auto overflow-x-auto">
+                    {mdxSource ? (
+                        <div className="min-w-full">
+                            <RenderMdx mdxSource={mdxSource} />
+                        </div>
+                    ) : (
+                        <pre className="whitespace-pre-wrap break-words overflow-x-auto">
+                            <code className="text-sm md:text-base">{fileContent}</code>
+                        </pre>
+                    )}
+                </div>
+                <div className="absolute bottom-4 right-4 flex gap-2">
+                    <button
+                        onClick={handleCopyContent}
+                        className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                        title="Copy code"
+                    >
+                        {isCopied ? <FiCheck /> : <FiCopy />}
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     if (!src) {
         return null;
     }
@@ -123,36 +168,74 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
         filename = src.split('/').pop() || 'file';
     }
 
+    // Inline view
+    if (!isExpanded) {
+        return (
+            <span className="inline-flex align-middle">
+                <span className="inline-flex border rounded-lg overflow-hidden shadow-md">
+                    <span
+                        className="bg-slate-100 dark:bg-dark p-2 flex items-center justify-between cursor-pointer"
+                        onClick={() => isProgrammingFile(filename) && setIsExpanded(true)}
+                    >
+                        <span className="flex items-center gap-2 flex-1 min-w-0">
+                            <span className="font-medium truncate">{filename}</span>
+                            {isProgrammingFile(filename) && (
+                                <button
+                                    className="text-blue-500 hover:text-blue-600 flex-shrink-0"
+                                    aria-label="Expand"
+                                >
+                                    <FiChevronDown />
+                                </button>
+                            )}
+                        </span>
+                        <span className="flex items-center gap-2 ml-2">
+                            {isProgrammingFile(filename) && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCopyContent();
+                                    }}
+                                    className="p-2 text-blue-500 hover:text-blue-600"
+                                    title="Copy code"
+                                >
+                                    {isCopied ? <FiCheck /> : <FiCopy />}
+                                </button>
+                            )}
+                            <a
+                                href={src}
+                                download
+                                className="p-2 text-blue-500 hover:text-blue-600"
+                                onClick={(e) => e.stopPropagation()}
+                                title="Download file"
+                            >
+                                <FiDownload />
+                            </a>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        );
+    }
+
+    // Expanded view
     return (
-        <span className="inline-block my-2 border rounded-lg overflow-hidden shadow-md align-middle w-full">
-            <span
-                className="bg-slate-100 dark:bg-dark p-2 flex items-center justify-between cursor-pointer"
-                onClick={() => isProgrammingFile(filename) && setIsExpanded(!isExpanded)}
+        <div className="my-4 border rounded-lg overflow-hidden shadow-md">
+            <div
+                className="bg-slate-100 dark:bg-dark p-4 flex items-center justify-between cursor-pointer"
+                onClick={() => isProgrammingFile(filename) && setIsExpanded(false)}
             >
-                <span className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className="font-medium truncate">{filename}</span>
                     {isProgrammingFile(filename) && (
-                        <button
+                        <button 
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
-                            aria-label={isExpanded ? "Collapse" : "Expand"}
+                            aria-label="Collapse"
                         >
-                            {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
+                            <FiChevronUp />
                         </button>
                     )}
-                </span>
-                <span className="flex items-center gap-2 ml-2">
-                    {isProgrammingFile(filename) && !isExpanded && (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleCopyContent();
-                            }}
-                            className="p-2 text-blue-500 hover:text-blue-600"
-                            title="Copy code"
-                        >
-                            {isCopied ? <FiCheck /> : <FiCopy />}
-                        </button>
-                    )}
+                </div>
+                <div className="flex items-center gap-2 ml-2">
                     <a
                         href={src}
                         download
@@ -162,46 +245,11 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                     >
                         <FiDownload />
                     </a>
-                </span>
-            </span>
+                </div>
+            </div>
 
-            {isExpanded && (
-                <span className="inline-file-container block relative w-full">
-                    <span className="block p-4 max-h-[80vh] overflow-y-auto overflow-x-hidden">
-                        {isLoading ? (
-                            <div className="flex justify-center p-4">
-                                <ClipLoader size={24} />
-                            </div>
-                        ) : error ? (
-                            <div className="p-4 text-red-500">
-                                {error}
-                            </div>
-                        ) : (
-                            <div className="relative">
-                                {mdxSource ? (
-                                    <div className="w-full overflow-x-auto">
-                                        <RenderMdx mdxSource={mdxSource} />
-                                    </div>
-                                ) : (
-                                    <pre className="whitespace-pre-wrap break-words w-full overflow-x-auto">
-                                        <code className="text-sm md:text-base">{fileContent}</code>
-                                    </pre>
-                                )}
-                                <div className="absolute bottom-4 right-4 flex gap-2">
-                                    <button
-                                        onClick={handleCopyContent}
-                                        className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
-                                        title="Copy code"
-                                    >
-                                        {isCopied ? <FiCheck /> : <FiCopy />}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </span>
-                </span>
-            )}
-        </span>
+            {renderContent()}
+        </div>
     );
 };
 

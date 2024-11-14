@@ -1,7 +1,6 @@
-// components/FileDisplay/CustomFileDisplay.tsx
 import React, { useState, useEffect } from 'react';
 import FileSelector from '../../Admin/FileSelector';
-import { FiDownload, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiDownload, FiChevronDown, FiChevronUp, FiCopy, FiCheck } from 'react-icons/fi';
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -28,7 +27,7 @@ interface CustomFileUploadProps {
     filename: string;
 }
 
-const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, filename}) => {
+const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, filename }) => {
     const [showSelector, setShowSelector] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [fileContent, setFileContent] = useState<string | null>(null);
@@ -36,7 +35,9 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
     const [error, setError] = useState<string | null>(null);
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [numPages, setNumPages] = useState<number | null>(null);
-    
+    const [isCopied, setIsCopied] = useState(false);
+    const [triedToFetch, setTriedToFetch] = useState(false);
+
     if (!filename && !src) {
         filename = "No file selected";
         src = "";
@@ -68,7 +69,6 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
             const lang = filename.split('.').pop();
 
             const codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
-
 
             try {
                 const response = await fetch('/api/serializeContent', {
@@ -179,35 +179,37 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
     return (
         <div className="my-4 border rounded-lg overflow-hidden">
             <div
-                className="bg-slate-100 dark:bg-slate-800 p-4 flex items-center justify-between cursor-pointer"
+                className="bg-slate-100 dark:bg-dark p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => (isProgrammingFile(filename) || isPdfFile(filename)) && setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-2">
-                    <span className="font-medium">{filename}</span>
-                    {(isProgrammingFile(filename) || isPdfFile(filename)) ? (
-                        <button className="text-blue-500 hover:text-blue-600">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="font-medium truncate">{filename}</span>
+                    {(isProgrammingFile(filename) || isPdfFile(filename)) && (
+                        <button className="text-blue-500 hover:text-blue-600 flex-shrink-0">
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                         </button>
-                    ) : (
-                        <a
-                            href={src}
-                            download
-                            className="text-blue-500 hover:text-blue-600"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <FiDownload />
-                        </a>
                     )}
                 </div>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setShowSelector(true);
-                    }}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                    Change File
-                </button>
+                <div className="flex items-center gap-2 ml-2">
+                    <a
+                        href={src}
+                        download
+                        className="p-2 text-blue-500 hover:text-blue-600"
+                        onClick={(e) => e.stopPropagation()}
+                        title="Download file"
+                    >
+                        <FiDownload />
+                    </a>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSelector(true);
+                        }}
+                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Change File
+                    </button>
+                </div>
             </div>
 
             {(isProgrammingFile(filename) || isPdfFile(filename)) && renderContent()}
