@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-
 import bcrypt from 'bcryptjs';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { revalidateRoutes, REVALIDATE_PATHS } from '@/lib/revalidate';
 
 // Utility function to validate input
 const validateInput = (input: any, type: string): string | null => {
@@ -25,7 +25,6 @@ const validateInput = (input: any, type: string): string | null => {
 
 // Utility function to handle errors
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-
     res.status(500).json({ error: message });
 };
 
@@ -62,7 +61,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (usernameError || emailError || passwordError) {
                     log += `\nResponse Status: 400 ${usernameError || emailError || passwordError}`;
-
                     return res.status(400).json({ error: usernameError || emailError || passwordError });
                 }
 
@@ -77,6 +75,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         last_name,
                     },
                 });
+
+                // Revalidate paths
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.AUTHORS,
+                    REVALIDATE_PATHS.getAuthorPath(username)
+                ]);
+
                 res.status(201).json(newUser);
                 log += `\nResponse Status: 201 Created`;
                 break;
@@ -88,7 +93,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const idError = validateInput(id, 'id');
                 if (idError) {
                     log += `\nResponse Status: 400 ${idError}`;
-
                     return res.status(400).json({ error: idError });
                 }
 
@@ -100,7 +104,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         const error = validateInput(value, 'string');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = value;
@@ -108,7 +111,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         const error = validateInput(value, 'email');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = value;
@@ -116,7 +118,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         const error = validateInput(value, 'string');
                         if (error) {
                             log += `\nResponse Status: 400 ${error}`;
-
                             return res.status(400).json({ error });
                         }
                         updatedData[key] = await bcrypt.hash(value as string, 10);
@@ -126,35 +127,41 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                 }
 
-                try {
-                    const updatedUser = await prisma.user.update({
-                        where: { id: Number(id) },
-                        data: updatedData,
-                    });
-                    res.status(200).json(updatedUser);
-                    log += `\nResponse Status: 200 OK`;
-                }
-                catch (error: any) {
-                    handleError(res, error, 'Internal Server Error');
-                }
-                break;
+                const updatedUser = await prisma.user.update({
+                    where: { id: Number(id) },
+                    data: updatedData,
+                });
 
+                // Revalidate paths
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.AUTHORS,
+                    REVALIDATE_PATHS.getAuthorPath(updatedUser.username)
+                ]);
+
+                res.status(200).json(updatedUser);
+                log += `\nResponse Status: 200 OK`;
+                break;
 
             case 'DELETE':
                 // Delete a user by ID
                 const { targetId } = body;
 
                 const deleteIdError = validateInput(targetId, 'id');
-
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-
                     return res.status(400).json({ error: deleteIdError });
                 }
 
                 const deletedUser = await prisma.user.delete({
                     where: { id: Number(targetId) },
                 });
+
+                // Revalidate paths
+                await revalidateRoutes(res, [
+                    REVALIDATE_PATHS.AUTHORS,
+                    REVALIDATE_PATHS.getAuthorPath(deletedUser.username)
+                ]);
+
                 res.status(200).json(deletedUser);
                 log += `\nResponse Status: 200 OK`;
                 break;
@@ -167,10 +174,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     } catch (error) {
         handleError(res, error, 'Internal Server Error');
     }
-
-
 }
-
 
 export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
     return authMiddleware(req, res, handler);
