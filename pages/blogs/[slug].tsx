@@ -12,6 +12,8 @@ import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
+import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
+import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -89,9 +91,39 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         }]
     };
 
-    // Serialize the post content
+    // Find all <File .../> and <InlineFile .../> tags in the post content
+    const fileTagRegex = /<(File|InlineFile)\s+([^>]+)\s*\/>/g;
+    const attributeRegex = /(\w+)="([^"]*)"/g;
+    const files = [];
+    let match;
+
+    while ((match = fileTagRegex.exec(post.content)) !== null) {
+        const attributes = match[2];
+        const file = { src: '', filename: '' };
+        let attrMatch;
+
+        while ((attrMatch = attributeRegex.exec(attributes)) !== null) {
+            const [_, attrName, attrValue] = attrMatch;
+            if (attrName === 'src') {
+                file.src = attrValue;
+            } else if (attrName === 'filename') {
+                file.filename = attrValue;
+            }
+        }
+
+        files.push(file);
+    }
+
+    console.log("files:", files);
+
+    // Add the "Resources" section to the post content
+    const resourcesSectionHtml = `<ResourcesSection files={${JSON.stringify(files)}} />`;
+
+    const finalContent = `${post.content}\n\n${resourcesSectionHtml}`;
+
+    // Serialize the modified content
     const mdxSource = await serialize(
-        post.content,
+        finalContent,
         Options as SerializeOptions
     );
 
@@ -134,7 +166,10 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
         Image: (props: any) => <CustomImage {...props} />,
         img: (props: any) => <CustomImage {...props} />,
         File: (props: any) => <CustomFileView {...props} />,
-        file: (props: any) => <CustomFileView {...props} />
+        file: (props: any) => <CustomFileView {...props} />,
+        ResourcesSection: (props: any) => <ResourcesSection {...props} />,
+        InlineFile: (props: any) => <InlineFileView {...props} />,
+
     });
 
     return (
