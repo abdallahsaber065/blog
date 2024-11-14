@@ -47,7 +47,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                 className="text-blue-500 underline mt-2"
                 onClick={() => setShowOutlineSettings(!showOutlineSettings)}
             >
-                {showOutlineSettings ? 'Hide' : 'Show'} Outline Advanced Settings
+                {showOutlineSettings ? 'Hide' : 'Show'} Content Advanced Settings
             </button>
             {showOutlineSettings && (
                 <div className="p-4 border border-slate-300 rounded bg-light dark:bg-gray mt-4">
