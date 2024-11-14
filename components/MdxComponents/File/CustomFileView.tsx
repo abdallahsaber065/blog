@@ -200,6 +200,14 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         return null;
     };
 
+    if (!src) {
+        return null;
+    }
+
+    if (!filename) {
+        filename = src.split('/').pop() || 'file';
+    }
+
     return (
         <div className="my-4 border rounded-lg overflow-hidden shadow-md">
             <div
@@ -247,4 +255,4 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     );
 };
 
-export default CustomFileView;                                                                                                                                                                                                                                                                                                                                                                                       
+export default CustomFileView;

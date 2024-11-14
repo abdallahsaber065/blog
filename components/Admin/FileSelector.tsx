@@ -46,11 +46,25 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         setLoading(true);
         try {
             const response = await axios.get(`/api/files?folder=${folder}`);
-            setFiles(response.data);
+            const filesWithFullUrls = await Promise.all(response.data.map(async (file: any) => {
+                const fileUrl = `${NEXT_PUBLIC_BASE_URL}/${file.file_url}`;
+                const exists = await checkFileExists(fileUrl);
+                return exists ? { ...file, file_url: fileUrl } : null;
+            }));
+            setFiles(filesWithFullUrls.filter(Boolean));
         } catch (error) {
             toast.error('Failed to fetch files');
         }
         setLoading(false);
+    };
+
+    const checkFileExists = async (url: string) => {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch {
+            return false;
+        }
     };
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,8 +86,12 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         setUploadLoading(true);
         try {
             const response = await axios.post('/api/files/upload', formData);
-            setFiles([...files, response.data.file]);
-            setSelectedFile(response.data.file);
+            const fileWithFullUrl = {
+                ...response.data.file,
+                file_url: `${NEXT_PUBLIC_BASE_URL}/${response.data.file.file_url}`
+            };
+            setFiles([...files, fileWithFullUrl]);
+            setSelectedFile(fileWithFullUrl);
             toast.success('File uploaded successfully');
         } catch (error) {
             toast.error('Failed to upload file');
@@ -87,15 +105,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
     };
 
     const handleSelect = (file: FileProps) => {
-        // Add file URL processing
-        const fileUrl = file.file_url.startsWith('http')
-            ? file.file_url
-            : `${NEXT_PUBLIC_BASE_URL}/${file.file_url}`;
-
-        onSelect({
-            ...file,
-            file_url: fileUrl
-        });
+        onSelect(file);
         onClose();
     };
 

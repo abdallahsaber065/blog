@@ -3,11 +3,13 @@ import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
 import CustomFileUpload from '../MdxComponents/File/CustomFileUpload';
+
 interface EditorWithPreviewProps {
     markdownText: string;
     onContentChange: (value: string) => void;
     className?: string;
 }
+
 interface ImageProps {
     id: string;
     file_name: string;
@@ -17,6 +19,7 @@ interface ImageProps {
     width: number;
     height: number;
 }
+
 interface FileProps {
     id: string;
     file_name: string;
@@ -32,7 +35,6 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     const previewRef = useRef<HTMLDivElement>(null);
 
     const replaceImagesInMarkdown = (text: string): string => {
-        // Create a list of all images in markdownText that do not have an id, whether in markdown, HTML, or JSX format
         const imageRegexes = {
             markdown: /!\[.*?\]\((?!.*#id=)[^\)]*\)/g,
             html: /<img\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g,
@@ -44,9 +46,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             html: text.match(imageRegexes.html) || [],
             jsx: text.match(imageRegexes.jsx) || [],
         };
-        console.log(images);
 
-        // Convert markdown and HTML images to JSX images
         const convertToJsxImage = (img: string, type: 'markdown' | 'html' | 'jsx'): string => {
             let alt: string, src: string;
             if (type === 'markdown') {
@@ -62,7 +62,6 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         const jsxImagesFromMarkdown = images.markdown.map(img => convertToJsxImage(img, 'markdown'));
         const jsxImagesFromHtml = images.html.map(img => convertToJsxImage(img, 'html'));
 
-        // Update markdown text to replace markdown images with JSX images
         let updatedMarkdownText = text;
         jsxImagesFromMarkdown.forEach((img, index) => {
             updatedMarkdownText = updatedMarkdownText.replace(images.markdown[index], img);
@@ -72,7 +71,6 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             updatedMarkdownText = updatedMarkdownText.replace(images.html[index], img);
         });
 
-        // add ids to all jsx images
         const jsxImages = updatedMarkdownText.match(imageRegexes.jsx) || [];
         const updatedJsxImages = jsxImages.map((img, index) => {
             return img.replace(' />', ` id="${index}" />`);
@@ -84,13 +82,30 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         return updatedMarkdownText;
     };
 
+    const replaceFilesInMarkdown = (text: string): string => {
+        const fileRegex = /<File\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g;
+        const files = text.match(fileRegex) || [];
+
+        const updatedFiles = files.map((file, index) => {
+            return file.replace(' />', ` id="${index}" />`);
+        });
+
+        let updatedMarkdownText = text;
+        updatedFiles.forEach((file, index) => {
+            updatedMarkdownText = updatedMarkdownText.replace(files[index], file);
+        });
+
+        return updatedMarkdownText;
+    };
+
     useEffect(() => {
         const fetchSerializedContent = async () => {
             if (!markdownText) {
                 return;
             }
             try {
-                const updatedMarkdownText = replaceImagesInMarkdown(markdownText);
+                let updatedMarkdownText = replaceImagesInMarkdown(markdownText);
+                updatedMarkdownText = replaceFilesInMarkdown(updatedMarkdownText);
 
                 const response = await fetch('/api/serializeContent', {
                     method: 'POST',
@@ -130,14 +145,10 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         const imageRegex = /(!\[.*?\]\(.*?\)|<img\s+[^>]*src=".*?"[^>]*>|<Image\s+[^>]*src=".*?"[^>]*>)/g;
 
         const images = markdownText.match(imageRegex) || [];
-        console.log("images before", images);
 
-        // id is the index of the image in the images array
         if (images[Number(id)]) {
-            console.log([`images[${id}]`, images[Number(id)]]);
             const updatedImage = `<Image src="${image.file_url}" alt="${alt}" width={${image.width}} height={${image.height}} />`;
 
-            // Replace the i-th occurrence of the regex match
             let matchIndex = 0;
             const updatedContent = markdownText.replace(imageRegex, (match) => {
                 if (matchIndex === Number(id)) {
@@ -153,20 +164,23 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     const handleFileChange = (file: FileProps, id: string) => {
-        // For programming files, create a collapsible code block
-        const ext = `.${file.file_name.split('.').pop()?.toLowerCase()}`;
-        const isProgrammingFile = ['.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'].includes(ext);
+        const fileRegex = /<File\s+[^>]*src=".*?"[^>]*>/g;
+        const files = markdownText.match(fileRegex) || [];
 
-        const fileComponent = isProgrammingFile
-            ? `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`
-            : `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
+        if (files[Number(id)]) {
+            const updatedFile = `<File src="${file.file_url}" filename="${file.file_name}" id="${id}" />`;
 
-        // Replace existing file component or add new one
-        const regex = new RegExp(`<File[^>]*id="${id}"[^>]*>`, 'g');
-        if (markdownText.match(regex)) {
-            onContentChange(markdownText.replace(regex, fileComponent));
-        } else {
-            onContentChange(markdownText + '\n\n' + fileComponent);
+            let matchIndex = 0;
+            const updatedContent = markdownText.replace(fileRegex, (match) => {
+                if (matchIndex === Number(id)) {
+                    matchIndex++;
+                    return updatedFile;
+                }
+                matchIndex++;
+                return match;
+            });
+
+            onContentChange(updatedContent);
         }
     };
 
