@@ -4,7 +4,8 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
-import { FiUpload, FiDownload, FiCode } from 'react-icons/fi';
+import { FiUpload, FiDownload, FiCode, FiTrash2, FiFileText } from 'react-icons/fi';
+import { FILE_ICONS, getFileIcon } from '@/components/Admin/FileIcons';
 
 interface FileProps {
     id: string;
@@ -23,12 +24,49 @@ interface FileSelectorProps {
     folder?: string;
 }
 
+interface ConfirmDialogProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    fileName: string;
+}
+
+const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfirm, fileName }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
+            <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
+                <h3 className="text-lg font-semibold mb-4">Delete File</h3>
+                <p className="mb-6">
+                    Are you sure you want to delete <span className="font-semibold break-all">{fileName}</span>? 
+                    This action cannot be undone.
+                </p>
+                <div className="flex justify-end gap-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 text-sm rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 text-sm rounded bg-red-500 text-white hover:bg-red-600"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const FileSelector: React.FC<FileSelectorProps> = ({
     isOpen,
     onClose,
     onSelect,
     currentFile,
-    allowedTypes = ['.pdf', '.js', '.ts', '.py', '.jsx', '.tsx', '.html', '.css'],
+    allowedTypes = Object.keys(FILE_ICONS).map(ext => `.${ext}`),
     folder = 'files'
 }) => {
     const [files, setFiles] = useState<FileProps[]>([]);
@@ -37,10 +75,29 @@ const FileSelector: React.FC<FileSelectorProps> = ({
     const [selectedFile, setSelectedFile] = useState<FileProps | null>(null);
     const { data: session } = useSession();
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
+    const [confirmDialog, setConfirmDialog] = useState<{
+        isOpen: boolean;
+        file: FileProps | null;
+    }>({
+        isOpen: false,
+        file: null
+    });
 
     useEffect(() => {
         fetchFiles();
     }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
 
     const fetchFiles = async () => {
         setLoading(true);
@@ -109,81 +166,134 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         onClose();
     };
 
+    const handleDeleteFile = async (file: FileProps, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setConfirmDialog({ isOpen: true, file });
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!confirmDialog.file) return;
+        
+        try {
+            await axios.delete(`/api/files?id=${confirmDialog.file.id}`);
+            setFiles(files.filter(f => f.id !== confirmDialog.file!.id));
+            
+            if (selectedFile?.id === confirmDialog.file.id) {
+                setSelectedFile(null);
+            }
+            
+            toast.success('File deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete file');
+        } finally {
+            setConfirmDialog({ isOpen: false, file: null });
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-lg overflow-hidden">
-                <div className="p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Select File</h2>
-                        <button onClick={onClose} className="text-slate-500">&times;</button>
-                    </div>
-
-                    <div className="mb-4">
-                        <input
-                            type="file"
-                            accept={allowedTypes.join(',')}
-                            onChange={handleFileUpload}
-                            className="hidden"
-                            id="file-upload"
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer inline-flex items-center gap-2"
-                        >
-                            <FiUpload />
-                            Upload File
-                        </label>
-                    </div>
-
-                    {loading ? (
-                        <div className="flex justify-center p-4">
-                            <ClipLoader size={24} />
+        <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+                <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <div className="p-6">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Select File</h2>
+                            <button 
+                                onClick={onClose} 
+                                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                            >
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 gap-2 max-h-[60vh] overflow-y-auto">
-                            {files.map((file) => (
-                                <div
-                                    key={file.id}
-                                    onClick={() => setSelectedFile(file)}
-                                    className={`p-3 border rounded cursor-pointer flex items-center justify-between ${selectedFile?.id === file.id ? 'border-blue-500 bg-blue-50' : ''
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        {isProgrammingFile(file.file_name) ? (
-                                            <FiCode className="text-xl" />
-                                        ) : (
-                                            <FiDownload className="text-xl" />
-                                        )}
-                                        <span>{file.file_name}</span>
+
+                        <div className="mb-6">
+                            <input
+                                type="file"
+                                accept={allowedTypes.join(',')}
+                                onChange={handleFileUpload}
+                                className="hidden"
+                                id="file-upload"
+                            />
+                            <label
+                                htmlFor="file-upload"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer inline-flex items-center gap-2 transition-colors shadow-sm"
+                            >
+                                <FiUpload className="text-lg" />
+                                Upload File
+                            </label>
+                        </div>
+
+                        {loading ? (
+                            <div className="flex justify-center p-8">
+                                <ClipLoader color="#3B82F6" size={32} />
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                                {files.map((file) => (
+                                    <div
+                                        key={file.id}
+                                        onClick={() => setSelectedFile(file)}
+                                        className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
+                                            ${selectedFile?.id === file.id 
+                                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+                                                : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                            }`}
+                                    >
+                                        <div className="flex flex-1 gap-2 min-w-0">
+                                            <div className="flex-shrink-0 mt-1">
+                                                {getFileIcon(file.file_name)}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-sm font-medium break-all">
+                                                    {file.file_name}
+                                                </div>
+                                                <span className="text-xs text-slate-500 block mt-0.5">
+                                                    {(file.file_size / 1024).toFixed(2)} KB
+                                                </span>
+                                            </div>
+                                            <div className="flex-shrink-0 ml-2">
+                                                <button
+                                                    onClick={(e) => handleDeleteFile(file, e)}
+                                                    className="p-1.5 text-red-500 hover:text-red-600 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                                                    title="Delete file"
+                                                >
+                                                    <FiTrash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span className="text-sm text-slate-500">
-                                        {(file.file_size / 1024).toFixed(2)} KB
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        )}
 
-                    <div className="flex justify-end gap-2 mt-4">
-                        <button
-                            onClick={() => selectedFile && handleSelect(selectedFile)}
-                            disabled={!selectedFile}
-                            className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50"
-                        >
-                            Select
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="bg-slate-500 text-white px-4 py-2 rounded"
-                        >
-                            Cancel
-                        </button>
+                        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <button
+                                onClick={onClose}
+                                className="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => selectedFile && handleSelect(selectedFile)}
+                                disabled={!selectedFile}
+                                className="px-6 py-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Select
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                onClose={() => setConfirmDialog({ isOpen: false, file: null })}
+                onConfirm={handleConfirmDelete}
+                fileName={confirmDialog.file?.file_name || ''}
+            />
+        </>
     );
 };
 
