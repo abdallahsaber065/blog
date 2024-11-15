@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClipLoader } from 'react-spinners';
-import OutlineSettings from './OutlineSettings';
+import ContentSettings from './ContentSettings';
 import JSONEditorComponent from '../JSONEditor';
 import LogViewer from './LogViewer';
 
@@ -18,8 +18,6 @@ interface AIContentGeneratorProps {
     setEnableNumOfPoints: (value: boolean) => void;
     userCustomInstructions: string;
     setUserCustomInstructions: (value: string) => void;
-    showOutlineSettings: boolean;
-    setShowOutlineSettings: (value: boolean) => void;
     showContentSettings: boolean;
     setShowContentSettings: (value: boolean) => void;
     loading: boolean;
@@ -51,8 +49,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     setEnableNumOfPoints,
     userCustomInstructions,
     setUserCustomInstructions,
-    showOutlineSettings,
-    setShowOutlineSettings,
+    showContentSettings,
+    setShowContentSettings,
     loading,
     outline,
     outlineDraft,
@@ -76,8 +74,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
             />
-            
-            <OutlineSettings
+
+            <ContentSettings
                 topic={topic}
                 setTopic={setTopic}
                 numOfTerms={numOfTerms}
@@ -90,8 +88,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 setEnableNumOfPoints={setEnableNumOfPoints}
                 userCustomInstructions={userCustomInstructions}
                 setUserCustomInstructions={setUserCustomInstructions}
-                showOutlineSettings={showOutlineSettings}
-                setShowOutlineSettings={setShowOutlineSettings}
+                showContentSettings={showContentSettings}
+                setShowContentSettings={setShowContentSettings}
             />
 
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">

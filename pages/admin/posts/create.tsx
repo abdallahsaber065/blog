@@ -293,8 +293,6 @@ const CreatePost: React.FC = () => {
                     setEnableNumOfPoints={setEnableNumOfPoints}
                     userCustomInstructions={userCustomInstructions}
                     setUserCustomInstructions={setUserCustomInstructions}
-                    showOutlineSettings={showContentSettings}
-                    setShowOutlineSettings={setShowContentSettings}
                     showContentSettings={showContentSettings}
                     setShowContentSettings={setShowContentSettings}
                     loading={loading}
