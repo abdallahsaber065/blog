@@ -151,18 +151,9 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         console.log('scrolling editor');
         const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
         const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
+
         if (previewRef.current) {
             previewRef.current.scrollTop = scrollPercentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
-        }
-    };
-
-    const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        console.log('scrolling preview');
-        const previewElement = e.target as HTMLDivElement;
-        const scrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
-        const editorElement = document.querySelector('.editor-class') as HTMLDivElement;
-        if (editorElement) {
-            editorElement.scrollTop = scrollPercentage * (editorElement.scrollHeight - editorElement.clientHeight);
         }
     };
 
@@ -248,7 +239,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : mdxSource ? (
-                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} previewRef={previewRef as MutableRefObject<HTMLDivElement>} handlePreviewScroll={handlePreviewScroll} />
+                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} previewRef={previewRef as MutableRefObject<HTMLDivElement>} />
                     ) : (
                         <p>No preview available</p>
                     )}
