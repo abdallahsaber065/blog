@@ -33,9 +33,9 @@ const getStatusByRole = (role: string, status: string) => {
     } else
         if (ApproveRoles.includes(role)) {
             return status;
-    } else {
-        return 'pending';
-    }
+        } else {
+            return 'pending';
+        }
 }
 
 const CreatePost: React.FC = () => {
@@ -53,7 +53,6 @@ const CreatePost: React.FC = () => {
     const { data: session } = useSession();
     const [isMounted, setIsMounted] = useState(false);
 
-    const [showOutlineSettings, setShowOutlineSettings] = useState(false);
     const [showContentSettings, setShowContentSettings] = useState(false);
     const [searchTerms, setSearchTerms] = useState('');
     const [numOfTerms, setNumOfTerms] = useState(3);
@@ -114,12 +113,12 @@ const CreatePost: React.FC = () => {
 
             const outline = outlineResponse.data?.outline;
             setSearchTerms(outlineResponse.data?.search_terms);
-    
+
             if (!outline) {
                 toast.dismiss();
                 throw new Error("No outline generated. Please try again.");
             }
-    
+
             setOutline(outline);
             setShowJSONEditor(true);
         } catch (error: any) {
@@ -244,13 +243,13 @@ const CreatePost: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4  bg-white dark:bg-dark dark:text-white text-slate-900">
-            <TourGuide 
-                run={showTour} 
-                onFinish={() => setShowTour(false)} 
+            <TourGuide
+                run={showTour}
+                onFinish={() => setShowTour(false)}
                 setShowAIGenerator={setShowAIGenerator}
-                setShowOutlineSettings={setShowOutlineSettings}
+                setShowContentSettings={setShowContentSettings}
             />
-            
+
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">Create New Post</h1>
                 <button
@@ -294,8 +293,8 @@ const CreatePost: React.FC = () => {
                     setEnableNumOfPoints={setEnableNumOfPoints}
                     userCustomInstructions={userCustomInstructions}
                     setUserCustomInstructions={setUserCustomInstructions}
-                    showOutlineSettings={showOutlineSettings}
-                    setShowOutlineSettings={setShowOutlineSettings}
+                    showOutlineSettings={showContentSettings}
+                    setShowOutlineSettings={setShowContentSettings}
                     showContentSettings={showContentSettings}
                     setShowContentSettings={setShowContentSettings}
                     loading={loading}
