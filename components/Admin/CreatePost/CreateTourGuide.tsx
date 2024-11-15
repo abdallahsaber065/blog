@@ -10,13 +10,20 @@ interface TourGuideProps {
 
 const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowContentSettings, setShowAIGenerator }) => {
     const handleBeforeStep = (data: CallBackProps) => {
-        const { index, step } = data;
-        if (index >= 1 && index <= 11) {
+        const { index } = data;
+        
+        // Always show AI Generator for steps 1-11 (AI-related steps)
+        if (index >= 0 && index <= 10) {
             setShowAIGenerator(true);
-            if (index >= 2 && index <= 8) {
+            
+            // Show Content Settings for steps 2-8 (settings-related steps)
+            if (index >= 1 && index <= 7) {
                 setShowContentSettings(true);
+            } else {
+                setShowContentSettings(false);
             }
         } else {
+            // Hide both for other steps (post form related steps)
             setShowAIGenerator(false);
             setShowContentSettings(false);
         }
@@ -85,15 +92,15 @@ const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowContentSett
             content: 'This is your main content editor. You can write in Markdown format and see the preview in real-time.',
         },
         {
-            target: '.editor-section',
+            target: '.editor-preview-editor-section',
             content: 'Write your content here using Markdown syntax. You can use formatting, links, images, and more.',
         },
         {
-            target: '.preview-section',
+            target: '.editor-preview-preview-section',
             content: 'See how your content will look when published. The preview updates as you type.',
         },
         {
-            target: '.editor-preview-toggle',
+            target: '.editor-preview-toggle-container',
             content: 'On mobile, use this toggle to switch between editor and preview modes.',
         },
         {
