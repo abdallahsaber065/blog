@@ -56,6 +56,7 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll }: EditorProps) =>
         <div>
             {error && <div className="text-red-500 mb-2">{error}</div>}
             <MdEditor
+                className="editor-class"
                 onScroll={onScroll}
                 style={{
                     height: "500px",
