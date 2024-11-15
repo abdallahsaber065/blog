@@ -17,7 +17,7 @@ const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowContentSett
             setShowAIGenerator(true);
             
             // Show Content Settings for steps 2-8 (settings-related steps)
-            if (index >= 1 && index <= 7) {
+            if (index >= 2 && index <= 8) {
                 setShowContentSettings(true);
             } else {
                 setShowContentSettings(false);
@@ -46,6 +46,10 @@ const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowContentSett
         {
             target: '.outline-settings-terms',
             content: 'Set the number of search terms to be used for research during content generation.',
+        },
+        {
+            target: '.include-search-terms-toggle',
+            content: 'Enable or disable the use Internet search to gather information for your content.',
         },
         {
             target: '.outline-settings-keywords',

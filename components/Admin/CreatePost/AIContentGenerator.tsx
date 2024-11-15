@@ -66,7 +66,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     handleSaveOutline,
 }) => {
     return (
-        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4 ${className}`}>
+        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4`}>
             <input
                 className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                 type="text"
@@ -90,6 +90,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 setUserCustomInstructions={setUserCustomInstructions}
                 showContentSettings={showContentSettings}
                 setShowContentSettings={setShowContentSettings}
+                includeSearchTerms={includeSearchTerms}
+                setIncludeSearchTerms={setIncludeSearchTerms}
             />
 
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
@@ -124,16 +126,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 >
                     View Logs
                 </button>
-
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        className="mr-2"
-                        checked={includeSearchTerms}
-                        onChange={() => setIncludeSearchTerms(!includeSearchTerms)}
-                    />
-                    <label className="text-gray dark:text-lightgray">Include Search Terms</label>
-                </div>
             </div>
 
             {showJSONEditor && (
