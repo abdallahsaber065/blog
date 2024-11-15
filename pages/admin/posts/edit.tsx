@@ -9,6 +9,7 @@ import withAuth from '@/components/Admin/withAuth';
 import readingTime from "reading-time"
 import { slug } from 'github-slugger';
 import { useSession } from 'next-auth/react';
+import EditTourGuide from '@/components/Admin/EditTourGuide';
 
 interface Post {
     id: number;
@@ -58,6 +59,7 @@ const PostEditorPage: React.FC = () => {
     const [author, setAuthor] = useState<Author | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const { data: session } = useSession();
+    const [showTour, setShowTour] = useState(false);
 
     const router = useRouter();
     const { id } = router.query;
@@ -267,30 +269,47 @@ const PostEditorPage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 text-slate-900 dark:text-slate-300">
-            <h1 className="text-2xl font-bold mb-4">Edit Post</h1>
+        <div className="container mx-auto p-4 text-slate-900 dark:text-slate-300" id="post-editor-container">
+            <EditTourGuide 
+                run={showTour} 
+                onFinish={() => setShowTour(false)}
+            />
+            
+            <div className="flex items-center justify-between mb-4">
+                <h1 className="text-2xl font-bold mb-4" id="post-editor-title">Edit Post</h1>
+                <button
+                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    onClick={() => setShowTour(true)}
+                >
+                    <span className="text-lg">❔</span>
+                    Show Guide
+                </button>
+            </div>
             
             {loadingPost && (
-                <div className="flex items-center justify-center p-4">
+                <div className="flex items-center justify-center p-4" id="post-editor-loading">
                     <ClipLoader />
                     <span className="ml-2">Loading post...</span>
                 </div>
             )}
 
             {!loadingPost && hasPermission === false && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" 
+                     role="alert" 
+                     id="post-editor-permission-denied">
                     <div className="flex">
                         <div className="py-1">
-                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-6 h-6 mr-4" id="post-editor-alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                         </div>
                         <div>
-                            <p className="font-bold">Access Denied</p>
-                            <p>You do not have permission to edit this post. Only the author or administrators can edit this content.</p>
+                            <p className="font-bold" id="post-editor-access-denied-title">Access Denied</p>
+                            <p id="post-editor-access-denied-message">You do not have permission to edit this post. Only the author or administrators can edit this content.</p>
                             <button 
                                 onClick={() => router.push('/admin/posts')}
                                 className="mt-2 text-red-600 hover:text-red-800 underline"
+                                id="post-editor-return-button"
                             >
                                 Return to Posts List
                             </button>
@@ -300,13 +319,15 @@ const PostEditorPage: React.FC = () => {
             )}
 
             {!loadingPost && hasPermission && post && (
-                <PostEditor
-                    post={post}
-                    tags={tags}
-                    categories={categories}
-                    onSave={handleSave}
-                    isLoading={loading}
-                />
+                <div id="post-editor-form">
+                    <PostEditor
+                        post={post}
+                        tags={tags}
+                        categories={categories}
+                        onSave={handleSave}
+                        isLoading={loading}
+                    />
+                </div>
             )}
         </div>
     );

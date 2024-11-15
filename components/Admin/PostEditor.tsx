@@ -74,12 +74,14 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
     };
 
     return (
-        <div className="flex flex-col">
-            <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
+        <div className="post-editor-container flex flex-col">
+            <div className="post-editor-title-section mb-4">
+                <label className="post-editor-title-label block text-l font-bold text-gray dark:text-lightgray my-4">
+                    Title
+                </label>
                 <input
                     type="text"
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                    className="post-editor-title-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                 />
@@ -88,12 +90,14 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                 markdownText={markdownText}
                 onContentChange={handleContentChange}
             />
-            <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
+            <div className="post-editor-tags-section mb-4">
+                <label className="post-editor-tags-label block text-l font-bold text-gray dark:text-lightgray my-4">
+                    Tags
+                </label>
                 <CreatableSelect
                     isMulti
                     components={animatedComponents}
-                    className="my-react-select-container"
+                    className="post-editor-tags-select my-react-select-container"
                     classNamePrefix="my-react-select"
                     value={currentPost.tags}
                     onChange={(selectedOptions) => handleFieldChange('tags', selectedOptions)}
@@ -104,11 +108,13 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
                 />
             </div>
-            <div className="mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Category</label>
+            <div className="post-editor-category-section mb-4">
+                <label className="post-editor-category-label block text-l font-bold text-gray dark:text-lightgray my-4">
+                    Category
+                </label>
                 <CreatableSelect
                     components={animatedComponents}
-                    className="my-react-select-container"
+                    className="post-editor-category-select my-react-select-container"
                     classNamePrefix="my-react-select"
                     value={currentPost.category}
                     onChange={(selectedOption) => handleFieldChange('category', selectedOption)}
@@ -119,16 +125,16 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
                 />
             </div>
-            <div className="flex space-x-4">
+            <div className="post-editor-actions flex space-x-4">
                 <button
-                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
+                    className="post-editor-publish-btn bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
                     onClick={() => handleSave('published')}
                     disabled={isLoading}
                 >
                     {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
                 </button>
                 <button
-                    className="bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
+                    className="post-editor-draft-btn bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
                     onClick={() => handleSave('draft')}
                     disabled={isLoading}
                 >

@@ -45,10 +45,9 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
         <ErrorBoundary>
             <div
                 className={`
-                    ${isFullScreen
-                        ? 'fixed inset-0 z-50 bg-white dark:bg-dark'
-                        : 'relative'
-                    } overflow-auto`
+                    render-mdx-container
+                    ${isFullScreen ? 'fixed inset-0 z-50 bg-white dark:bg-dark' : 'relative'}
+                    overflow-auto`
                 }
                 style={{
                     height: isFullScreen ? '100vh' : '500px',
@@ -56,13 +55,13 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 ref={previewRef}
             >
                 <div
-                    className="sticky top-0 z-20 flex items-center justify-between border-b border-t border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
+                    className="render-mdx-toolbar sticky top-0 z-20 flex items-center justify-between border-b border-t border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
-                    <button onClick={handleSyncScroll} className="mr-2" title="Sync the editor scroll with the preview">
+                    <button className="render-mdx-sync-btn mr-2" onClick={handleSyncScroll} title="Sync the editor scroll with the preview">
                         <FaSync className="text-dark dark:text-white" />
                     </button>
-                    <button onClick={handleToggleFullScreen} title={isFullScreen ? "Exit full screen" : "Enter full screen"}>
+                    <button className="render-mdx-fullscreen-btn" onClick={handleToggleFullScreen} title={isFullScreen ? "Exit full screen" : "Enter full screen"}>
                         {isFullScreen ? (
                             <FaCompress className="text-dark dark:text-white" />
                         ) : (
