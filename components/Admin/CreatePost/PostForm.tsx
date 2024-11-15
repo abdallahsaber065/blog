@@ -18,6 +18,7 @@ interface ImageProps {
 }
 
 interface PostFormProps {
+    className?: string;
     title: string;
     setTitle: (value: string) => void;
     excerpt: string;
@@ -36,6 +37,7 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({
+    className,
     title,
     setTitle,
     excerpt,
@@ -82,12 +84,12 @@ const PostForm: React.FC<PostFormProps> = ({
     }, [showImageSelector]);
 
     return (
-        <div className="">
+        <div className={`post-form ${className}`}>
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Title</label>
                 <input
                     type="text"
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                    className="post-title w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
@@ -95,15 +97,17 @@ const PostForm: React.FC<PostFormProps> = ({
             <div className="mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Excerpt</label>
                 <textarea
-                    className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                    className="post-excerpt w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                     value={excerpt}
                     onChange={(e) => setExcerpt(e.target.value)}
                 />
             </div>
-            <EditorWithPreview
-                markdownText={content}
-                onContentChange={handleContentChange}
-            />
+            <div className="post-content">
+                <EditorWithPreview
+                    markdownText={content}
+                    onContentChange={handleContentChange}
+                />
+            </div>
             {isMounted && (
                 <>
                     <div className="mb-4">
@@ -115,7 +119,7 @@ const PostForm: React.FC<PostFormProps> = ({
                             value={tags}
                             onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
                             onCreateOption={handleCreateTag}
-                            className="my-react-select-container"
+                            className="tags-select my-react-select-container"
                             classNamePrefix="my-react-select"
                             placeholder="Select or create tags..."
                             formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
@@ -129,7 +133,7 @@ const PostForm: React.FC<PostFormProps> = ({
                             value={category}
                             onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
                             onCreateOption={handleCreateCategory}
-                            className="my-react-select-container"
+                            className="category-select my-react-select-container"
                             classNamePrefix="my-react-select"
                             placeholder="Select or create category..."
                             formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
@@ -137,14 +141,14 @@ const PostForm: React.FC<PostFormProps> = ({
                     </div>
                 </>
             )}
-            <div className="mb-4">
+            <div className="featured-image mb-4">
                 <label className="block text-l font-bold text-gray dark:text-lightgray my-4">
                     Featured Image
                 </label>
                 <div className="flex flex-col sm:flex-row gap-2">
                     <button
                         onClick={() => setShowImageSelector(true)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        className="featured-image-btn bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         Browse
                     </button>
@@ -153,7 +157,7 @@ const PostForm: React.FC<PostFormProps> = ({
                     <img
                         src={featuredImage}
                         alt="Featured"
-                        className="mt-2 max-h-40 object-cover"
+                        className="featured-image-preview mt-2 max-h-40 object-cover"
                     />
                 )}
 

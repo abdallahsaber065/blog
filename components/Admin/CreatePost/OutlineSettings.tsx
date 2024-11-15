@@ -35,14 +35,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
     setShowOutlineSettings,
 }) => {
     return (
-        <div className="mb-4">
-            <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Topic</label>
-            <input
-                type="text"
-                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-            />
+        <div className="outline-settings mb-4">
             <button
                 className="text-blue-500 underline mt-2"
                 onClick={() => setShowOutlineSettings(!showOutlineSettings)}
@@ -56,7 +49,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Terms</label>
                             <input
                                 type="number"
-                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                                className="outline-settings-terms w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                                 value={numOfTerms}
                                 onChange={(e) => setNumOfTerms(Number(e.target.value))}
                             />
@@ -65,7 +58,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Keywords</label>
                             <input
                                 type="number"
-                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                                className="outline-settings-keywords w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                                 value={numOfKeywords}
                                 onChange={(e) => setNumOfKeywords(Number(e.target.value))}
                             />
@@ -74,7 +67,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                             <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Number of Points</label>
                             <input
                                 type="number"
-                                className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                                className="outline-settings-points w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                                 value={numOfPoints}
                                 onChange={(e) => setNumOfPoints(Number(e.target.value))}
                                 disabled={!enableNumOfPoints}
@@ -82,7 +75,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                             <div className="flex items-center mt-2">
                                 <input
                                     type="checkbox"
-                                    className="mr-2"
+                                    className="outline-settings-points-toggle mr-2"
                                     checked={enableNumOfPoints}
                                     onChange={() => {
                                         setEnableNumOfPoints(!enableNumOfPoints);
@@ -96,7 +89,7 @@ const OutlineSettings: React.FC<OutlineSettingsProps> = ({
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
                         <textarea
-                            className="w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                            className="outline-settings-instructions w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                             value={userCustomInstructions}
                             onChange={(e) => setUserCustomInstructions(e.target.value)}
                         />

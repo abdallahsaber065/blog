@@ -11,6 +11,7 @@ import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
+import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
 
 const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
 
@@ -65,6 +66,7 @@ const CreatePost: React.FC = () => {
     const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
     const [showLogViewer, setShowLogViewer] = useState(false);
+    const [showTour, setShowTour] = useState(false);
 
     // Inside the CreatePost component
     const router = useRouter();
@@ -242,12 +244,28 @@ const CreatePost: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4  bg-white dark:bg-dark dark:text-white text-slate-900">
-            <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
+            <TourGuide 
+                run={showTour} 
+                onFinish={() => setShowTour(false)} 
+                setShowAIGenerator={setShowAIGenerator}
+                setShowOutlineSettings={setShowOutlineSettings}
+            />
+            
+            <div className="flex items-center justify-between mb-4">
+                <h1 className="text-2xl font-bold">Create New Post</h1>
+                <button
+                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    onClick={() => setShowTour(true)}
+                >
+                    <span className="text-lg">❔</span>
+                    Show Guide
+                </button>
+            </div>
 
             <div className="mb-6">
                 <button
+                    className="ai-generator-toggle flex items-center gap-2 text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-200"
                     onClick={() => setShowAIGenerator(!showAIGenerator)}
-                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-200"
                 >
                     {showAIGenerator ? (
                         <>
@@ -263,6 +281,7 @@ const CreatePost: React.FC = () => {
 
             {showAIGenerator && (
                 <AIContentGenerator
+                    className="outline-settings"
                     topic={topic}
                     setTopic={setTopic}
                     numOfTerms={numOfTerms}
@@ -296,6 +315,7 @@ const CreatePost: React.FC = () => {
             )}
 
             <PostForm
+                className="post-form"
                 title={title}
                 setTitle={setTitle}
                 excerpt={excerpt}
@@ -313,7 +333,7 @@ const CreatePost: React.FC = () => {
                 isMounted={isMounted}
             />
 
-            <div className="flex space-x-4">
+            <div className="publish-buttons flex space-x-4">
                 <button
                     className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
                     onClick={() => handleSave('published')}

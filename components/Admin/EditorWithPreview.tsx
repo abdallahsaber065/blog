@@ -213,7 +213,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     return (
         <div className="flex flex-col sm:flex-row text-slate-900 dark:text-slate-300">
             <div className="sm:hidden flex justify-center my-1">
-                <label className="flex cursor-pointer gap-2 items-center">
+                <label className="flex cursor-pointer gap-2 items-center editor-preview-toggle">
                     <span className="label-text text-lg text-sky-900 dark:text-sky-300">Editor</span>
                     <input
                         type="checkbox"
@@ -224,7 +224,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     <span className="label-text text-lg text-lime-950 dark:text-lime-300">Preview</span>
                 </label>
             </div>
-            <div className={`w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`} ref={editorRef}>
+            <div className={`editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`} ref={editorRef}>
                 <label className="block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
                 <Editor
                     markdown={markdownText}
@@ -233,7 +233,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     editorRef={editorRef as MutableRefObject<HTMLDivElement>} 
                 />
             </div>
-            <div className={`w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
+            <div className={`preview-section w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
                 <h2 className="text-xl font-bold my-4">Preview</h2>
                 <div style={{ height: '500px', overflowY: 'scroll' }} >
                     {error ? (
