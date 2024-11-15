@@ -87,8 +87,8 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     const replaceFilesInMarkdown = (text: string): string => {
-        const fileRegex = /<File\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g;
-        const inlineFileRegex = /<InlineFile\s+[^>]*src="(?!.*#id=)[^"]*"[^>]*>/g;
+        const fileRegex = /<File(\s+[^>]*src="(?!.*#id=)[^"]*")?[^>]*>/g;
+        const inlineFileRegex = /<InlineFile(\s+[^>]*src="(?!.*#id=)[^"]*")?[^>]*>/g;
         const files = text.match(fileRegex) || [];
         const inlineFiles = text.match(inlineFileRegex) || [];
 
@@ -180,7 +180,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     const handleFileChange = (file: FileProps, id: string, type: string = "File") => {
-        const fileRegex = type === "File" ? /<File\s+[^>]*src=".*?"[^>]*>/g : /<InlineFile\s+[^>]*src=".*?"[^>]*>/g;
+        const fileRegex = type === "File" ? /<File(\s+[^>]*src=".*?")?[^>]*>/g : /<InlineFile(\s+[^>]*src=".*?")?[^>]*>/g;
         const files = markdownText.match(fileRegex) || [];
 
         if (files[Number(id)]) {
