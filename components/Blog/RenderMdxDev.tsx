@@ -2,7 +2,7 @@ import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useState, useEffect } from 'react';
-import { FaExpand, FaCompress } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaSync } from 'react-icons/fa';
 import BlogPreview from '@/components/Blog/BlogPreview';
 
 interface RenderMdxProps {
@@ -10,14 +10,23 @@ interface RenderMdxProps {
     mdxSource: MDXRemoteSerializeResult;
     additionalComponents?: Record<string, React.FC>;
     previewRef?: React.MutableRefObject<HTMLDivElement>;
-    handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
-const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef, handlePreviewScroll }) => {
+const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef }) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const handleToggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
+    };
+
+    const handleSyncScroll = () => {
+        const previewElement = previewRef?.current;
+        const editorElement = document.querySelector('.editor-class') as HTMLDivElement;
+
+        if (previewElement && editorElement) {
+            const scrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
+            editorElement.scrollTop = scrollPercentage * (editorElement.scrollHeight - editorElement.clientHeight);
+        }
     };
 
     useEffect(() => {
@@ -44,14 +53,16 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 style={{
                     height: isFullScreen ? '100vh' : '500px',
                 }}
-                onScroll={handlePreviewScroll}
                 ref={previewRef}
             >
                 <div
-                    className="sticky top-0 z-20 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark"
+                    className="sticky top-0 z-20 flex items-center justify-between border-b border-t border-gray-300 dark:border-gray-700 px-4 bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
-                    <button onClick={handleToggleFullScreen}>
+                    <button onClick={handleSyncScroll} className="mr-2" title="Sync the editor scroll with the preview">
+                        <FaSync className="text-dark dark:text-white" />
+                    </button>
+                    <button onClick={handleToggleFullScreen} title={isFullScreen ? "Exit full screen" : "Enter full screen"}>
                         {isFullScreen ? (
                             <FaCompress className="text-dark dark:text-white" />
                         ) : (
@@ -63,7 +74,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
                 ) : (
                     <div
-                            className={`
+                        className={`
                             preview-class
                             col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
                             prose-blockquote:bg-accent/20 
@@ -106,11 +117,21 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                             // Custom styles for links
                             prose-a:text-accent
                             dark:prose-a:text-accentDark
+
+                            // Custom styles for inline code
+                            prose-code:bg-slate-100
+                            prose-code:dark:bg-slate-800
+                            prose-code:px-1
+                            prose-code:py-0.5
+                            prose-code:rounded
+                            prose-code:text-red-600
+                            dark:prose-code:text-red-400
+
                             ${isFullScreen ? 'flex justify-center' : ''}
                             `}
                         style={{ height: '100%', paddingTop: '40px' }}
                     >
-                            <MDXRemote
+                        <MDXRemote
                             {...mdxSource}
                             components={{
                                 ...additionalComponents,

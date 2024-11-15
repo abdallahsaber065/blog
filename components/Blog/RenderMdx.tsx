@@ -55,6 +55,15 @@ const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource, additionalComponents }
       // Custom styles for links
       prose-a:text-accent
       dark:prose-a:text-accentDark
+
+      // Custom styles for inline code
+      prose-code:bg-slate-100
+      prose-code:dark:bg-slate-800
+      prose-code:px-1
+      prose-code:py-0.5
+      prose-code:rounded
+      prose-code:text-red-600
+      dark:prose-code:text-red-400
       '
       >
         <MDXRemote
