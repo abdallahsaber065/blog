@@ -30,6 +30,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
     const [triedToFetch, setTriedToFetch] = useState(false);
 
     const MAX_FILE_SIZE = 100 * 1024; // 100KB in bytes
+    const file_url_name = src.split('/').pop();
 
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
@@ -172,7 +173,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                         </button>
                     )}
                     <a
-                        href={src}
+                        href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}

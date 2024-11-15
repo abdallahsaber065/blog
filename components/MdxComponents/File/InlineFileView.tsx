@@ -21,6 +21,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
     const [triedToFetch, setTriedToFetch] = useState(false);
     const [width, setWidth] = useState<number>(0);
     const [fileSize, setFileSize] = useState<number>(0);
+    const file_url_name = src.split('/').pop();
 
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
@@ -152,7 +153,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                     <p className="text-red-500">{error}</p>
                     {fileSize > MAX_PREVIEW_SIZE && (
                         <a
-                            href={src}
+                            href={`/api/files/download?file_url_name=${file_url_name}`}
                             download
                             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center gap-2"
                         >
@@ -232,7 +233,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                                 </button>
                             )}
                             <a
-                                href={src}
+                                href={`/api/files/download?file_url_name=${file_url_name}`}
                                 download
                                 className="p-2 text-blue-500 hover:text-blue-600"
                                 onClick={(e) => e.stopPropagation()}
@@ -268,7 +269,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                 </div>
                 <div className="flex items-center gap-2 ml-2">
                     <a
-                        href={src}
+                        href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
