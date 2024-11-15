@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, MutableRefObject } from 'react';
 import Editor from "@/components/Admin/Editor";
 import RenderMdx from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
@@ -146,10 +146,23 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         fetchSerializedContent();
     }, [markdownText]);
 
-    const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => {
-        if (type === 'md' && previewRef.current) {
-            const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
-            const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
+    const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        if (previewRef.current) {
+            const previewElement = e.target as HTMLDivElement;
+            const scrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
+            const editorElement = document.querySelector('.editor-class') as HTMLTextAreaElement | HTMLDivElement;
+            if (editorElement) {
+                console.log('Preview scroll percentage:', scrollPercentage);
+                editorElement.scrollTop = scrollPercentage * (editorElement.scrollHeight - editorElement.clientHeight);
+            }
+        }
+    };
+
+    const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) => {
+        const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
+        const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
+        if (previewRef.current) {
+            console.log('Editor scroll percentage:', scrollPercentage);
             previewRef.current.scrollTop = scrollPercentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
         }
     };
@@ -226,16 +239,16 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                 <Editor
                     markdown={markdownText}
                     onChange={onContentChange}
-                    onScroll={(e) => handleEditorScroll(e, 'md')}
+                    onScroll={handleEditorScroll}
                 />
             </div>
             <div className={`w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
                 <h2 className="text-xl font-bold my-4">Preview</h2>
-                <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }}>
+                <div ref={previewRef} style={{ height: '500px', overflowY: 'scroll' }} onScroll={handlePreviewScroll}>
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : mdxSource ? (
-                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} />
+                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} previewRef={previewRef as MutableRefObject<HTMLDivElement>} handlePreviewScroll={handlePreviewScroll} />
                     ) : (
                         <p>No preview available</p>
                     )}

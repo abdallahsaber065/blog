@@ -1,4 +1,3 @@
-// components/RenderMdxDev.tsx
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -10,9 +9,11 @@ interface RenderMdxProps {
     mdxText: string;
     mdxSource: MDXRemoteSerializeResult;
     additionalComponents?: Record<string, React.FC>;
+    previewRef?: React.MutableRefObject<HTMLDivElement>;
+    handlePreviewScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
-const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents }) => {
+const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef, handlePreviewScroll }) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const handleToggleFullScreen = () => {
@@ -38,11 +39,13 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     ${isFullScreen
                         ? 'fixed inset-0 z-50 bg-white dark:bg-dark'
                         : 'relative'
-                    } overflow-auto`
+                    } overflow-auto preview-class`
                 }
                 style={{
                     height: isFullScreen ? '100vh' : '500px',
                 }}
+                onScroll={handlePreviewScroll}
+                ref={previewRef}
             >
                 <div
                     className="sticky top-0 z-20 flex items-center justify-end border-b px-4 dark:border-dark bg-white dark:bg-dark"
