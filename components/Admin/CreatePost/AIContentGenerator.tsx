@@ -5,6 +5,7 @@ import JSONEditorComponent from '../JSONEditor';
 import LogViewer from './LogViewer';
 
 interface AIContentGeneratorProps {
+    className?: string;
     topic: string;
     setTopic: (value: string) => void;
     numOfTerms: number;
@@ -37,6 +38,7 @@ interface AIContentGeneratorProps {
 }
 
 const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
+    className,
     topic,
     setTopic,
     numOfTerms,
@@ -51,8 +53,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     setUserCustomInstructions,
     showOutlineSettings,
     setShowOutlineSettings,
-    showContentSettings,
-    setShowContentSettings,
     loading,
     outline,
     outlineDraft,
@@ -68,7 +68,15 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     handleSaveOutline,
 }) => {
     return (
-        <div className="mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4 ${className}`}>
+            <input
+                className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                type="text"
+                placeholder="Enter your post topic here"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+            />
+            
             <OutlineSettings
                 topic={topic}
                 setTopic={setTopic}
@@ -85,10 +93,10 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 showOutlineSettings={showOutlineSettings}
                 setShowOutlineSettings={setShowOutlineSettings}
             />
-            
+
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
                 <button
-                    className="bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600"
+                    className="generate-outline-btn bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600"
                     onClick={handleGenerateOutline}
                     disabled={loading}
                 >
@@ -96,7 +104,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 </button>
 
                 <button
-                    className="bg-yellow-500 text-white font-bold p-2 rounded hover:bg-yellow-600"
+                    className="edit-outline-btn bg-yellow-500 text-white font-bold p-2 rounded hover:bg-yellow-600"
                     onClick={() => setShowJSONEditor(true)}
                 >
                     Edit Outline
@@ -104,7 +112,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
 
                 {outline && (
                     <button
-                        className="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600"
+                        className="generate-content-btn bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600"
                         onClick={handleAcceptOutline}
                         disabled={loading}
                     >
