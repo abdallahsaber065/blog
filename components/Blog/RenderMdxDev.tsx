@@ -119,8 +119,6 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                             dark:prose-a:text-accentDark
 
                             // Custom styles for inline code
-                            prose-code:bg-slate-100
-                            prose-code:dark:bg-slate-800
                             prose-code:px-1
                             prose-code:py-0.5
                             prose-code:rounded

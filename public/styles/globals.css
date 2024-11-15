@@ -120,3 +120,32 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* styles.css */
+.prose code {
+    background-color: #e9e9eb; /* Light mode background */
+    color: #e11d48; /* Light mode text color */
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.dark .prose code {
+    background-color: #1f2937; /* Dark mode background */
+    color: #f87171; /* Dark mode text color */
+}
+
+
+
+.prose pre code {
+    background-color: transparent; /* Ensure block code background is not affected */
+    color: inherit; /* Inherit text color for block code */
+    padding: 0; /* Remove padding for block code */
+    border-radius: 0; /* Remove border-radius for block code */
+}
+
+.dark .prose pre code {
+    background-color: transparent; /* Ensure block code background is not affected */
+    color: inherit; /* Inherit text color for block code */
+    padding: 0; /* Remove padding for block code */
+    border-radius: 0; /* Remove border-radius for block code */
+}
