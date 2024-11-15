@@ -29,9 +29,10 @@ interface EditorProps {
     onChange: (markdown: string) => void;
     parseMarkdown?: (markdown: string) => string;
     onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
+    editorRef?: React.MutableRefObject<HTMLDivElement>;
 }
 
-const Editor = ({ markdown, onChange, parseMarkdown, onScroll }: EditorProps) => {
+const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef }: EditorProps) => {
     const [error, setError] = useState<string | null>(null);
 
     const handleChange = ({ text }: { text: string }) => {
@@ -56,7 +57,7 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll }: EditorProps) =>
         <div>
             {error && <div className="text-red-500 mb-2">{error}</div>}
             <MdEditor
-                className="editor-class"
+                markdownClass="editor-class"
                 onScroll={onScroll}
                 style={{
                     height: "500px",
@@ -77,6 +78,7 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll }: EditorProps) =>
                 }}
                 onChange={handleChange}
                 value={markdown}
+                syncScrollMode={['rightFollowLeft', 'leftFollowRight']}
             />
         </div>
     );
