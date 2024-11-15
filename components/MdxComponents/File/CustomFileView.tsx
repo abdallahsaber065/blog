@@ -248,6 +248,9 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         filename = src.split('/').pop() || 'file';
     }
 
+    const file_url_name = src.split('/').pop();
+
+
     return (
         <div className="my-4 border rounded-lg overflow-hidden shadow-md">
             <div
@@ -280,7 +283,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                         </button>
                     )}
                     <a
-                        href={src}
+                        href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}

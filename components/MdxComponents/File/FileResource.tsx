@@ -15,6 +15,8 @@ const FileResource: React.FC<FileResourceProps> = ({ src, filename }) => {
     if (!filename) {
         filename = src.split('/').pop() || 'file';
     }
+    const file_url_name = src.split('/').pop();
+
 
     return (
         <div className="my-2 border rounded-lg overflow-hidden shadow-md inline-block">
@@ -25,7 +27,7 @@ const FileResource: React.FC<FileResourceProps> = ({ src, filename }) => {
                 </div>
                 <div className="flex items-center gap-2 ml-2">
                     <a
-                        href={src}
+                        href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         title="Download file"

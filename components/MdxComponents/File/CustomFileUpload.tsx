@@ -49,6 +49,8 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
     if (!src) {
         src = "";
     }
+    const file_url_name = src.split('/').pop();
+
 
     const fetchFileContent = async (url: string) => {
         // Check cache first
@@ -211,7 +213,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                 </div>
                 <div className="flex items-center gap-2 ml-2">
                     <a
-                        href={src}
+                        href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
