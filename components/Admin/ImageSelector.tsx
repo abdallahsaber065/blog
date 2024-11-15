@@ -39,13 +39,13 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfir
             <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
                 <h3 className="text-lg font-semibold mb-4">Delete Image</h3>
                 <p className="mb-6">
-                    Are you sure you want to delete <span className="font-semibold break-all">{imageName}</span>? 
+                    Are you sure you want to delete <span className="font-semibold break-all">{imageName}</span>?
                     This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                        className="px-4 py-2 text-sm rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600"
                     >
                         Cancel
                     </button>
@@ -187,16 +187,16 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
 
     const handleConfirmDelete = async () => {
         if (!confirmDialog.image) return;
-        
+
         try {
             await axios.delete(`/api/media?id=${confirmDialog.image.id}`);
             setImages(images.filter(img => img.id !== confirmDialog.image!.id));
-            
+
             if (selectedImage === confirmDialog.image.file_url) {
                 setSelectedImage(undefined);
                 setSelectedImageDetails(null);
             }
-            
+
             toast.success('Image deleted successfully');
         } catch (error) {
             toast.error('Failed to delete image');
@@ -242,7 +242,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                             value={urlInput}
                                             onChange={(e) => setUrlInput(e.target.value)}
                                             placeholder="Enter image URL"
-                                            className="flex-1 min-w-0 border rounded px-2 py-1.5 text-sm dark:bg-gray-800 dark:border-gray-700"
+                                            className="flex-1 min-w-0 border rounded px-2 py-1.5 text-sm dark:bg-slate-800 dark:border-slate-700"
                                         />
                                         <button
                                             onClick={handleUrlUpload}
@@ -275,9 +275,8 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                 {images.map((image) => (
                                     <div
                                         key={image.id}
-                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${
-                                            selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
-                                        }`}
+                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                            }`}
                                         onClick={() => handleImageSelect(image)}
                                     >
                                         <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden">

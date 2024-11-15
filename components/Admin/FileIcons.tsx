@@ -1,10 +1,10 @@
 import React from 'react';
 import { FiCode, FiFileText } from 'react-icons/fi';
-import { 
-    SiJavascript, 
-    SiTypescript, 
-    SiPython, 
-    SiHtml5, 
+import {
+    SiJavascript,
+    SiTypescript,
+    SiPython,
+    SiHtml5,
     SiCss3,
     SiPhp,
     SiRuby,
@@ -64,9 +64,9 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     py: { icon: SiPython, color: "text-blue-500" },
     pyw: { icon: SiPython, color: "text-blue-500" },
     rb: { icon: SiRuby, color: "text-red-600" },
-    sh: { icon: SiShell, color: "text-gray-600" },
-    bash: { icon: SiShell, color: "text-gray-600" },
-    zsh: { icon: SiShell, color: "text-gray-600" },
+    sh: { icon: SiShell, color: "text-slate-600" },
+    bash: { icon: SiShell, color: "text-600" },
+    zsh: { icon: SiShell, color: "text-slate-600" },
 
     // Data & Config Files
     json: { icon: SiJson, color: "text-yellow-600" },
@@ -83,15 +83,15 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
 
     // Documents
     pdf: { icon: FiFileText, color: "text-red-500" },
-    txt: { icon: FiFileText, color: "text-gray-500" },
+    txt: { icon: FiFileText, color: "text-slate-500" },
 };
 
 export const getFileIcon = (fileName: string): JSX.Element => {
     const ext = fileName.split('.').pop()?.toLowerCase() || '';
     const iconConfig = FILE_ICONS[ext];
-    
+
     if (!iconConfig) {
-        return <FiCode className="text-xl text-gray-500" />;
+        return <FiCode className="text-xl text-slate-500" />;
     }
 
     const IconComponent = iconConfig.icon;

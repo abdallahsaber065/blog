@@ -56,7 +56,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 ref={previewRef}
             >
                 <div
-                    className="sticky top-0 z-20 flex items-center justify-between border-b border-t border-gray-300 dark:border-gray-700 px-4 bg-white dark:bg-dark"
+                    className="sticky top-0 z-20 flex items-center justify-between border-b border-t border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
                     <button onClick={handleSyncScroll} className="mr-2" title="Sync the editor scroll with the preview">
