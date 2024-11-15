@@ -10,7 +10,7 @@ interface RenderMdxProps {
     mdxSource: MDXRemoteSerializeResult;
     additionalComponents?: Record<string, React.FC>;
     previewRef?: React.MutableRefObject<HTMLDivElement>;
-    handlePreviewScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+    handlePreviewScroll: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
 const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef, handlePreviewScroll }) => {
@@ -39,7 +39,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     ${isFullScreen
                         ? 'fixed inset-0 z-50 bg-white dark:bg-dark'
                         : 'relative'
-                    } overflow-auto preview-class`
+                    } overflow-auto`
                 }
                 style={{
                     height: isFullScreen ? '100vh' : '500px',
@@ -63,7 +63,8 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
                 ) : (
                     <div
-                        className={`
+                            className={`
+                            preview-class
                             col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
                             prose-blockquote:bg-accent/20 
                             prose-blockquote:p-2
@@ -109,7 +110,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                             `}
                         style={{ height: '100%', paddingTop: '40px' }}
                     >
-                        <MDXRemote
+                            <MDXRemote
                             {...mdxSource}
                             components={{
                                 ...additionalComponents,
