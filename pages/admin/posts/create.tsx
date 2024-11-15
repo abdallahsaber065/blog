@@ -62,7 +62,7 @@ const CreatePost: React.FC = () => {
     const [userCustomInstructions, setUserCustomInstructions] = useState('');
     const [outline, setOutline] = useState<any>(null);
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
-    const [includeSearchTerms, setIncludeSearchTerms] = useState(true);
+    const [includeSearchTerms, setIncludeSearchTerms] = useState(false);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
     const [showLogViewer, setShowLogViewer] = useState(false);
     const [showTour, setShowTour] = useState(false);
