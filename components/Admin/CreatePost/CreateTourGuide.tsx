@@ -5,20 +5,20 @@ interface TourGuideProps {
     run: boolean;
     onFinish: () => void;
     setShowAIGenerator: (value: boolean) => void;
-    setShowOutlineSettings: (value: boolean) => void;
+    setShowContentSettings: (value: boolean) => void;
 }
 
-const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowOutlineSettings, setShowAIGenerator }) => {
+const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowContentSettings, setShowAIGenerator }) => {
     const handleBeforeStep = (data: CallBackProps) => {
         const { index, step } = data;
         if (index >= 1 && index <= 11) {
             setShowAIGenerator(true);
             if (index >= 2 && index <= 8) {
-                setShowOutlineSettings(true);
+                setShowContentSettings(true);
             }
         } else {
             setShowAIGenerator(false);
-            setShowOutlineSettings(false);
+            setShowContentSettings(false);
         }
     };
 
@@ -136,7 +136,7 @@ const TourGuide: React.FC<TourGuideProps> = ({ run, onFinish, setShowOutlineSett
             callback={(data) => {
                 handleBeforeStep(data);
                 if (data.status === 'finished' || data.status === 'skipped') {
-                    setShowOutlineSettings(false);
+                    setShowContentSettings(false);
                     onFinish();
                 }
             }}
