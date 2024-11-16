@@ -29,18 +29,18 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
         });
 
         if (previewElement && editorElement) {
-            const editorScrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
-            const newScrollTop = editorScrollPercentage * (previewElement.scrollHeight - previewElement.clientHeight);
+            const previewScrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
+            const newEditorScrollTop = previewScrollPercentage * (editorElement.scrollHeight - editorElement.clientHeight);
 
             console.log('Sync Scroll Calculation:', {
-                editorScrollTop: editorElement.scrollTop,
-                editorScrollHeight: editorElement.scrollHeight,
-                editorClientHeight: editorElement.clientHeight,
-                percentage: editorScrollPercentage,
-                newPreviewScrollTop: newScrollTop
+                previewScrollTop: previewElement.scrollTop,
+                previewScrollHeight: previewElement.scrollHeight,
+                previewClientHeight: previewElement.clientHeight,
+                percentage: previewScrollPercentage,
+                newEditorScrollTop: newEditorScrollTop
             });
 
-            previewElement.scrollTop = newScrollTop;
+            editorElement.scrollTop = newEditorScrollTop;
         } else {
             console.log('Missing elements:', {
                 preview: !previewElement,
