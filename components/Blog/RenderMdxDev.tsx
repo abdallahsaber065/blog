@@ -69,7 +69,9 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                         )}
                     </button>
                 </div>
-                <div style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}>
+                <div
+                    style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}
+                >
                     {isFullScreen ? (
                         <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
                     ) : mdxSource === null ? (

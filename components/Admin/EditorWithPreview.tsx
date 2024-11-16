@@ -117,7 +117,6 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             if (!markdownText || markdownText.trim() === '') {
                 setMdxSource(null);
                 setError(null);
-                console.log('no markdown text');    
                 return;
             }
             try {
@@ -154,8 +153,8 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         console.log('scrolling editor');
         const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
         const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
-
         if (previewRef.current) {
+            console.log('Editor scroll percentage:', scrollPercentage);
             previewRef.current.scrollTop = scrollPercentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
         }
     };
@@ -227,7 +226,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     <span className="label-text text-lg text-lime-950 dark:text-lime-300">Preview</span>
                 </label>
             </div>
-            <div className={`editor-preview-editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`} ref={editorRef}>
+            <div className={`editor-preview-editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
                 <label className="editor-preview-content-label block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
                 <Editor
                     markdown={markdownText}
@@ -238,7 +237,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
             </div>
             <div className={`editor-preview-preview-section w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
                 <h2 className="editor-preview-preview-title text-xl font-bold my-4">Preview</h2>
-                <div className="editor-preview-preview-content" style={{ height: '500px', overflowY: 'scroll' }} >
+                <div style={{ height: '500px', overflowY: 'scroll' }}>
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : (
