@@ -69,13 +69,15 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                         )}
                     </button>
                 </div>
-                {isFullScreen ? (
-                    <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
-                ) : (
-                    <div
-                        className={`
-                            preview-class
-                            col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
+                <div style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}>
+                    {isFullScreen ? (
+                        <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
+                    ) : mdxSource === null ? (
+                        <div className="flex items-center justify-center h-full text-gray-500">
+                            No content to preview
+                        </div>
+                    ) : (
+                        <div className={`preview-class col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
                             prose-blockquote:bg-accent/20 
                             prose-blockquote:p-2
                             prose-blockquote:px-6
@@ -126,16 +128,17 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
 
                             ${isFullScreen ? 'flex justify-center' : ''}
                             `}
-                        style={{ height: '100%', paddingTop: '40px' }}
-                    >
-                        <MDXRemote
-                            {...mdxSource}
-                            components={{
-                                ...additionalComponents,
-                            }}
-                        />
-                    </div>
-                )}
+                            style={{ height: '100%', paddingTop: '40px' }}
+                        >
+                            <MDXRemote
+                                {...mdxSource}
+                                components={{
+                                    ...additionalComponents,
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         </ErrorBoundary>
     );

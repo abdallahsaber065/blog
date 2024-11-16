@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, MutableRefObject } from 'react';
 import Editor from "@/components/Admin/Editor";
-import RenderMdx from '@/components/Blog/RenderMdxDev';
+import RenderMdxDev from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
 import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
 import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
@@ -114,7 +114,10 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
     useEffect(() => {
         const fetchSerializedContent = async () => {
-            if (!markdownText) {
+            if (!markdownText || markdownText.trim() === '') {
+                setMdxSource(null);
+                setError(null);
+                console.log('no markdown text');    
                 return;
             }
             try {
@@ -238,10 +241,13 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                 <div className="editor-preview-preview-content" style={{ height: '500px', overflowY: 'scroll' }} >
                     {error ? (
                         <p className="text-red-500">{error}</p>
-                    ) : mdxSource ? (
-                        <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents} mdxText={markdownText} previewRef={previewRef as MutableRefObject<HTMLDivElement>} />
                     ) : (
-                        <p>No preview available</p>
+                        <RenderMdxDev 
+                            mdxSource={mdxSource} 
+                            additionalComponents={mdxComponents} 
+                            mdxText={markdownText} 
+                            previewRef={previewRef as MutableRefObject<HTMLDivElement>} 
+                        />
                     )}
                 </div>
             </div>
