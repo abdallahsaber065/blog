@@ -23,9 +23,29 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
         const previewElement = previewRef?.current;
         const editorElement = document.querySelector('.editor-class') as HTMLDivElement;
 
+        console.log('Sync Button Clicked - Elements:', {
+            previewElement: !!previewElement,
+            editorElement: !!editorElement
+        });
+
         if (previewElement && editorElement) {
-            const scrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
-            editorElement.scrollTop = scrollPercentage * (editorElement.scrollHeight - editorElement.clientHeight);
+            const editorScrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
+            const newScrollTop = editorScrollPercentage * (previewElement.scrollHeight - previewElement.clientHeight);
+
+            console.log('Sync Scroll Calculation:', {
+                editorScrollTop: editorElement.scrollTop,
+                editorScrollHeight: editorElement.scrollHeight,
+                editorClientHeight: editorElement.clientHeight,
+                percentage: editorScrollPercentage,
+                newPreviewScrollTop: newScrollTop
+            });
+
+            previewElement.scrollTop = newScrollTop;
+        } else {
+            console.log('Missing elements:', {
+                preview: !previewElement,
+                editor: !editorElement
+            });
         }
     };
 
@@ -52,7 +72,6 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 style={{
                     height: isFullScreen ? '100vh' : '500px',
                 }}
-                ref={previewRef}
             >
                 <div
                     className="render-mdx-toolbar sticky top-0 z-20 flex items-center justify-between border-b border-t border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
@@ -71,6 +90,8 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 </div>
                 <div
                     style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}
+                    ref={previewRef}
+
                 >
                     {isFullScreen ? (
                         <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />

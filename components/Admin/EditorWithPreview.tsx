@@ -150,12 +150,27 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     }, [markdownText]);
 
     const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) => {
-        console.log('scrolling editor');
         const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
         const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
+        
+        console.log('Editor Scroll Event:', {
+            scrollTop: editorElement.scrollTop,
+            scrollHeight: editorElement.scrollHeight,
+            clientHeight: editorElement.clientHeight,
+            percentage: scrollPercentage
+        });
+
         if (previewRef.current) {
-            console.log('Editor scroll percentage:', scrollPercentage);
-            previewRef.current.scrollTop = scrollPercentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
+            const previewElement = previewRef.current;
+            const newScrollTop = scrollPercentage * (previewElement.scrollHeight - previewElement.clientHeight);
+            console.log('Preview Scroll Calculation:', {
+                previewScrollHeight: previewElement.scrollHeight,
+                previewClientHeight: previewElement.clientHeight,
+                newScrollTop
+            });
+            previewElement.scrollTop = newScrollTop;
+        } else {
+            console.log('Preview ref is not available');
         }
     };
 
