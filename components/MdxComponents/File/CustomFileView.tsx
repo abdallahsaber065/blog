@@ -7,6 +7,21 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 
+
+if (typeof Promise.withResolvers === 'undefined') {
+    if (window)
+        // @ts-expect-error This does not exist outside of polyfill which this is doing
+        window.Promise.withResolvers = function () {
+            let resolve, reject;
+            const promise = new Promise((res, rej) => {
+                resolve = res;
+                reject = rej;
+            });
+            return { promise, resolve, reject };
+        };
+}
+
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
 
 const fileContentCache: { [key: string]: string } = {};
