@@ -4,9 +4,9 @@ import RenderMdxDev from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
 import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
 import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
-import FileResource from '../MdxComponents/File/FileResource';
+import FileResource from '@/components/MdxComponents/File/FileResource';
 import Embed from '@/components/MdxComponents/Embed/Embed';
-import { FaExpand, FaCompress } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaBookOpen } from 'react-icons/fa';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -271,7 +271,20 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
 
             <div className={`editor-preview-editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}
                  style={{ height: isFullScreen ? 'calc(100vh - 64px)' : '500px' }}>
-                <label className="editor-preview-content-label block text-xl font-bold text-gray dark:text-lightgray mb-2">Content</label>
+                <div className="flex items-center justify-between mb-2">
+                    <label className="editor-preview-content-label text-xl font-bold text-gray dark:text-lightgray">Content</label>
+                    <button
+                        onClick={() => fetch('/static/editor_guide.md')
+                            .then(res => res.text())
+                            .then(text => onContentChange(text))
+                            .catch(err => console.error('Error loading example:', err))}
+                        className="flex items-center gap-2 px-3 py-1 text-sm rounded-md bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+                        title="Load example content"
+                    >
+                        <FaBookOpen className="text-base" />
+                        <span>Load Example</span>
+                    </button>
+                </div>
                 <Editor
                     markdown={markdownText}
                     onChange={onContentChange}
