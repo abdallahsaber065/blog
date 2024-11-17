@@ -6,6 +6,13 @@ import { ClipLoader } from 'react-spinners';
 import PostList from '@/components/Admin/PostList';
 import withAuth from '@/components/Admin/withAuth';
 
+interface PostPermission {
+    id: number;
+    post_id: number;
+    user_id: number | null;
+    role: string | null;
+}
+
 interface Post {
     id: number;
     slug: string;
@@ -15,7 +22,9 @@ interface Post {
     author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
+    permissions: PostPermission[];
 }
+
 
 const DashboardPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -53,6 +62,13 @@ const DashboardPage: React.FC = () => {
                     id: true,
                     name: true,
                 },
+            },
+            permissions: {
+                select: {
+                    id: true,
+                    user_id: true,
+                    role: true,
+                }
             },
         });
 

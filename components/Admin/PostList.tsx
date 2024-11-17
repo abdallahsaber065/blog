@@ -1,7 +1,14 @@
 import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { FaTrash, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaSave, FaTimes, FaUserLock } from 'react-icons/fa';
+
+interface PostPermission {
+    id: number;
+    post_id: number;
+    user_id: number | null;
+    role: string | null;
+}
 
 interface Post {
     id: number;
@@ -12,6 +19,7 @@ interface Post {
     author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
+    permissions: PostPermission[];
 }
 
 interface PostListProps {
@@ -22,6 +30,198 @@ interface PostListProps {
 }
 
 const ApproveRoles = ['admin', 'moderator'];
+const PermissionManageRoles = ['admin', 'moderator'];
+
+const POST_SELECT_FIELDS = {
+    id: true,
+    slug: true,
+    title: true,
+    status: true,
+    tags: {
+        select: {
+            id: true,
+            name: true,
+        },
+    },
+    created_at: true,
+    author: {
+        select: {
+            id: true,
+            username: true,
+            first_name: true,
+            last_name: true,
+        },
+    },
+    category: {
+        select: {
+            id: true,
+            name: true,
+        },
+    },
+    permissions: {
+        select: {
+            id: true,
+            user_id: true,
+            role: true,
+        }
+    },
+};
+
+const PermissionsModal: React.FC<{
+    isOpen: boolean;
+    onClose: () => void;
+    post: Post;
+    onSave: (permissions: { users: number[], roles: string[] }) => Promise<void>;
+}> = ({ isOpen, onClose, post, onSave }) => {
+    const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+    const [selectedRoles, setSelectedRoles] = useState<string[]>(['admin']);
+    const [availableUsers, setAvailableUsers] = useState<Array<{ id: number, username: string, role?: string }>>([]);
+    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        if (isOpen && post) {
+            // Load available users with their roles
+            fetch('/api/users').then(res => res.json()).then(users => {
+                setAvailableUsers(users);
+                // Auto-select admin users
+                const adminUsers = users.filter((user: { role?: string; id: number }) => user.role === 'admin').map((user: { id: number }) => user.id);
+                setSelectedUsers(prevSelected => [...new Set([...prevSelected, ...adminUsers])]);
+            });
+
+            // Set initial selections based on existing permissions
+            const userIds = (post.permissions || [])
+                .filter(p => p.user_id !== null)
+                .map(p => p.user_id!);
+            const roles = (post.permissions || [])
+                .filter(p => p.role !== null)
+                .map(p => p.role!);
+
+            setSelectedUsers(prev => [...new Set([...prev, ...userIds])]);
+            setSelectedRoles(prev => [...new Set([...prev, ...roles])]);
+        }
+    }, [isOpen, post]);
+
+    const filteredUsers = availableUsers.filter(user => 
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleUserToggle = (userId: number, isAdmin: boolean) => {
+        if (isAdmin) return; // Prevent toggling admin users
+        setSelectedUsers(prev => {
+            if (prev.includes(userId)) {
+                return prev.filter(id => id !== userId);
+            } else {
+                return [...prev, userId];
+            }
+        });
+    };
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await onSave({ 
+                users: selectedUsers, 
+                roles: selectedRoles.includes('admin') ? selectedRoles : ['admin', ...selectedRoles] 
+            });
+            onClose();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 text-slate-900 dark:text-slate-300">
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"> 
+                <h2 className="text-xl font-bold mb-4">Manage Permissions</h2>
+                
+                <div className="mb-4">
+                    <h3 className="font-semibold mb-2">Users</h3>
+                    <input
+                        type="text"
+                        placeholder="Search users..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full p-2 mb-2 border rounded dark:bg-slate-700 dark:border-slate-600"
+                    />
+                    <div className="max-h-48 overflow-y-auto border rounded p-2 dark:border-slate-600">
+                        {filteredUsers.map(user => {
+                            const isAdmin = user.role === 'admin';
+                            return (
+                                <label 
+                                    key={user.id} 
+                                    className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
+                                        ${isAdmin ? 'opacity-75' : ''}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedUsers.includes(user.id)}
+                                        onChange={() => handleUserToggle(user.id, isAdmin)}
+                                        disabled={isAdmin}
+                                        className="rounded"
+                                    />
+                                    <span>
+                                        {user.username}
+                                        {isAdmin && <span className="ml-2 text-xs text-slate-500">(Admin)</span>}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="mb-4">
+                    <h3 className="font-semibold mb-2">Roles</h3>
+                    {['admin', 'moderator', 'editor'].map(role => (
+                        <label 
+                            key={role} 
+                            className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
+                                ${role === 'admin' ? 'opacity-75' : ''}`}
+                        >
+                            <input
+                                type="checkbox"
+                                checked={selectedRoles.includes(role)}
+                                onChange={(e) => {
+                                    if (role === 'admin') return; // Prevent changing admin role
+                                    if (e.target.checked) {
+                                        setSelectedRoles([...selectedRoles, role]);
+                                    } else {
+                                        setSelectedRoles(selectedRoles.filter(r => r !== role));
+                                    }
+                                }}
+                                disabled={role === 'admin'}
+                                className="rounded"
+                            />
+                            <span className="capitalize">
+                                {role}
+                                {role === 'admin' && <span className="ml-2 text-xs text-slate-500">(Required)</span>}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-600"
+                        disabled={loading}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                        disabled={loading}
+                    >
+                        {loading ? 'Saving...' : 'Save'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, setPosts }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -37,12 +237,15 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     const [editedStatus, setEditedStatus] = useState<string>('');
     const [savingPostIds, setSavingPostIds] = useState<Set<number>>(new Set());
     const [deletingPostIds, setDeletingPostIds] = useState<Set<number>>(new Set());
+    const [selectedPostForPermissions, setSelectedPostForPermissions] = useState<Post | null>(null);
     const { data: session, status } = useSession();
+    const canManagePermissions = session?.user?.role && PermissionManageRoles.includes(session.user.role);
+    const currentUserId = Number(session?.user?.id);
+    const currentUserRole = session?.user?.role;
 
     const deleteRoles = ['admin'];
 
     const hasApproveRights = session?.user?.role && ApproveRoles.includes(session.user.role);
-    const currentUserId = Number(session?.user?.id);
 
     if (!Array.isArray(posts)) {
         return <div>Error: posts is not an array</div>;
@@ -145,9 +348,60 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
         }
     };
 
+    const handlePermissionsSave = async (postId: number, permissions: { users: number[], roles: string[] }) => {
+        try {
+            const response = await fetch(`/api/posts/${postId}/permissions`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(permissions),
+            });
+
+            if (response.ok) {
+                toast.success('Permissions updated successfully');
+                
+                // Use the constant select fields
+                const updatedPosts = await fetch('/api/posts?select=' + JSON.stringify(POST_SELECT_FIELDS))
+                    .then(res => res.json());
+                setPosts(updatedPosts);
+            } else {
+                toast.error('Failed to update permissions');
+            }
+        } catch (error) {
+            toast.error('Failed to update permissions');
+        }
+    };
+
     // Helper function to check if a post is being processed
     const isPostProcessing = (postId: number) => {
         return savingPostIds.has(postId) || deletingPostIds.has(postId);
+    };
+
+    const hasPermissionForPost = (post: Post) => {
+        // Admin/moderator has full access
+        if (ApproveRoles.includes(currentUserRole || '')) {
+            return true;
+        }
+
+        // Author has access
+        if (post.author.id === currentUserId) {
+            return true;
+        }
+
+        // Check user-specific permission
+        const hasUserPermission = post.permissions?.some(p => p.user_id === currentUserId);
+        if (hasUserPermission) {
+            return true;
+        }
+
+        // Check role-based permission
+        const hasRolePermission = post.permissions?.some(p => p.role === currentUserRole);
+        if (hasRolePermission) {
+            return true;
+        }
+
+        return false;
     };
 
     return (
@@ -307,7 +561,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                 )}
                             </div>
                             
-                            {(hasApproveRights || post.author.id === currentUserId) && (
+                            {hasPermissionForPost(post) && (
                                 <div className="flex items-center space-x-2">
                                     <button
                                         className="text-green-500 hover:text-green-600 disabled:opacity-50"
@@ -327,6 +581,15 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                             <FaTrash />
                                         )}
                                     </button>
+                                    {canManagePermissions && (
+                                        <button
+                                            className="text-blue-500 hover:text-blue-600 disabled:opacity-50"
+                                            onClick={() => setSelectedPostForPermissions(post)}
+                                            disabled={isPostProcessing(post.id)}
+                                        >
+                                            <FaUserLock />
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -353,6 +616,20 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                         Next
                     </button>
                 </div>
+            )}
+
+            {canManagePermissions && (
+                <PermissionsModal
+                    isOpen={!!selectedPostForPermissions}
+                    onClose={() => setSelectedPostForPermissions(null)}
+                    post={selectedPostForPermissions!}
+                    onSave={(permissions) => {
+                        if (selectedPostForPermissions) {
+                            return handlePermissionsSave(selectedPostForPermissions.id, permissions);
+                        }
+                        return Promise.resolve();
+                    }}
+                />
             )}
         </div>
     );
