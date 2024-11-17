@@ -255,6 +255,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 log += `\nResponse Status: 405 Method ${method} Not Allowed`;
                 res.status(405).end(`Method ${method} Not Allowed`);
         }
+        console.log(log);
     } catch (error) {
         handleError(res, error, 'Internal Server Error');
     }
