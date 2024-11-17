@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { options } from '@/pages/api/auth/[...nextauth]';
-import { logger } from '@/next-logger.config';
 
 const publicEndpoints = [
     '/api/auth/signup',
@@ -15,21 +14,20 @@ export async function authMiddleware(
     res: NextApiResponse,
     handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>
 ) {
-    const log = logger();
     const start = Date.now();
 
     try {
         const session = await getServerSession(req, res, options);
         const isPublicEndpoint = publicEndpoints.includes(req.url || '');
 
-        log.info(`${req.method} ${req.url ? decodeURIComponent(req.url) : ''} isPublic:${isPublicEndpoint} authenticated:${!!session}`);
+        console.info(`${req.method} ${req.url ? decodeURIComponent(req.url) : ''} isPublic:${isPublicEndpoint} authenticated:${!!session}`);
 
         if (isPublicEndpoint) {
             return handler(req, res);
         }
 
         if (!session) {
-            log.warn({
+            console.warn({
                 message: 'Unauthorized access attempt',
                 url: req.url,
                 method: req.method,
@@ -41,7 +39,7 @@ export async function authMiddleware(
         const result = await handler(req, res);
         const duration = Date.now() - start;
 
-        log.info({
+        console.info({
             message: 'Request completed',
             method: req.method,
             url: req.url,
@@ -51,7 +49,7 @@ export async function authMiddleware(
 
         return result;
     } catch (error) {
-        log.error({
+        console.error({
             message: 'Request failed',
             method: req.method,
             url: req.url,
