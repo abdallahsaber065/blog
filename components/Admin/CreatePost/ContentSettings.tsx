@@ -64,7 +64,7 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
                                 <input
                                     type="checkbox"
                                     id="includeSearchTerms"
-                                    className="form-checkbox h-4 w-4 text-blue-500 rounded border-gray-300 focus:ring-blue-500
+                                    className="form-checkbox h-4 w-4 text-blue-500 rounded border-slate-300 focus:ring-blue-500
                                     include-search-terms-toggle
                                     "
                                     checked={includeSearchTerms}
