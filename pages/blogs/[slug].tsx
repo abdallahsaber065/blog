@@ -7,7 +7,7 @@ import { serialize } from 'next-mdx-remote/serialize';
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { prisma } from '@/lib/prisma';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
@@ -15,6 +15,9 @@ import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
 import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
 import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
 import Embed from "@/components/MdxComponents/Embed/Embed";
+import { getSession } from 'next-auth/react';
+import FileResource from "@/components/MdxComponents/File/FileResource";
+
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
         where: {
@@ -35,7 +38,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params, preview = false }) => {
     const { slug } = params as { slug: string };
 
     const post = await prisma.post.findUnique({
@@ -68,7 +71,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         },
     });
 
-    if (!post || post?.status !== 'published') {
+    if (!post) {
         return { notFound: true };
     }
 
@@ -154,6 +157,40 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const session = await getSession();
+            const hasAccess = session?.user?.role && ['admin', 'editor', 'moderator'].includes(session.user.role);
+            setIsAuthorized(hasAccess || false);
+            setLoading(false);
+        };
+        
+        checkAuth();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // Show unauthorized message if not published and user is not authorized
+    if (post.status !== 'published' && !isAuthorized) {
+        return (
+            <main className="container mx-auto pb-16 px-4 flex-1">
+                <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg mt-8">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">Access Denied</h1>
+                    <p className="text-slate-700 dark:text-slate-300 mb-4">
+                        This post is currently not published and requires special permissions to view.
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        Please contact an administrator if you believe you should have access to this content.
+                    </p>
+                </div>
+            </main>
+        );
+    }
 
     // Convert strings back to Date objects
     const deserializedPost = {
@@ -171,6 +208,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
         ResourcesSection: (props: any) => <ResourcesSection {...props} />,
         InlineFile: (props: any) => <InlineFileView {...props} />,
         Embed: (props: any) => <Embed {...props} />,
+        FileResource: (props: any) => <FileResource {...props} />,
     });
 
     return (
@@ -180,6 +218,16 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <article>
+                {post.status !== 'published' && (
+                    <div className="w-full bg-amber-50 dark:bg-amber-900/30 border-y border-amber-200 dark:border-amber-700/50 py-3 text-center">
+                        <span className="text-amber-800 dark:text-amber-200 text-sm md:text-base font-medium px-4 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            {post.status.charAt(0).toUpperCase() + post.status.slice(1)} Preview Mode
+                        </span>
+                    </div>
+                )}
                 <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         {deserializedPost.tags?.[0] && (
