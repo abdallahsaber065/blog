@@ -67,6 +67,8 @@ const CreatePost: React.FC = () => {
     const [showLogViewer, setShowLogViewer] = useState(false);
     const [showTour, setShowTour] = useState(false);
 
+    const [includeImages, setIncludeImages] = useState(false);
+
     // Inside the CreatePost component
     const router = useRouter();
 
@@ -143,6 +145,7 @@ const CreatePost: React.FC = () => {
                 topic,
                 outline,
                 search_terms: searchTerms,
+                include_images: includeImages,
                 user_custom_instructions: userCustomInstructions,
             }, {
                 timeout: 1000000 // 5 minutes
@@ -308,6 +311,8 @@ const CreatePost: React.FC = () => {
                     handleGenerateOutline={handleGenerateOutline}
                     handleAcceptOutline={handleAcceptOutline}
                     handleSaveOutline={handleSaveOutline}
+                    includeImages={includeImages}
+                    setIncludeImages={setIncludeImages}
                 />
             )}
 

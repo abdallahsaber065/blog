@@ -33,6 +33,8 @@ interface AIContentGeneratorProps {
     handleGenerateOutline: () => void;
     handleAcceptOutline: () => void;
     handleSaveOutline: () => void;
+    includeImages: boolean;
+    setIncludeImages: (value: boolean) => void;
 }
 
 const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
@@ -64,6 +66,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     handleGenerateOutline,
     handleAcceptOutline,
     handleSaveOutline,
+    includeImages,
+    setIncludeImages,
 }) => {
     return (
         <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4`}>
@@ -92,6 +96,8 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 setShowContentSettings={setShowContentSettings}
                 includeSearchTerms={includeSearchTerms}
                 setIncludeSearchTerms={setIncludeSearchTerms}
+                includeImages={includeImages}
+                setIncludeImages={setIncludeImages}
             />
 
             <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
