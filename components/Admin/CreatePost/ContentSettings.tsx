@@ -18,6 +18,8 @@ interface ContentSettingsProps {
     setShowContentSettings: (value: boolean) => void;
     includeSearchTerms: boolean;
     setIncludeSearchTerms: (value: boolean) => void;
+    includeImages: boolean;
+    setIncludeImages: (value: boolean) => void;
 }
 
 const ContentSettings: React.FC<ContentSettingsProps> = ({
@@ -37,6 +39,8 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
     setShowContentSettings,
     includeSearchTerms,
     setIncludeSearchTerms,
+    includeImages,
+    setIncludeImages,
 }) => {
     return (
         <div className="mb-4 outline-settings">
@@ -110,6 +114,18 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
                                 <label className="text-sm text-gray dark:text-lightgray">Enable</label>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex items-center mb-4">
+                        <input
+                            type="checkbox"
+                            id="includeImages"
+                            className="form-checkbox h-4 w-4 text-blue-500 rounded border-slate-300 focus:ring-blue-500"
+                            checked={includeImages}
+                            onChange={() => setIncludeImages(!includeImages)}
+                        />
+                        <label htmlFor="includeImages" className="ml-2 text-sm text-gray dark:text-lightgray">
+                            Include images in content <span className="text-red-500">(Beta)</span>
+                        </label>
                     </div>
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">User Custom Instructions</label>
