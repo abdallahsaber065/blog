@@ -28,6 +28,7 @@ model User {
   media_library MediaLibrary[]
 
   FileLibrary FileLibrary[]
+  post_permissions PostPermission[]
 }
 
 model Category {
@@ -68,6 +69,7 @@ model Post {
   comments   Comment[]
   tags       Tag[]
   post_views PostView[] // Add this line to establish the relation
+  permissions PostPermission[]
 }
 
 model Comment {
@@ -134,4 +136,18 @@ model Setting {
   id            Int    @id @default(autoincrement())
   setting_name  String @unique
   setting_value String
+}
+
+model PostPermission {
+  id         Int      @id @default(autoincrement())
+  post_id    Int
+  user_id    Int?     // Specific user permission
+  role       String?  // Role-based permission
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, user_id, role]) // Prevent duplicate permissions
 }

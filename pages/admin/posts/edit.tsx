@@ -18,6 +18,13 @@ interface Post {
     content: string;
     tags: Tag[];
     category: Category;
+    permissions?: PostPermission[];
+    author: Author;
+}
+
+interface PostPermission {
+    user_id: number | null;
+    role: string | null;
 }
 
 interface Tag {
@@ -64,43 +71,79 @@ const PostEditorPage: React.FC = () => {
     const router = useRouter();
     const { id } = router.query;
 
-    useEffect(() => {
-        if (id) {
-            loadData(Number(id));
-        }
-    }, [id]);
+    const checkPermission = async (postId: number) => {
+        const userId = Number(session?.user?.id);
+        const userRole = session?.user?.role;
 
-    const loadData = async (postId: number) => {
-        setLoadingPost(true);
         try {
-            // First, fetch just the post's author to check permissions
-            const authorCheckWhere = JSON.stringify({ id: postId });
-            const authorCheckSelect = JSON.stringify({
+            // First, check if user is admin/moderator
+            if (ApproveRoles.includes(userRole || '')) {
+                setHasPermission(true);
+                return true;
+            }
+
+            // Then check specific post permissions
+            const postWhere = JSON.stringify({ id: postId });
+            const postSelect = JSON.stringify({
                 author: {
+                    select: { id: true }
+                },
+                permissions: {
                     select: {
-                        id: true,
+                        user_id: true,
+                        role: true
                     }
                 }
             });
             
-            const authorCheckUrl = `/api/posts?where=${authorCheckWhere}&select=${authorCheckSelect}`;
-            const authorCheckResponse = await fetch(authorCheckUrl).then(res => res.json());
-            
-            // Check permissions
-            const isAuthor = authorCheckResponse[0]?.author?.id === Number(session?.user?.id);
-            const hasApproveRole = ApproveRoles.includes(session?.user?.role || '');
-            
-            setHasPermission(isAuthor || hasApproveRole);
-            
-            if (!isAuthor && !hasApproveRole) {
-                return; // Don't load the rest of the data
+            const postUrl = `/api/posts?where=${postWhere}&select=${postSelect}`;
+            const postData = await fetch(postUrl).then(res => res.json());
+            const post = postData[0];
+
+            if (!post) return false;
+
+            // Check if user is author
+            if (post.author?.id === userId) {
+                setHasPermission(true);
+                return true;
+            }
+            // Check user-specific permission
+            const hasUserPermission = post.permissions?.some((p: { user_id: number }) => p.user_id === userId);
+            if (hasUserPermission) {
+                setHasPermission(true);
+                return true;
+            }
+            // Check role-based permission
+            const hasRolePermission = post.permissions?.some((p: { role: string }) => p.role === userRole);
+            if (hasRolePermission) {
+                setHasPermission(true);
+                return true;
             }
 
-            // Continue with existing loadData logic if authorized
-            const postWhere = JSON.stringify({
-                id: postId,
-            });
+            setHasPermission(false);
+            return false;
+        } catch (error) {
+            console.error('Permission check error:', error);
+            setHasPermission(false);
+            return false;
+        }
+    };
 
+    useEffect(() => {
+        if (id && session?.user) {
+            checkPermission(Number(id)).then(hasPermission => {
+                if (hasPermission) {
+                    loadData(Number(id));
+                }
+            });
+        }
+    }, [id, session]);
+
+    const loadData = async (postId: number) => {
+        setLoadingPost(true);
+        try {
+            // Fetch post with all necessary data including permissions
+            const postWhere = JSON.stringify({ id: postId });
             const postSelect = JSON.stringify({
                 id: true,
                 title: true,
@@ -113,6 +156,12 @@ const PostEditorPage: React.FC = () => {
                         first_name: true,
                         last_name: true,
                     },
+                },
+                permissions: {  // Add permissions to the select
+                    select: {
+                        user_id: true,
+                        role: true,
+                    }
                 },
                 tags: {
                     select: {
@@ -134,33 +183,25 @@ const PostEditorPage: React.FC = () => {
                 fetch(`/api/tags`).then((res) => res.json()),
                 fetch(`/api/categories`).then((res) => res.json()),
             ]);
-            console.log("Post Data: ", postData);
 
-            // Set author without removing it from postData
-            setAuthor(postData[0].author);
-            let post = postData[0];
-
+            const post = postData[0];
             if (!post) {
                 toast.dismiss();
                 toast.error('Post not found');
                 return;
             }
 
-            // add space after and before **...** to prevent markdown from rendering bold text
-            // retrieve the bold text from the content before editing ex.: \*\*I often do this thing where list items have headings.\*\*
+            // Set author
+            setAuthor(post.author);
+
+            // Process content (your existing bold text processing)
             const boldMatch = post.content.match(/\\\*\\\*[^*]+?\\\*\\\*/g);
             const boldTextOnly = boldMatch?.map((text: string) => text.replace(/\\\*\\\*/g, ''));
-            // trim the bold text from right and left
             const boldTextTrimmed = boldTextOnly?.map((text: string) => text.trim());
 
-            // replace matched bold text with trimmed bold text
             boldMatch?.forEach((text: string, index: number) => {
                 post.content = post.content.replace(text, ` **${boldTextTrimmed[index]}** `);
             });
-            console.log("Post: ", post.content);
-            console.log("Bold Match: ", boldMatch);
-            console.log("Bold Text Only: ", boldTextOnly);
-            console.log("Bold Text Trimmed: ", boldTextTrimmed);
 
             setPost(post);
             setTags(tagsData);
