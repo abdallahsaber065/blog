@@ -6,6 +6,7 @@ import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
 import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
 import FileResource from '../MdxComponents/File/FileResource';
 import Embed from '@/components/MdxComponents/Embed/Embed';
+import { FaExpand, FaCompress } from 'react-icons/fa';
 
 interface EditorWithPreviewProps {
     markdownText: string;
@@ -37,6 +38,19 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     const [view, setView] = useState<'editor' | 'preview'>('editor');
     const previewRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<HTMLDivElement>(null);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
+    useEffect(() => {
+        if (isFullScreen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isFullScreen]);
 
     const replaceImagesInMarkdown = (text: string): string => {
         const imageRegexes = {
@@ -228,7 +242,20 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     };
 
     return (
-        <div className="editor-preview-container flex flex-col sm:flex-row text-slate-900 dark:text-slate-300">
+        <div className={`editor-preview-container flex flex-col sm:flex-row text-slate-900 dark:text-slate-300
+            ${isFullScreen ? 'fixed top-[64px] left-0 right-0 bottom-0 z-40 bg-white dark:bg-dark' : 'relative'}`}>
+            
+            <button 
+                className="absolute top-2 right-2 z-40 p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 flex items-center gap-2"
+                onClick={() => setIsFullScreen(!isFullScreen)}
+                title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
+            >
+                <span className="hidden sm:inline text-sm font-medium">
+                    {isFullScreen ? "Exit Focus Mode" : "Focus Mode"}
+                </span>
+                {isFullScreen ? <FaCompress /> : <FaExpand />}
+            </button>
+
             <div className="editor-preview-toggle-container sm:hidden flex justify-center my-1">
                 <label className="editor-preview-toggle-label flex cursor-pointer gap-2 items-center">
                     <span className="label-text text-lg text-sky-900 dark:text-sky-300">Editor</span>
@@ -241,18 +268,23 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     <span className="label-text text-lg text-lime-950 dark:text-lime-300">Preview</span>
                 </label>
             </div>
-            <div className={`editor-preview-editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
-                <label className="editor-preview-content-label block text-xl font-bold text-gray dark:text-lightgray my-4">Content</label>
+
+            <div className={`editor-preview-editor-section w-full sm:w-1/2 pr-2 ${view === 'preview' ? 'hidden sm:block' : ''}`}
+                 style={{ height: isFullScreen ? 'calc(100vh - 64px)' : '500px' }}>
+                <label className="editor-preview-content-label block text-xl font-bold text-gray dark:text-lightgray mb-2">Content</label>
                 <Editor
                     markdown={markdownText}
                     onChange={onContentChange}
                     onScroll={handleEditorScroll}
-                    editorRef={editorRef as MutableRefObject<HTMLDivElement>} 
+                    editorRef={editorRef as MutableRefObject<HTMLDivElement>}
+                    isFullScreen={isFullScreen}
                 />
             </div>
-            <div className={`editor-preview-preview-section w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
-                <h2 className="editor-preview-preview-title text-xl font-bold my-4">Preview</h2>
-                <div style={{ height: '500px', overflowY: 'scroll' }}>
+
+            <div className={`editor-preview-preview-section w-full sm:w-1/2 pl-2 ${view === 'editor' ? 'hidden sm:block' : ''}`}
+                 style={{ height: isFullScreen ? 'calc(100vh - 64px)' : '500px' }}>
+                <h2 className="editor-preview-preview-title text-xl font-bold mb-2">Preview</h2>
+                <div style={{ height: isFullScreen ? 'calc(100vh - 7rem)' : '500px', overflowY: 'scroll' }}>
                     {error ? (
                         <p className="text-red-500">{error}</p>
                     ) : (

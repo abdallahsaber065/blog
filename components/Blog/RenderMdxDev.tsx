@@ -10,6 +10,7 @@ interface RenderMdxProps {
     mdxSource: MDXRemoteSerializeResult;
     additionalComponents?: Record<string, React.FC>;
     previewRef?: React.MutableRefObject<HTMLDivElement>;
+    isFullScreen?: boolean;
 }
 
 const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef }) => {
@@ -69,18 +70,20 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     ${isFullScreen ? 'fixed inset-0 z-50 bg-white dark:bg-dark' : 'relative'}
                     overflow-auto`
                 }
-                style={{
-                    height: isFullScreen ? '100vh' : '500px',
-                }}
+                style={{ height: '100%' }}
             >
                 <div
-                    className="render-mdx-toolbar sticky top-0 z-20 flex items-center justify-between border-b border-t border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
+                    className="render-mdx-toolbar sticky top-0 z-20 flex items-center justify-between border-b border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
                     style={{ height: '40px' }}
                 >
-                    <button className="render-mdx-sync-btn mr-2" onClick={handleSyncScroll} title="Sync the editor scroll with the preview">
+                    <button className="render-mdx-sync-btn mr-2" onClick={handleSyncScroll}>
                         <FaSync className="text-dark dark:text-white" />
                     </button>
-                    <button className="render-mdx-fullscreen-btn" onClick={handleToggleFullScreen} title={isFullScreen ? "Exit full screen" : "Enter full screen"}>
+                    <button 
+                        className="render-mdx-fullscreen-btn" 
+                        onClick={handleToggleFullScreen} 
+                        title={isFullScreen ? "Exit preview full screen" : "Enter preview full screen"}
+                    >
                         {isFullScreen ? (
                             <FaCompress className="text-dark dark:text-white" />
                         ) : (
@@ -91,12 +94,11 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 <div
                     style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}
                     ref={previewRef}
-
                 >
                     {isFullScreen ? (
                         <BlogPreview mdxText={mdxText} mdxSource={mdxSource} />
                     ) : mdxSource === null ? (
-                        <div className="flex items-center justify-center h-full text-gray-500">
+                        <div className="flex items-center justify-center h-full text-slate-500">
                             No content to preview
                         </div>
                     ) : (

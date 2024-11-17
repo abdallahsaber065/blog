@@ -30,9 +30,10 @@ interface EditorProps {
     parseMarkdown?: (markdown: string) => string;
     onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
     editorRef?: React.MutableRefObject<HTMLDivElement>;
+    isFullScreen?: boolean;
 }
 
-const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef }: EditorProps) => {
+const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef, isFullScreen }: EditorProps) => {
     const [error, setError] = useState<string | null>(null);
 
     const handleChange = ({ text }: { text: string }) => {
@@ -61,7 +62,7 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef }: Edit
                 markdownClass="editor-class"
                 onScroll={onScroll}
                 style={{
-                    height: "500px",
+                    height: isFullScreen ? "calc(100vh - 3rem)" : "500px",
                 }}
                 renderHTML={renderHTML}
                 canView={{
