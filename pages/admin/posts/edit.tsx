@@ -67,9 +67,36 @@ const PostEditorPage: React.FC = () => {
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const { data: session } = useSession();
     const [showTour, setShowTour] = useState(false);
+    const [postNotFound, setPostNotFound] = useState(false);
+    const [isValidId, setIsValidId] = useState<boolean | null>(null);
 
     const router = useRouter();
     const { id } = router.query;
+
+    useEffect(() => {
+        // Check if id exists and is valid
+        if (!id) {
+            setIsValidId(false);
+            return;
+        }
+
+        const numId = Number(id);
+        if (isNaN(numId)) {
+            setIsValidId(false);
+            return;
+        }
+
+        setIsValidId(true);
+
+        // Only proceed with permission check if we have a valid ID and session
+        if (session?.user) {
+            checkPermission(numId).then(hasPermission => {
+                if (hasPermission) {
+                    loadData(numId);
+                }
+            });
+        }
+    }, [id, session]);
 
     const checkPermission = async (postId: number) => {
         const userId = Number(session?.user?.id);
@@ -82,7 +109,7 @@ const PostEditorPage: React.FC = () => {
                 return true;
             }
 
-            // Then check specific post permissions
+            // Fetch post with permissions
             const postWhere = JSON.stringify({ id: postId });
             const postSelect = JSON.stringify({
                 author: {
@@ -100,44 +127,32 @@ const PostEditorPage: React.FC = () => {
             const postData = await fetch(postUrl).then(res => res.json());
             const post = postData[0];
 
-            if (!post) return false;
+            if (!post) {
+                setPostNotFound(true);
+                setHasPermission(false);
+                return false;
+            }
 
             // Check if user is author
             if (post.author?.id === userId) {
                 setHasPermission(true);
                 return true;
             }
-            // Check user-specific permission
-            const hasUserPermission = post.permissions?.some((p: { user_id: number }) => p.user_id === userId);
-            if (hasUserPermission) {
-                setHasPermission(true);
-                return true;
-            }
-            // Check role-based permission
-            const hasRolePermission = post.permissions?.some((p: { role: string }) => p.role === userRole);
-            if (hasRolePermission) {
-                setHasPermission(true);
-                return true;
-            }
 
-            setHasPermission(false);
-            return false;
+            // Check permissions
+            const hasPermission = post.permissions?.some((p: { user_id: number; role: string | undefined; }) => 
+                (p.user_id === userId) || (p.role === userRole)
+            );
+
+            setHasPermission(hasPermission);
+            return hasPermission;
+
         } catch (error) {
             console.error('Permission check error:', error);
             setHasPermission(false);
             return false;
         }
     };
-
-    useEffect(() => {
-        if (id && session?.user) {
-            checkPermission(Number(id)).then(hasPermission => {
-                if (hasPermission) {
-                    loadData(Number(id));
-                }
-            });
-        }
-    }, [id, session]);
 
     const loadData = async (postId: number) => {
         setLoadingPost(true);
@@ -186,8 +201,7 @@ const PostEditorPage: React.FC = () => {
 
             const post = postData[0];
             if (!post) {
-                toast.dismiss();
-                toast.error('Post not found');
+                setPostNotFound(true);
                 return;
             }
 
@@ -209,7 +223,6 @@ const PostEditorPage: React.FC = () => {
             setLoading(false);
         } catch (error) {
             console.error('Error loading post:', error);
-            toast.dismiss();
             toast.error('Failed to load post');
         } finally {
             setLoadingPost(false);
@@ -309,6 +322,83 @@ const PostEditorPage: React.FC = () => {
         }
     };
 
+    // Helper function to render error message
+    const renderErrorMessage = () => {
+        if (!isValidId) {
+            return (
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                    <div className="flex">
+                        <div className="py-1">
+                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="font-bold">Invalid Post ID</p>
+                            <p>The post ID provided is invalid or missing.</p>
+                            <button 
+                                onClick={() => router.push('/admin/posts')}
+                                className="mt-2 text-red-600 hover:text-red-800 underline"
+                            >
+                                Return to Posts List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (postNotFound && hasPermission) {
+            return (
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+                    <div className="flex">
+                        <div className="py-1">
+                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="font-bold">Post Not Found</p>
+                            <p>The post you're looking for doesn't exist or has been deleted.</p>
+                            <button 
+                                onClick={() => router.push('/admin/posts')}
+                                className="mt-2 text-yellow-600 hover:text-yellow-800 underline"
+                            >
+                                Return to Posts List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (hasPermission === false) {
+            return (
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                    <div className="flex">
+                        <div className="py-1">
+                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="font-bold">Access Denied</p>
+                            <p>You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
+                            <button 
+                                onClick={() => router.push('/admin/posts')}
+                                className="mt-2 text-red-600 hover:text-red-800 underline"
+                            >
+                                Return to Posts List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <div className="container mx-auto p-4 text-slate-900 dark:text-slate-300" id="post-editor-container">
             <EditTourGuide 
@@ -334,32 +424,9 @@ const PostEditorPage: React.FC = () => {
                 </div>
             )}
 
-            {!loadingPost && hasPermission === false && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" 
-                     role="alert" 
-                     id="post-editor-permission-denied">
-                    <div className="flex">
-                        <div className="py-1">
-                            <svg className="w-6 h-6 mr-4" id="post-editor-alert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p className="font-bold" id="post-editor-access-denied-title">Access Denied</p>
-                            <p id="post-editor-access-denied-message">You do not have permission to edit this post. Only the author or administrators can edit this content.</p>
-                            <button 
-                                onClick={() => router.push('/admin/posts')}
-                                className="mt-2 text-red-600 hover:text-red-800 underline"
-                                id="post-editor-return-button"
-                            >
-                                Return to Posts List
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {!loadingPost && renderErrorMessage()}
 
-            {!loadingPost && hasPermission && post && (
+            {!loadingPost && hasPermission && post && !postNotFound && (
                 <div id="post-editor-form">
                     <PostEditor
                         post={post}
