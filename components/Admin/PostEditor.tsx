@@ -7,6 +7,11 @@ import { ClipLoader } from 'react-spinners';
 
 const animatedComponents = makeAnimated();
 
+interface PostPermission {
+    user_id: number | null;
+    role: string | null;
+}
+
 interface Post {
     id: number;
     title: string;
@@ -14,6 +19,7 @@ interface Post {
     content: string;
     tags: Tag[];
     category: Category;
+    permissions?: PostPermission[];
 }
 
 interface Tag {
@@ -70,7 +76,12 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
     };
 
     const handleSave = async (status: string) => {
-        await onSave(currentPost, status);
+        const { permissions, ...postData } = currentPost;
+        const postToUpdate = {
+            ...postData
+        };
+        
+        await onSave(postToUpdate, status);
     };
 
     return (
