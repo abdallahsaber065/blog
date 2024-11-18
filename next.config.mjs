@@ -19,8 +19,30 @@ const nextConfig = {
   swcMinify: true,
   images: {
     minimumCacheTTL: 600,
-    domains: ['localhost', 'devtrend.tech', 'collage.devtrend.tech'], // Add collage domain
-
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'devtrend.tech',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'collage.devtrend.tech',
+        pathname: '/uploads/**',
+      }
+    ]
   },
 
   distDir: process.env.BUILD_DIR || '.next',
