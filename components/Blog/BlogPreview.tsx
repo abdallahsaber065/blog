@@ -13,6 +13,10 @@ import { GetServerSideProps } from 'next';
 import InlineFileView from "../MdxComponents/File/InlineFileView";
 import FileResource from "../MdxComponents/File/FileResource";
 import Embed from '@/components/MdxComponents/Embed/Embed';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 
 interface BlogPreviewProps {
@@ -24,7 +28,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
     const placeholderPost = {
         title: "Placeholder Title",
         tags: [{ name: "Placeholder Tag", slug: "placeholder-tag" }],
-        featured_image_url: "http://localhost:3000/blogs/c-d-x-PDX_a_82obo-unsplash.jpg",
+        featured_image_url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/c-d-x-PDX_a_82obo-unsplash.jpg`,
         content: mdxText,
     };
 
