@@ -54,17 +54,23 @@ jobs:
     - name: Build the project in temp directory
       working-directory: /var/www/devtrend.tech
       run: |
-        echo -e ">>> \033[1;34mBuilding the project in temp directory...\033[0m"
-        BUILD_DIR=temp npm run build || { echo -e "\033[1;31mBuild failed\033[0m"; exit 1; }
+        echo -e ">>> \033[1;34mBuilding the project...\033[0m"
+        mkdir -p temp
+        BUILD_DIR=temp npm run build || { 
+          echo -e "\033[1;31mBuild failed\033[0m"
+          rm -rf temp
+          exit 1
+        }
+        echo -e "\033[1;32mBuild completed successfully\033[0m"
 
-    - name: Check if temp directory exists
+    - name: Verify build output
       working-directory: /var/www/devtrend.tech
       run: |
-        if [ ! -d "temp" ]; then
-          echo -e "\033[1;31mtemp Directory not exists!\033[0m"
+        if [ ! -d "temp" ] || [ ! -d "temp/_next" ]; then
+          echo -e "\033[1;31mBuild output is invalid!\033[0m"
           exit 1
         fi
-        echo -e "\033[1;32mBuild successful in temp directory\033[0m"
+        echo -e "\033[1;32mBuild output verified\033[0m"
 
     - name: Create release directory if not exists
       working-directory: /var/www/devtrend.tech

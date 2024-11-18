@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "NODE_NO_WARNINGS=1 next build",
-    "dev": "NODE_NO_WARNINGS=1 dotenv -c -- next dev",
-    "start": "dotenv -c -- next start",
+    "dev": "NODE_NO_WARNINGS=1 BUILD_DIR=temp dotenv -c -- next dev",
+    "start": "BUILD_DIR=.next dotenv -c -- next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
