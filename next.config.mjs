@@ -3,11 +3,11 @@ import createMDX from '@next/mdx';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
-// dotenv
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load the appropriate env file based on NEXT_PUBLIC_SITE_TYPE
+const envFile = process.env.NEXT_PUBLIC_SITE_TYPE === 'college' ? '.env.college' : '.env';
+dotenv.config({ path: envFile });
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +19,7 @@ const nextConfig = {
   swcMinify: true,
   images: {
     minimumCacheTTL: 600,
-    domains: ['localhost', 'devtrend.tech'], // Add your trusted domains here
+    domains: ['localhost', 'devtrend.tech', 'college.devtrend.tech'], // Add college domain
 
   },
 
