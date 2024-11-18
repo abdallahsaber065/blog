@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import formidable, { IncomingForm, Fields, Files } from 'formidable';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import createEmailConfirmationForm from '@/lib/html_forms/EmailConfirmationForm';
 import { authMiddleware } from '@/middleware/authMiddleware';
 
 interface SignupFields {
@@ -127,7 +128,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 from: process.env.MAILGUN_USER,
                 to: parsedFields.email,
                 subject: 'Verify your email',
-                text: `Please verify your email by clicking the following link: ${verificationUrl}`,
+                html: createEmailConfirmationForm(verificationUrl,parsedFields.username,parsedFields.email),
             });
 
             res.status(201).json(newUser);
