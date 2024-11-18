@@ -5,9 +5,8 @@ import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
 import dotenv from 'dotenv';
 
-// Load the appropriate env file based on NEXT_PUBLIC_SITE_TYPE
-const envFile = process.env.NEXT_PUBLIC_SITE_TYPE === 'collage' ? '.env.collage' : '.env';
-dotenv.config({ path: envFile });
+
+dotenv.config();
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -45,7 +44,7 @@ const nextConfig = {
     ]
   },
 
-  distDir: process.env.BUILD_DIR || '.next',
+  distDir:'.next',
   transpilePackages: ['@mdxeditor/editor'],
   reactStrictMode: false,
   webpack: (config) => {
@@ -65,11 +64,6 @@ const nextConfig = {
   // Configure `pageExtensions` to include MDX files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
-
-  compiler: {
-    // Remove console logs only in production
-    removeConsole: process.env.NODE_ENV === "production"
-  },
 
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
