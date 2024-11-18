@@ -59,7 +59,7 @@ jobs:
       working-directory: /var/www/collage.devtrend.tech
       run: |
         echo -e ">>> \033[1;34mGenerating Prisma Client for Collage...\033[0m"
-        npm run postinstall:collage || { echo -e "\033[1;31mFailed to generate Prisma Client\033[0m"; exit 1; }
+        npm run postinstall || { echo -e "\033[1;31mFailed to generate Prisma Client\033[0m"; exit 1; }
         echo -e "\033[1;32mPrisma Client generated successfully\033[0m"
 
     - name: Build the project in temp directory
@@ -104,9 +104,9 @@ jobs:
       working-directory: /var/www/collage.devtrend.tech
       run: |
         echo -e ">>> \033[1;34mUpdating symbolic link...\033[0m"
-        ln -sfn "$NEW_BUILD_DIR" .next-collage || { 
+        ln -sfn "$NEW_BUILD_DIR" .next || { 
           echo -e "\033[1;31mFailed to update symbolic link\033[0m"; 
-          ln -sfn "$CURRENT_RELEASE" .next-collage  # Revert to the old release
+          ln -sfn "$CURRENT_RELEASE" .next  # Revert to the old release
           exit 1; 
         }
         echo -e "\033[1;32mRelease $NEW_BUILD_DIR staged successfully\033[0m"
