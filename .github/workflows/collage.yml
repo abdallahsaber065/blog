@@ -1,4 +1,4 @@
-name: Deploy College to VPS
+name: Deploy Collage to VPS
 
 on:
   workflow_run:
@@ -55,10 +55,10 @@ jobs:
         npm install || { echo -e "\033[1;31mFailed to install dependencies\033[0m"; exit 1; }
         echo -e "\033[1;32mDependencies installed successfully\033[0m"
 
-    - name: Generate Prisma Client for College
+    - name: Generate Prisma Client for Collage
       working-directory: /var/www/collage.devtrend.tech
       run: |
-        echo -e ">>> \033[1;34mGenerating Prisma Client for College...\033[0m"
+        echo -e ">>> \033[1;34mGenerating Prisma Client for Collage...\033[0m"
         npm run postinstall:collage || { echo -e "\033[1;31mFailed to generate Prisma Client\033[0m"; exit 1; }
         echo -e "\033[1;32mPrisma Client generated successfully\033[0m"
 
@@ -128,8 +128,8 @@ jobs:
       if: always()
       run: |
         if [ "$?" -eq 0 ]; then
-          echo -e "\033[1;32mCollege site deployment completed successfully!\033[0m"
+          echo -e "\033[1;32mCollage site deployment completed successfully!\033[0m"
         else
-          echo -e "\033[1;31mCollege site deployment failed!\033[0m"
+          echo -e "\033[1;31mCollage site deployment failed!\033[0m"
           exit 1
         fi
