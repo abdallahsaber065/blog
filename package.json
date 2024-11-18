@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "dev:college": "cross-env NEXT_PUBLIC_SITE_TYPE=college NODE_NO_WARNINGS=1 next dev -p 3001",
-    "build:college": "cross-env NEXT_PUBLIC_SITE_TYPE=college NODE_NO_WARNINGS=1 next build",
-    "start:college": "cross-env NEXT_PUBLIC_SITE_TYPE=college next start -p 3001",
-    "postinstall:college": "cross-env NEXT_PUBLIC_SITE_TYPE=college prisma generate"
+    "dev:collage": "cross-env NEXT_PUBLIC_SITE_TYPE=collage NODE_NO_WARNINGS=1 next dev -p 3001",
+    "build:collage": "cross-env NEXT_PUBLIC_SITE_TYPE=collage NODE_NO_WARNINGS=1 next build",
+    "start:collage": "cross-env NEXT_PUBLIC_SITE_TYPE=collage next start -p 3001",
+    "postinstall:collage": "cross-env NEXT_PUBLIC_SITE_TYPE=collage prisma generate"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.1",
