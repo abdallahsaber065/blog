@@ -6,7 +6,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import dotenv from 'dotenv';
 
 // Load the appropriate env file based on NEXT_PUBLIC_SITE_TYPE
-const envFile = process.env.NEXT_PUBLIC_SITE_TYPE === 'college' ? '.env.college' : '.env';
+const envFile = process.env.NEXT_PUBLIC_SITE_TYPE === 'collage' ? '.env.collage' : '.env';
 dotenv.config({ path: envFile });
 
 // Get the directory name of the current module
@@ -19,7 +19,7 @@ const nextConfig = {
   swcMinify: true,
   images: {
     minimumCacheTTL: 600,
-    domains: ['localhost', 'devtrend.tech', 'college.devtrend.tech'], // Add college domain
+    domains: ['localhost', 'devtrend.tech', 'collage.devtrend.tech'], // Add collage domain
 
   },
 

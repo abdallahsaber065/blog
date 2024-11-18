@@ -8,15 +8,15 @@ type SiteConfig = {
 };
 
 const getEnvConfig = (): SiteConfig => {
-    const isSiteCollege = process.env.NEXT_PUBLIC_SITE_TYPE === 'college';
+    const isSiteCollege = process.env.NEXT_PUBLIC_SITE_TYPE === 'collage';
     const isDev = process.env.NODE_ENV === 'development';
 
     if (isSiteCollege) {
-        const baseUrl = isDev ? 'http://localhost:3001' : 'https://college.devtrend.tech';
+        const baseUrl = isDev ? 'http://localhost:3001' : 'https://collage.devtrend.tech';
         return {
-            envFile: '.env.college',
+            envFile: '.env.collage',
             siteName: 'College DevTrend',
-            siteDescription: 'A blog for college students about technology and development',
+            siteDescription: 'A blog for collage students about technology and development',
             siteUrl: baseUrl,
             logo: `${baseUrl}/static/images/logo.png`,
             dark_logo: `${baseUrl}/static/images/logo-dark.png`,
