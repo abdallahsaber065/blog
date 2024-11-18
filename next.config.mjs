@@ -44,7 +44,7 @@ const nextConfig = {
     ]
   },
 
-  distDir:'.next',
+  distDir: process.env.BUILD_DIR || '.next',
   transpilePackages: ['@mdxeditor/editor'],
   reactStrictMode: false,
   webpack: (config) => {
