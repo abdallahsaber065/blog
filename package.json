@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "NODE_NO_WARNINGS=1 next build",
-    "dev": "NODE_NO_WARNINGS=1 next dev",
-    "start": "next start",
+    "dev": "NODE_NO_WARNINGS=1 dotenv -c -- next dev",
+    "start": "dotenv -c -- next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
@@ -38,6 +38,7 @@
     "daisyui": "^4.12.10",
     "date-fns": "^2.30.0",
     "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "eslint": "8.57.1",
     "eslint-config-next": "14.2.13",
     "express": "^4.21.1",

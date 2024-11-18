@@ -21,9 +21,9 @@ jobs:
     - name: Set up environment variables
       working-directory: /var/www/collage.devtrend.tech
       run: |
-        echo "CURRENT_RELEASE=$(readlink .next-collage)" >> $GITHUB_ENV
+        echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-        # add HOME as /root to fix npm permission issue
+        echo "PORT=3050" >> $GITHUB_ENV
         echo "HOME=/root" >> $GITHUB_ENV
 
     - name: Fetch the latest changes
@@ -107,9 +107,9 @@ jobs:
       working-directory: /var/www/collage.devtrend.tech
       run: |
         echo -e ">>> \033[1;34mReloading the pm2 process...\033[0m"
-        pm2 reload collage-devtrend-tech --update-env || { 
+        PORT=3050 pm2 reload collage-devtrend-tech --update-env || { 
           echo -e "\033[1;31mFailed to reload pm2 process\033[0m"; 
-          ln -sfn "$CURRENT_RELEASE" .next-collage  # Revert to the old release
+          ln -sfn "$CURRENT_RELEASE" .next  # Revert to the old release
           exit 1; 
         }
         echo -e "\033[1;32mPM2 process reloaded successfully\033[0m"
