@@ -109,6 +109,7 @@ const CreatePost: React.FC = () => {
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
+                website_type: process.env.WEBSITE_TYPE,
             }, {
                 timeout: 1000000 // 5 minutes
             });
@@ -147,6 +148,7 @@ const CreatePost: React.FC = () => {
                 search_terms: searchTerms,
                 include_images: includeImages,
                 user_custom_instructions: userCustomInstructions,
+                website_type: process.env.WEBSITE_TYPE,
             }, {
                 timeout: 1000000 // 5 minutes
             });
