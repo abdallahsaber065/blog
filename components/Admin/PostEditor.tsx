@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+/* eslint-disable @next/next/no-img-element */
+import React, { useState, useEffect } from 'react';
 import { FaSave } from 'react-icons/fa';
 import EditorWithPreview from "@/components/Admin/EditorWithPreview";
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import { ClipLoader } from 'react-spinners';
+import ImageSelector from '@/components/Admin/ImageSelector';
 
 const animatedComponents = makeAnimated();
 
@@ -43,6 +45,7 @@ interface PostEditorProps {
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave, isLoading }) => {
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
+    const [showImageSelector, setShowImageSelector] = useState(false);
 
     const handleContentChange = async (value: string) => {
         setMarkdownText(value);
@@ -83,6 +86,18 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
         
         await onSave(postToUpdate, status);
     };
+
+    useEffect(() => {
+        if (showImageSelector) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showImageSelector]);
 
     return (
         <div className="post-editor-container flex flex-col">
@@ -134,6 +149,34 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => String(option.id)}
                     formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
+                />
+            </div>
+            <div className="featured-image mb-4">
+                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">
+                    Featured Image
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                        onClick={() => setShowImageSelector(true)}
+                        className="featured-image-btn bg-blue-500 text-white px-4 py-2 rounded"
+                    >
+                        Browse
+                    </button>
+                </div>
+                {currentPost.featured_image_url && (
+                    <img
+                        src={currentPost.featured_image_url}
+                        alt="Featured"
+                        className="featured-image-preview mt-2 max-h-40 object-cover"
+                    />
+                )}
+
+                <ImageSelector
+                    isOpen={showImageSelector}
+                    onClose={() => setShowImageSelector(false)}
+                    onSelect={(image) => handleFieldChange('featured_image_url', image.file_url)}
+                    currentImage={currentPost.featured_image_url}
+                    folder='blog'
                 />
             </div>
             <div className="post-editor-actions flex space-x-4">
