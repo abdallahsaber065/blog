@@ -101,6 +101,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     });
                 }
 
+                // authors pages to revalidate
+                postRoutesToRevalidate.push(REVALIDATE_PATHS.AUTHORS);
+                const user = await prisma.user.findUnique({
+                    where: { id: newPost.author_id || undefined },
+                    select: { username: true }
+                });
+                if (user?.username) {
+                    postRoutesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(user.username));
+                }
+                console.log('postRoutesToRevalidate', postRoutesToRevalidate);
                 await revalidateRoutes(res, postRoutesToRevalidate);
                 res.status(201).json(newPost);
                 log += `\nResponse Status: 201 Created`;
@@ -150,6 +160,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     where: { id: Number(body.id) },
                     data: updateData,
                     select: {
+                        author: {
+                            select: {
+                                username: true
+                            }
+                        },
                         slug: true,
                         status: true,
                         category: {
@@ -172,6 +187,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         REVALIDATE_PATHS.CATEGORIES,
                         REVALIDATE_PATHS.CATEGORIES_ALL
                     ];
+
+                    // Add author page to revalidate
+                    if (updatedPost.author?.username) {
+                        routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(updatedPost.author.username));
+                    }
 
                     // Add both old and new paths
                     if (oldPost.slug) {
@@ -217,6 +237,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postToDelete = await prisma.post.findUnique({
                     where: { id: Number(query.id) },
                     include: {
+                        author: {
+                            select: {
+                                username: true
+                            }
+                        },
                         category: true,
                         tags: true
                     }
@@ -232,6 +257,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     REVALIDATE_PATHS.CATEGORIES,
                     REVALIDATE_PATHS.CATEGORIES_ALL
                 ];
+
+                // Add author page to revalidate
+                if (postToDelete?.author?.username) {
+                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(postToDelete.author.username));
+                }
 
                 if (postToDelete?.category?.slug) {
                     deleteRoutesToRevalidate.push(

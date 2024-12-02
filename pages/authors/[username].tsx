@@ -105,7 +105,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { username } = params as { username: string };
-    
+
     const author = await prisma.user.findUnique({
         where: { username },
         select: {
@@ -122,6 +122,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
                     excerpt: true,
                     featured_image_url: true,
                 },
+                where: {
+                    status: {
+                        equals: 'published'
+                    }
+                }
             },
         },
     });
