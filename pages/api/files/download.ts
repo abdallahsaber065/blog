@@ -7,7 +7,7 @@ import { authMiddleware } from '@/middleware/authMiddleware';
 const cache = new Map<string, any>();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'GET') {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
@@ -22,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         if (cache.has(file_url_name as string)) {
             console.log(`Cache hit for file: ${file_url_name}`);
             const cachedFile = cache.get(file_url_name as string);
-            return sendFile(res, cachedFile.filePath, cachedFile.fileRecord);
+            return sendFile(res, cachedFile.filePath, cachedFile.fileRecord,req.method);
         }
 
         const fileRecord = await prisma.fileLibrary.findFirst({
@@ -42,16 +42,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         // Cache the file metadata
         cache.set(file_url_name as string, { filePath, fileRecord });
 
-        return sendFile(res, filePath, fileRecord);
+        return sendFile(res, filePath, fileRecord,req.method);
     } catch (error) {
         console.error('Error downloading file:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
-function sendFile(res: NextApiResponse, filePath: string, fileRecord: any) {
+function sendFile(res: NextApiResponse, filePath: string, fileRecord: any,method: string) {
     res.setHeader('Content-Disposition', `attachment; filename="${fileRecord.file_name}"`);
     res.setHeader('Content-Type', fileRecord.file_type || 'application/octet-stream');
+    res.setHeader('Content-Length', fileRecord.file_size.toString());
+    res.setHeader('File-Id', fileRecord.id.toString());
+    res.setHeader('File-Name', fileRecord.file_name);
+    res.setHeader('File-Url', fileRecord.file_url);
+    res.setHeader('File-Type', fileRecord.file_type);
+    res.setHeader('File-Size', fileRecord.file_size.toString());
+
+    if (method === 'HEAD') {
+        res.status(200).end();
+        return;
+    }
 
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
