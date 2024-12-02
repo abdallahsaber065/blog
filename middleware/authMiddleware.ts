@@ -6,7 +6,8 @@ const publicEndpoints = [
     '/api/auth/signup',
     '/api/auth/reset-password',
     '/api/auth/request-password-reset',
-    '/api/auth/check-uniqueness'
+    '/api/auth/check-uniqueness',
+    '/api/files/download'
 ];
 
 export async function authMiddleware(
