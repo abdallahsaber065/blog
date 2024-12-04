@@ -32,6 +32,12 @@ const nextConfig = {
         pathname: '/uploads/**',
       },
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/blogs/**',
+      },
+      {
         protocol: 'https',
         hostname: 'devtrend.tech',
         pathname: '/uploads/**',
