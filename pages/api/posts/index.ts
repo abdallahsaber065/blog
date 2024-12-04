@@ -180,46 +180,42 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                 });
 
-                // Revalidate if post is or was published
-                if (updateData.status === 'published' || oldPost.status === 'published') {
-                    const routesToRevalidate = [
-                        REVALIDATE_PATHS.HOME,
-                        REVALIDATE_PATHS.CATEGORIES,
-                        REVALIDATE_PATHS.CATEGORIES_ALL
-                    ];
 
-                    // Add author page to revalidate
-                    if (updatedPost.author?.username) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(updatedPost.author.username));
-                    }
+                const routesToRevalidate = [
+                    REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.CATEGORIES,
+                    REVALIDATE_PATHS.CATEGORIES_ALL
+                ];
 
-                    // Add both old and new paths
-                    if (oldPost.slug) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(oldPost.slug));
-                    }
-                    if (updatedPost.slug && oldPost.slug !== updatedPost.slug) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(updatedPost.slug));
-                    }
-
-                    // Add category paths
-                    if (oldPost.category?.slug) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
-                    }
-                    if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
-                    }
-
-                    // Add tag paths
-                    const oldTags = oldPost.tags.map(tag => tag.slug);
-                    const newTags = updatedPost.tags.map(tag => tag.slug);
-                    [...oldTags, ...newTags].forEach(slug => {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(slug));
-                    });
-
-                    await revalidateRoutes(res, routesToRevalidate);
-                } else {
-                    console.log('Skipping revalidation - post is not published');
+                // Add author page to revalidate
+                if (updatedPost.author?.username) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getAuthorPath(updatedPost.author.username));
                 }
+
+                // Add both old and new paths
+                if (oldPost.slug) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(oldPost.slug));
+                }
+                if (updatedPost.slug && oldPost.slug !== updatedPost.slug) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(updatedPost.slug));
+                }
+
+                // Add category paths
+                if (oldPost.category?.slug) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
+                }
+                if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
+                }
+
+                // Add tag paths
+                const oldTags = oldPost.tags.map(tag => tag.slug);
+                const newTags = updatedPost.tags.map(tag => tag.slug);
+                [...oldTags, ...newTags].forEach(slug => {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(slug));
+                });
+
+                await revalidateRoutes(res, routesToRevalidate);
 
                 res.status(200).json(updatedPost);
                 log += `\nResponse Status: 200 OK`;
