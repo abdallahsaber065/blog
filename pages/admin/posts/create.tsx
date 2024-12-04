@@ -69,6 +69,9 @@ const CreatePost: React.FC = () => {
 
     const [includeImages, setIncludeImages] = useState(false);
 
+    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
     // Inside the CreatePost component
     const router = useRouter();
 
@@ -103,6 +106,8 @@ const CreatePost: React.FC = () => {
                 throw new Error("Please enter a topic to generate content.");
             }
 
+            // combine selected files and images in one array
+            const filesAndImages = [...selectedFiles, ...selectedImages];
             const outlineResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_outline`, {
                 topic,
                 num_of_terms: includeSearchTerms ? numOfTerms : 0,
@@ -110,6 +115,7 @@ const CreatePost: React.FC = () => {
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
                 website_type: process.env.WEBSITE_TYPE,
+                files: filesAndImages.length > 0 ? filesAndImages : null
             }, {
                 timeout: 1000000 // 5 minutes
             });
@@ -142,6 +148,7 @@ const CreatePost: React.FC = () => {
     const handleAcceptOutline = async () => {
         setLoading(true);
         try {
+            const filesAndImages = [...selectedFiles, ...selectedImages];
             const contentResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_content`, {
                 topic,
                 outline,
@@ -149,6 +156,7 @@ const CreatePost: React.FC = () => {
                 include_images: includeImages,
                 user_custom_instructions: userCustomInstructions,
                 website_type: process.env.WEBSITE_TYPE,
+                files: filesAndImages.length > 0 ? filesAndImages : null
             }, {
                 timeout: 1000000 // 5 minutes
             });
@@ -246,6 +254,14 @@ const CreatePost: React.FC = () => {
         }
     };
 
+    const handleFileSelection = (files: string[]) => {
+        setSelectedFiles(files);
+    };
+
+    const handleImageSelection = (images: string[]) => {
+        setSelectedImages(images);
+    };
+
     return (
         <div className="container mx-auto p-4  bg-white dark:bg-dark dark:text-white text-slate-900">
             <TourGuide
@@ -315,6 +331,8 @@ const CreatePost: React.FC = () => {
                     handleSaveOutline={handleSaveOutline}
                     includeImages={includeImages}
                     setIncludeImages={setIncludeImages}
+                    onFileSelect={handleFileSelection}
+                    onImageSelect={handleImageSelection}
                 />
             )}
 
