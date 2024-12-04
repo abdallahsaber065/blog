@@ -16,6 +16,14 @@ interface RenderMdxProps {
 const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additionalComponents = {}, previewRef }) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
 
+    useEffect(() => {
+        const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p');
+        elements.forEach((element) => {
+            if (!element.hasAttribute('dir')) {
+                element.setAttribute('dir', 'auto');
+            }
+        });
+    }, [mdxSource]);
     const handleToggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
     };
@@ -151,9 +159,11 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                             prose-code:text-red-600
                             dark:prose-code:text-red-400
 
+                            RenderMdxDev
                             ${isFullScreen ? 'flex justify-center' : ''}
                             `}
                             style={{ height: '100%', paddingTop: '40px' }}
+                            dir='auto'
                         >
                             <MDXRemote
                                 {...mdxSource}
