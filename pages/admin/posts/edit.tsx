@@ -63,6 +63,7 @@ const PostEditorPage: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
     const [loadingPost, setLoadingPost] = useState(false);
+    const [postLoaded, setPostLoaded] = useState(false);
     const [author, setAuthor] = useState<Author | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const { data: session } = useSession();
@@ -155,6 +156,7 @@ const PostEditorPage: React.FC = () => {
     };
 
     const loadData = async (postId: number) => {
+        if (postLoaded) return;
         setLoadingPost(true);
         try {
             // Fetch post with all necessary data including permissions
@@ -220,6 +222,7 @@ const PostEditorPage: React.FC = () => {
             setPost(post);
             setTags(tagsData);
             setCategories(categoriesData);
+            setPostLoaded(true);
             setLoading(false);
         } catch (error) {
             console.error('Error loading post:', error);
