@@ -44,11 +44,19 @@ jobs:
           rm -rf temp
         fi
 
+    - name: Cache Node.js modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
     - name: Install dependencies
       working-directory: /var/www/devtrend.tech
       run: |
         echo -e ">>> \033[1;34mInstalling dependencies...\033[0m"
-        npm install || { echo -e "\033[1;31mFailed to install dependencies\033[0m"; exit 1; }
+        npm ci || { echo -e "\033[1;31mFailed to install dependencies\033[0m"; exit 1; }
         echo -e "\033[1;32mDependencies installed successfully\033[0m"
 
     - name: Build the project in temp directory
