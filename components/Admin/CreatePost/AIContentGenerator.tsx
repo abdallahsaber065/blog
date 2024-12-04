@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 import ContentSettings from './ContentSettings';
 import JSONEditorComponent from '../JSONEditor';
 import LogViewer from './LogViewer';
+import FileSelector from '@/components/Admin/FileSelector';
+import ImageSelector from '@/components/Admin/ImageSelector';
 
 interface AIContentGeneratorProps {
     className?: string;
@@ -35,7 +37,28 @@ interface AIContentGeneratorProps {
     handleSaveOutline: () => void;
     includeImages: boolean;
     setIncludeImages: (value: boolean) => void;
+    onFileSelect: (files: string[]) => void;
+    onImageSelect: (images: string[]) => void;
 }
+
+interface FileProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+}
+
+interface ImageProps {
+    id: string;
+    file_name: string;
+    file_type: string;
+    file_size: number;
+    file_url: string;
+    width: number;
+    height: number;
+}
+
 
 const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     className,
@@ -68,9 +91,38 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     handleSaveOutline,
     includeImages,
     setIncludeImages,
+    onFileSelect,
+    onImageSelect
+
 }) => {
+    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+    const [showFileSelector, setShowFileSelector] = useState(false);
+    const [showImageSelector, setShowImageSelector] = useState(false);
+
+    const handleFileSelect = (file: FileProps) => {
+        const fileUrl = `https://collage.devtrend.tech/api/files/download?file_url_name=${file.file_name}`;
+        setSelectedFiles((prev) => [...prev, fileUrl]);
+        onFileSelect([...selectedFiles, fileUrl]);
+    };
+
+    const handleImageSelect = (image: ImageProps) => {
+        setSelectedImages((prev) => [...prev, image.file_url]);
+        onImageSelect([...selectedImages, image.file_url]);
+    };
+
+    const removeFile = (fileUrl: string) => {
+        setSelectedFiles((prev) => prev.filter((url) => url !== fileUrl));
+        onFileSelect(selectedFiles.filter((url) => url !== fileUrl));
+    };
+
+    const removeImage = (imageUrl: string) => {
+        setSelectedImages((prev) => prev.filter((url) => url !== imageUrl));
+        onImageSelect(selectedImages.filter((url) => url !== imageUrl));
+    };
+
     return (
-        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4`}>
+        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4 ${className}`}>
             <input
                 className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
                 type="text"
@@ -134,6 +186,46 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 </button>
             </div>
 
+            <div className="flex space-x-2 mb-4">
+                <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    onClick={() => setShowFileSelector(true)}
+                >
+                    Select File
+                </button>
+                <button
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    onClick={() => setShowImageSelector(true)}
+                >
+                    Select Image
+                </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-4">
+                {selectedFiles.map((fileUrl, index) => (
+                    <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center">
+                        {fileUrl.split('=').pop()}
+                        <button
+                            className="ml-2 text-red-500 hover:text-red-700"
+                            onClick={() => removeFile(fileUrl)}
+                        >
+                            &times;
+                        </button>
+                    </span>
+                ))}
+                {selectedImages.map((imageUrl, index) => (
+                    <span key={index} className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center">
+                        {imageUrl.split('/').pop()}
+                        <button
+                            className="ml-2 text-red-500 hover:text-red-700"
+                            onClick={() => removeImage(imageUrl)}
+                        >
+                            &times;
+                        </button>
+                    </span>
+                ))}
+            </div>
+
             {showJSONEditor && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-4 rounded shadow-lg w-3/4">
@@ -161,6 +253,22 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 <LogViewer
                     onClose={() => setShowLogViewer(false)}
                     link='https://generate.api.devtrend.tech/logs'
+                />
+            )}
+
+            {showFileSelector && (
+                <FileSelector
+                    isOpen={showFileSelector}
+                    onClose={() => setShowFileSelector(false)}
+                    onSelect={handleFileSelect}
+                />
+            )}
+
+            {showImageSelector && (
+                <ImageSelector
+                    isOpen={showImageSelector}
+                    onClose={() => setShowImageSelector(false)}
+                    onSelect={handleImageSelect}
                 />
             )}
         </div>
