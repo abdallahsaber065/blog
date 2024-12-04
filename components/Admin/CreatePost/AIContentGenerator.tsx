@@ -5,6 +5,7 @@ import JSONEditorComponent from '../JSONEditor';
 import LogViewer from './LogViewer';
 import FileSelector from '@/components/Admin/FileSelector';
 import ImageSelector from '@/components/Admin/ImageSelector';
+import { FaFile, FaImage } from 'react-icons/fa';
 
 interface AIContentGeneratorProps {
     className?: string;
@@ -123,13 +124,54 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
 
     return (
         <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4 ${className}`}>
-            <input
-                className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
-                type="text"
-                placeholder="Enter your post topic here"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-            />
+            <div className="flex flex-col">
+                <div className="flex items-center">
+                    <input
+                        className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                        type="text"
+                        placeholder="Enter your post topic here"
+                        value={topic}
+                        onChange={(e) => setTopic(e.target.value)}
+                    />
+                    <button
+                        className="ml-2 text-blue-500 hover:text-blue-600"
+                        onClick={() => setShowFileSelector(true)}
+                    >
+                        <FaFile />
+                    </button>
+                    <button
+                        className="ml-2 text-green-500 hover:text-green-600"
+                        onClick={() => setShowImageSelector(true)}
+                    >
+                        <FaImage />
+                    </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-2 mt-1">
+                    {selectedFiles.map((fileUrl, index) => (
+                        <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
+                            {fileUrl.split('=').pop()}
+                            <button
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                onClick={() => removeFile(fileUrl)}
+                            >
+                                &times;
+                            </button>
+                        </span>
+                    ))}
+                    {selectedImages.map((imageUrl, index) => (
+                        <span key={index} className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
+                            {imageUrl.split('/').pop()}
+                            <button
+                                className="ml-2 text-red-500 hover:text-red-700"
+                                onClick={() => removeImage(imageUrl)}
+                            >
+                                &times;
+                            </button>
+                        </span>
+                    ))}
+                </div>
+            </div>
 
             <ContentSettings
                 topic={topic}
@@ -184,46 +226,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 >
                     View Logs
                 </button>
-            </div>
-
-            <div className="flex space-x-2 mb-4">
-                <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    onClick={() => setShowFileSelector(true)}
-                >
-                    Select File
-                </button>
-                <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    onClick={() => setShowImageSelector(true)}
-                >
-                    Select Image
-                </button>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mb-4">
-                {selectedFiles.map((fileUrl, index) => (
-                    <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center">
-                        {fileUrl.split('=').pop()}
-                        <button
-                            className="ml-2 text-red-500 hover:text-red-700"
-                            onClick={() => removeFile(fileUrl)}
-                        >
-                            &times;
-                        </button>
-                    </span>
-                ))}
-                {selectedImages.map((imageUrl, index) => (
-                    <span key={index} className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center">
-                        {imageUrl.split('/').pop()}
-                        <button
-                            className="ml-2 text-red-500 hover:text-red-700"
-                            onClick={() => removeImage(imageUrl)}
-                        >
-                            &times;
-                        </button>
-                    </span>
-                ))}
             </div>
 
             {showJSONEditor && (
