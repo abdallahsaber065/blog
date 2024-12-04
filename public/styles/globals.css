@@ -149,3 +149,8 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
     padding: 0; /* Remove padding for block code */
     border-radius: 0; /* Remove border-radius for block code */
 }
+
+.prose code,.prose pre {
+    direction: ltr !important;
+    text-align: left;
+}

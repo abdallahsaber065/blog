@@ -56,9 +56,9 @@ const renderTOC = (
     highestLevel: 'one' | 'two' | 'three'
 ) => {
     return (
-        <ul className="mt-4 font-in text-base mx-4">
+        <ul className="mt-4 font-in text-base mx-4 " dir="auto">
             {headings.map((heading) => (
-                <li key={`#${heading.slug}`} className="py-1">
+                <li key={`#${heading.slug}`} className="py-1" >
                     <a
                         href={`#${heading.slug}`}
                         data-level={heading.level}
@@ -73,7 +73,17 @@ const renderTOC = (
                             if (heading.level === highestLevel && heading.children && heading.children.length > 0) {
                                 toggleCollapse(heading.slug);
                             }
-                            document.getElementById(heading.slug)?.scrollIntoView({ behavior: 'smooth' });
+                            const target = document.getElementById(heading.slug);
+                            if (target) {
+                                const offset = 80; // Adjust this value based on your header height
+                                const elementPosition = target.getBoundingClientRect().top;
+                                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                                window.scrollTo({
+                                    top: offsetPosition,
+                                    behavior: 'smooth'
+                                });
+                            }
                         }}
                     >
                         {heading.level === 'three' && (

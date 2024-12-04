@@ -4,6 +4,7 @@
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useEffect } from 'react';
 
 interface RenderMdxProps {
   mdxSource: MDXRemoteSerializeResult;
@@ -11,6 +12,15 @@ interface RenderMdxProps {
 }
 
 const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource, additionalComponents }) => {
+  useEffect(() => {
+    const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p');
+    elements.forEach((element) => {
+      if (!element.hasAttribute('dir')) {
+        element.setAttribute('dir', 'auto');
+      }
+    });
+  }, [mdxSource]);
+
   return (
     <ErrorBoundary>
       <div className='
@@ -64,7 +74,10 @@ const RenderMdx: React.FC<RenderMdxProps> = ({ mdxSource, additionalComponents }
       prose-code:rounded
       prose-code:text-red-600
       dark:prose-code:text-red-400
+
+      RenderMdx
       '
+        dir='auto'
       >
         <MDXRemote
           {...mdxSource}
