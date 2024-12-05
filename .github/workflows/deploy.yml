@@ -126,3 +126,13 @@ jobs:
           find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {} || { echo -e "\033[1;31mFailed to remove old releases\033[0m"; exit 1; }
           echo -e "\033[1;32mOld releases removed successfully\033[0m"
         fi
+
+        
+    - name: Schedule Runner Restart
+      if: success()
+      run: |
+        # Schedule restart for 1 minute from now
+        echo "sudo systemctl restart actions.runner.abdallah065-blog.nextjs-blog.service" | at now + 1 minute
+        
+    - name: Add Delay Before Next Workflow
+      run: sleep 90 # Wait 90 seconds to ensure runner has restarted
