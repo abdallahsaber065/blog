@@ -1,13 +1,13 @@
 import React, { useRef } from "react";
-import Category from "./Category";
-import { Tag as PrismaCategory } from "@prisma/client";
+import TagItem from "./Tag";
+import { Tag as PrismaTag } from "@prisma/client";
 
 interface CategoriesProps {
-  categories: PrismaCategory[];
+  tags: PrismaTag[];
   currentSlug: string;
 }
 
-const Categories = ({ categories, currentSlug }: CategoriesProps) => {
+const Tags = ({ tags, currentSlug }: CategoriesProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -34,13 +34,13 @@ const Categories = ({ categories, currentSlug }: CategoriesProps) => {
         ref={scrollRef}
         className="flex items-start flex-nowrap overflow-x-auto scrollbar-hide px-0 md:px-10 sxl:px-20"
       >
-        <Category link="/categories/all" name="All" active={currentSlug === "all"} />
-        {categories.map((cat) => (
-          <Category
-            key={cat.id}
-            link={`/categories/${cat.slug}`}
-            name={cat.name}
-            active={currentSlug === cat.slug}
+        <TagItem link="/categories/all" name="All" active={currentSlug === "all"} />
+        {tags.map((tag) => (
+          <TagItem
+            key={tag.id}
+            link={`/categories/${tag.slug}`}
+            name={tag.name}
+            active={currentSlug === tag.slug}
           />
         ))}
       </div>
@@ -54,4 +54,4 @@ const Categories = ({ categories, currentSlug }: CategoriesProps) => {
   );
 };
 
-export default Categories;
+export default Tags;

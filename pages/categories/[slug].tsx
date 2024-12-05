@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import BlogLayoutThree from "@/components/Blog/BlogLayoutThree";
-import Categories from "@/components/Blog/Categories";
+import Tags from "@/components/Blog/Tags";
 import { GetStaticProps, GetStaticPaths } from 'next';
 
 // Define TypeScript types
@@ -55,6 +55,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       },
     }),
     prisma.tag.findMany({
+      where: { posts: { some: { status: "published" } } },
       select: {
         slug: true,
         name: true,
@@ -80,7 +81,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       slug,
       posts: serializedPosts,
-      categories: allCategories,
+      tags: allCategories,
     },
     revalidate: false // Only revalidate on-demand
   };
@@ -94,7 +95,7 @@ const deserializePosts = (posts: Post[]) => posts.map(post => ({
   published_at: post.published_at ? new Date(post.published_at).toISOString() : null,
 }));
 
-const CategoryPage = ({ slug, posts, categories }: { slug: string, posts: Post[], categories: any[] }) => {
+const CategoryPage = ({ slug, posts, tags }: { slug: string, posts: Post[], tags: any[] }) => {
   const deserializedPosts = deserializePosts(posts);
 
   return (
@@ -102,10 +103,10 @@ const CategoryPage = ({ slug, posts, categories }: { slug: string, posts: Post[]
       <div className="px-5 sm:px-10 md:px-24 sxl:px-32 flex flex-col">
         <h1 className="mt-6 font-semibold text-2xl md:text-4xl lg:text-5xl">#{slug}</h1>
         <span className="mt-2 inline-block">
-          Discover more categories and expand your knowledge!
+          Discover more Topics and expand your knowledge!
         </span>
       </div>
-      <Categories categories={categories} currentSlug={slug} />
+      <Tags tags={tags} currentSlug={slug} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-16 mt-5 sm:mt-10 md:mt-24 sxl:mt-32 px-5 sm:px-10 md:px-24 sxl:px-32">
         {deserializedPosts.map((post, index) => (
           <article key={index} className="col-span-1 row-span-1 relative">
