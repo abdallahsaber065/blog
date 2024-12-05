@@ -87,8 +87,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 res.status(200).json(updatedTag);
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ];
                 if (body.id) {
                     const tag = await prisma.tag.findUnique({
@@ -96,7 +96,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                         select: { slug: true }
                     });
                     if (tag) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(tag.slug));
+                        routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(tag.slug));
                     }
                 }
                 await revalidateRoutes(res, routesToRevalidate);
@@ -131,9 +131,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 // Prepare routes for revalidation
                 const routesToRevalidateForDelete = [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL,
-                    REVALIDATE_PATHS.getCategoryPath(tagToDelete.slug)
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS,
+                    REVALIDATE_PATHS.getTagPath(tagToDelete.slug)
                 ];
 
                 // Add all associated post paths
