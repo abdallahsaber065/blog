@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = () => {
           </li>
           <li>
             <Link href="/tags/all" className={`hover:text-primary dark:hover:text-accent ${pathname === '/tags/all' ? 'font-bold text-primary dark:text-accent' : ''}`}>
-              Categories
+              Tags
             </Link>
           </li>
           {session && RoleList.includes(session.user.role) && (

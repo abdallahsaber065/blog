@@ -84,19 +84,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postRoutesToRevalidate = [
                     REVALIDATE_PATHS.getBlogPath(newPost.slug),
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ];
 
                 if (body.category?.value) {
                     postRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getCategoryPath(body.category.value)
+                        REVALIDATE_PATHS.getTagPath(body.category.value)
                     );
                 }
                 if (body.tags?.length > 0) {
                     body.tags.forEach((tag: { value: string }) => {
                         postRoutesToRevalidate.push(
-                            REVALIDATE_PATHS.getCategoryPath(tag.value)
+                            REVALIDATE_PATHS.getTagPath(tag.value)
                         );
                     });
                 }
@@ -183,8 +183,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ];
 
                 // Add author page to revalidate
@@ -202,17 +202,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 // Add category paths
                 if (oldPost.category?.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(oldPost.category.slug));
                 }
                 if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(updatedPost.category.slug));
                 }
 
                 // Add tag paths
                 const oldTags = oldPost.tags.map(tag => tag.slug);
                 const newTags = updatedPost.tags.map(tag => tag.slug);
                 [...oldTags, ...newTags].forEach(slug => {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(slug));
                 });
 
                 await revalidateRoutes(res, routesToRevalidate);
@@ -250,8 +250,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteRoutesToRevalidate = [
                     REVALIDATE_PATHS.getBlogPath(postToDelete?.slug || ''),
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ];
 
                 // Add author page to revalidate
@@ -261,13 +261,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (postToDelete?.category?.slug) {
                     deleteRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getCategoryPath(postToDelete.category.slug)
+                        REVALIDATE_PATHS.getTagPath(postToDelete.category.slug)
                     );
                 }
 
                 postToDelete?.tags.forEach(tag => {
                     deleteRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getCategoryPath(tag.slug)
+                        REVALIDATE_PATHS.getTagPath(tag.slug)
                     );
                 });
 

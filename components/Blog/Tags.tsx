@@ -2,12 +2,12 @@ import React, { useRef } from "react";
 import TagItem from "./Tag";
 import { Tag as PrismaTag } from "@prisma/client";
 
-interface CategoriesProps {
+interface TagsProps {
   tags: PrismaTag[];
   currentSlug: string;
 }
 
-const Tags = ({ tags, currentSlug }: CategoriesProps) => {
+const Tags = ({ tags, currentSlug }: TagsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
