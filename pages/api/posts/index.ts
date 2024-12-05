@@ -23,7 +23,6 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-
     res.status(500).json({ error: message });
 };
 
@@ -55,7 +54,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postValidationError = validateRequiredFields(['title', 'content'], body);
                 if (postValidationError) {
                     log += `\nResponse Status: 400 ${postValidationError}`;
-
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -71,7 +69,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (existingPost) {
                     log += `\nResponse Status: 400 Duplicate title`;
-
                     return res.status(400).json({
                         error: 'A post with this title already exists. Please choose a different title.'
                     });
@@ -84,13 +81,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postRoutesToRevalidate = [
                     REVALIDATE_PATHS.getBlogPath(newPost.slug),
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.TAGS,
-                    REVALIDATE_PATHS.ALL_TAGS
+
+                    REVALIDATE_PATHS.ALL_TAGS,
+
+                    REVALIDATE_PATHS.ALL_CATEGORIES
                 ];
 
                 if (body.category?.value) {
                     postRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getTagPath(body.category.value)
+                        REVALIDATE_PATHS.getCategoryPath(body.category.value)
                     );
                 }
                 if (body.tags?.length > 0) {
@@ -120,7 +119,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const updateIdError = validateId(body.id);
                 if (updateIdError) {
                     log += `\nResponse Status: 400 ${updateIdError}`;
-
                     return res.status(400).json({ error: updateIdError });
                 }
 
@@ -144,7 +142,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (!oldPost) {
                     log += `\nResponse Status: 404 Post not found`;
-
                     return res.status(404).json({ error: 'Post not found' });
                 }
 
@@ -180,11 +177,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                 });
 
-
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.TAGS,
-                    REVALIDATE_PATHS.ALL_TAGS
+
+                    REVALIDATE_PATHS.ALL_TAGS,
+
+                    REVALIDATE_PATHS.ALL_CATEGORIES
                 ];
 
                 // Add author page to revalidate
@@ -202,10 +200,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 // Add category paths
                 if (oldPost.category?.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(oldPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
                 }
                 if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(updatedPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
                 }
 
                 // Add tag paths
@@ -225,7 +223,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
-
                     return res.status(400).json({ error: deleteIdError });
                 }
 
@@ -250,8 +247,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteRoutesToRevalidate = [
                     REVALIDATE_PATHS.getBlogPath(postToDelete?.slug || ''),
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.TAGS,
-                    REVALIDATE_PATHS.ALL_TAGS
+
+                    REVALIDATE_PATHS.ALL_TAGS,
+
+                    REVALIDATE_PATHS.ALL_CATEGORIES
                 ];
 
                 // Add author page to revalidate
@@ -261,7 +260,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (postToDelete?.category?.slug) {
                     deleteRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getTagPath(postToDelete.category.slug)
+                        REVALIDATE_PATHS.getCategoryPath(postToDelete.category.slug)
                     );
                 }
 

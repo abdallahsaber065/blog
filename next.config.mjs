@@ -89,6 +89,11 @@ const nextConfig = {
         destination: '/tags/all',
         permanent: true,
       },
+      {
+        source: '/categories',
+        destination: '/categories/all',
+        permanent: true,
+      }
     ];
   },
 
