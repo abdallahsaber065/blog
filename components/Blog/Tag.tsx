@@ -2,14 +2,14 @@ import { cx } from "@/lib";
 import Link from "next/link";
 import React from "react";
 
-interface CategoryProps {
+interface TagProps {
   link: string;
   name: string;
   active: boolean;
   className?: string;
 }
 
-const Category = ({ link = "#", name, active, ...props }: CategoryProps) => {
+const Category = ({ link = "#", name, active, ...props }: TagProps) => {
   return (
     <Link
       href={link}
