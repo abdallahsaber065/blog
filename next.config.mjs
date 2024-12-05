@@ -85,8 +85,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/categories',
-        destination: '/categories/all',
+        source: '/tags',
+        destination: '/tags/all',
         permanent: true,
       },
     ];

@@ -61,7 +61,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body,
                 });
                 res.status(201).json(newTag);
-                await res.revalidate('/categories');
+                await res.revalidate('/tags');
                 log += `\nResponse Status: 201 Created`;
                 break;
 
