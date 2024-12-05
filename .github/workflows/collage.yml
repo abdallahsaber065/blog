@@ -149,3 +149,7 @@ jobs:
           echo -e "\033[1;31mCollage site deployment failed!\033[0m"
           exit 1
         fi
+
+    - name: Restart the Runner
+      run: |
+        echo "sudo systemctl restart actions.runner.abdallah065-blog.nextjs-blog.service" | at now + 1 minute
