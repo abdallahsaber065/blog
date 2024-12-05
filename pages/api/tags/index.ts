@@ -22,7 +22,6 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any) => {
-
     res.status(500).json({ error: 'Internal Server Error' });
 };
 
@@ -53,7 +52,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const postValidationError = validateRequiredFields(['name', 'slug'], body);
                 if (postValidationError) {
                     log += `\nResponse Status: 400 ${postValidationError}`;
-
                     return res.status(400).json({ error: postValidationError });
                 }
 
@@ -61,7 +59,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body,
                 });
                 res.status(201).json(newTag);
-                await res.revalidate('/tags');
+
                 log += `\nResponse Status: 201 Created`;
                 break;
 
@@ -69,14 +67,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const putValidationError = validateRequiredFields(['id', 'data'], body);
                 if (putValidationError) {
                     log += `\nResponse Status: 400 ${putValidationError}`;
-
                     return res.status(400).json({ error: putValidationError });
                 }
 
                 const idError = validateId(body.id);
                 if (idError) {
                     log += `\nResponse Status: 400 ${idError}`;
-
                     return res.status(400).json({ error: idError });
                 }
 
@@ -85,19 +81,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     data: body.data,
                 });
                 res.status(200).json(updatedTag);
+
                 const routesToRevalidate = [
-                    REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.TAGS,
+
                     REVALIDATE_PATHS.ALL_TAGS
                 ];
-                if (body.id) {
-                    const tag = await prisma.tag.findUnique({
-                        where: { id: Number(body.id) },
-                        select: { slug: true }
-                    });
-                    if (tag) {
-                        routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(tag.slug));
-                    }
+                if (updatedTag.slug) {
+                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(updatedTag.slug));
                 }
                 await revalidateRoutes(res, routesToRevalidate);
                 log += `\nResponse Status: 200 OK`;
@@ -110,39 +100,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     return res.status(400).json({ error: deleteIdError });
                 }
 
-                // Get tag and its associated posts before deletion
                 const tagToDelete = await prisma.tag.findUnique({
                     where: { id: Number(query.id) },
-                    include: {
-                        posts: {
-                            select: { slug: true }
-                        }
-                    }
+                    select: { slug: true }
                 });
 
-                if (!tagToDelete) {
-                    return res.status(404).json({ error: 'Tag not found' });
-                }
-
-                // Delete the tag
                 await prisma.tag.delete({
                     where: { id: Number(query.id) },
                 });
-                // Prepare routes for revalidation
-                const routesToRevalidateForDelete = [
-                    REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.TAGS,
-                    REVALIDATE_PATHS.ALL_TAGS,
-                    REVALIDATE_PATHS.getTagPath(tagToDelete.slug)
+
+                const deleteRoutesToRevalidate = [
+
+                    REVALIDATE_PATHS.ALL_TAGS
                 ];
+                if (tagToDelete?.slug) {
+                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getTagPath(tagToDelete.slug));
+                }
 
-                // Add all associated post paths
-                tagToDelete.posts.forEach(post => {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getBlogPath(post.slug));
-                });
-
-                await revalidateRoutes(res, routesToRevalidateForDelete);
+                await revalidateRoutes(res, deleteRoutesToRevalidate);
                 res.status(200).json({ message: 'Tag deleted successfully' });
+                log += `\nResponse Status: 200 OK`;
                 break;
 
             default:
@@ -153,10 +130,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     } catch (error) {
         handleError(res, error);
     }
-
-
 }
-
 
 export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
     return authMiddleware(req, res, handler);
