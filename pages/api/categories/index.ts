@@ -62,8 +62,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 res.status(201).json(newCategory);
                 await revalidateRoutes(res, [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ]);
                 log += `\nResponse Status: 201 Created`;
                 break;
@@ -90,8 +90,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 res.status(200).json(updatedCategory);
                 await revalidateRoutes(res, [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS
                 ]);
                 log += `\nResponse Status: 200 OK`;
                 break;
@@ -125,9 +125,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 // Prepare routes for revalidation
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
-                    REVALIDATE_PATHS.CATEGORIES,
-                    REVALIDATE_PATHS.CATEGORIES_ALL,
-                    REVALIDATE_PATHS.getCategoryPath(categoryToDelete.slug)
+                    REVALIDATE_PATHS.TAGS,
+                    REVALIDATE_PATHS.ALL_TAGS,
+                    REVALIDATE_PATHS.getTagPath(categoryToDelete.slug)
                 ];
 
                 // Add all associated post paths
