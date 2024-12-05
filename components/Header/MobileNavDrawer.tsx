@@ -34,6 +34,13 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                 </button>
                 <ul className="menu menu-vertical">
                     <li>
+                        <Link href="/" className={`hover:text-primary font-semibold dark:hover:text-accent
+                            ${pathname === '/' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                            Home
+                        </Link>
+                    </li>
+
+                    <li>
                         <Link href="/about" className={
                             `hover:text-primary font-semibold dark:hover:text-accent
                             ${pathname === '/about' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
