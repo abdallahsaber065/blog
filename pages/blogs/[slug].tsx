@@ -167,7 +167,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
             setIsAuthorized(hasAccess || false);
             setLoading(false);
         };
-        
+
         checkAuth();
     }, []);
 
@@ -233,7 +233,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                         {deserializedPost.tags?.[0] && (
                             <Tag
                                 name={deserializedPost.tags[0].name}
-                                link={`/categories/${deserializedPost.tags[0].slug}`}
+                                link={`/tags/${deserializedPost.tags[0].slug}`}
                                 className="px-6 text-sm py-2"
                             />
                         )}

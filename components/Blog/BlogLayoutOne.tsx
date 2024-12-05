@@ -40,7 +40,7 @@ const BlogLayoutOne = ({ post }: BlogLayoutOneProps) => {
       <div className="w-full absolute bottom-0 p-4 xs:p-6 sm:p-10 z-20">
         {post.tags.length > 0 && (
           <Tag
-            link={`/categories/${slug(post.tags[0].name)}`}
+            link={`/tags/${slug(post.tags[0].name)}`}
             name={post.tags[0].name}
             className="px-6 text-xs sm:text-sm py-1 sm:py-2 !border"
           />

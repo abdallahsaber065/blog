@@ -34,11 +34,11 @@ const Tags = ({ tags, currentSlug }: CategoriesProps) => {
         ref={scrollRef}
         className="flex items-start flex-nowrap overflow-x-auto scrollbar-hide px-0 md:px-10 sxl:px-20"
       >
-        <TagItem link="/categories/all" name="All" active={currentSlug === "all"} />
+        <TagItem link="/tags/all" name="All" active={currentSlug === "all"} />
         {tags.map((tag) => (
           <TagItem
             key={tag.id}
-            link={`/categories/${tag.slug}`}
+            link={`/tags/${tag.slug}`}
             name={tag.name}
             active={currentSlug === tag.slug}
           />

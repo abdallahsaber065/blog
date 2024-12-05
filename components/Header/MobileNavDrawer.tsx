@@ -47,7 +47,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/categories/all" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/categories/all' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                        <Link href="/tags/all" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/tags/all' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
                             Categories
                         </Link>
                     </li>
