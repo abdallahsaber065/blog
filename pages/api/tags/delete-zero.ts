@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 },
             });
             const routesToRevalidate = [
-                REVALIDATE_PATHS.TAGS,
+
                 REVALIDATE_PATHS.ALL_TAGS
             ];
             await revalidateRoutes(res, routesToRevalidate);

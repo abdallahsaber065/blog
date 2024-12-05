@@ -3,12 +3,13 @@ import { prisma } from '@/lib/prisma';
 
 export const REVALIDATE_PATHS = {
   HOME: '/',
-  TAGS: '/tags',
   ALL_TAGS: '/tags/all',
+  ALL_CATEGORIES: '/categories/all',
   AUTHORS: '/authors',
   BLOG: '/blogs',
   getAuthorPath: (username: string) => `/authors/${username}`,
   getTagPath: (slug: string) => `/tags/${slug}`,
+  getCategoryPath: (slug: string) => `/categories/${slug}`,
   getBlogPath: (slug: string) => `/blogs/${slug}`,
 };
 
@@ -18,7 +19,6 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
 
     // If paths include any Tag-related paths, fetch all Tag slugs
     const shouldRevalidateAllTags = paths.some(path =>
-      path === REVALIDATE_PATHS.TAGS ||
       path === REVALIDATE_PATHS.ALL_TAGS ||
       path.startsWith('/tags/')
     );
@@ -30,6 +30,22 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
       paths = [
         ...paths,
         ...allTags.map(tag => REVALIDATE_PATHS.getTagPath(tag.slug))
+      ];
+    }
+
+    // If paths include any Category-related paths, fetch all Category slugs
+    const shouldRevalidateAllCategories = paths.some(path =>
+      path === REVALIDATE_PATHS.ALL_CATEGORIES ||
+      path.startsWith('/categories/')
+    );
+
+    if (shouldRevalidateAllCategories) {
+      const allCategories = await prisma.category.findMany({
+        select: { slug: true }
+      });
+      paths = [
+        ...paths,
+        ...allCategories.map(category => REVALIDATE_PATHS.getCategoryPath(category.slug))
       ];
     }
 
@@ -55,4 +71,4 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
     console.error('Error revalidating:', error);
     return false;
   }
-} 
+}
