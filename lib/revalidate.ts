@@ -3,12 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export const REVALIDATE_PATHS = {
   HOME: '/',
-  CATEGORIES: '/categories',
-  CATEGORIES_ALL: '/categories/all',
+  CATEGORIES: '/tags',
+  CATEGORIES_ALL: '/tags/all',
   AUTHORS: '/authors',
   BLOG: '/blogs',
   getAuthorPath: (username: string) => `/authors/${username}`,
-  getCategoryPath: (slug: string) => `/categories/${slug}`,
+  getCategoryPath: (slug: string) => `/tags/${slug}`,
   getBlogPath: (slug: string) => `/blogs/${slug}`,
 };
 
@@ -20,7 +20,7 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
     const shouldRevalidateAllCategories = paths.some(path =>
       path === REVALIDATE_PATHS.CATEGORIES ||
       path === REVALIDATE_PATHS.CATEGORIES_ALL ||
-      path.startsWith('/categories/')
+      path.startsWith('/tags/')
     );
 
     if (shouldRevalidateAllCategories) {

@@ -48,7 +48,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
                 <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                     <Tag
                         name={placeholderPost.tags[0].name}
-                        link={`/categories/${placeholderPost.tags[0].slug}`}
+                        link={`/tags/${placeholderPost.tags[0].slug}`}
                         className="px-6 text-sm py-2"
                     />
                     <h1

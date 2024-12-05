@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = () => {
             </Link>
           </li>
           <li>
-            <Link href="/categories/all" className={`hover:text-primary dark:hover:text-accent ${pathname === '/categories/all' ? 'font-bold text-primary dark:text-accent' : ''}`}>
+            <Link href="/tags/all" className={`hover:text-primary dark:hover:text-accent ${pathname === '/tags/all' ? 'font-bold text-primary dark:text-accent' : ''}`}>
               Categories
             </Link>
           </li>

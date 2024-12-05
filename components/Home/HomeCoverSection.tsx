@@ -42,9 +42,9 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
         />
         <div className='w-full lg:w-3/4 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col items-start justify-center z-20 text-light'>
           {post.tags?.[0] && (
-            <Tag 
-              link={`/categories/${slug(post.tags[0].name)}`} 
-              name={post.tags[0].name} 
+            <Tag
+              link={`/tags/${slug(post.tags[0].name)}`}
+              name={post.tags[0].name}
             />
           )}
           <Link href={`/blogs/${post.slug}`} className='mt-6'>
