@@ -13,8 +13,6 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-    - name: Wait for Runner Restart
-      run: sleep 90 # Wait 90 seconds after previous workflow's runner restart
       
     - name: Set up Node.js
       uses: actions/setup-node@v3
