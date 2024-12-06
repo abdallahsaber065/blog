@@ -136,7 +136,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                             select: {
                                 slug: true
                             }
-                        }
+                        },
+                        published_at: true,
                     }
                 });
 
@@ -154,7 +155,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 }
 
                 // check if status is being updated to published to add published_at date
-                if (updateData.status === 'published' && oldPost.status !== 'published') {
+                if (updateData.status === 'published' && (oldPost.status !== 'published' || oldPost.published_at === null)) {
                     updateData.published_at = new Date();
                 }
 
