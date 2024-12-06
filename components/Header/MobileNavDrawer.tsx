@@ -53,10 +53,30 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             Contact
                         </Link>
                     </li>
+                    <li className="mt-4"></li>
                     <li>
-                        <Link href="/tags/all" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/tags/all' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                            Topics
-                        </Link>
+                        <button
+                            className={`text-lg font-semibold flex justify-between items-center w-full focus:ring-2 
+                            ${isAdminMenuOpen || pathname?.startsWith("/tags") || pathname?.startsWith("/categories") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
+                            onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                        >
+                            Discover
+                            <span>{isAdminMenuOpen ? '-' : '+'}</span>
+                        </button>
+                        {isAdminMenuOpen && (
+                            <ul className="mt-2 space-y-2">
+                                <li>
+                                    <Link href="/tags" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/tags') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                                        Topics
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/categories" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/categories') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                                        {process.env.NEXT_PUBLIC_REMOTE_URL?.includes('collage') ? 'Subjects' : 'Categories'}
+                                    </Link>
+                                </li>
+                            </ul>
+                        )}
                     </li>
                     {session && RoleList.includes(session.user.role) && (
                         <li className="mt-4">
