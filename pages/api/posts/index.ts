@@ -153,6 +153,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     };
                 }
 
+                // check if status is being updated to published to add published_at date
+                if (updateData.status === 'published' && oldPost.status !== 'published') {
+                    updateData.published_at = new Date();
+                }
+
                 const updatedPost = await prisma.post.update({
                     where: { id: Number(body.id) },
                     data: updateData,
