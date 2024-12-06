@@ -17,9 +17,15 @@ export default function CategoryList({ categories, refreshCategories }: Category
         setLoadingId(id);
         toast.dismiss();
         try {
-            await fetch(`/api/categories?id=${id}`, {
+            const response = await fetch(`/api/categories?id=${id}`, {
                 method: 'DELETE',
             });
+            if (!response.status.toString().startsWith('2')) {
+                const errorResponse = await response.json();
+                toast.error(errorResponse.error || 'Failed to delete category.');
+                return;
+            }
+
             refreshCategories();
             toast.success('Category deleted successfully!');
         } catch (error) {

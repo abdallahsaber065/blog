@@ -117,9 +117,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     return res.status(404).json({ error: 'Category not found' });
                 }
 
+                // do not delete uncategorized category
+                if (categoryToDelete.name === 'Uncategorized') {
+                    return res.status(403).json({ error: 'Cannot delete Uncategorized category' });
+                }
+
                 // Delete the category
                 await prisma.category.delete({
                     where: { id: Number(query.id) },
+                    
                 });
 
                 // Prepare routes for revalidation

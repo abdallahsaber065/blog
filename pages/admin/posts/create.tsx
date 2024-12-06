@@ -210,8 +210,11 @@ const CreatePost: React.FC = () => {
                 },
                 category: {
                     connectOrCreate: {
-                        where: { slug: slug(category?.value || '') },
-                        create: { name: category?.value || '', slug: slug(category?.value || '') }
+                        where: { slug: slug(category?.value || 'uncategorized') },
+                        create: {
+                            name: category?.value || 'Uncategorized',
+                            slug: slug(category?.value || 'uncategorized')
+                        }
                     }
                 },
                 author: {

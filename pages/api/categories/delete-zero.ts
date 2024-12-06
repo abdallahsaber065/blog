@@ -12,6 +12,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     posts: {
                         none: {},
                     },
+                    slug: {
+                        not: 'uncategorized',
+                    },
                 },
             });
             const routesToRevalidate = [
