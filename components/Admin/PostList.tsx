@@ -499,7 +499,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                                                     disabled={isPostProcessing(post.id)}
                                                 >
-                                                    {hasApproveRights ? (
+                                                    {(hasApproveRights || post.author.id === currentUserId) ? ( 
                                                         <>
                                                             <option value="published">Published</option>
                                                             <option value="pending">Pending</option>
