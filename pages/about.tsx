@@ -2,20 +2,49 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SocialIcon } from 'react-social-icons';
-import InsightRoll from "@/components/About/InsightRoll";
-import { ReactNode } from 'react';
+import { prisma } from '../lib/prisma';
 
-const insights = [
-  "20+ Projects Completed",
-  "3+ Years of Freelancing",
-  "99% Client Satisfaction",
-  "20K+ Subscribers",
-];
+export async function getStaticProps() {
+  const editors = await prisma.user.findMany({
+    where: {
+      OR: [
+        { role: 'editor' },
+        { role: 'moderator' },
+      ]
+    },
+    select: {
+      id: true,
+      username: true,
+      first_name: true,
+      last_name: true,
+      bio: true,
+      profile_image_url: true,
+    },
+  });
 
-const AboutPage = () => {
+  return {
+    props: { editors },
+    revalidate: 60, // Revalidate every 60 seconds
+  };
+}
+
+interface Editor {
+  id: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
+  profile_image_url: string | null;
+}
+
+interface AboutPageProps {
+  editors: Editor[];
+}
+
+const AboutPage: React.FC<AboutPageProps> = ({ editors }) => {
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      {/* Hero Section - improved spacing and responsive text */}
+      {/* Hero Section */}
       <div className="min-h-screen bg-light dark:bg-dark py-8 sm:py-16 px-4">
         <section className="container mx-auto text-center mb-8 sm:mb-16">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent dark:text-accentDark mb-4">
@@ -26,7 +55,7 @@ const AboutPage = () => {
           </p>
         </section>
 
-        {/* Our Mission Section - improved layout and spacing */}
+        {/* Our Mission Section */}
         <section className="container mx-auto text-center mb-8 sm:mb-16 px-4">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1 max-w-xl">
@@ -56,7 +85,7 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Team Section - improved card design and responsiveness */}
+        {/* Team Section */}
         <section className="container mx-auto text-center mb-8 sm:mb-16 px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-accent dark:text-accentDark">
             Meet Our Team
@@ -83,29 +112,56 @@ const AboutPage = () => {
                 I am a full-stack developer and tech enthusiast with a passion for building and sharing knowledge. I have been working in the tech industry for over 3 years and have experience in a wide range of technologies, including ML, AI, and Full-Stack Development.
               </p>
               <div className="flex space-x-4">
-                <SocialIcon 
-                  url="https://abdallah-saber.vercel.app/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="hover:scale-110 transition-transform" 
-                  style={{ width: '35px', height: '35px' }}
-                />
-                <SocialIcon 
-                  url="https://www.linkedin.com/in/abdallah-saber065/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <SocialIcon
+                  url="https://abdallah-saber.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:scale-110 transition-transform"
                   style={{ width: '35px', height: '35px' }}
                 />
-                <SocialIcon 
-                  url="https://twitter.com/DevTrend0" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <SocialIcon
+                  url="https://www.linkedin.com/in/abdallah-saber065/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:scale-110 transition-transform"
+                  style={{ width: '35px', height: '35px' }}
+                />
+                <SocialIcon
+                  url="https://twitter.com/DevTrend0"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:scale-110 transition-transform"
                   style={{ width: '35px', height: '35px' }}
                 />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Editors Grid Section */}
+        <section className="container mx-auto text-center mb-8 sm:mb-16 px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {editors.map((editor) => (
+              <div key={editor.id} className="bg-light dark:bg-dark shadow-lg hover:shadow-xl transition-all rounded-xl p-6">
+                <Image
+                  src={editor.profile_image_url || '/static/images/default-profile.jpg'}
+                  alt={`${editor.first_name} ${editor.last_name}`}
+                  width={300}
+                  height={300}
+                  className="rounded-lg shadow-md hover:shadow-lg transition-shadow w-full"
+                  style={{ objectFit: "cover" }}
+                />
+                <Link href={`/authors/${editor.username}`} className="text-xl sm:text-2xl font-semibold text-accent dark:text-accentDark mt-4 block">
+                  {editor.first_name} {editor.last_name}
+                </Link>
+                <p className="text-gray dark:text-light font-medium mb-3">
+                  Editor
+                </p>
+                <p className="text-sm sm:text-base text-gray dark:text-light mb-6">
+                  {editor.bio}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
       </div>
