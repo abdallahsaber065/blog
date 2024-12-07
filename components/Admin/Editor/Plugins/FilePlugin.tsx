@@ -1,41 +1,65 @@
 import * as React from "react";
-// file icon from react-icons
 import { BsFileEarmarkRichtextFill } from "react-icons/bs";
-
-// Using type assertion for the dynamic
+import FileSelector from "../../FileSelector";
+import { FILE_EXTENSIONS } from "../../FileIcons";
+interface FilePluginState {
+    isFileSelectorOpen: boolean;
+}
 export default class FilePlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
     static pluginName: string = "FilePlugin";
     static align: "left" | "right" = "left";
 
+    state: FilePluginState;
     constructor(props: any) {
         super(props);
 
         this.handleClick = this.handleClick.bind(this);
+        this.handleFileSelect = this.handleFileSelect.bind(this);
+        this.closeFileSelector = this.closeFileSelector.bind(this);
 
         this.state = {
-            num: this.getConfig("start")
+            isFileSelectorOpen: false,
         };
     }
 
     handleClick(): void {
-        this.editor.insertText("<File src='' alt='' />");
+        this.setState({ isFileSelectorOpen: true });
+    }
+
+    handleFileSelect(file: any): void {
+        this.editor.insertText(`<File src='${file.file_url}' alt='${file.file_name}' filename='${file.file_name}' />`);
+        this.setState({ isFileSelectorOpen: false });
+    }
+
+    closeFileSelector(): void {
+        this.setState({ isFileSelectorOpen: false });
     }
 
     render(): React.ReactElement {
         return (
-            <span
-                className="button button-type-counter"
-                title="Insert File"
-                onClick={this.handleClick}
-                style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-            >
-                <BsFileEarmarkRichtextFill
-                    style={{
-                        height: '18.5px',
-                        width: '18px'
-                    }}
-                />
-            </span>
+            <>
+                <span
+                    className="button button-type-counter"
+                    title="Insert File"
+                    onClick={this.handleClick}
+                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
+                    <BsFileEarmarkRichtextFill
+                        style={{
+                            height: '18.5px',
+                            width: '18px'
+                        }}
+                    />
+                </span>
+                {this.state.isFileSelectorOpen && (
+                    <FileSelector
+                        isOpen={this.state.isFileSelectorOpen}
+                        onClose={this.closeFileSelector}
+                        onSelect={this.handleFileSelect}
+                        allowedTypes={FILE_EXTENSIONS}
+                    />
+                )}
+            </>
         );
     }
 }
