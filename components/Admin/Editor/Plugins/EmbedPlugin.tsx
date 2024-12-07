@@ -11,9 +11,6 @@ export default class EmbedPlugin extends (await import('react-markdown-editor-li
 
         this.handleClick = this.handleClick.bind(this);
 
-        this.state = {
-            num: this.getConfig("start")
-        };
     }
 
     handleClick(): void {
