@@ -17,7 +17,7 @@ export default class EmbedPlugin extends (await import('react-markdown-editor-li
     }
 
     handleClick(): void {
-        this.editor.insertText("<Embed src='' alt='' />");
+        this.editor.insertText("<Embed src='' alt='' height='auto' width='auto' />");
     }
 
     render(): React.ReactElement {

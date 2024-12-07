@@ -154,3 +154,8 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
     direction: ltr !important;
     text-align: left;
 }
+
+.embed-container {
+    max-width: 100%;
+    overflow: hidden;
+}
