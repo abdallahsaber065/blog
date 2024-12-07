@@ -44,6 +44,9 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const [triedToFetch, setTriedToFetch] = useState(false);
     const [fileSize, setFileSize] = useState<number>(0);
 
+    // if not filename: take the last part of the src
+    filename = filename || src.split('/').pop() || 'File';
+    
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
             '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c',
