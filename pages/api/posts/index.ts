@@ -83,7 +83,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     REVALIDATE_PATHS.HOME,
 
                     REVALIDATE_PATHS.ALL_TAGS,
-
+                    REVALIDATE_PATHS.ABOUT,
                     REVALIDATE_PATHS.ALL_CATEGORIES
                 ];
 
@@ -187,8 +187,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     REVALIDATE_PATHS.HOME,
 
                     REVALIDATE_PATHS.ALL_TAGS,
-
-                    REVALIDATE_PATHS.ALL_CATEGORIES
+                    REVALIDATE_PATHS.ABOUT,
+                    REVALIDATE_PATHS.ALL_CATEGORIES,
+                    REVALIDATE_PATHS.ABOUT
                 ];
 
                 // Add author page to revalidate
@@ -253,6 +254,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const deleteRoutesToRevalidate = [
                     REVALIDATE_PATHS.getBlogPath(postToDelete?.slug || ''),
                     REVALIDATE_PATHS.HOME,
+                    REVALIDATE_PATHS.ABOUT,
 
                     REVALIDATE_PATHS.ALL_TAGS,
 
