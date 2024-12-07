@@ -1,27 +1,25 @@
 import * as React from "react";
-// Embed icon from react-icons {not FaFile because it's already used}
-import { PiPlugsConnectedFill } from "react-icons/pi";
-// Using type assertion for the dynamic import
-export default class EmbedPlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
-    static pluginName: string = "EmbedPlugin";
+// Section icon from react-icons {not FaFile because it's already used}
+import { TbLayoutSidebarRightCollapseFilled } from "react-icons/tb";// Using type assertion for the dynamic import
+export default class SectionPlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+    static pluginName: string = "SectionPlugin";
     static align: "left" | "right" = "left";
 
     constructor(props: any) {
         super(props);
 
         this.handleClick = this.handleClick.bind(this);
-
     }
 
     handleClick(): void {
-        this.editor.insertText("<Embed src='' alt='' height='auto' width='auto' />");
+        this.editor.insertText('<details>\n\t<summary>Put your title here</summary>\n\tAnything you want to put here\n</details>');
     }
 
     render(): React.ReactElement {
         return (
             <span
                 className="button button-type-counter"
-                title="Insert Embed ex. Youtube, Gdrive, etc."
+                title="Insert Section ex. Youtube, Gdrive, etc."
                 onClick={this.handleClick}
                 style={{
                     display: 'flex',
@@ -29,7 +27,7 @@ export default class EmbedPlugin extends (await import('react-markdown-editor-li
                     alignItems: 'center'
                 }}
             >
-                <PiPlugsConnectedFill
+                <TbLayoutSidebarRightCollapseFilled
                     style={{
                         height: '18.5px',
                         width: '18px'
