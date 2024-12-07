@@ -1,3 +1,4 @@
+import nextWednesday from "date-fns/nextWednesday/index.js";
 import * as React from "react";
 // Section icon from react-icons {not FaFile because it's already used}
 import { TbLayoutSidebarRightCollapseFilled } from "react-icons/tb";// Using type assertion for the dynamic import
@@ -12,7 +13,10 @@ export default class SectionPlugin extends (await import('react-markdown-editor-
     }
 
     handleClick(): void {
-        this.editor.insertText('<details>\n\t<summary>Put your title here</summary>\n\tAnything you want to put here\n</details>');
+        this.editor.insertText('<details>\n\t<summary>Put your title here</summary>\n\tAnything you want to put here\n</details>',
+            false,
+            { start: 20, end: 39 }
+        );
     }
 
     render(): React.ReactElement {
