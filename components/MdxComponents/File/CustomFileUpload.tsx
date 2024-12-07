@@ -65,6 +65,10 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
     if (!src) {
         src = "";
     }
+    
+    // if not filename: take the last part of the src
+    filename = filename || src.split('/').pop() || 'File';
+
     const file_url_name = src.split('/').pop();
 
 
