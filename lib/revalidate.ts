@@ -7,6 +7,7 @@ export const REVALIDATE_PATHS = {
   ALL_CATEGORIES: '/categories/all',
   AUTHORS: '/authors',
   BLOG: '/blogs',
+  ABOUT: '/about',
   getAuthorPath: (username: string) => `/authors/${username}`,
   getTagPath: (slug: string) => `/tags/${slug}`,
   getCategoryPath: (slug: string) => `/categories/${slug}`,
