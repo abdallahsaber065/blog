@@ -7,8 +7,26 @@ import dynamic from 'next/dynamic';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css'; // You can choose any highlight.js theme
 
-// Dynamically import the Markdown editor to avoid SSR issues
-const MdEditor = dynamic(() => import('react-markdown-editor-lite'), { ssr: false });
+const MdEditor = dynamic(
+    async () => {
+        const [MdEditor,ImagePlugin, FilePlugin, InlineFilePlugin, EmbedPlugin] = await Promise.all([
+            import('react-markdown-editor-lite'),
+            import('./Editor/Plugins/ImagePlugin'),
+            import('./Editor/Plugins/FilePlugin'),
+            import('./Editor/Plugins/InlineFilePlugin'),
+            import('./Editor/Plugins/EmbedPlugin'),
+            /** Add more plugins, and use below */
+        ]);
+        MdEditor.default.use(ImagePlugin.default);
+        MdEditor.default.use(FilePlugin.default);
+        MdEditor.default.use(InlineFilePlugin.default);
+        MdEditor.default.use(EmbedPlugin.default);
+        return MdEditor.default;
+    },
+    {
+        ssr: false,
+    },
+);
 
 // Configure markdown-it with highlight.js
 const mdParser = new MarkdownIt({
