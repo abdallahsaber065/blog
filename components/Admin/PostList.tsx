@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FaTrash, FaEdit, FaSave, FaTimes, FaUserLock } from 'react-icons/fa';
@@ -102,7 +103,7 @@ const PermissionsModal: React.FC<{
         }
     }, [isOpen, post]);
 
-    const filteredUsers = availableUsers.filter(user => 
+    const filteredUsers = availableUsers.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -120,9 +121,9 @@ const PermissionsModal: React.FC<{
     const handleSave = async () => {
         setLoading(true);
         try {
-            await onSave({ 
-                users: selectedUsers, 
-                roles: selectedRoles.includes('admin') ? selectedRoles : ['admin', ...selectedRoles] 
+            await onSave({
+                users: selectedUsers,
+                roles: selectedRoles.includes('admin') ? selectedRoles : ['admin', ...selectedRoles]
             });
             onClose();
         } finally {
@@ -134,9 +135,9 @@ const PermissionsModal: React.FC<{
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 text-slate-900 dark:text-slate-300">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"> 
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
                 <h2 className="text-xl font-bold mb-4">Manage Permissions</h2>
-                
+
                 <div className="mb-4">
                     <h3 className="font-semibold mb-2">Users</h3>
                     <input
@@ -150,8 +151,8 @@ const PermissionsModal: React.FC<{
                         {filteredUsers.map(user => {
                             const isAdmin = user.role === 'admin';
                             return (
-                                <label 
-                                    key={user.id} 
+                                <label
+                                    key={user.id}
                                     className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
                                         ${isAdmin ? 'opacity-75' : ''}`}
                                 >
@@ -175,8 +176,8 @@ const PermissionsModal: React.FC<{
                 <div className="mb-4">
                     <h3 className="font-semibold mb-2">Roles</h3>
                     {['admin', 'moderator', 'editor'].map(role => (
-                        <label 
-                            key={role} 
+                        <label
+                            key={role}
                             className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
                                 ${role === 'admin' ? 'opacity-75' : ''}`}
                         >
@@ -264,7 +265,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
             if (a.author.id === currentUserId && b.author.id !== currentUserId) return -1;
             if (a.author.id !== currentUserId && b.author.id === currentUserId) return 1;
         }
-        
+
         if (sortOrder === 'asc') {
             return a.title.localeCompare(b.title);
         } else {
@@ -303,7 +304,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 toast.success('Status updated successfully');
                 setEditingPostId(null);
                 setEditedStatus('');
-                const updatedPosts = posts.map(post => 
+                const updatedPosts = posts.map(post =>
                     post.id === postId ? { ...post, status: editedStatus } : post
                 );
                 setPosts(updatedPosts);
@@ -324,7 +325,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     };
 
     const handleDeletePost = async (postId: number) => {
-        if (!((session?.user?.role && deleteRoles.includes(session.user.role)) || 
+        if (!((session?.user?.role && deleteRoles.includes(session.user.role)) ||
             Number(session?.user?.id) === posts.find(p => p.id === postId)?.author.id)) {
             toast.dismiss();
             toast.error('You do not have permission to delete this post.');
@@ -360,7 +361,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
             if (response.ok) {
                 toast.success('Permissions updated successfully');
-                
+
                 // Use the constant select fields
                 const updatedPosts = await fetch('/api/posts?select=' + JSON.stringify(POST_SELECT_FIELDS))
                     .then(res => res.json());
@@ -474,19 +475,19 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 {paginatedPosts.map((post) => (
                     <li key={post.id} className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0 p-3 border border-slate-200 dark:border-slate-700 rounded">
                         <div className="flex flex-col w-full md:w-1/2">
-                            <a className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium" 
-                               href={`/blogs/${post.slug}`} 
-                               target="_blank">
+                            <Link className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                                href={`/blogs/${post.slug}`}
+                                target="_blank">
                                 {post.title}
-                            </a>
+                            </Link>
                             <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                by {post.author.first_name} {post.author.last_name} 
+                                by {post.author.first_name} {post.author.last_name}
                                 <span className="text-slate-400 dark:text-slate-500">
                                     (@{post.author.username})
                                 </span>
                             </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-4 w-full md:w-auto">
                             <div className="text-sm text-slate-600 dark:text-slate-400">
                                 {editingPostId === post.id ? (
@@ -499,7 +500,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                                                     disabled={isPostProcessing(post.id)}
                                                 >
-                                                    {(hasApproveRights || post.author.id === currentUserId) ? ( 
+                                                    {(hasApproveRights || post.author.id === currentUserId) ? (
                                                         <>
                                                             <option value="published">Published</option>
                                                             <option value="pending">Pending</option>
@@ -534,15 +535,14 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                     </>
                                 ) : (
                                     <div className="flex items-center space-x-4">
-                                        <span className={`px-2 py-1 rounded text-xs ${
-                                            post.status === 'published' 
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                : post.status === 'pending'
+                                        <span className={`px-2 py-1 rounded text-xs ${post.status === 'published'
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                            : post.status === 'pending'
                                                 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                    : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                                        }`}>
-                                            {post.status === 'pending' && !hasApproveRights 
-                                                ? 'Waiting for Approval' 
+                                                : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                                            }`}>
+                                            {post.status === 'pending' && !hasApproveRights
+                                                ? 'Waiting for Approval'
                                                 : post.status}
                                         </span>
                                         {(hasApproveRights || post.author.id === currentUserId) && (
@@ -560,7 +560,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                     </div>
                                 )}
                             </div>
-                            
+
                             {hasPermissionForPost(post) && (
                                 <div className="flex items-center space-x-2">
                                     <button
