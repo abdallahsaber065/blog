@@ -3,6 +3,7 @@ import { FiDownload, FiChevronDown, FiChevronUp, FiCopy, FiCheck } from 'react-i
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import { getFileIcon } from '@/components/Admin/FileIcons';
+import Link from 'next/link';
 
 interface InlineFileProps {
     src: string;
@@ -68,7 +69,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                 } else {
                     codeAsMdx = `\`\`\`${lang}\n${content}\n\`\`\``;
                 }
-                
+
                 try {
                     const response = await fetch('/api/serializeContent', {
                         method: 'POST',
@@ -152,13 +153,12 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                 <div className="p-4 flex flex-col items-center gap-4 text-center">
                     <p className="text-red-500">{error}</p>
                     {fileSize > MAX_PREVIEW_SIZE && (
-                        <a
-                            href={`/api/files/download?file_url_name=${file_url_name}`}
+                        <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                             download
                             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center gap-2"
                         >
                             <FiDownload /> Download File
-                        </a>
+                        </Link>
                     )}
                 </div>
             );
@@ -232,15 +232,14 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                                     {isCopied ? <FiCheck /> : <FiCopy />}
                                 </button>
                             )}
-                            <a
-                                href={`/api/files/download?file_url_name=${file_url_name}`}
+                            <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                                 download
                                 className="p-2 text-blue-500 hover:text-blue-600"
                                 onClick={(e) => e.stopPropagation()}
                                 title="Download file"
                             >
                                 <FiDownload />
-                            </a>
+                            </Link>
                         </span>
                     </span>
                 </span>
@@ -259,7 +258,7 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                     {getFileIcon(filename)}
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                     {isProgrammingFile(filename) && (
-                        <button 
+                        <button
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
                             aria-label="Collapse"
                         >
@@ -268,15 +267,14 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                     )}
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                    <a
-                        href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
                         <FiDownload />
-                    </a>
+                    </Link>
                 </div>
             </div>
 

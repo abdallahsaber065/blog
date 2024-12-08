@@ -85,33 +85,30 @@ const Footer = () => {
 
         {/* Social Links */}
         <div className="flex justify-center space-x-6 mb-6">
-          <a
-            href={siteMetadata.linkedin}
+          <Link href={siteMetadata.linkedin}
             className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
             aria-label="LinkedIn"
             target="_blank"
             rel="noopener noreferrer"
           >
             <LinkedinIcon className="w-5 h-5" />
-          </a>
-          <a
-            href={siteMetadata.twitter}
+          </Link>
+          <Link href={siteMetadata.twitter}
             className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
             aria-label="Twitter"
             target="_blank"
             rel="noopener noreferrer"
           >
             <TwitterIcon className="w-5 h-5" />
-          </a>
-          <a
-            href={siteMetadata.github}
+          </Link>
+          <Link href={siteMetadata.github}
             className="transform hover:scale-110 transition-transform text-slate-300 hover:text-white"
             aria-label="GitHub"
             target="_blank"
             rel="noopener noreferrer"
           >
             <GithubIcon className="w-5 h-5" />
-          </a>
+          </Link>
         </div>
 
         {/* Bottom Bar */}
@@ -120,13 +117,12 @@ const Footer = () => {
             <span>&copy; 2024 Dev Trend. All rights reserved.</span>
             <div>
               Made with ❤️ by{" "}
-              <a
-                href="https://abdallah-saber.vercel.app/"
+              <Link href="https://abdallah-saber.vercel.app/"
                 className="underline hover:text-primary transition-colors"
                 target="_blank"
               >
                 Abdallah Saber
-              </a>
+              </Link>
             </div>
           </div>
         </div>

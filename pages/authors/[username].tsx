@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
 import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 
 interface AuthorProps {
     author: {
@@ -65,9 +66,9 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
                         {author.posts.map((post) => (
                             <li key={post.id} className="border-b border-slate-300 dark:border-slate-700 pb-4">
                                 <h3 className="text-xl font-bold text-slate-800 dark:text-light">
-                                    <a href={`/posts/${post.slug}`} className="hover:underline">
+                                    <Link href={`/posts/${post.slug}`} className="hover:underline">
                                         {post.title}
-                                    </a>
+                                    </Link>
                                 </h3>
                                 <p className="text-slate-600 dark:text-slate-400 mt-2">{post.excerpt}</p>
                                 {post.featured_image_url && (

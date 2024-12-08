@@ -4,6 +4,7 @@ import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import FileSelector from '../../Admin/FileSelector';
 import { getFileIcon } from '@/components/Admin/FileIcons';
+import Link from 'next/link';
 
 interface FileProps {
     id: string;
@@ -151,7 +152,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                     {getFileIcon(filename)}
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                     {isProgrammingFile(filename) && (
-                        <button 
+                        <button
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
                             aria-label={isExpanded ? "Collapse" : "Expand"}
                         >
@@ -172,15 +173,14 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                             {isCopied ? <FiCheck /> : <FiCopy />}
                         </button>
                     )}
-                    <a
-                        href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
                         <FiDownload />
-                    </a>
+                    </Link>
                     <button
                         onClick={(e) => {
                             e.stopPropagation();

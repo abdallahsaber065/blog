@@ -6,6 +6,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { getFileIcon } from '@/components/Admin/FileIcons';
+import Link from 'next/link';
 
 
 if (typeof Promise.withResolvers === 'undefined') {
@@ -46,7 +47,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
 
     // if not filename: take the last part of the src
     filename = filename || src.split('/').pop() || 'File';
-    
+
     const isProgrammingFile = (filename: string): boolean => {
         const programmingExtensions = [
             '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c',
@@ -64,7 +65,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
     const fetchFileContent = async () => {
         setTriedToFetch(true);
         if (!isProgrammingFile(filename) && !isPdfFile(filename)) return;
-        
+
         if (fileContentCache[src]) {
             setFileContent(fileContentCache[src]);
             return;
@@ -185,13 +186,12 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                 <div className="p-4 flex flex-col items-center gap-4 text-center">
                     <p className="text-red-500">{error}</p>
                     {fileSize > MAX_PREVIEW_SIZE && (
-                        <a
-                            href={src}
+                        <Link                             href={src}
                             download
                             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center gap-2"
                         >
                             <FiDownload /> Download File
-                        </a>
+                        </Link>
                     )}
                 </div>
             );
@@ -211,7 +211,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                         }
                     >
                         {Array.from(new Array(numPages), (el, index) => (
-                            <Page 
+                            <Page
                                 key={`page_${index + 1}`}
                                 pageNumber={index + 1}
                                 width={width || undefined}
@@ -279,7 +279,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     {getFileIcon(filename)}
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
-                        <button 
+                        <button
                             className="text-blue-500 hover:text-blue-600 flex-shrink-0"
                             aria-label={isExpanded ? "Collapse" : "Expand"}
                         >
@@ -300,15 +300,14 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                             {isCopied ? <FiCheck /> : <FiCopy />}
                         </button>
                     )}
-                    <a
-                        href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link                         href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
                         <FiDownload />
-                    </a>
+                    </Link>
                 </div>
             </div>
 
