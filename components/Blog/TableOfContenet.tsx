@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GithubSlugger from 'github-slugger';
+import Link from 'next/link';
 
 interface Heading {
     level: 'one' | 'two' | 'three';
@@ -59,7 +60,7 @@ const renderTOC = (
         <ul className="mt-4 font-in text-base mx-4 " dir="auto">
             {headings.map((heading) => (
                 <li key={`#${heading.slug}`} className="py-1" >
-                    <a
+                    <Link
                         href={`#${heading.slug}`}
                         data-level={heading.level}
                         className={`
@@ -95,7 +96,7 @@ const renderTOC = (
                                 {collapsedState[heading.slug] ? '▶' : '▼'} {/* Simple arrow indicator */}
                             </span>
                         )}
-                    </a>
+                    </Link>
                     {heading.children && heading.children.length > 0 && !collapsedState[heading.slug] && renderTOC(heading.children, collapsedState, toggleCollapse, highestLevel)}
                 </li>
             ))}

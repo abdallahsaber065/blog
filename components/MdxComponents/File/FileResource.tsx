@@ -1,6 +1,7 @@
 import React from 'react';
 import { FiDownload } from 'react-icons/fi';
 import { getFileIcon } from '@/components/Admin/FileIcons';
+import Link from 'next/link';
 
 interface FileResourceProps {
     src: string;
@@ -26,14 +27,13 @@ const FileResource: React.FC<FileResourceProps> = ({ src, filename }) => {
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                    <a
-                        href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         title="Download file"
                     >
                         <FiDownload />
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

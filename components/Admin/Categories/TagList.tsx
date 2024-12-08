@@ -2,6 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import { Tag } from '@prisma/client';
+import Link from 'next/link';
 
 interface TagListProps {
     tags: (Tag & { postCount: number })[];
@@ -68,9 +69,9 @@ export default function TagList({ tags, refreshTags }: TagListProps) {
                         <ul className="mt-2 ml-4">
                             {tagPosts[tag.id]?.map(post => (
                                 <li key={post.id} className="truncate">
-                                    <a href={`/blogs/${post.slug}`} className="text-blue-500 hover:underline">
+                                    <Link href={`/blogs/${post.slug}`} className="text-blue-500 hover:underline">
                                         {post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

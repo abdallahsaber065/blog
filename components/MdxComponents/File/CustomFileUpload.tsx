@@ -7,6 +7,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { getFileIcon } from '@/components/Admin/FileIcons';
+import Link from 'next/link';
 
 
 
@@ -65,7 +66,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
     if (!src) {
         src = "";
     }
-    
+
     // if not filename: take the last part of the src
     filename = filename || src.split('/').pop() || 'File';
 
@@ -232,15 +233,14 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                     )}
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                    <a
-                        href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-blue-500 hover:text-blue-600"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
                         <FiDownload />
-                    </a>
+                    </Link>
                     <button
                         onClick={(e) => {
                             e.stopPropagation();

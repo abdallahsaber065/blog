@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import BlogLayoutThree from "@/components/Blog/BlogLayoutThree";
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { useState } from 'react';
+import Link from 'next/link';
 
 // Define TypeScript types
 interface Post {
@@ -53,7 +54,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             },
         }),
         prisma.category.findMany({
-            where: {posts: {some: {status: "published"}}},
+            where: { posts: { some: { status: "published" } } },
             select: {
                 slug: true,
                 name: true,
@@ -113,15 +114,15 @@ const CategoryPage = ({ slug, posts, categories }: { slug: string, posts: Post[]
                     />
                     <ul>
                         <li key="all" className={`mb-2 ${slug === "all" ? 'font-bold text-blue-500' : ''}`}>
-                            <a href={`/categories/all`} className="hover:underline">
+                            <Link href={`/categories/all`} className="hover:underline">
                                 All
-                            </a>
+                            </Link>
                         </li>
                         {filteredCategories.map((category) => (
                             <li key={category.slug} className={`mb-2 ${category.slug === slug ? 'font-bold text-blue-500' : ''}`}>
-                                <a href={`/categories/${category.slug}`} className="hover:underline">
+                                <Link href={`/categories/${category.slug}`} className="hover:underline">
                                     {category.name}
-                                </a>
+                                </Link>
                             </li>
                         ))}
                     </ul>
