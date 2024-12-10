@@ -36,13 +36,6 @@ jobs:
           rm -rf temp
         fi
 
-    - name: Configure npm to use a different directory for global installations
-      run: |
-        mkdir ~/.npm-global
-        npm config set prefix '~/.npm-global'
-        echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.profile
-        export PATH=~/.npm-global/bin:$PATH
-
     - name: Install dependencies
       run: npm ci
 
