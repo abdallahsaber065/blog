@@ -22,7 +22,6 @@ jobs:
         echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         echo "PORT=3000" >> $GITHUB_ENV
-        echo "HOME=/root" >> $GITHUB_ENV
 
     - name: Fetch the latest changes
       run: git fetch origin main
@@ -35,10 +34,12 @@ jobs:
         if [ -d "temp" ]; then
           rm -rf temp
         fi
+    # print all files in the current directory to see if the files are there
+    - name: List all files in the current directory
+      run: ls -la
 
     - name: Install dependencies
       run: |
-        sudo chown -R 1001:127 "~/.npm"
         npm ci
 
     - name: Build the project in temp directory
