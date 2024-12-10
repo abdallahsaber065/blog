@@ -36,11 +36,10 @@ jobs:
           rm -rf temp
         fi
 
-    - name: Fix npm permissions
-      run: sudo chown -R 1001:127 "/root/.npm"
-
     - name: Install dependencies
-      run: npm ci
+      run: |
+        sudo chown -R 1001:127 "~/.npm"
+        npm ci
 
     - name: Build the project in temp directory
       run: |
