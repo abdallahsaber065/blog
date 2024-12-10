@@ -36,13 +36,8 @@ jobs:
           rm -rf temp
         fi
 
-    - name: Cache Node.js modules
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+    - name: Fix npm permissions
+      run: sudo chown -R $USER:$(id -gn $USER) /root/.npm
 
     - name: Install dependencies
       run: npm ci
