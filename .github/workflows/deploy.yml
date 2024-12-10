@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -22,21 +25,14 @@ jobs:
         echo "HOME=/root" >> $GITHUB_ENV
 
     - name: Fetch the latest changes
-      run: |
-        echo -e ">>> \033[1;34mFetching the latest changes...\033[0m"
-        git fetch origin main || { echo -e "\033[1;31mFailed to fetch the latest changes\033[0m"; exit 1; }
-        echo -e "\033[1;32mLatest changes fetched successfully\033[0m"
+      run: git fetch origin main
 
     - name: Reset to Main branch
-      run: |
-        echo -e ">>> \033[1;34mResetting to main branch...\033[0m"
-        git reset --hard origin/main || { echo -e "\033[1;31mFailed to reset to main branch\033[0m"; exit 1; }
-        echo -e "\033[1;32mReset to main branch successfully\033[0m" 
+      run: git reset --hard origin/main
 
     - name: Clean up old temp directory if exists
       run: |
         if [ -d "temp" ]; then
-          echo -e ">>> \033[1;34mCleaning up old temp directory...\033[0m"
           rm -rf temp
         fi
 
@@ -49,42 +45,27 @@ jobs:
           ${{ runner.os }}-node-
 
     - name: Install dependencies
-      run: |
-        echo -e ">>> \033[1;34mInstalling dependencies...\033[0m"
-        npm ci || { echo -e "\033[1;31mFailed to install dependencies\033[0m"; exit 1; }
-        echo -e "\033[1;32mDependencies installed successfully\033[0m"
+      run: npm ci
 
     - name: Build the project in temp directory
       run: |
-        echo -e ">>> \033[1;34mBuilding the project...\033[0m"
         mkdir -p temp
-        BUILD_DIR=temp npm run build || { 
-          echo -e "\033[1;31mBuild failed\033[0m"
-          rm -rf temp
-          exit 1
-        }
-        echo -e "\033[1;32mBuild completed successfully\033[0m"
+        BUILD_DIR=temp npm run build
 
     - name: Verify build output
       run: |
-        if [ ! -d "temp" ; then
-          echo -e "\033[1;31mBuild output is invalid!\033[0m"
+        if [ ! -d "temp" ]; then
           exit 1
         fi
-        echo -e "\033[1;32mBuild output verified\033[0m"
 
     - name: Create release directory if not exists
       run: |
-        echo -e ">>> \033[1;34mCreating release directory if not exists...\033[0m"
         if [ ! -d "releases" ]; then
           mkdir releases
         fi
 
     - name: Move the build to releases directory with timestamp
-      run: |
-        echo -e ">>> \033[1;34mMoving build to releases directory...\033[0m"
-        mv temp "$NEW_BUILD_DIR" || { echo -e "\033[1;31mFailed to move build to releases directory\033[0m"; exit 1; }
-        echo -e "\033[1;32mBuild moved to $NEW_BUILD_DIR\033[0m"
+      run: mv temp "$NEW_BUILD_DIR"
 
     - name: Install SSH client
       run: sudo apt-get install -y openssh-client
@@ -97,41 +78,30 @@ jobs:
     - name: Transfer build to VPS
       env:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
-      run: |
-        echo -e ">>> \033[1;34mTransferring build to VPS...\033[0m"
-        scp -r $NEW_BUILD_DIR root@146.190.199.118:/var/www/devtrend.tech/releases/ || { echo -e "\033[1;31mFailed to transfer build to VPS\033[0m"; exit 1; }
-        echo -e "\033[1;32mBuild transferred to VPS successfully\033[0m"
+      run: scp -r $NEW_BUILD_DIR root@146.190.199.118:/var/www/devtrend.tech/releases/
 
     - name: Update the symbolic link on VPS
       env:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
-        echo -e ">>> \033[1;34mUpdating symbolic link on VPS...\033[0m"
         ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn releases/$NEW_BUILD_DIR .next || { 
-          echo -e '\033[1;31mFailed to update symbolic link\033[0m'; 
           ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
           exit 1; 
         }"
-        echo -e "\033[1;32mRelease $NEW_BUILD_DIR staged successfully on VPS\033[0m"
 
     - name: Reload the pm2 process on VPS
       env:
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
-        echo -e ">>> \033[1;34mReloading the pm2 process on VPS...\033[0m"
         ssh root@146.190.199.118 "cd /var/www/devtrend.tech && PORT=3000 pm2 reload devtrend-tech --update-env || { 
-          echo -e '\033[1;31mFailed to reload pm2 process\033[0m'; 
           ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
           exit 1; 
         }"
-        echo -e "\033[1;32mPM2 process reloaded successfully on VPS\033[0m"
 
     - name: Check the number of releases and keep only 3 latest releases on VPS
       run: |
-        echo -e ">>> \033[1;34mRemoving old releases on VPS...\033[0m"
         ssh root@146.190.199.118 "cd /var/www/devtrend.tech && RELEASES_COUNT=$(find releases -mindepth 1 -maxdepth 1 -type d | wc -l)
         if [ '$RELEASES_COUNT' -gt 3 ]; then
-          find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {} || { echo -e '\033[1;31mFailed to remove old releases\033[0m'; exit 1; }
-          echo -e '\033[1;32mOld releases removed successfully\033[0m'
+          find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {}
         fi"
