@@ -87,10 +87,10 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
       run: scp -r $NEW_BUILD_DIR root@146.190.199.118:/var/www/devtrend.tech/releases/
 
-    #         echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
     - name: Get the current release on VPS
       run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && echo 'CURRENT_RELEASE=$(readlink .next)' >> $GITHUB_ENV"
+        CURRENT_RELEASE=$(ssh root@146.190.199.118 "cd /var/www/devtrend.tech && readlink .next")
+        echo "CURRENT_RELEASE=$CURRENT_RELEASE" >> $GITHUB_ENV
 
     - name: Update the symbolic link on VPS
       env:
