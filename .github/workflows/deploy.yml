@@ -93,8 +93,9 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn releases/$NEW_BUILD_DIR .next || { 
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn releases/$NEW_BUILD_DIR .next && echo 'Symbolic link updated to $NEW_BUILD_DIR' || { 
           ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
+          echo 'Failed to update symbolic link, reverted to $CURRENT_RELEASE'
           exit 1; 
         }"
 
