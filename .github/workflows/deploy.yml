@@ -32,7 +32,7 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        echo "NEW_BUILD_DIR=/var/www/devtrend.tech/releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         echo "PORT=3000" >> $GITHUB_ENV
 
     - name: Fetch the latest changes
@@ -64,7 +64,9 @@ jobs:
 
     - name: Create release directory if not exists
       run: |
-        mkdir -p /var/www/devtrend.tech/releases
+        if [ ! -d "releases" ]; then
+          mkdir releases
+        fi
 
     - name: Move the build to releases directory with timestamp
       run: mv temp "$NEW_BUILD_DIR"
@@ -95,7 +97,7 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn $NEW_BUILD_DIR .next && echo 'Symbolic link updated to $NEW_BUILD_DIR' || { 
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn /var/www/devtrend.tech/$NEW_BUILD_DIR .next && echo 'Symbolic link updated to /var/www/devtrend.tech/$NEW_BUILD_DIR' || { 
           ln -sfn $CURRENT_RELEASE .next  # Revert to the old release
           echo 'Failed to update symbolic link, reverted to $CURRENT_RELEASE'
           exit 1; 
