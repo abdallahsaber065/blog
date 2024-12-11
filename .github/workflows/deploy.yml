@@ -32,7 +32,6 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
         echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         echo "PORT=3000" >> $GITHUB_ENV
 
@@ -88,6 +87,11 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
       run: scp -r $NEW_BUILD_DIR root@146.190.199.118:/var/www/devtrend.tech/releases/
 
+    #         echo "CURRENT_RELEASE=$(readlink .next)" >> $GITHUB_ENV
+    - name: Get the current release on VPS
+      run: |
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && echo 'CURRENT_RELEASE=$(readlink .next)' >> $GITHUB_ENV"
+
     - name: Update the symbolic link on VPS
       env:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
@@ -98,6 +102,9 @@ jobs:
           echo 'Failed to update symbolic link, reverted to $CURRENT_RELEASE'
           exit 1; 
         }"
+
+    - name: Wait for 3 seconds
+      run: sleep 3
 
     - name: Reload the pm2 process on VPS
       env:
