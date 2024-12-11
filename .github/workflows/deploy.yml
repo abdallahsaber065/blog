@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    environment: production
     runs-on: ubuntu-latest
 
     steps:
@@ -34,9 +35,6 @@ jobs:
         if [ -d "temp" ]; then
           rm -rf temp
         fi
-    # print all files in the current directory to see if the files are there
-    - name: List all files in the current directory
-      run: ls -la
 
     - name: Install dependencies
       run: |
