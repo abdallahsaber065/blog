@@ -32,7 +32,7 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        echo "NEW_BUILD_DIR=releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        echo "NEW_BUILD_DIR=/var/www/devtrend.tech/releases/$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         echo "PORT=3000" >> $GITHUB_ENV
 
     - name: Fetch the latest changes
@@ -97,8 +97,8 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn /var/www/devtrend.tech/releases/$NEW_BUILD_DIR .next && echo 'Symbolic link updated to $NEW_BUILD_DIR' || { 
-          ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn $NEW_BUILD_DIR .next && echo 'Symbolic link updated to $NEW_BUILD_DIR' || { 
+          ln -sfn $CURRENT_RELEASE .next  # Revert to the old release
           echo 'Failed to update symbolic link, reverted to $CURRENT_RELEASE'
           exit 1; 
         }"
@@ -111,7 +111,7 @@ jobs:
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
       run: |
         ssh root@146.190.199.118 "cd /var/www/devtrend.tech && PORT=3000 pm2 reload devtrend-tech --update-env || { 
-          ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
+          ln -sfn $CURRENT_RELEASE .next  # Revert to the old release
           exit 1; 
         }"
 
