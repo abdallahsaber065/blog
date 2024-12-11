@@ -80,6 +80,9 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+    - name: Add remote server to known hosts
+      run: ssh-keyscan 146.190.199.118 >> ~/.ssh/known_hosts
+
     - name: Transfer build to VPS
       env:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
