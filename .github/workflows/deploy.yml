@@ -92,19 +92,11 @@ jobs:
         CURRENT_RELEASE=$(ssh root@146.190.199.118 "cd /var/www/devtrend.tech && readlink .next")
         echo "CURRENT_RELEASE=$CURRENT_RELEASE" >> $GITHUB_ENV
 
-    - name: Update the symbolic link on VPS
+    - name: Execute redeploy script on VPS
       env:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
-      run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && ln -sfn releases/$NEW_BUILD_DIR .next && echo 'Symbolic link updated to $NEW_BUILD_DIR' || { 
-          ln -sfn releases/$CURRENT_RELEASE .next  # Revert to the old release
-          echo 'Failed to update symbolic link, reverted to $CURRENT_RELEASE'
-          exit 1; 
-        }"
-
-    - name: Wait for 3 seconds
-      run: sleep 3
+      run: ssh root@146.190.199.118 "cd /var/www/devtrend.tech && chmod +x redeploy.sh && ./redeploy.sh"
 
     - name: Reload the pm2 process on VPS
       env:
