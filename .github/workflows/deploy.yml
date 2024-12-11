@@ -109,7 +109,7 @@ jobs:
 
     - name: Check the number of releases and keep only 3 latest releases on VPS
       run: |
-        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && RELEASES_COUNT=$(find releases -mindepth 1 -maxdepth 1 -type d | wc -l)
-        if [ '$RELEASES_COUNT' -gt 3 ]; then
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && RELEASES_COUNT=\$(find releases -mindepth 1 -maxdepth 1 -type d | wc -l || echo 0) &&
+        if [ \"\$RELEASES_COUNT\" -gt 3 ]; then
           find releases -mindepth 1 -maxdepth 1 -type d | sort | head -n -3 | xargs -I {} rm -rf {}
         fi"
