@@ -64,9 +64,7 @@ jobs:
 
     - name: Create release directory if not exists
       run: |
-        if [ ! -d "releases" ]; then
-          mkdir releases
-        fi
+        mkdir -p /var/www/devtrend.tech/releases
 
     - name: Move the build to releases directory with timestamp
       run: mv temp "$NEW_BUILD_DIR"
