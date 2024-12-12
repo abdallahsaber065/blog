@@ -103,9 +103,6 @@ jobs:
           exit 1; 
         }"
 
-    - name: Wait for 3 seconds
-      run: sleep 3
-
     - name: Reload the pm2 process on VPS
       env:
         CURRENT_RELEASE: ${{ env.CURRENT_RELEASE }}
