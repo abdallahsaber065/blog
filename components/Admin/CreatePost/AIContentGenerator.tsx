@@ -102,7 +102,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     const [showImageSelector, setShowImageSelector] = useState(false);
 
     const handleFileSelect = (file: FileProps) => {
-        const fileUrl = `https://collage.devtrend.tech/api/files/download?file_url_name=${file.file_url.split('/').pop()}`;
+        const fileUrl = `${process.env.NEXT_PUBLIC_REMOTE_URL}/api/files/download?file_url_name=${file.file_url.split('/').pop()}`;
         setSelectedFiles((prev) => [...prev, fileUrl]);
         onFileSelect([...selectedFiles, fileUrl]);
     };
