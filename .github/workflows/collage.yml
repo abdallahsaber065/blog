@@ -12,14 +12,14 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       MAILGUN_USER: ${{ secrets.MAILGUN_USER }}
       MAILGUN_PASS: ${{ secrets.MAILGUN_PASS }}
-      NEXT_PUBLIC_REMOTE_URL: ${{ vars.NEXT_PUBLIC_REMOTE_URL }}
-      NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
-      NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
+      NEXT_PUBLIC_REMOTE_URL: ${{ vars.COLLAGE_NEXT_PUBLIC_REMOTE_URL }}
+      NEXT_PUBLIC_BASE_URL: ${{ vars.COLLAGE_NEXT_PUBLIC_BASE_URL }}
+      NEXTAUTH_URL: ${{ vars.COLLAGE_NEXTAUTH_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       CONTENT_GENERATOR_API_LINK: ${{ vars.CONTENT_GENERATOR_API_LINK }}
       NEXT_PUBLIC_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_MEASUREMENT_ID }}
-      PORT: ${{ vars.PORT }}
-      WEBSITE_TYPE: ${{ vars.WEBSITE_TYPE }}
+      PORT: ${{ vars.COLLAGE_PORT }}
+      WEBSITE_TYPE: ${{ vars.COLLAGE_WEBSITE_TYPE }}
 
     steps:
     - name: Check out the repository
