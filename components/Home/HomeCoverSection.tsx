@@ -20,6 +20,7 @@ interface HomeCoverSectionProps {
     published_at: string | null;
     featured_image_url: string;
     tags: { slug: string; name: string }[];
+    category: { slug: string; name: string } | null;
   }[];
 }
 
@@ -41,10 +42,10 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
           priority
         />
         <div className='w-full lg:w-3/4 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col items-start justify-center z-20 text-light'>
-          {post.tags?.[0] && (
+          {post.category && (
             <Tag
-              link={`/tags/${slug(post.tags[0].name)}`}
-              name={post.tags[0].name}
+              link={`/categories/${slug(post.category.name)}`}
+              name={post.category.name}
             />
           )}
           <Link href={`/blogs/${post.slug}`} className='mt-6'>

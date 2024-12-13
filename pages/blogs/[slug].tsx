@@ -68,6 +68,12 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
                     slug: true,
                 },
             },
+            category: {
+                select: {
+                    name: true,
+                    slug: true,
+                },
+            },
         },
     });
 
@@ -230,10 +236,10 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 )}
                 <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        {deserializedPost.tags?.[0] && (
+                        {deserializedPost.category && ( 
                             <Tag
-                                name={deserializedPost.tags[0].name}
-                                link={`/tags/${deserializedPost.tags[0].slug}`}
+                                name={deserializedPost.category.name}
+                                link={`/categories/${deserializedPost.category.slug}`}
                                 className="px-6 text-sm py-2"
                             />
                         )}
@@ -257,7 +263,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                     />
                 </div>
 
-                <BlogDetails post={deserializedPost} postSlug={deserializedPost.slug} tags={deserializedPost.tags} />
+                <BlogDetails post={deserializedPost} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
                     <TableOfContent mdxContent={post.content} />
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />

@@ -13,6 +13,7 @@ interface FeaturedPostsProps {
     published_at: string | null;
     featured_image_url: string;
     tags: { slug: string; name: string }[];
+    category: { slug: string; name: string } | null;
   }[];
 }
 
