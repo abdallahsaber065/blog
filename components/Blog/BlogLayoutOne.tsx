@@ -15,6 +15,7 @@ interface BlogLayoutOneProps {
     published_at: string | null;
     featured_image_url: string;
     tags: { slug: string; name: string }[];
+    category: { slug: string; name: string } | null;
   };
 }
 
@@ -38,10 +39,10 @@ const BlogLayoutOne = ({ post }: BlogLayoutOneProps) => {
       />
 
       <div className="w-full absolute bottom-0 p-4 xs:p-6 sm:p-10 z-20">
-        {post.tags.length > 0 && (
+        {post.category && (
           <Tag
-            link={`/tags/${slug(post.tags[0].name)}`}
-            name={post.tags[0].name}
+            link={`/categories/${slug(post.category?.name)}`}
+            name={post.category?.name || ''}
             className="px-6 text-xs sm:text-sm py-1 sm:py-2 !border"
           />
         )}

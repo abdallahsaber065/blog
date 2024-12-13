@@ -14,6 +14,7 @@ interface BlogLayoutTwoProps {
     published_at: string | null;
     featured_image_url: string;
     tags: { slug: string; name: string }[];
+    category: { slug: string; name: string } | null;
   };
 }
 
@@ -37,9 +38,9 @@ const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
       </Link>
 
       <div className="col-span-12 lg:col-span-8 w-full">
-        {post.tags.length > 0 && (
+        {post.category && (
           <span className="inline-block w-full uppercase text-accent dark:text-accentDark font-semibold text-xs sm:text-sm">
-            {post.tags[0].name}
+            {post.category.name}
           </span>
         )}
         <Link href={`/blogs/${post.slug}`} className="inline-block my-1">
