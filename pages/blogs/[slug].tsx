@@ -245,9 +245,9 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                     </div>
                     <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
                     <Image
-                        src={deserializedPost.featured_image_url || '/default-image.jpg'}
+                        src={deserializedPost.featured_image_url || '/static/images/default-image.jpg'}
                         placeholder="blur"
-                        blurDataURL={deserializedPost.featured_image_url || '/default-image.jpg'}
+                        blurDataURL={deserializedPost.featured_image_url || '/static/images/default-image.jpg'}
                         alt={deserializedPost.title}
                         width={800}
                         height={600}
