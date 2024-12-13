@@ -22,9 +22,9 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
     <div className="group flex flex-col items-center text-dark dark:text-light">
       <Link href={`/blogs/${post.slug}`} className="h-full rounded-xl overflow-hidden">
         <Image
-          src={post.featured_image_url || "/default-image.jpg"}
+          src={post.featured_image_url || "/static/images/default-image.jpg"}
           placeholder="blur"
-          blurDataURL={post.featured_image_url || "/default-image.jpg"}
+          blurDataURL={post.featured_image_url || "/static/images/default-image.jpg"}
           alt={post.title}
           width={800}
           height={600}
