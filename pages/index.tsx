@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import HomeCoverSection from "@/components/Home/HomeCoverSection";
 import FeaturedPosts from "@/components/Home/FeaturedPosts";
 import RecentPosts from "@/components/Home/RecentPosts";
-import { GetStaticProps } from 'next';
 
 export const getStaticProps = async () => {
   const allBlogs = await prisma.post.findMany({
@@ -15,6 +14,12 @@ export const getStaticProps = async () => {
       published_at: true,
       featured_image_url: true,
       tags: {
+        select: {
+          name: true,
+          slug: true
+        }
+      },
+      category: {
         select: {
           name: true,
           slug: true
