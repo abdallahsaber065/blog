@@ -259,15 +259,11 @@ const CreatePost: React.FC = () => {
     };
 
     const handleFileSelection = (files: string[]) => {
-        // Prevent duplicate files
-        const uniqueFiles = Array.from(new Set([...selectedFiles, ...files]));
-        setSelectedFiles(uniqueFiles);
+        setSelectedFiles(files);
     };
 
     const handleImageSelection = (images: string[]) => {
-        // Prevent duplicate images
-        const uniqueImages = Array.from(new Set([...selectedImages, ...images]));
-        setSelectedImages(uniqueImages);
+        setSelectedImages(images);
     };
 
     return (
