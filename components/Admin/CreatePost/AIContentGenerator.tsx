@@ -100,6 +100,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
     const [showFileSelector, setShowFileSelector] = useState(false);
     const [showImageSelector, setShowImageSelector] = useState(false);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const handleFileSelect = (file: FileProps) => {
         const fileUrl = `${process.env.NEXT_PUBLIC_REMOTE_URL}/api/files/download?file_url_name=${file.file_url.split('/').pop()}`;
@@ -120,13 +121,20 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     };
 
     const removeFile = (fileUrl: string) => {
-        setSelectedFiles((prev) => prev.filter((file) => file.url !== fileUrl));
-        onFileSelect(selectedFiles.filter((file) => file.url !== fileUrl).map(file => file.url));
+        const updatedFiles = selectedFiles.filter((file) => file.url !== fileUrl);
+        setSelectedFiles(updatedFiles);
+        console.log(updatedFiles);
+        onFileSelect(updatedFiles.map(file => file.url));
+        console.log(updatedFiles.map(file => file.url));
     };
 
     const removeImage = (imageUrl: string) => {
         setSelectedImages((prev) => prev.filter((url) => url !== imageUrl));
         onImageSelect(selectedImages.filter((url) => url !== imageUrl));
+    };
+
+    const handleShowPreview = (imageUrl: string) => {
+        setPreviewImage(imageUrl);
     };
 
     return (
@@ -159,8 +167,9 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                         <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
                             {file.name}
                             <button
-                                className="ml-2 text-red-500 hover:text-red-700"
+                                className="ml-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                                 onClick={() => removeFile(file.url)}
+                                title="Remove file"
                             >
                                 &times;
                             </button>
@@ -168,15 +177,22 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                     ))}
                     {selectedImages.map((imageUrl, index) => (
                         <div key={index} className="relative group">
-                            <img src={imageUrl} alt={`Selected ${index}`} className="w-16 h-16 object-cover rounded" />
-                            <span className="absolute bottom-0 left-0 bg-white p-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                <img src={imageUrl} alt={`Preview ${index}`} className="w-32 h-32 object-cover" />
+                            <span className="absolute top-0 right-0">
+                                <button
+                                    className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                    onClick={() => removeImage(imageUrl)}
+                                    title="Remove image"
+                                >
+                                    &times;
+                                </button>
                             </span>
+                            <img src={imageUrl} alt={`Selected ${index}`} className="w-16 h-16 object-cover rounded" />
                             <button
-                                className="ml-2 text-red-500 hover:text-red-700"
-                                onClick={() => removeImage(imageUrl)}
+                                className="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleShowPreview(imageUrl)}
+                                title="Show Preview"
                             >
-                                &times;
+                                <span className="material-icons">expand_more</span>
                             </button>
                         </div>
                     ))}
@@ -283,6 +299,21 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                     onSelect={handleImageSelect}
                     folder='blog'
                 />
+            )}
+
+            {previewImage && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-4 rounded shadow-lg w-3/4">
+                        <h2 className="text-xl font-bold mb-4">Image Preview</h2>
+                        <img src={previewImage} alt="Preview" className="w-full h-auto" />
+                        <button
+                            className="mt-4 bg-red-500 text-white p-2 rounded"
+                            onClick={() => setPreviewImage(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
