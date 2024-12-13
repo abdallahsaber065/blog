@@ -117,7 +117,8 @@ const CreatePost: React.FC = () => {
                 website_type: process.env.WEBSITE_TYPE,
                 files: filesAndImages.length > 0 ? filesAndImages : null
             }, {
-                timeout: 1000000 // 5 minutes
+                // 30 minutes timeout
+                timeout: 1800000
             });
 
             const outline = outlineResponse.data?.outline;
@@ -158,7 +159,7 @@ const CreatePost: React.FC = () => {
                 website_type: process.env.WEBSITE_TYPE,
                 files: filesAndImages.length > 0 ? filesAndImages : null
             }, {
-                timeout: 1000000 // 5 minutes
+                timeout: 1800000 // 
             });
 
             const generatedContent = contentResponse.data?.content;
@@ -174,7 +175,7 @@ const CreatePost: React.FC = () => {
                 old_tags: oldTags.map(tag => tag.value),
                 old_categories: oldCategories.map(category => category.value),
             }, {
-                timeout: 1000000 // 5 minutes
+                timeout: 1800000 // 
             });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
@@ -258,11 +259,15 @@ const CreatePost: React.FC = () => {
     };
 
     const handleFileSelection = (files: string[]) => {
-        setSelectedFiles(files);
+        // Prevent duplicate files
+        const uniqueFiles = Array.from(new Set([...selectedFiles, ...files]));
+        setSelectedFiles(uniqueFiles);
     };
 
     const handleImageSelection = (images: string[]) => {
-        setSelectedImages(images);
+        // Prevent duplicate images
+        const uniqueImages = Array.from(new Set([...selectedImages, ...images]));
+        setSelectedImages(uniqueImages);
     };
 
     return (

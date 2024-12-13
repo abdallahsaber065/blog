@@ -75,7 +75,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const [selectedImage, setSelectedImage] = useState(currentImage);
     const [selectedImageDetails, setSelectedImageDetails] = useState<ImageProps | null>(null);
     const { data: session } = useSession();
-    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
+    const NEXT_PUBLIC_BASE_URL =  process.env.NEXT_PUBLIC_REMOTE_URL;
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         image: ImageProps | null;

@@ -74,7 +74,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
     const [uploadLoading, setUploadLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<FileProps | null>(null);
     const { data: session } = useSession();
-    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_REMOTE_URL;
+    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_REMOTE_URL;
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         file: FileProps | null;
