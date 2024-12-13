@@ -6,6 +6,8 @@ import LogViewer from './LogViewer';
 import FileSelector from '@/components/Admin/FileSelector';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import { FaFile, FaImage } from 'react-icons/fa';
+// expand icon
+import { AiOutlineExpand } from 'react-icons/ai';
 
 interface AIContentGeneratorProps {
     className?: string;
@@ -186,13 +188,13 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                                     &times;
                                 </button>
                             </span>
-                            <img src={imageUrl} alt={`Selected ${index}`} className="w-16 h-16 object-cover rounded" />
+                            <img src={imageUrl} className="w-16 h-16 object-cover rounded" />
                             <button
                                 className="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                 onClick={() => handleShowPreview(imageUrl)}
                                 title="Show Preview"
                             >
-                                <span className="material-icons">expand_more</span>
+                                <AiOutlineExpand />
                             </button>
                         </div>
                     ))}
