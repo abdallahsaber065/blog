@@ -96,25 +96,32 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     onImageSelect
 
 }) => {
-    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<{ url: string; name: string }[]>([]);
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
     const [showFileSelector, setShowFileSelector] = useState(false);
     const [showImageSelector, setShowImageSelector] = useState(false);
 
     const handleFileSelect = (file: FileProps) => {
         const fileUrl = `${process.env.NEXT_PUBLIC_REMOTE_URL}/api/files/download?file_url_name=${file.file_url.split('/').pop()}`;
-        setSelectedFiles((prev) => [...prev, fileUrl]);
-        onFileSelect([...selectedFiles, fileUrl]);
+        const fileName = file.file_name;
+
+        if (!selectedFiles.some(selectedFile => selectedFile.url === fileUrl)) {
+            const newFile = { url: fileUrl, name: fileName };
+            setSelectedFiles((prev) => [...prev, newFile]);
+            onFileSelect([...selectedFiles.map(f => f.url), fileUrl]);
+        }
     };
 
     const handleImageSelect = (image: ImageProps) => {
-        setSelectedImages((prev) => [...prev, image.file_url]);
-        onImageSelect([...selectedImages, image.file_url]);
+        if (!selectedImages.includes(image.file_url)) {
+            setSelectedImages((prev) => [...prev, image.file_url]);
+            onImageSelect([...selectedImages, image.file_url]);
+        }
     };
 
     const removeFile = (fileUrl: string) => {
-        setSelectedFiles((prev) => prev.filter((url) => url !== fileUrl));
-        onFileSelect(selectedFiles.filter((url) => url !== fileUrl));
+        setSelectedFiles((prev) => prev.filter((file) => file.url !== fileUrl));
+        onFileSelect(selectedFiles.filter((file) => file.url !== fileUrl).map(file => file.url));
     };
 
     const removeImage = (imageUrl: string) => {
@@ -148,27 +155,30 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-2 mt-1">
-                    {selectedFiles.map((fileUrl, index) => (
+                    {selectedFiles.map((file, index) => (
                         <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
-                            {fileUrl.split('=').pop()}
+                            {file.name}
                             <button
                                 className="ml-2 text-red-500 hover:text-red-700"
-                                onClick={() => removeFile(fileUrl)}
+                                onClick={() => removeFile(file.url)}
                             >
                                 &times;
                             </button>
                         </span>
                     ))}
                     {selectedImages.map((imageUrl, index) => (
-                        <span key={index} className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
-                            {imageUrl.split('/').pop()}
+                        <div key={index} className="relative group">
+                            <img src={imageUrl} alt={`Selected ${index}`} className="w-16 h-16 object-cover rounded" />
+                            <span className="absolute bottom-0 left-0 bg-white p-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                <img src={imageUrl} alt={`Preview ${index}`} className="w-32 h-32 object-cover" />
+                            </span>
                             <button
                                 className="ml-2 text-red-500 hover:text-red-700"
                                 onClick={() => removeImage(imageUrl)}
                             >
                                 &times;
                             </button>
-                        </span>
+                        </div>
                     ))}
                 </div>
             </div>
