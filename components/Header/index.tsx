@@ -81,12 +81,12 @@ const Header: React.FC<HeaderProps> = () => {
             </Link>
             <ul className="dropdown-content bg-light dark:bg-dark rounded-t-none p-2 left-1/2 transform -translate-x-1/2">
               <li>
-                <Link href="/tags" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/tags') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                <Link href="/tags/all" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/tags') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
                   Topics
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/categories') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
+                <Link href="/categories/all" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/categories') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
                   {process.env.NEXT_PUBLIC_REMOTE_URL?.includes('collage') ? 'Subjects' :
                   'Categories'}
                 </Link>
