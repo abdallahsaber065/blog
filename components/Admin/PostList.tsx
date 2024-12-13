@@ -254,16 +254,18 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
     const filteredPosts = posts.filter(post => {
         const matchesSearchTerm = post.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = categoryFilter === 'All' || post.category.name === categoryFilter;
-        const matchesAuthor = !authorFilter || post.author.first_name.toLowerCase().includes(authorFilter.toLowerCase()) || post.author.last_name.toLowerCase().includes(authorFilter.toLowerCase());
+        const matchesCategory = categoryFilter === 'All' || post.category?.name === categoryFilter;
+        const matchesAuthor = !authorFilter || 
+            post.author?.first_name?.toLowerCase().includes(authorFilter.toLowerCase()) || 
+            post.author?.last_name?.toLowerCase().includes(authorFilter.toLowerCase());
         const matchesDate = !dateFilter || post.created_at.includes(dateFilter);
         return matchesSearchTerm && matchesCategory && matchesAuthor && matchesDate;
     });
 
     const sortedPosts = filteredPosts.sort((a, b) => {
         if (!hasApproveRights) {
-            if (a.author.id === currentUserId && b.author.id !== currentUserId) return -1;
-            if (a.author.id !== currentUserId && b.author.id === currentUserId) return 1;
+            if (a.author?.id === currentUserId && b.author?.id !== currentUserId) return -1;
+            if (a.author?.id !== currentUserId && b.author?.id === currentUserId) return 1;
         }
 
         if (sortOrder === 'asc') {
@@ -386,7 +388,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
         }
 
         // Author has access
-        if (post.author.id === currentUserId) {
+        if (post.author?.id === currentUserId) {
             return true;
         }
 
@@ -421,9 +423,11 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                     className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
                 >
                     <option value="All">All Categories</option>
-                    {Array.from(new Set(posts.map(post => post.category.name))).map(category => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
+                    {Array.from(new Set(posts.map(post => post.category ? post.category.name : 'Unknown')))
+                        .filter((category: string) => category !== 'Unknown')
+                        .map((category: string) => (
+                            <option key={category} value={category}>{category}</option>
+                        ))}
                 </select>
                 <button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
@@ -481,9 +485,9 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                 {post.title}
                             </Link>
                             <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                by {post.author.first_name} {post.author.last_name}
+                                by {post.author?.first_name} {post.author?.last_name}
                                 <span className="text-slate-400 dark:text-slate-500">
-                                    (@{post.author.username})
+                                    (@{post.author?.username})
                                 </span>
                             </div>
                         </div>
@@ -492,7 +496,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                             <div className="text-sm text-slate-600 dark:text-slate-400">
                                 {editingPostId === post.id ? (
                                     <>
-                                        {(hasApproveRights || post.author.id === currentUserId) && (
+                                        {(hasApproveRights || post.author?.id === currentUserId) && (
                                             <>
                                                 <select
                                                     value={editedStatus}
@@ -500,7 +504,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
                                                     disabled={isPostProcessing(post.id)}
                                                 >
-                                                    {(hasApproveRights || post.author.id === currentUserId) ? (
+                                                    {(hasApproveRights || post.author?.id === currentUserId) ? (
                                                         <>
                                                             <option value="published">Published</option>
                                                             <option value="pending">Pending</option>
@@ -545,7 +549,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                 ? 'Waiting for Approval'
                                                 : post.status}
                                         </span>
-                                        {(hasApproveRights || post.author.id === currentUserId) && (
+                                        {(hasApproveRights || post.author?.id === currentUserId) && (
                                             <button
                                                 className="text-blue-500 hover:text-blue-600 disabled:opacity-50"
                                                 onClick={() => {
