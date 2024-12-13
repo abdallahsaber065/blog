@@ -17,6 +17,7 @@ import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
 import Embed from "@/components/MdxComponents/Embed/Embed";
 import { getSession } from 'next-auth/react';
 import FileResource from "@/components/MdxComponents/File/FileResource";
+import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -236,7 +237,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 )}
                 <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        {deserializedPost.category && ( 
+                        {deserializedPost.category && (
                             <Tag
                                 name={deserializedPost.category.name}
                                 link={`/categories/${deserializedPost.category.slug}`}
@@ -263,10 +264,24 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                     />
                 </div>
 
+
+
                 <BlogDetails post={deserializedPost} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
                     <TableOfContent mdxContent={post.content} />
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
+                </div>
+                <hr className="my-8" />
+
+                {/* Modern Tags Section */}
+                <div className="flex justify-center mt-4">
+                    <div className="flex flex-wrap gap-2 justify-center md:gap-4">
+                        {deserializedPost.tags && deserializedPost.tags.map((tag: { name: string; slug: string }) => (
+                            <Link key={tag.slug} href={`/tags/${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
+                                {tag.name}
+                            </Link>
+                        ))}
+                    </div>
                 </div>
             </article>
         </>
