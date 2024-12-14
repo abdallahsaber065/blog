@@ -87,6 +87,14 @@ jobs:
         NEW_BUILD_DIR: ${{ env.NEW_BUILD_DIR }}
       run: scp -r $NEW_BUILD_DIR root@146.190.199.118:/var/www/devtrend.tech/releases/
 
+    - name: Fetch the latest changes on VPS
+      run: |
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && git fetch origin main"
+
+    - name: Reset to Main branch on VPS
+      run: |
+        ssh root@146.190.199.118 "cd /var/www/devtrend.tech && git reset --hard origin/main"
+
     - name: Get the current release on VPS
       run: |
         CURRENT_RELEASE=$(ssh root@146.190.199.118 "cd /var/www/devtrend.tech && readlink .next") || CURRENT_RELEASE=".next"
