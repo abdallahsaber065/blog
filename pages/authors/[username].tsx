@@ -41,7 +41,7 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
                 <div className="flex flex-col items-center">
                     {author.profile_image_url ? (
                         <Image
-                            src={author.profile_image_url.startsWith('http') || author.profile_image_url.startsWith('/') ? author.profile_image_url : '/' + author.profile_image_url}
+                            src={process.env.NEXT_PUBLIC_BASE_URL + "/" + author.profile_image_url}
                             alt={`${author.username}'s profile image`}
                             className="rounded-full w-24 h-24 object-cover"
                             width={96}
