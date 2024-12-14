@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import HomeCoverSection from "@/components/Home/HomeCoverSection";
 import FeaturedPosts from "@/components/Home/FeaturedPosts";
 import RecentPosts from "@/components/Home/RecentPosts";
+import { GetStaticProps } from 'next';
 
 export const getStaticProps = async () => {
   const allBlogs = await prisma.post.findMany({
