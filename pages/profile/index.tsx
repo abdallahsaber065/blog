@@ -32,7 +32,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     const { data: session, status, update } = useSession();
     const router = useRouter();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [currentImage, setCurrentImage] = useState<string | null>(null);
+    const [currentImage, setCurrentImage] = useState<string | null>(session?.user.profile_image_url || null);
     const [imageError, setImageError] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
