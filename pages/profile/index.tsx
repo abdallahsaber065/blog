@@ -178,7 +178,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 <div className="flex justify-center">
                                     {!imageError ? (
                                         <Image
-                                            src={currentImage || `/${user.profile_image_url}`}
+                                            src={currentImage || process.env.NEXT_PUBLIC_BASE_URL + `/${user.profile_image_url}`}
                                             alt="Profile Image"
                                             className="rounded-full w-24 h-24 object-cover p-1"
                                             onError={() => setImageError(true)}
