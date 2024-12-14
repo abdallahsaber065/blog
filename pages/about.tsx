@@ -4,44 +4,44 @@ import Link from 'next/link';
 import { SocialIcon } from 'react-social-icons';
 import { prisma } from '../lib/prisma';
 
-export async function getStaticProps() {
-  const editors = await prisma.user.findMany({
-    where: {
-      OR: [
-        { role: 'editor' },
-        { role: 'moderator' },
-      ]
-    },
-    select: {
-      id: true,
-      username: true,
-      first_name: true,
-      last_name: true,
-      bio: true,
-      profile_image_url: true,
-    },
-  });
+// export async function getStaticProps() {
+//   const editors = await prisma.user.findMany({
+//     where: {
+//       OR: [
+//         { role: 'editor' },
+//         { role: 'moderator' },
+//       ]
+//     },
+//     select: {
+//       id: true,
+//       username: true,
+//       first_name: true,
+//       last_name: true,
+//       bio: true,
+//       profile_image_url: true,
+//     },
+//   });
 
-  return {
-    props: { editors },
-    revalidate: 60, // Revalidate every 60 seconds
-  };
-}
+//   return {
+//     props: { editors },
+//     revalidate: false,
+//   };
+// }
 
-interface Editor {
-  id: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  bio: string;
-  profile_image_url: string | null;
-}
+// interface Editor {
+//   id: string;
+//   username: string;
+//   first_name: string;
+//   last_name: string;
+//   bio: string;
+//   profile_image_url: string | null;
+// }
 
-interface AboutPageProps {
-  editors: Editor[];
-}
+// interface AboutPageProps {
+//   editors: Editor[];
+// }
 
-const AboutPage: React.FC<AboutPageProps> = ({ editors }) => {
+const AboutPage: React.FC = () => {
   return (
     <main className="flex flex-col items-center justify-between w-full">
       {/* Hero Section */}
@@ -138,7 +138,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ editors }) => {
           </div>
         </section>
 
-        {/* Editors Grid Section */}
+        {/* Editors Grid Section
         <section className="container mx-auto text-center mb-8 sm:mb-16 px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {editors.map((editor) => (
@@ -163,7 +163,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ editors }) => {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
       </div>
     </main>
   );
