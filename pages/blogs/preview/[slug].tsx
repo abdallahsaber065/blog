@@ -5,7 +5,7 @@ import Tag from "@/components/Elements/Tag";
 import siteMetadata from "@/lib/siteMetaData";
 import { serialize } from 'next-mdx-remote/serialize';
 import { Options } from "@/lib/articles/mdxconfig";
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { prisma } from '@/lib/prisma';
 import React, { useEffect, useState } from "react";
 import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
@@ -19,28 +19,9 @@ import { getSession } from 'next-auth/react';
 import FileResource from "@/components/MdxComponents/File/FileResource";
 import Link from "next/link";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const posts = await prisma.post.findMany({
-        where: {
-            status: 'published',
-        },
-        select: {
-            slug: true,
-        },
-    });
-
-    const paths = posts.map((post) => ({
-        params: { slug: post.slug },
-    }));
-
-    return {
-        paths,
-        fallback: 'blocking'
-    };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params, preview = false }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
     const { slug } = params as { slug: string };
+    const session = await getSession({ req });
 
     const post = await prisma.post.findUnique({
         where: { slug },
@@ -78,8 +59,21 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
         },
     });
 
-    if (!post || post.status !== 'published') {
+    if (!post || !session) {
         return { notFound: true };
+    }
+
+    const hasAccess = session?.user?.role && ['admin', 'editor', 'moderator'].includes(session.user.role);
+
+    if (post.status !== 'published' && !hasAccess) {
+        return {
+            props: {
+                post: null,
+                mdxSource: null,
+                jsonLd: null,
+                isAuthorized: false,
+            },
+        };
     }
 
     let imageList = [siteMetadata.socialBanner];
@@ -102,7 +96,6 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
         }]
     };
 
-    // Find all <File .../> and <InlineFile .../> tags in the post content
     const fileTagRegex = /<(File|InlineFile)\s+([^>]+)\s*\/>/g;
     const attributeRegex = /(\w+)="([^"]*)"/g;
     const files = [];
@@ -125,27 +118,21 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
         files.push(file);
     }
 
-    console.log("files:", files);
-
-    // Add the "Resources" section to the post content
     const resourcesSectionHtml = `<ResourcesSection files={${JSON.stringify(files)}} />`;
 
     const finalContent = `${post.content}\n\n${resourcesSectionHtml}`;
 
-    // Serialize the modified content
     const mdxSource = await serialize(
         finalContent,
         Options as SerializeOptions
     );
 
-    // Convert Date objects to strings
     const serializedPost = {
         ...post,
         created_at: post.created_at.toISOString(),
         updated_at: post.updated_at.toISOString(),
         published_at: post.published_at ? post.published_at.toISOString() : null,
 
-        // Convert author Date objects to strings
         author: {
             ...post.author,
             created_at: post?.author?.created_at.toISOString(),
@@ -158,13 +145,38 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
             post: serializedPost,
             mdxSource,
             jsonLd,
+            isAuthorized: true,
         },
-        revalidate: false, // Revalidate on demand
     };
 };
 
-const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
-    // Convert strings back to Date objects
+const BlogPreviewPage = ({ post, mdxSource, jsonLd, isAuthorized }: any) => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(false);
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!isAuthorized) {
+        return (
+            <main className="container mx-auto pb-16 px-4 flex-1">
+                <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg mt-8">
+                    <h1 className="text-3xl font-bold text-red-600 mb-4">Access Denied</h1>
+                    <p className="text-slate-700 dark:text-slate-300 mb-4">
+                        This post is currently not published and requires special permissions to view.
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        Please contact an administrator if you believe you should have access to this content.
+                    </p>
+                </div>
+            </main>
+        );
+    }
+
     const deserializedPost = {
         ...post,
         created_at: new Date(post.created_at),
@@ -190,6 +202,16 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <article>
+                {post.status !== 'published' && (
+                    <div className="w-full bg-amber-50 dark:bg-amber-900/30 border-y border-amber-200 dark:border-amber-700/50 py-3 text-center">
+                        <span className="text-amber-800 dark:text-amber-200 text-sm md:text-base font-medium px-4 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            {post.status.charAt(0).toUpperCase() + post.status.slice(1)} Preview Mode
+                        </span>
+                    </div>
+                )}
                 <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         {deserializedPost.category && (
@@ -219,8 +241,6 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                     />
                 </div>
 
-
-
                 <BlogDetails post={deserializedPost} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
                     <TableOfContent mdxContent={post.content} />
@@ -228,7 +248,6 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 </div>
                 <hr className="my-8" />
 
-                {/* Modern Tags Section */}
                 <div className="flex justify-center mt-4">
                     <div className="flex flex-wrap gap-2 justify-center md:gap-4">
                         {deserializedPost.tags && deserializedPost.tags.map((tag: { name: string; slug: string }) => (
@@ -243,4 +262,4 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
     );
 };
 
-export default BlogPage;
+export default BlogPreviewPage;
