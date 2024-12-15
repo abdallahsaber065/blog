@@ -205,7 +205,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                             {deserializedPost.title}
                         </h1>
                     </div>
-                    <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
+                    <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-gradient-to-t from-dark/90 via-dark/70 to-transparent" />
                     <Image
                         src={deserializedPost.featured_image_url || '/static/images/default-image.jpg'}
                         placeholder="blur"
