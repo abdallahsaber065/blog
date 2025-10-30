@@ -6,6 +6,7 @@ import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import { ClipLoader } from 'react-spinners';
 import ImageSelector from '@/components/Admin/ImageSelector';
+import { Button } from '@/components/ui/button';
 
 const animatedComponents = makeAnimated();
 
@@ -156,12 +157,11 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     Featured Image
                 </label>
                 <div className="flex flex-col sm:flex-row gap-2">
-                    <button
+                    <Button
                         onClick={() => setShowImageSelector(true)}
-                        className="featured-image-btn bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         Browse
-                    </button>
+                    </Button>
                 </div>
                 {currentPost.featured_image_url && (
                     <img
@@ -179,21 +179,22 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     folder='blog'
                 />
             </div>
-            <div className="post-editor-actions flex space-x-4">
-                <button
-                    className="post-editor-publish-btn bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
+            <div className="post-editor-actions flex gap-4">
+                <Button
+                    className="flex-1"
                     onClick={() => handleSave('published')}
                     disabled={isLoading}
                 >
                     {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
-                </button>
-                <button
-                    className="post-editor-draft-btn bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
+                </Button>
+                <Button
+                    variant="secondary"
+                    className="flex-1"
                     onClick={() => handleSave('draft')}
                     disabled={isLoading}
                 >
                     {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
-                </button>
+                </Button>
             </div>
         </div>
     );
