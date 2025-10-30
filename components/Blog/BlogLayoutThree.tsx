@@ -2,6 +2,8 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // Define TypeScript types
 interface BlogLayoutThreeProps {
@@ -19,8 +21,8 @@ interface BlogLayoutThreeProps {
 
 const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
   return (
-    <div className="group flex flex-col items-center text-dark dark:text-light">
-      <Link href={`/blogs/${post.slug}`} className="h-full rounded-xl overflow-hidden">
+    <Card className="group flex flex-col items-center border-none shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+      <Link href={`/blogs/${post.slug}`} className="h-full w-full overflow-hidden">
         <Image
           src={post.featured_image_url || "/static/images/default-image.jpg"}
           placeholder="blur"
@@ -33,14 +35,14 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
         />
       </Link>
 
-      <div className="flex flex-col w-full mt-4">
+      <CardContent className="flex flex-col w-full mt-4 p-4">
         {post.tags.length > 0 && (
-          <span className="uppercase text-accent dark:text-accentDark font-semibold text-xs sm:text-sm">
-            {post.tags[0].name}
-          </span>
+          <Badge variant="secondary" className="w-fit mb-2">
+            {post.tags[0].name.toUpperCase()}
+          </Badge>
         )}
         <Link href={`/blogs/${post.slug}`} className="inline-block my-1">
-          <h2 className="font-semibold capitalize text-base sm:text-lg">
+          <h2 className="font-semibold capitalize text-base sm:text-lg text-dark dark:text-light">
             <span
               className="bg-gradient-to-r from-accent/50 to-accent/50 dark:from-accentDark/50 dark:to-accentDark/50 bg-[length:0px_6px] group-hover:bg-[length:100%_6px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500"
             >
@@ -52,8 +54,8 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
         <span className="capitalize text-gray dark:text-light/50 font-semibold text-sm sm:text-base">
           {post.published_at ? format(new Date(post.published_at), "MMMM dd, yyyy") : "Unpublished"}
         </span>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
