@@ -120,7 +120,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   padding-left: 0;
   padding-right: 4px;
   border-radius: 2px;
-  border-left: 2px solid #7B00D3;
+  border-left: 2px solid #3b82f6;
 }
 
 [data-highlighted-chars] {
@@ -136,7 +136,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 [data-rehype-pretty-code-title] {
   position: absolute;
   right: 0;
-  background-color: #7B00D3;
+  background-color: #3b82f6;
   color: #fff;
   padding: 4px 8px;
   font-size: 1rem;
