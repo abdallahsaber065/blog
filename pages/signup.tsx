@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import SignupForm from '@/components/signup/SignupForm';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SignupPage = () => {
     const { data: session, status } = useSession();
@@ -15,42 +17,44 @@ const SignupPage = () => {
 
     if (session) {
         return (
-            <div className=" bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-md w-full space-y-8">
-                    <div>
-                        <h2 className="mt-6 text-center text-2xl sm:text-3xl font-extrabold text-primary dark:text-accentDark break-words">
+            <div className="bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="max-w-md w-full">
+                    <CardHeader>
+                        <CardTitle className="text-center text-2xl sm:text-3xl break-words">
                             You are signed in as {session.user?.email}
-                        </h2>
-                        <div className="mt-4 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button onClick={() => signOut({ callbackUrl: '/login' })} className="btn btn-accent w-full sm:w-auto">
-                                Sign out
-                            </button>
-                            <button onClick={() => router.push('/')} className="btn btn-primary w-full sm:w-auto">
-                                Go to Home
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <Button onClick={() => signOut({ callbackUrl: '/login' })} variant="secondary" className="w-full sm:w-auto">
+                            Sign out
+                        </Button>
+                        <Button onClick={() => router.push('/')} className="w-full sm:w-auto">
+                            Go to Home
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
 
     return (
-        <div className=" bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray dark:text-primary">
+        <div className="bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <Card className="max-w-md w-full">
+                <CardHeader>
+                    <CardTitle className="text-center text-3xl">
                         Create your account
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+                    </CardTitle>
+                    <CardDescription className="text-center">
                         Or{' '}
                         <Link href="/login" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
                             sign in to your account
                         </Link>
-                    </p>
-                </div>
-                <SignupForm />
-            </div>
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <SignupForm />
+                </CardContent>
+            </Card>
         </div>
     );
 };
