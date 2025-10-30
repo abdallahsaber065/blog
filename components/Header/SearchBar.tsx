@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { SearchIcon, CloseIcon } from '@/components/Icons';
+import { Input } from '@/components/ui/input';
 import axios from 'axios';
 export function debounce(func: (...args: any[]) => void, wait: number) {
     let timeout: NodeJS.Timeout;
@@ -70,13 +71,13 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
     return (
         <>
             <div className={"relative flex items-center " + className}>
-                <input
+                <Input
                     type="text"
                     placeholder="Search..."
                     value={query}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className="input input-bordered w-full max-w-xs hidden lg:block text-slate-800 dark:text-light bg-light dark:bg-dark h-8 lg:h-10"
+                    className="w-full max-w-xs hidden lg:block h-8 lg:h-10"
                 />
                 <button className="lg:hidden btn btn-ghost btn-circle p-0 m-0" aria-label="Search" onClick={handleOverlayOpen}>
                     <SearchIcon className="w-6 h-6 text-slate-800 dark:text-light" />
@@ -98,13 +99,13 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-16">
                     <div className="bg-white dark:bg-dark p-4 rounded-lg w-full max-w-md mx-auto">
                         <div className="flex justify-between items-center mb-4">
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Search..."
                                 value={query}
                                 onChange={handleChange}
                                 ref={inputRef}
-                                className="input input-bordered w-full text-slate-800 dark:text-light bg-light dark:bg-dark h-10"
+                                className="w-full h-10"
                             />
                             <button className="btn btn-ghost btn-circle p-0 m-0 ml-2" aria-label="Close" onClick={handleOverlayClose}>
                                 <CloseIcon className="w-6 h-6 text-slate-800 dark:text-light" />
