@@ -3,6 +3,7 @@ import Cropper from 'react-easy-crop';
 import { Area } from 'react-easy-crop/types';
 import { FaTimes } from 'react-icons/fa';
 import { getCroppedImg } from '@/lib/cropImage';
+import { Button } from '@/components/ui/button';
 
 interface ImageEditorProps {
     imageSrc: string;
@@ -43,7 +44,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                         onCropComplete={onCropComplete}
                     />
                 </div>
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-between items-center mt-4">
                     <input
                         type="range"
                         min={1}
@@ -65,9 +66,9 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave }) 
                     <button onClick={onClose} className="absolute top-2 right-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600 transition-colors m-5 text-2xl">
                         <FaTimes />
                     </button>
-                    <button onClick={handleSave} className="btn btn-primary bg-blue-500 dark:bg-blue-600 text-white shadow-md hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
+                    <Button onClick={handleSave}>
                         Save
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,4 +1,7 @@
 import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface StepTwoProps {
     firstName: string;
@@ -12,61 +15,46 @@ interface StepTwoProps {
 
 const StepTwo: React.FC<StepTwoProps> = ({ firstName, setFirstName, lastName, setLastName, bio, setBio, handlePrevStep }) => {
     return (
-        <div className="rounded-md shadow-sm -space-y-px">
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">First Name</span>
-                </label>
-                <input
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="firstName" className="text-slate-900 font-bold dark:text-slate-300">
+                    First Name
+                </Label>
+                <Input
+                    id="firstName"
                     title="first_name"
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="First Name"
                 />
             </div>
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Last Name</span>
-                </label>
-                <input
+            <div className="space-y-2">
+                <Label htmlFor="lastName" className="text-slate-900 font-bold dark:text-slate-300">
+                    Last Name
+                </Label>
+                <Input
+                    id="lastName"
                     title="last_name"
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Last Name"
                 />
             </div>
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Bio</span>
-                </label>
-                <textarea
+            <div className="space-y-2">
+                <Label htmlFor="bio" className="text-slate-900 font-bold dark:text-slate-300">
+                    Bio
+                </Label>
+                <Textarea
+                    id="bio"
                     title="bio"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="textarea textarea-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Tell us a bit about yourself"
+                    rows={4}
                 />
             </div>
-            {/* <div className="flex justify-between mt-4">
-                <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={handlePrevStep}
-                >
-                    Previous
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleNextStep}
-                >
-                    Next
-                </button>
-            </div> */}
         </div>
     );
 };
