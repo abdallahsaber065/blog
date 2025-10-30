@@ -80,6 +80,7 @@ const nextConfig = {
     MAILGUN_PASS: process.env.MAILGUN_PASS,
     NEXT_PUBLIC_CSRF_TOKEN: process.env.CSRF_SECRET,
     WEBSITE_TYPE: process.env.WEBSITE_TYPE,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   },
 
   async redirects() {
