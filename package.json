@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "NODE_NO_WARNINGS=1  BUILD_DIR=temp next build",
-    "dev": "NODE_NO_WARNINGS=1 dotenv -c -- next dev",
-    "start": "BUILD_DIR=.next dotenv -c -- next start",
+    "build": "next build",
+    "dev": "dotenv -c -- next dev",
+    "start": "dotenv -c -- next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "create-admin": "dotenv -c -- node scripts/create-admin.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.1",
