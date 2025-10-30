@@ -20,13 +20,16 @@ class MyDocument extends Document {
                 (function() {
                   const preferDarkQuery = '(prefers-color-scheme: dark)';
                   const storageKey = 'theme';
-                  const userPref = localStorage.getItem(storageKey);
-                  const prefersDark = window.matchMedia(preferDarkQuery).matches;
-                  if (userPref === 'dark' || (!userPref && prefersDark)) {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
+                  try {
+                    const userPref = localStorage.getItem(storageKey);
+                    const prefersDark = window.matchMedia(preferDarkQuery).matches;
+                    
+                    if (userPref === 'dark' || (userPref === 'system' && prefersDark) || (!userPref && prefersDark)) {
+                      document.documentElement.classList.add('dark');
+                    } else if (userPref === 'light' || (userPref === 'system' && !prefersDark) || (!userPref && !prefersDark)) {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  } catch (e) {}
                 })();
               `,
             }}
