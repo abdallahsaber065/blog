@@ -1,23 +1,42 @@
+"use client"
 
-import { useThemeSwitch } from "../Hooks/useThemeSwitch";
-import { cx } from "@/lib";
-import { MoonIcon, SunIcon } from "../Icons";
+import * as React from "react"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const ThemeSwitcher = () => {
-  const [mode, setMode] = useThemeSwitch();
+  const { setTheme } = useTheme()
 
   return (
-    <button
-      onClick={() => setMode(mode === "light" ? "dark" : "light")}
-      className={cx(
-        "w-6 h-6  ml-2 flex items-center justify-center rounded-full p-1",
-        mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
-      )}
-      aria-label="theme-switcher"
-    >
-      {mode === "light" ? <MoonIcon className={"fill-dark"} /> : <SunIcon className={"fill-dark"} />}
-    </button>
-  );
-};
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="ml-2">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
-export default ThemeSwitcher;
+export default ThemeSwitcher
