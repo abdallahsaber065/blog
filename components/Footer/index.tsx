@@ -6,6 +6,8 @@ import Link from "next/link";
 import siteMetadata from "@/lib/siteMetaData";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 
 const Footer = () => {
@@ -60,26 +62,19 @@ const Footer = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
           >
-            <input
+            <Input
               type="email"
               placeholder="Enter your email"
               {...register("email", { required: true, maxLength: 80 })}
-              className="flex-1 px-4 py-2 rounded-lg 
-                bg-slate-800/50 dark:bg-slate-800 
-                text-white dark:text-white
-                border border-slate-700 dark:border-slate-600 
-                focus:ring-2 focus:ring-primary/50 focus:border-transparent
-                placeholder-slate-400 dark:placeholder-slate-400"
+              className="flex-1 bg-slate-800/50 dark:bg-slate-800 text-white dark:text-white border-slate-700 dark:border-slate-600 placeholder-slate-400 dark:placeholder-slate-400"
             />
-            <button
+            <Button
               type="submit"
-              className="px-6 py-2 rounded-lg bg-primary hover:bg-primary/90 
-                text-white font-medium transition-colors disabled:opacity-70
-                hover:shadow-lg"
               disabled={loading}
+              className="bg-primary hover:bg-primary/90 text-white"
             >
               {loading ? <ClipLoader size={20} color={"#fff"} /> : "Subscribe"}
-            </button>
+            </Button>
           </form>
         </div>
 
