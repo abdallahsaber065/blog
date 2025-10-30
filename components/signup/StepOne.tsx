@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface StepOneProps {
     username: string;
@@ -69,59 +72,59 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
     };
 
     return (
-        <div className="rounded-md shadow-sm -space-y-px">
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Username</span>
-                </label>
-                <input
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="username" className="text-slate-900 font-bold dark:text-slate-300">
+                    Username
+                </Label>
+                <Input
+                    id="username"
                     title="username"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Username"
                 />
             </div>
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Email</span>
-                </label>
-                <input
+            <div className="space-y-2">
+                <Label htmlFor="email" className="text-slate-900 font-bold dark:text-slate-300">
+                    Email
+                </Label>
+                <Input
+                    id="email"
                     title="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Email address"
                 />
             </div>
-            <div className="form-control">
-                <label className="label">
-                    <span className="label-text text-slate-900 font-bold dark:text-slate-300">Password</span>
-                </label>
-                <input
+            <div className="space-y-2">
+                <Label htmlFor="password" className="text-slate-900 font-bold dark:text-slate-300">
+                    Password
+                </Label>
+                <Input
+                    id="password"
                     title="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                     placeholder="Password"
                 />
             </div>
-            {error && <p className="mt-2 text-sm text-error">{error}</p>}
-            <div className="flex justify-between mt-4">
-                <button
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <div className="flex justify-end mt-4">
+                <Button
                     type="button"
-                    className="btn btn-primary mt-4 space-y-4"
                     onClick={handleNext}
                     disabled={loading}
+                    className="w-full sm:w-auto"
                 >
                     {loading ? 'Checking...' : 'Next'}
-                </button>
+                </Button>
             </div>
         </div>
     );

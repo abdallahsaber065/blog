@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import { ClipLoader } from 'react-spinners';
+import { Button } from '@/components/ui/button';
 
 const SignupForm = () => {
     const [step, setStep] = useState(1);
@@ -92,20 +93,21 @@ const SignupForm = () => {
             {error && <p className="mt-2 text-sm text-error">{error}</p>}
             {loading && <ClipLoader size={24} color="#ffffff" />}
             {step === 2 && (
-                <div className="flex justify-between mt-4">
-                    <button
+                <div className="flex justify-between mt-4 gap-4">
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={handlePrevStep}
+                        className="flex-1"
                     >
                         Previous
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
-                        className="btn btn-primary"
+                        className="flex-1"
                     >
                         Sign Up
-                    </button>
+                    </Button>
                 </div>
             )}
         </form>

@@ -10,6 +10,7 @@ import ImageSelector from '@/components/Admin/ImageSelector';
 import { FaFile, FaImage } from 'react-icons/fa';
 // expand icon
 import { AiOutlineExpand } from 'react-icons/ai';
+import { Button } from '@/components/ui/button';
 
 interface AIContentGeneratorProps {
     className?: string;
@@ -224,58 +225,59 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 setIncludeImages={setIncludeImages}
             />
 
-            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
-                <button
-                    className="generate-outline-btn bg-blue-500 text-white font-bold p-2 rounded hover:bg-blue-600"
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <Button
+                    className="generate-outline-btn"
                     onClick={handleGenerateOutline}
                     disabled={loading}
                 >
                     {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Outline'}
-                </button>
+                </Button>
 
-                <button
-                    className="edit-outline-btn bg-yellow-500 text-white font-bold p-2 rounded hover:bg-yellow-600"
+                <Button
+                    className="edit-outline-btn"
+                    variant="warning"
                     onClick={() => setShowJSONEditor(true)}
                 >
                     Edit Outline
-                </button>
+                </Button>
 
                 {outline && (
-                    <button
-                        className="generate-content-btn bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600"
+                    <Button
+                        className="generate-content-btn"
+                        variant="success"
                         onClick={handleAcceptOutline}
                         disabled={loading}
                     >
                         {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
-                    </button>
+                    </Button>
                 )}
 
-                <button
-                    className="bg-slate-500 text-white font-bold p-2 rounded hover:bg-slate-600"
+                <Button
+                    variant="secondary"
                     onClick={() => setShowLogViewer(true)}
                 >
                     View Logs
-                </button>
+                </Button>
             </div>
 
             {showJSONEditor && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-4 rounded shadow-lg w-3/4">
-                        <h2 className="text-xl font-bold mb-4">Edit Outline</h2>
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg w-3/4">
+                        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Edit Outline</h2>
                         <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
-                        <div className="flex justify-end space-x-4 mt-4">
-                            <button
-                                className="bg-red-500 text-white p-2 rounded"
+                        <div className="flex justify-end gap-4 mt-4">
+                            <Button
+                                variant="destructive"
                                 onClick={() => setShowJSONEditor(false)}
                             >
                                 Cancel
-                            </button>
-                            <button
-                                className="bg-blue-500 text-white p-2 rounded"
+                            </Button>
+                            <Button
                                 onClick={handleSaveOutline}
                             >
                                 Save
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

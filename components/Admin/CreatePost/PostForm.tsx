@@ -5,6 +5,7 @@ import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import ImageSelector from '@/components/Admin/ImageSelector';
+import { Button } from '@/components/ui/button';
 
 const animatedComponents = makeAnimated();
 interface ImageProps {
@@ -146,12 +147,11 @@ const PostForm: React.FC<PostFormProps> = ({
                     Featured Image
                 </label>
                 <div className="flex flex-col sm:flex-row gap-2">
-                    <button
+                    <Button
                         onClick={() => setShowImageSelector(true)}
-                        className="featured-image-btn bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         Browse
-                    </button>
+                    </Button>
                 </div>
                 {featuredImage && (
                     <img

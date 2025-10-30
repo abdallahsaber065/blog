@@ -10,6 +10,7 @@ import Logo from './Logo';
 import SearchBar from './SearchBar';
 import ThemeSwitcher from './ThemeSwitcher'; // Import ThemeSwitcher
 import { MenuIcon } from '@/components/Icons';
+import { Badge } from '@/components/ui/badge';
 
 const RoleList = ['admin', 'moderator', 'editor'];
 
@@ -170,7 +171,7 @@ const Header: React.FC<HeaderProps> = () => {
                   <Link href="/profile" className="flex items-center space-x-2 p-2">
                     <span className="text-slate-800 dark:text-light font-bold">{session?.user.name.split(' ')[0]}</span>
                     {RoleList.includes(session?.user.role) && (
-                      <span className="badge badge-primary dark:badge-accent ml-2">{session?.user.role.toUpperCase()}</span>
+                      <Badge variant="default" className="ml-2">{session?.user.role.toUpperCase()}</Badge>
                     )}
                   </Link>
                 </li>

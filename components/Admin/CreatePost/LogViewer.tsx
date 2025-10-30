@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
+import { Button } from '@/components/ui/button';
 
 interface LogViewerProps {
     link: string;
@@ -43,19 +44,18 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, link }) => {
             <div className="bg-white p-4 rounded shadow-lg w-3/4 h-3/4 flex flex-col dark:bg-zinc-800">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-bold dark:text-white">Log Viewer</h2>
-                    <div className="space-x-2">
-                        <button
-                            className="bg-blue-500 text-white p-2 rounded dark:bg-blue-700"
+                    <div className="flex gap-2">
+                        <Button
                             onClick={fetchLogs}
                         >
                             Refresh
-                        </button>
-                        <button
-                            className="bg-red-500 text-white p-2 rounded dark:bg-red-700"
+                        </Button>
+                        <Button
+                            variant="destructive"
                             onClick={onClose}
                         >
                             Close
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 <div className="flex items-center mb-4">
@@ -96,12 +96,13 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, link }) => {
                     )}
                     <div ref={logEndRef} />
                 </div>
-                <button
-                    className="bg-green-500 text-white p-2 rounded mt-2 dark:bg-green-700"
+                <Button
+                    variant="success"
                     onClick={() => logEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                    className="mt-2"
                 >
                     Scroll to End
-                </button>
+                </Button>
             </div>
         </div>
     );

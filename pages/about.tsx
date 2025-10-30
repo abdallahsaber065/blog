@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SocialIcon } from 'react-social-icons';
 import { prisma } from '../lib/prisma';
+import { Button } from '@/components/ui/button';
 
 // export async function getStaticProps() {
 //   const editors = await prisma.user.findMany({
@@ -66,9 +67,9 @@ const AboutPage: React.FC = () => {
                 At Dev Trend, we believe in sharing knowledge and fostering a community where developers of all levels can learn, grow, and contribute. Our content covers a wide range of topics, from beginner tutorials to advanced tech discussions, ensuring there&apos;s something for everyone.
               </p>
               <Link href="/contact">
-                <button className="btn btn-accent dark:btn-accentDark hover:opacity-90 transition-opacity px-6 py-2 rounded-lg">
+                <Button>
                   Contact Us
-                </button>
+                </Button>
               </Link>
             </div>
             <div className="flex-1 w-full max-w-md">
