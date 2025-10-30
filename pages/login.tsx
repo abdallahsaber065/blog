@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn, useSession, signOut } from 'next-auth/react';
 import { ClipLoader } from 'react-spinners';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const LoginPage = () => {
     const { data: session, status } = useSession();
@@ -49,84 +53,82 @@ const LoginPage = () => {
 
     if (session) {
         return (
-            <div className=" bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-md w-full space-y-8">
-                    <div>
-                        <h2 className="mt-6 text-center text-2xl sm:text-3xl font-extrabold text-primary dark:text-accentDark break-words">
+            <div className="bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="max-w-md w-full">
+                    <CardHeader>
+                        <CardTitle className="text-center text-2xl sm:text-3xl break-words">
                             You are signed in as {session.user?.email}
-                        </h2>
-                        <div className="mt-4 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button onClick={() => signOut({ callbackUrl: '/login' })} className="btn btn-accent w-full sm:w-auto">
-                                Sign out
-                            </button>
-                            <button onClick={() => router.push('/')} className="btn btn-primary w-full sm:w-auto">
-                                Go to Home
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <Button onClick={() => signOut({ callbackUrl: '/login' })} variant="secondary" className="w-full sm:w-auto">
+                            Sign out
+                        </Button>
+                        <Button onClick={() => router.push('/')} className="w-full sm:w-auto">
+                            Go to Home
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
 
     return (
-        <div className=" bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray dark:text-primary">
+        <div className="bg-light dark:bg-dark flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <Card className="max-w-md w-full">
+                <CardHeader>
+                    <CardTitle className="text-center text-3xl">
                         Sign in to your account
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
+                    </CardTitle>
+                    <CardDescription className="text-center">
                         Or{' '}
                         <Link href="/signup" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
                             create a new account
                         </Link>
-                    </p>
-                </div>
-                <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm -space-y-px">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-slate-900 font-bold dark:text-slate-300">Email</span>
-                            </label>
-                            <input
-                                title="email"
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-slate-900 font-bold dark:text-slate-300">
+                                Email
+                            </Label>
+                            <Input
+                                id="email"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                                 placeholder="Email address"
+                                className="bg-slate-100 dark:bg-gray"
                             />
                         </div>
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text text-slate-900 font-bold dark:text-slate-300">Password</span>
-                            </label>
-                            <input
-                                title="password"
+                        <div className="space-y-2">
+                            <Label htmlFor="password" className="text-slate-900 font-bold dark:text-slate-300">
+                                Password
+                            </Label>
+                            <Input
+                                id="password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="input input-bordered w-full bg-slate-100 dark:bg-gray text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:outline-none border-accent dark:border-primary"
                                 placeholder="Password"
+                                className="bg-slate-100 dark:bg-gray"
                             />
                         </div>
-                    </div>
-                    {error && <p className="mt-2 text-sm text-danger">{error}</p>}
-                    <div className="flex justify-between mt-4">
-                        <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+                        {error && <p className="text-sm text-danger">{error}</p>}
+                        <Button type="submit" className="w-full" disabled={loading}>
                             {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Login'}
-                        </button>
+                        </Button>
+                    </form>
+                    <div className="mt-4 text-center">
+                        <Link href="/auth/request-password-reset" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
+                            Forgot your password?
+                        </Link>
                     </div>
-                </form>
-                <div className="mt-4 text-center">
-                    <Link href="/auth/request-password-reset" className="font-medium text-accent hover:text-secondary-focus dark:text-secondary">
-                        Forgot your password?
-                    </Link>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         </div>
     );
 };

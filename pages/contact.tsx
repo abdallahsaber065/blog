@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
-import { ClipLoader } from 'react-spinners'; // Import the spinner
+import { ClipLoader } from 'react-spinners';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 // Add this social links data array
 const socialLinks = [
@@ -16,7 +21,7 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // State to manage loading
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -27,7 +32,7 @@ const ContactPage = () => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-    setLoading(true); // Set loading to true
+    setLoading(true);
 
     try {
       const res = await fetch('/api/contact', {
@@ -48,7 +53,7 @@ const ContactPage = () => {
     } catch (error) {
       setError('Failed to send message');
     } finally {
-      setLoading(false); // Set loading to false
+      setLoading(false);
     }
   };
 
@@ -62,55 +67,59 @@ const ContactPage = () => {
           </p>
         </section>
         <section className="max-w-2xl mx-auto px-4">
-          <form className="bg-light dark:bg-dark p-4 md:p-8 rounded-lg shadow-lg space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-accent dark:text-accentDark">Your Name</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your name"
-                className="input input-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
-                required
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-accent dark:text-accentDark">Your Email</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="input input-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
-                required
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-accent dark:text-accentDark">Message</span>
-              </label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Enter your message"
-                className="textarea textarea-bordered w-full bg-light dark:bg-dark text-gray dark:text-light"
-                rows={5}
-                required
-              ></textarea>
-            </div>
-            <button type="submit" className="btn btn-accent dark:btn-accentDark w-full" disabled={loading}>
-              {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Send Message'}
-            </button>
-            {success && <p className="text-green-500 mt-4">Message sent successfully!</p>}
-            {error && <p className="text-red-500 mt-4">{error}</p>}
-          </form>
+          <Card>
+            <CardContent className="p-4 md:p-8">
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-accent dark:text-accentDark">
+                    Your Name
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter your name"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-accent dark:text-accentDark">
+                    Your Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-accent dark:text-accentDark">
+                    Message
+                  </Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Enter your message"
+                    rows={5}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Send Message'}
+                </Button>
+                {success && <p className="text-green-500 mt-4">Message sent successfully!</p>}
+                {error && <p className="text-red-500 mt-4">{error}</p>}
+              </form>
+            </CardContent>
+          </Card>
         </section>
         <section className="mt-8 md:mt-16 text-center px-4">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-accent dark:text-accentDark">Connect with Us</h2>

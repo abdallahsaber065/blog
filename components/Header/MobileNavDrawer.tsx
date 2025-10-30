@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import { CloseIcon } from '@/components/Icons';
 import { usePathname } from 'next/navigation';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+} from "@/components/ui/sheet"
 
 interface MobileNavDrawerProps {
     isOpen: boolean;
@@ -15,6 +20,7 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
     const pathname = usePathname();
     const { data: session } = useSession();
     const [mounted, setMounted] = useState(false);
+    const [isDiscoverMenuOpen, setIsDiscoverMenuOpen] = useState(false);
     const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -26,13 +32,12 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
     }
 
     return (
-        <div className={`fixed inset-0 z-50 transition-transform transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
-            <div className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-dark shadow-lg p-4 text-slate-800">
-                <button className="btn btn-ghost btn-circle mb-4" onClick={onClose} aria-label="Close Menu">
-                    <CloseIcon className="h-6 w-6 text-slate-800 dark:text-white" />
-                </button>
-                <ul className="menu menu-vertical">
+        <Sheet open={isOpen} onOpenChange={onClose}>
+            <SheetContent side="left" className="w-64 p-4">
+                <SheetHeader>
+                    <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <ul className="menu menu-vertical mt-4 space-y-2">
                     <li>
                         <Link href="/" className={`hover:text-primary font-semibold dark:hover:text-accent
                             ${pathname === '/' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
@@ -57,13 +62,13 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                     <li>
                         <button
                             className={`text-lg font-semibold flex justify-between items-center w-full focus:ring-2 
-                            ${isAdminMenuOpen || pathname?.startsWith("/tags") || pathname?.startsWith("/categories") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
-                            onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                            ${isDiscoverMenuOpen || pathname?.startsWith("/tags") || pathname?.startsWith("/categories") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
+                            onClick={() => setIsDiscoverMenuOpen(!isDiscoverMenuOpen)}
                         >
                             Discover
-                            <span>{isAdminMenuOpen ? '-' : '+'}</span>
+                            <span>{isDiscoverMenuOpen ? '-' : '+'}</span>
                         </button>
-                        {isAdminMenuOpen && (
+                        {isDiscoverMenuOpen && (
                             <ul className="mt-2 space-y-2">
                                 <li>
                                     <Link href="/tags" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/tags') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
@@ -147,8 +152,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                         </>
                     )}
                 </ul>
-            </div>
-        </div>
+            </SheetContent>
+        </Sheet>
     );
 };
 
