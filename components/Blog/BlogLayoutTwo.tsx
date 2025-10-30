@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Post, Tag as PrismaTag } from "@prisma/client";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogLayoutTwoProps {
   post: {
@@ -20,10 +22,10 @@ interface BlogLayoutTwoProps {
 
 const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
   return (
-    <div className="group grid grid-cols-12 gap-4 items-center text-dark dark:text-light">
+    <Card className="group grid grid-cols-12 gap-4 items-center border-none shadow-md hover:shadow-lg transition-shadow overflow-hidden">
       <Link
         href={`/blogs/${post.slug}`}
-        className="col-span-12 lg:col-span-4 h-full rounded-xl overflow-hidden"
+        className="col-span-12 lg:col-span-4 h-full overflow-hidden"
       >
         <Image
           src={post.featured_image_url || "/static/images/default-image.jpg"}
@@ -37,14 +39,14 @@ const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
         />
       </Link>
 
-      <div className="col-span-12 lg:col-span-8 w-full">
+      <CardContent className="col-span-12 lg:col-span-8 w-full p-4 lg:p-6">
         {post.category && (
-          <span className="inline-block w-full uppercase text-accent dark:text-accentDark font-semibold text-xs sm:text-sm">
-            {post.category.name}
-          </span>
+          <Badge variant="secondary" className="mb-2">
+            {post.category.name.toUpperCase()}
+          </Badge>
         )}
         <Link href={`/blogs/${post.slug}`} className="inline-block my-1">
-          <h2 className="font-semibold capitalize text-base sm:text-lg">
+          <h2 className="font-semibold capitalize text-base sm:text-lg text-dark dark:text-light">
             <span
               className="bg-gradient-to-r from-accent/50 dark:from-accentDark/50 to-accent/50 dark:to-accentDark/50 bg-[length:0px_6px]
                 group-hover:bg-[length:100%_6px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 "
@@ -57,8 +59,8 @@ const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
         <span className="inline-block w-full capitalize text-gray dark:text-light/50 font-semibold text-xs sm:text-base">
           {post.published_at ? format(new Date(post.published_at), "MMMM dd, yyyy") : "Unpublished"}
         </span>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
