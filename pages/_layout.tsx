@@ -1,25 +1,11 @@
 import "../public/styles/globals.css";
 import { cx } from "@/lib";
-import { Inter, Manrope } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import siteMetadata from "@/lib/siteMetaData";
 import { ReactNode } from 'react';
 import Head from 'next/head';
 import { Toaster } from "react-hot-toast";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-in",
-  axes: ["opsz"]
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mr",
-});
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -60,10 +46,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <div
       className={cx(
-        inter.variable,
-        manrope.variable,
         "font-mr bg-light dark:bg-dark"
       )}
+      style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
     >
       <Head>
         <link rel="manifest" href="/manifest.json" />

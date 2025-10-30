@@ -12,7 +12,6 @@ import {
     SiKotlin,
     SiCplusplus,
     SiC,
-    SiCsharp,
     SiRust,
     SiGo,
     SiMarkdown,
@@ -20,11 +19,11 @@ import {
     SiYaml,
     SiDocker,
     SiGit,
-    SiMysql,
     SiShell,
 } from 'react-icons/si';
 import { FaJava } from 'react-icons/fa';
 import { TbSql } from 'react-icons/tb';
+import { TbBrandCSharp } from 'react-icons/tb';
 
 interface FileIconConfig {
     icon: React.ElementType;
@@ -50,7 +49,7 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     cpp: { icon: SiCplusplus, color: "text-pink-500" },
     cc: { icon: SiCplusplus, color: "text-pink-500" },
     cxx: { icon: SiCplusplus, color: "text-pink-500" },
-    cs: { icon: SiCsharp, color: "text-green-600" },
+    cs: { icon: TbBrandCSharp, color: "text-green-600" },
     rs: { icon: SiRust, color: "text-orange-600" },
     go: { icon: SiGo, color: "text-blue-400" },
 

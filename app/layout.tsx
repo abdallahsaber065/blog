@@ -1,24 +1,10 @@
 import "../public/styles/globals.css";
 import { cx } from "@/lib";
-import { Inter, Manrope } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import siteMetadata from "@/lib/siteMetaData";
 import { ReactNode } from 'react';
 import ClientProvider from './ClientProvider';
-
-const inter = Inter({
-    subsets: ["latin"],
-    display: "swap",
-    variable: "--font-in",
-    axes: ["opsz"]
-});
-
-const manrope = Manrope({
-    subsets: ["latin"],
-    display: "swap",
-    variable: "--font-mr",
-});
 
 export const metadata = {
     metadataBase: new URL(siteMetadata.siteUrl),
@@ -86,7 +72,7 @@ export default function RootLayout({ children}: { children: ReactNode}) {
                     }}
                 />
             </head>
-            <body className={cx(inter.variable, manrope.variable, "font-mr bg-light dark:bg-dark")}>
+            <body className={cx("font-mr bg-light dark:bg-dark")} style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
                 <ClientProvider>
                     <Header />
                     {children}
