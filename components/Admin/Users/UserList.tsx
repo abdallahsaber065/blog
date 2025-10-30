@@ -4,6 +4,8 @@ import { FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const RoleList = ['admin', 'moderator', 'editor', 'user', 'reader'];
 
@@ -112,34 +114,33 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                         <tr key={user.id}>
                             <td>
                                 {editingUserId === user.id ? (
-                                    <>
-                                        <input
+                                    <div className="flex gap-2">
+                                        <Input
                                             type="text"
                                             name="first_name"
                                             value={editedUser.first_name || ''}
                                             onChange={handleChange}
-                                            className="input input-bordered mr-2"
+                                            className="w-32"
                                         />
-                                        <input
+                                        <Input
                                             type="text"
                                             name="last_name"
                                             value={editedUser.last_name || ''}
                                             onChange={handleChange}
-                                            className="input input-bordered"
+                                            className="w-32"
                                         />
-                                    </>
+                                    </div>
                                 ) : (
                                     `${user.first_name} ${user.last_name}`
                                 )}
                             </td>
                             <td>
                                 {editingUserId === user.id ? (
-                                    <input
+                                    <Input
                                         type="text"
                                         name="username"
                                         value={editedUser.username || ''}
                                         onChange={handleChange}
-                                        className="input input-bordered"
                                     />
                                 ) : (
                                     user.username
@@ -147,12 +148,11 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                             </td>
                             <td>
                                 {editingUserId === user.id ? (
-                                    <input
+                                    <Input
                                         type="email"
                                         name="email"
                                         value={editedUser.email || ''}
                                         onChange={handleChange}
-                                        className="input input-bordered"
                                     />
                                 ) : (
                                     user.email
@@ -180,21 +180,21 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                             <td>
                                 {editingUserId === user.id ? (
                                     <>
-                                        <button className="btn btn-primary mr-2" onClick={() => handleSave(user.id)}>
+                                        <Button size="sm" onClick={() => handleSave(user.id)} className="mr-2">
                                             <FaSave />
-                                        </button>
-                                        <button className="btn btn-secondary" onClick={handleCancel}>
+                                        </Button>
+                                        <Button variant="secondary" size="sm" onClick={handleCancel}>
                                             <FaTimes />
-                                        </button>
+                                        </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <button className="btn btn-secondary mr-2" onClick={() => handleEdit(user)}>
+                                        <Button variant="secondary" size="sm" onClick={() => handleEdit(user)} className="mr-2">
                                             <FaEdit />
-                                        </button>
-                                        <button className="btn btn-error" onClick={() => openDeleteConfirmation(user.id)}>
+                                        </Button>
+                                        <Button variant="destructive" size="sm" onClick={() => openDeleteConfirmation(user.id)}>
                                             <FaTrash />
-                                        </button>
+                                        </Button>
                                     </>
                                 )}
                             </td>
@@ -204,13 +204,13 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             </table>
 
             {showDeleteConfirmation && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded">
-                        <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
-                        <p>Are you sure you want to delete this user?</p>
-                        <div className="mt-4">
-                            <button className="btn btn-error mr-2" onClick={handleDelete}>Delete</button>
-                            <button className="btn btn-secondary" onClick={closeDeleteConfirmation}>Cancel</button>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Confirm Deletion</h2>
+                        <p className="text-slate-700 dark:text-slate-100 mb-6">Are you sure you want to delete this user?</p>
+                        <div className="flex justify-end gap-4">
+                            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+                            <Button variant="secondary" onClick={closeDeleteConfirmation}>Cancel</Button>
                         </div>
                     </div>
                 </div>
