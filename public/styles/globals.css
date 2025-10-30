@@ -7,32 +7,32 @@
     /* Light mode - Professional and clean color palette */
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
-    
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
-    
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
-    
+
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
-    
+
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    
+
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    
+
     --radius: 0.5rem;
   }
 
@@ -40,28 +40,28 @@
     /* Dark mode - Professional and easy on the eyes */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    
+
     --card: 222.2 47.4% 11.2%;
     --card-foreground: 210 40% 98%;
-    
+
     --popover: 222.2 47.4% 11.2%;
     --popover-foreground: 210 40% 98%;
-    
+
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    
+
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-    
+
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    
+
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-    
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    
+
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
@@ -77,18 +77,27 @@
   }
 }
 
+/* Smooth theme transition */
+html,
+body,
+body * {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-h1>a>.icon.icon-link:before,
-h2>a>.icon.icon-link:before,
-h3>a>.icon.icon-link:before {
+h1 > a > .icon.icon-link:before,
+h2 > a > .icon.icon-link:before,
+h3 > a > .icon.icon-link:before {
   content: "#";
   font-size: 0.8rem;
 }
 
-h2 > a, h3>a {
+h2 > a,
+h3 > a {
   text-decoration: none !important;
 }
 
@@ -106,16 +115,16 @@ code > [data-line]::before {
   color: gray;
 }
 
-code[data-line-numbers-max-digits='2'] > [data-line]::before {
+code[data-line-numbers-max-digits="2"] > [data-line]::before {
   width: 2rem;
 }
 
-code[data-line-numbers-max-digits='3'] > [data-line]::before {
+code[data-line-numbers-max-digits="3"] > [data-line]::before {
   width: 3rem;
 }
 
 [data-highlighted-line] {
-  background-color: rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
   padding: 2px;
   padding-left: 0;
   padding-right: 4px;
@@ -124,7 +133,7 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 }
 
 [data-highlighted-chars] {
-  background-color: rgba(255,255,255,0.2) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
   padding: 2px;
   border-radius: 2px;
 }
@@ -192,45 +201,44 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* styles.css */
 .prose code {
-    background-color: #e9e9eb; /* Light mode background */
-    color: #e11d48; /* Light mode text color */
-    padding: 0.25rem;
-    border-radius: 0.25rem;
+  background-color: #e9e9eb; /* Light mode background */
+  color: #e11d48; /* Light mode text color */
+  padding: 0.25rem;
+  border-radius: 0.25rem;
 }
 
 .dark .prose code {
-    background-color: #1f2937; /* Dark mode background */
-    color: #f87171; /* Dark mode text color */
+  background-color: #1f2937; /* Dark mode background */
+  color: #f87171; /* Dark mode text color */
 }
 
-
-
 .prose pre code {
-    background-color: transparent; /* Ensure block code background is not affected */
-    color: inherit; /* Inherit text color for block code */
-    padding: 0; /* Remove padding for block code */
-    border-radius: 0; /* Remove border-radius for block code */
+  background-color: transparent; /* Ensure block code background is not affected */
+  color: inherit; /* Inherit text color for block code */
+  padding: 0; /* Remove padding for block code */
+  border-radius: 0; /* Remove border-radius for block code */
 }
 
 .dark .prose pre code {
-    background-color: transparent; /* Ensure block code background is not affected */
-    color: inherit; /* Inherit text color for block code */
-    padding: 0; /* Remove padding for block code */
-    border-radius: 0; /* Remove border-radius for block code */
+  background-color: transparent; /* Ensure block code background is not affected */
+  color: inherit; /* Inherit text color for block code */
+  padding: 0; /* Remove padding for block code */
+  border-radius: 0; /* Remove border-radius for block code */
 }
 
-.prose code,.prose pre {
-    direction: ltr !important;
-    text-align: left;
+.prose code,
+.prose pre {
+  direction: ltr !important;
+  text-align: left;
 }
 
 .embed-container {
-    max-width: 100%;
-    overflow: hidden;
+  max-width: 100%;
+  overflow: hidden;
 }

@@ -1,9 +1,10 @@
-import type { AppProps } from 'next/app';
-import RootLayout from './_layout';
-import { StrictMode, useEffect, useState } from 'react';
-import { SessionProvider } from 'next-auth/react';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
+import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import RootLayout from './_layout';
 // pages/_app.js or pages/_app.jsx
 
 import { polyfillPromiseWithResolvers } from "@/utils/polyfilsResolver";
@@ -35,14 +36,22 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   return (
     <SessionProvider session={session}>
-      <RootLayout>
-          {!isExcludedRoute && (
-            <div id="google-analytics-container">
-              <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
-            </div>
-          )}
-          <Component {...pageProps} />
-      </RootLayout>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        storageKey="theme"
+        disableTransitionOnChange={false}
+      >
+        <RootLayout>
+            {!isExcludedRoute && (
+              <div id="google-analytics-container">
+                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
+              </div>
+            )}
+            <Component {...pageProps} />
+        </RootLayout>
+      </ThemeProvider>
     </SessionProvider>
   );
 }
