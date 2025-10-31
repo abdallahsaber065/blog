@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed - October 31, 2025
+
+#### Navigation & Routing Updates
+
+- **Unified Content Discovery**: Migrated all category and tag pages to the new explore page
+  - Added URL query parameter support for filtering (e.g., `/explore?category=tech`, `/explore?tag=javascript`)
+  - Implemented automatic state initialization from URL parameters on page load
+  - Updated all internal links to use explore page with query parameters
+  - Modified blog post detail pages (`/blogs/[slug]`) to link categories/tags to explore page
+  - Modified blog preview pages (`/blogs/preview/[slug]`) to link categories/tags to explore page
+  - Updated "Recent Posts" view all link to point to explore page
+  - Updated mobile navigation drawer to use explore page
+  - Added redirects for old `/tags` and `/categories` routes to `/explore`
+  - Added redirect for `/discover` to `/explore` for consistency
+  - Implemented dynamic redirects for specific tag/category slugs (e.g., `/tags/javascript` → `/explore?tag=javascript`)
+  - Updated all revalidation paths in API routes to use explore page
+  - Modified `REVALIDATE_PATHS` constants to use `EXPLORE`, `getExploreTagPath`, and `getExploreCategoryPath`
+  - Updated API routes for posts, tags, and categories to trigger explore page revalidation
+  - Ensured seamless data passing between blog posts and explore page filters
+
 ### Added - October 31, 2025
 
 #### File Management Enhancement

@@ -1,8 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { REVALIDATE_PATHS } from '@/lib/revalidate';
-import { revalidateRoutes } from '@/lib/revalidate';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -63,7 +62,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 await revalidateRoutes(res, [
                     REVALIDATE_PATHS.HOME,
 
-                    REVALIDATE_PATHS.ALL_CATEGORIES
+                    REVALIDATE_PATHS.EXPLORE
                 ]);
                 log += `\nResponse Status: 201 Created`;
                 break;
@@ -91,7 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 await revalidateRoutes(res, [
                     REVALIDATE_PATHS.HOME,
 
-                    REVALIDATE_PATHS.ALL_CATEGORIES
+                    REVALIDATE_PATHS.EXPLORE
                 ]);
                 log += `\nResponse Status: 200 OK`;
                 break;
@@ -125,15 +124,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 // Delete the category
                 await prisma.category.delete({
                     where: { id: Number(query.id) },
-                    
+
                 });
 
                 // Prepare routes for revalidation
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
 
-                    REVALIDATE_PATHS.ALL_CATEGORIES,
-                    REVALIDATE_PATHS.getCategoryPath(categoryToDelete.slug)
+                    REVALIDATE_PATHS.EXPLORE,
+                    REVALIDATE_PATHS.getExploreCategoryPath(categoryToDelete.slug)
                 ];
 
                 // Add all associated post paths
