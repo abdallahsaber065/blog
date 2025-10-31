@@ -1,12 +1,31 @@
 // pages/admin/users/index.tsx
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/router';
-import { FaEdit, FaTrash, FaUserFriends, FaEnvelope } from 'react-icons/fa';
-import { ClipLoader } from 'react-spinners';
 import withAuth from '@/components/Admin/withAuth';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FaEdit, FaEnvelope, FaTrash, FaUserPlus } from 'react-icons/fa';
+import { ClipLoader } from 'react-spinners';
 
 const RoleList = ['admin', 'moderator', 'editor', 'user', 'reader'];
 
@@ -100,128 +119,186 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 text-slate-800 dark:text-slate-200">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">User Management</h1>
-        
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <Link 
-            href="/admin/users/subscriptions" 
-            className="flex items-center justify-center gap-2 btn btn-secondary w-full sm:w-auto"
-          >
-            <FaEnvelope className="shrink-0" />
-            <span className="whitespace-nowrap">Newsletter Subscriptions</span>
-          </Link>
-          
-          <button 
-            className="flex items-center justify-center gap-2 btn btn-primary w-full sm:w-auto"
-            onClick={handleCreateUser}
-          >
-            <FaUserFriends className="shrink-0" />
-            <span className="whitespace-nowrap">Create New User</span>
-          </button>
-        </div>
-      </div>
+    <div className="container mx-auto p-4 md:p-6 lg:p-8">
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <CardTitle className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-200">
+              User Management
+            </CardTitle>
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button 
+                variant="outline"
+                asChild
+                className="w-full sm:w-auto"
+              >
+                <Link href="/admin/users/subscriptions">
+                  <FaEnvelope className="mr-2 h-4 w-4" />
+                  Newsletter Subscriptions
+                </Link>
+              </Button>
+              
+              <Button 
+                onClick={handleCreateUser}
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              >
+                <FaUserPlus className="mr-2 h-4 w-4" />
+                Create New User
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
 
-      <div className="text-sm breadcrumbs mb-4 overflow-x-auto whitespace-nowrap">
-        <ul className="flex flex-wrap gap-2">
-          <li><Link href="/admin">Admin</Link></li>
-          <li>Users</li>
-        </ul>
-      </div>
+        <CardContent>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50 dark:bg-slate-800/50">
+                  <TableHead className="font-semibold">Full Name</TableHead>
+                  <TableHead className="font-semibold">Username</TableHead>
+                  <TableHead className="font-semibold">Email</TableHead>
+                  <TableHead className="font-semibold">Role</TableHead>
+                  <TableHead className="font-semibold">Posts</TableHead>
+                  <TableHead className="font-semibold text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map(user => (
+                  <TableRow key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                    <TableCell className="font-medium">{`${user.first_name} ${user.last_name}`}</TableCell>
+                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={user.role === 'admin' ? 'default' : 'secondary'}
+                        className={`${
+                          user.role === 'admin' 
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                            : user.role === 'moderator'
+                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                            : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                        }`}
+                      >
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{user.posts || 0}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          size="sm"
+                          variant="ghost"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
+                          onClick={() => handleEditUser(user.id)}
+                          title="Edit User"
+                        >
+                          <FaEdit />
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                          onClick={() => openDeleteConfirmation(user.id)}
+                          title="Delete User"
+                        >
+                          <FaTrash />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
-      <div className="hidden md:block overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr className='text-dark dark:text-white font-bold text-sm'>
-              <th>Full Name</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Posts</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+          {/* Mobile Cards */}
+          <div className="block md:hidden space-y-4">
             {users.map(user => (
-              <tr key={user.id} >
-                <td>{`${user.first_name} ${user.last_name}`}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>{user.posts}</td>
-                <td>
-                  <button className="btn btn-secondary mr-2" onClick={() => handleEditUser(user.id)}>
-                    <FaEdit />
-                  </button>
-                  <button className="btn btn-error" onClick={() => openDeleteConfirmation(user.id)}>
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
+              <Card key={user.id} className="overflow-hidden">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">{user.username}</h3>
+                      <Badge 
+                        variant={user.role === 'admin' ? 'default' : 'secondary'}
+                        className={`mt-1 ${
+                          user.role === 'admin' 
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
+                            : user.role === 'moderator'
+                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                            : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                        }`}
+                      >
+                        {user.role}
+                      </Badge>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm"
+                        variant="ghost"
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
+                        onClick={() => handleEditUser(user.id)}
+                      >
+                        <FaEdit />
+                      </Button>
+                      <Button 
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                        onClick={() => openDeleteConfirmation(user.id)}
+                      >
+                        <FaTrash />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <p className="flex justify-between">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">Name:</span>
+                      <span className="text-slate-900 dark:text-slate-100">{`${user.first_name} ${user.last_name}`}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">Email:</span>
+                      <span className="text-slate-900 dark:text-slate-100 truncate ml-2">{user.email}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500 dark:text-slate-400 font-medium">Posts:</span>
+                      <span className="text-slate-900 dark:text-slate-100">{user.posts || 0}</span>
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="block md:hidden">
-        {users.map(user => (
-          <div key={user.id} className="mb-4 bg-white dark:bg-dark rounded-lg shadow p-4">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold">{user.username}</h3>
-              <div className="flex gap-2">
-                <button 
-                  className="btn btn-sm btn-secondary"
-                  onClick={() => handleEditUser(user.id)}
-                >
-                  <FaEdit />
-                </button>
-                <button 
-                  className="btn btn-sm btn-error"
-                  onClick={() => openDeleteConfirmation(user.id)}
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            </div>
-            <div className="space-y-1 text-sm">
-              <p>
-                <span className="text-slate-500 dark:text-slate-400 font-medium">Name:</span>
-                <span className="ml-2 text-slate-900 dark:text-slate-100">{`${user.first_name} ${user.last_name}`}</span>
-              </p>
-              <p>
-                <span className="text-slate-500 dark:text-slate-400 font-medium">Email:</span>
-                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.email}</span>
-              </p>
-              <p>
-                <span className="text-slate-500 dark:text-slate-400 font-medium">Role:</span>
-                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.role}</span>
-              </p>
-              <p>
-                <span className="text-slate-500 dark:text-slate-400 font-medium">Posts:</span>
-                <span className="ml-2 text-slate-900 dark:text-slate-100">{user.posts}</span>
-              </p>
-            </div>
           </div>
-        ))}
-      </div>
+        </CardContent>
+      </Card>
 
-      {showDeleteConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Confirm Deletion</h2>
-            <p className="text-slate-700 dark:text-slate-100 mb-6">Are you sure you want to delete this user? This action cannot be undone.</p>
-            <div className="flex justify-end space-x-4">
-              <button className="btn btn-error" onClick={handleDelete}>
-                Delete
-              </button>
-              <button className="btn btn-secondary" onClick={closeDeleteConfirmation}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this user? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={closeDeleteConfirmation}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDelete}
+            >
+              Delete User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

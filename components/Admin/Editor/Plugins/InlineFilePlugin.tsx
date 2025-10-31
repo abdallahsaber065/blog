@@ -1,12 +1,13 @@
 import * as React from "react";
 import { FaFileInvoice } from "react-icons/fa6";
 import FileSelector from "../../FileSelector"; // Adjust the import path as necessary
+import { PluginComponent } from "./types";
 
 interface InlineFilePluginState {
     isFileSelectorOpen: boolean;
 }
 
-export default class InlineFilePlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+export default class InlineFilePlugin extends PluginComponent<{}, InlineFilePluginState> {
     static pluginName: string = "InlineFilePlugin";
     static align: "left" | "right" = "left";
 

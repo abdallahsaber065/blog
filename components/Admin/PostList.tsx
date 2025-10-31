@@ -1,8 +1,11 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { FaTrash, FaEdit, FaSave, FaTimes, FaUserLock } from 'react-icons/fa';
+import { FaEdit, FaFilter, FaSave, FaSearch, FaTimes, FaTrash, FaUserLock } from 'react-icons/fa';
 
 interface PostPermission {
     id: number;
@@ -204,20 +207,20 @@ const PermissionsModal: React.FC<{
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                    <button
+                    <Button
                         onClick={onClose}
-                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-600"
+                        variant="outline"
                         disabled={loading}
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleSave}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
                         disabled={loading}
+                        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                     >
                         {loading ? 'Saving...' : 'Save'}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -408,19 +411,23 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     };
 
     return (
-        <div className="p-4 bg-white dark:bg-dark rounded shadow-md">
-            <div className="mb-4 flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
-                <input
-                    type="text"
-                    placeholder="Search posts..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
-                />
+        <div className="space-y-4">
+            {/* Search and Filter Bar */}
+            <div className="flex flex-col md:flex-row gap-3 flex-wrap">
+                <div className="relative flex-1 min-w-[200px]">
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                    <Input
+                        type="text"
+                        placeholder="Search posts..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                    />
+                </div>
                 <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
+                    className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
                     <option value="All">All Categories</option>
                     {Array.from(new Set(posts.map(post => post.category ? post.category.name : 'Unknown')))
@@ -429,71 +436,73 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                             <option key={category} value={category}>{category}</option>
                         ))}
                 </select>
-                <button
+                <Button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="p-2 bg-zinc-600 text-white rounded w-full md:w-auto dark:text-slate-300 font-bold"
+                    variant="secondary"
+                    className="whitespace-nowrap"
                 >
-                    Sort {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
-                </button>
-                <button
+                    Sort {sortOrder === 'asc' ? '↓' : '↑'}
+                </Button>
+                <Button
                     onClick={() => setShowAll(!showAll)}
-                    className="p-2 bg-slate-600 text-white rounded w-full md:w-auto dark:text-slate-300 font-bold"
+                    variant="secondary"
+                    className="whitespace-nowrap"
                 >
-                    {showAll ? 'Show Paginated' : 'Show All'}
-                </button>
+                    {showAll ? 'Paginate' : 'Show All'}
+                </Button>
                 <select
                     value={postsPerPage}
                     onChange={(e) => setPostsPerPage(Number(e.target.value))}
-                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full md:w-auto"
+                    className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
                     {[5, 10, 20, 50].map(number => (
                         <option key={number} value={number}>{number} per page</option>
                     ))}
                 </select>
-                <button
+                <Button
                     onClick={() => setAdvancedSearch(!advancedSearch)}
-                    className="p-2 bg-amber-600 text-white rounded w-full md:w-auto dark:text-slate-200 font-bold"
+                    variant="outline"
+                    className="whitespace-nowrap"
                 >
-                    {advancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
-                </button>
+                    <FaFilter className="mr-2" />
+                    {advancedSearch ? 'Hide Filters' : 'More Filters'}
+                </Button>
             </div>
             {advancedSearch && (
-                <div className="mb-4 p-4 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray space-y-2">
-                    <input
+                <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50 space-y-3">
+                    <Input
                         type="text"
                         placeholder="Filter by author..."
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
-                        className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
-                    <input
+                    <Input
                         type="date"
                         placeholder="Filter by date..."
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
-                        className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light w-full"
                     />
                 </div>
             )}
-            <ul className="mb-4 space-y-2">
+            <ul className="space-y-3">
                 {paginatedPosts.map((post) => (
-                    <li key={post.id} className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0 p-3 border border-slate-200 dark:border-slate-700 rounded">
-                        <div className="flex flex-col w-full md:w-1/2">
-                            <Link className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                    <li key={post.id} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800/50 hover:shadow-md transition-shadow">
+                        <div className="flex flex-col w-full md:w-1/2 space-y-1">
+                            <Link className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
                                 href={post.status === 'published' ? `/blogs/${post.slug}` : `/blogs/preview/${post.slug}`}
                                 target="_blank">
                                 {post.title}
                             </Link>
-                            <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                by {post.author?.first_name} {post.author?.last_name}
+                            <div className="text-sm text-slate-600 dark:text-slate-400">
+                                by <span className="font-medium">{post.author?.first_name} {post.author?.last_name}</span>
                                 <span className="text-slate-400 dark:text-slate-500">
-                                    (@{post.author?.username})
+                                    {' '}(@{post.author?.username})
                                 </span>
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-4 w-full md:w-auto">
-                            <div className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
+                            <div className="flex items-center gap-2">
                                 {editingPostId === post.id ? (
                                     <>
                                         {(hasApproveRights || post.author?.id === currentUserId) && (
@@ -501,7 +510,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                 <select
                                                     value={editedStatus}
                                                     onChange={(e) => setEditedStatus(e.target.value)}
-                                                    className="p-2 border border-slate-300 dark:border-slate-600 rounded bg-light dark:bg-gray text-dark dark:text-light"
+                                                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 transition-colors"
                                                     disabled={isPostProcessing(post.id)}
                                                 >
                                                     {(hasApproveRights || post.author?.id === currentUserId) ? (
@@ -517,15 +526,19 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                         </>
                                                     )}
                                                 </select>
-                                                <button
-                                                    className="text-green-500 hover:text-green-600 ml-2 disabled:opacity-50"
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
                                                     onClick={() => handleSaveStatus(post.id)}
                                                     disabled={isPostProcessing(post.id)}
                                                 >
                                                     {savingPostIds.has(post.id) ? 'Saving...' : <FaSave />}
-                                                </button>
-                                                <button
-                                                    className="text-red-500 hover:text-red-600 ml-2 disabled:opacity-50"
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                                                     onClick={() => {
                                                         setEditingPostId(null);
                                                         setEditedStatus('');
@@ -533,25 +546,31 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     disabled={isPostProcessing(post.id)}
                                                 >
                                                     <FaTimes />
-                                                </button>
+                                                </Button>
                                             </>
                                         )}
                                     </>
                                 ) : (
-                                    <div className="flex items-center space-x-4">
-                                        <span className={`px-2 py-1 rounded text-xs ${post.status === 'published'
-                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                            : post.status === 'pending'
-                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                                            }`}>
+                                    <div className="flex items-center gap-2">
+                                        <Badge 
+                                            variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
+                                            className={`${
+                                                post.status === 'published'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200'
+                                                    : post.status === 'pending'
+                                                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200'
+                                                        : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 hover:bg-slate-200'
+                                            }`}
+                                        >
                                             {post.status === 'pending' && !hasApproveRights
                                                 ? 'Waiting for Approval'
                                                 : post.status}
-                                        </span>
+                                        </Badge>
                                         {(hasApproveRights || post.author?.id === currentUserId) && (
-                                            <button
-                                                className="text-blue-500 hover:text-blue-600 disabled:opacity-50"
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                                                 onClick={() => {
                                                     setEditingPostId(post.id);
                                                     setEditedStatus(post.status);
@@ -559,40 +578,49 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                 disabled={isPostProcessing(post.id)}
                                             >
                                                 <FaEdit />
-                                            </button>
+                                            </Button>
                                         )}
                                     </div>
                                 )}
                             </div>
 
                             {hasPermissionForPost(post) && (
-                                <div className="flex items-center space-x-2">
-                                    <button
-                                        className="text-green-500 hover:text-green-600 disabled:opacity-50"
+                                <div className="flex items-center gap-1.5">
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
                                         onClick={() => onSelectPost(post.id)}
                                         disabled={isPostProcessing(post.id)}
+                                        title="Edit Post"
                                     >
                                         <FaEdit />
-                                    </button>
-                                    <button
-                                        className="text-red-500 hover:text-red-600 disabled:opacity-50"
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                                         onClick={() => handleDeletePost(post.id)}
                                         disabled={isPostProcessing(post.id)}
+                                        title="Delete Post"
                                     >
                                         {deletingPostIds.has(post.id) ? (
-                                            <span className="text-sm">Deleting...</span>
+                                            <span className="text-xs">Deleting...</span>
                                         ) : (
                                             <FaTrash />
                                         )}
-                                    </button>
+                                    </Button>
                                     {canManagePermissions && (
-                                        <button
-                                            className="text-blue-500 hover:text-blue-600 disabled:opacity-50"
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                                             onClick={() => setSelectedPostForPermissions(post)}
                                             disabled={isPostProcessing(post.id)}
+                                            title="Manage Permissions"
                                         >
                                             <FaUserLock />
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             )}
@@ -601,24 +629,26 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 ))}
             </ul>
             {!showAll && (
-                <div className="flex flex-wrap justify-between items-center space-y-2 md:space-y-0">
-                    <button
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <Button
                         onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 bg-slate-300 dark:bg-slate-600 rounded disabled:opacity-50 w-full md:w-auto"
+                        variant="outline"
+                        className="w-full sm:w-auto"
                     >
-                        Previous
-                    </button>
-                    <span className="text-dark dark:text-light w-full md:w-auto text-center">
+                        ← Previous
+                    </Button>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         Page {currentPage} of {totalPages}
                     </span>
-                    <button
+                    <Button
                         onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 bg-slate-300 dark:bg-slate-600 rounded disabled:opacity-50 w-full md:w-auto"
+                        variant="outline"
+                        className="w-full sm:w-auto"
                     >
-                        Next
-                    </button>
+                        Next →
+                    </Button>
                 </div>
             )}
 

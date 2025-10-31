@@ -1,12 +1,22 @@
-import { useState, useEffect } from 'react';
-import TagList from '@/components/Admin/Categories/TagList';
+import CategoryForm from '@/components/Admin/Categories/CategoryForm';
 import CategoryList from '@/components/Admin/Categories/CategoryList';
 import TagForm from '@/components/Admin/Categories/TagForm';
-import CategoryForm from '@/components/Admin/Categories/CategoryForm';
-import { Tag, Category } from '@prisma/client';
-import dotenv from 'dotenv';
+import TagList from '@/components/Admin/Categories/TagList';
 import withAuth from '@/components/Admin/withAuth';
-import { getSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Category, Tag } from '@prisma/client';
+import dotenv from 'dotenv';
+import { Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 dotenv.config();
 
@@ -65,57 +75,79 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 bg-white dark:bg-dark dark:text-white text-slate-900 ">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-xl font-semibold">Tags</h2>
-                        <button
-                            onClick={() => { setShowConfirm(true); setConfirmType('tags'); }}
-                            className="bg-red-500 text-white px-2 py-1 text-sm rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
-                        >
-                            Delete <span className="font-bold">0</span> Tags
-                        </button>
-                    </div>
-                    <TagForm refreshTags={refreshTags} />
-                    <TagList tags={tagList} refreshTags={refreshTags} />
-                </div>
-                <div>
-                    <div className="flex justify-between items-center mb-2">
-                        <h2 className="text-xl font-semibold">Categories</h2>
-                        <button
-                            onClick={() => { setShowConfirm(true); setConfirmType('categories'); }}
-                            className="bg-red-500 text-white px-2 py-1 text-sm rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
-                        >
-                            Delete <span className="font-bold">0</span> Categories
-                        </button>
-                    </div>
-                    <CategoryForm refreshCategories={refreshCategories} />
-                    <CategoryList categories={categoryList} refreshCategories={refreshCategories} />
-                </div>
-            </div>
-            {showConfirm && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white dark:bg-dark p-4 rounded shadow-lg">
-                        <h3 className="text-lg font-semibold mb-4">Are you sure you want to delete all {confirmType} with 0 posts?</h3>
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => setShowConfirm(false)}
-                                className="bg-slate-500 text-white p-2 rounded mr-2 hover:bg-slate-600 active:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-900"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => handleDeleteZeroCount(confirmType!)}
-                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 active:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:active:bg-red-900"
-                            >
-                                Confirm
-                            </button>
+        <div className="container mx-auto p-4 md:p-6 lg:p-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-200">
+                        Categories & Tags Dashboard
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Tags Section */}
+                        <div className="space-y-4">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">Tags</h2>
+                                <Button
+                                    onClick={() => { setShowConfirm(true); setConfirmType('tags'); }}
+                                    variant="destructive"
+                                    size="sm"
+                                    className="w-full sm:w-auto"
+                                >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete <span className="font-bold ml-1">0</span> Count Tags
+                                </Button>
+                            </div>
+                            <TagForm refreshTags={refreshTags} />
+                            <TagList tags={tagList} refreshTags={refreshTags} />
+                        </div>
+
+                        {/* Categories Section */}
+                        <div className="space-y-4">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">Categories</h2>
+                                <Button
+                                    onClick={() => { setShowConfirm(true); setConfirmType('categories'); }}
+                                    variant="destructive"
+                                    size="sm"
+                                    className="w-full sm:w-auto"
+                                >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete <span className="font-bold ml-1">0</span> Count Categories
+                                </Button>
+                            </div>
+                            <CategoryForm refreshCategories={refreshCategories} />
+                            <CategoryList categories={categoryList} refreshCategories={refreshCategories} />
                         </div>
                     </div>
-                </div>
-            )}
+                </CardContent>
+            </Card>
+
+            {/* Confirmation Dialog */}
+            <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete all {confirmType} with 0 posts? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowConfirm(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={() => handleDeleteZeroCount(confirmType!)}
+                        >
+                            Confirm Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
