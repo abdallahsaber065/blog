@@ -1,11 +1,14 @@
 import * as React from "react";
 import { BsFileEarmarkRichtextFill } from "react-icons/bs";
-import FileSelector from "../../FileSelector";
 import { FILE_EXTENSIONS } from "../../FileIcons";
+import FileSelector from "../../FileSelector";
+import { PluginComponent } from "./types";
+
 interface FilePluginState {
     isFileSelectorOpen: boolean;
 }
-export default class FilePlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+
+export default class FilePlugin extends PluginComponent<{}, FilePluginState> {
     static pluginName: string = "FilePlugin";
     static align: "left" | "right" = "left";
 

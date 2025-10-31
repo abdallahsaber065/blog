@@ -1,8 +1,9 @@
-import nextWednesday from "date-fns/nextWednesday/index.js";
 import * as React from "react";
 // Section icon from react-icons {not FaFile because it's already used}
-import { TbLayoutSidebarRightCollapseFilled } from "react-icons/tb";// Using type assertion for the dynamic import
-export default class SectionPlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+import { TbLayoutSidebarRightCollapseFilled } from "react-icons/tb";
+import { PluginComponent } from "./types";
+
+export default class SectionPlugin extends PluginComponent {
     static pluginName: string = "SectionPlugin";
     static align: "left" | "right" = "left";
 

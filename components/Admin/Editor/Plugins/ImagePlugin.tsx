@@ -1,12 +1,13 @@
 import * as React from "react";
 import { IoImage } from "react-icons/io5";
 import ImageSelector from "../../ImageSelector"; // Adjust the import path as necessary
+import { PluginComponent } from "./types";
 
 interface ImagePluginState {
     isImageSelectorOpen: boolean;
 }
 
-export default class ImagePlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+export default class ImagePlugin extends PluginComponent<{}, ImagePluginState> {
     static pluginName: string = "ImagePlugin";
     static align: "left" | "right" = "left";
 

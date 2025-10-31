@@ -1,8 +1,9 @@
 import * as React from "react";
 // Embed icon from react-icons {not FaFile because it's already used}
 import { PiPlugsConnectedFill } from "react-icons/pi";
-// Using type assertion for the dynamic import
-export default class EmbedPlugin extends (await import('react-markdown-editor-lite')).PluginComponent {
+import { PluginComponent } from "./types";
+
+export default class EmbedPlugin extends PluginComponent {
     static pluginName: string = "EmbedPlugin";
     static align: "left" | "right" = "left";
 
