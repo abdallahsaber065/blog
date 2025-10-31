@@ -13,7 +13,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const {
       topic,
-      num_of_keywords = 10,
+      num_of_keywords = 20,
       user_custom_instructions = '',
       num_of_points = null,
       website_type = 'blog',

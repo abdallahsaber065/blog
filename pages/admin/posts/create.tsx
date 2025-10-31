@@ -112,7 +112,7 @@ const CreatePost: React.FC = () => {
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
-                website_type: process.env.WEBSITE_TYPE || 'blog',
+                website_type: 'blog',
                 files: filesAndImages.length > 0 ? filesAndImages : null
             });
 
@@ -146,10 +146,7 @@ const CreatePost: React.FC = () => {
         try {
             const filesAndImages = [...selectedFiles, ...selectedImages];
             
-            // Stream content generation with EventSource
-            const eventSource = new EventSource('/api/ai/generate-content');
-            
-            // Make POST request to trigger content generation
+            // Make POST request to trigger content generation with streaming
             const response = await fetch('/api/ai/generate-content', {
                 method: 'POST',
                 headers: {
@@ -161,7 +158,7 @@ const CreatePost: React.FC = () => {
                     search_terms: searchTerms,
                     include_images: includeImages,
                     user_custom_instructions: userCustomInstructions,
-                    website_type: process.env.WEBSITE_TYPE || 'blog',
+                    website_type: 'blog',
                     files: filesAndImages.length > 0 ? filesAndImages : null
                 }),
             });
