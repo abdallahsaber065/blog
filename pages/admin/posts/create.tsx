@@ -6,14 +6,13 @@ import { toast } from 'react-hot-toast';
 import { slug } from "github-slugger";
 import { useSession } from 'next-auth/react';
 import JSONEditorComponent from '@/components/Admin/JSONEditor';
-import LogViewer from '@/components/Admin/CreatePost/LogViewer';
 import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
 
-const CONTENT_GENERATOR_API_LINK = process.env.CONTENT_GENERATOR_API_LINK || 'http://localhost:5000';
+// Using Next.js API routes for AI content generation
 
 interface ImageProps {
     id: string;
@@ -64,7 +63,6 @@ const CreatePost: React.FC = () => {
     const [outlineDraft, setOutlineDraft] = useState<any>(null);
     const [includeSearchTerms, setIncludeSearchTerms] = useState(false);
     const [showJSONEditor, setShowJSONEditor] = useState(false);
-    const [showLogViewer, setShowLogViewer] = useState(false);
     const [showTour, setShowTour] = useState(false);
 
     const [includeImages, setIncludeImages] = useState(false);
@@ -108,17 +106,14 @@ const CreatePost: React.FC = () => {
 
             // combine selected files and images in one array
             const filesAndImages = [...selectedFiles, ...selectedImages];
-            const outlineResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_outline`, {
+            const outlineResponse = await axios.post('/api/ai/generate-outline', {
                 topic,
                 num_of_terms: includeSearchTerms ? numOfTerms : 0,
                 num_of_keywords: numOfKeywords,
                 user_custom_instructions: userCustomInstructions,
                 num_of_points: enableNumOfPoints ? numOfPoints : null,
-                website_type: process.env.WEBSITE_TYPE,
+                website_type: 'blog',
                 files: filesAndImages.length > 0 ? filesAndImages : null
-            }, {
-                // 30 minutes timeout
-                timeout: 1800000
             });
 
             const outline = outlineResponse.data?.outline;
@@ -135,11 +130,11 @@ const CreatePost: React.FC = () => {
             console.error('Error during outline generation:', error);
             toast.dismiss();
             if (error.response?.status === 500) {
-                toast.error("Server error. Please try again later.");
+                toast.error(error.response?.data?.error || "Server error. Please try again later.");
             } else if (error.message.includes("timeout")) {
                 toast.error("Request timed out. Please try again.");
             } else {
-                toast.error(error.message);
+                toast.error(error.response?.data?.error || error.message);
             }
         } finally {
             setLoading(false);
@@ -150,32 +145,75 @@ const CreatePost: React.FC = () => {
         setLoading(true);
         try {
             const filesAndImages = [...selectedFiles, ...selectedImages];
-            const contentResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_content`, {
-                topic,
-                outline,
-                search_terms: searchTerms,
-                include_images: includeImages,
-                user_custom_instructions: userCustomInstructions,
-                website_type: process.env.WEBSITE_TYPE,
-                files: filesAndImages.length > 0 ? filesAndImages : null
-            }, {
-                timeout: 1800000 // 
+            
+            // Make POST request to trigger content generation with streaming
+            const response = await fetch('/api/ai/generate-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    topic,
+                    outline,
+                    search_terms: searchTerms,
+                    include_images: includeImages,
+                    user_custom_instructions: userCustomInstructions,
+                    website_type: 'blog',
+                    files: filesAndImages.length > 0 ? filesAndImages : null
+                }),
             });
 
-            const generatedContent = contentResponse.data?.content;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to generate content');
+            }
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            let generatedContent = '';
+
+            if (reader) {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.error) {
+                                    throw new Error(data.error);
+                                }
+                                if (data.chunk) {
+                                    generatedContent += data.chunk;
+                                    setContent(generatedContent); // Update content in real-time
+                                }
+                                if (data.done && data.content) {
+                                    generatedContent = data.content;
+                                }
+                            } catch (parseError) {
+                                // Ignore parsing errors for incomplete chunks
+                            }
+                        }
+                    }
+                }
+            }
+
             if (!generatedContent) {
                 throw new Error("No content generated. Please try again.");
             }
 
             setContent(generatedContent);
 
-            const metadataResponse = await axios.post(`${CONTENT_GENERATOR_API_LINK}/generate_metadata`, {
+            // Generate metadata
+            const metadataResponse = await axios.post('/api/ai/generate-metadata', {
                 topic,
                 content: generatedContent,
                 old_tags: oldTags.map(tag => tag.value),
                 old_categories: oldCategories.map(category => category.value),
-            }, {
-                timeout: 1800000 // 
             });
 
             const { title: generatedTitle = '', excerpt = '', tags = [], main_category = '' } = metadataResponse.data;
@@ -185,10 +223,12 @@ const CreatePost: React.FC = () => {
             setTags(tags.map((tag: string) => ({ label: tag, value: tag })));
             setCategory(main_category ? { label: main_category, value: main_category } : null);
             setFeaturedImage('/blogs/placeholder.jpg');
+            
+            toast.success('Content generated successfully!');
         } catch (error: any) {
             console.error('Error during content generation:', error);
             toast.dismiss();
-            toast.error(error.message);
+            toast.error(error.message || 'Failed to generate content');
         } finally {
             setLoading(false);
         }
@@ -326,8 +366,6 @@ const CreatePost: React.FC = () => {
                     setOutlineDraft={setOutlineDraft}
                     showJSONEditor={showJSONEditor}
                     setShowJSONEditor={setShowJSONEditor}
-                    showLogViewer={showLogViewer}
-                    setShowLogViewer={setShowLogViewer}
                     includeSearchTerms={includeSearchTerms}
                     setIncludeSearchTerms={setIncludeSearchTerms}
                     handleGenerateOutline={handleGenerateOutline}
@@ -397,13 +435,6 @@ const CreatePost: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            )}
-
-            {showLogViewer && (
-                <LogViewer
-                    onClose={() => setShowLogViewer(false)}
-                    link='https://generate.api.devtrend.tech/logs'
-                />
             )}
         </div>
     );
