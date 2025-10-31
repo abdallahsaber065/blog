@@ -21,6 +21,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Standard select input styling matching the project's design system
+const SELECT_INPUT_CLASSNAME = "flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950";
+
 interface User {
     id: number;
     username: string;
@@ -29,6 +32,16 @@ interface User {
     first_name: string;
     last_name: string;
     posts: number;
+}
+
+interface UserApiResponse {
+    id: number;
+    username: string;
+    email: string;
+    role: string;
+    first_name: string;
+    last_name: string;
+    posts: Array<{ id: number }>;
 }
 
 const UsersManagementPage = () => {
@@ -63,8 +76,8 @@ const UsersManagementPage = () => {
                     }
                 }
             });
-            const response = await axios.get(`/api/users?select=${userSelect}`);
-            const usersWithPostCount = response.data.map((user: any) => ({
+            const response = await axios.get<UserApiResponse[]>(`/api/users?select=${userSelect}`);
+            const usersWithPostCount: User[] = response.data.map((user) => ({
                 ...user,
                 posts: user.posts?.length || 0
             }));
@@ -227,7 +240,7 @@ const UsersManagementPage = () => {
                                 <select
                                     value={roleFilter}
                                     onChange={(e) => setRoleFilter(e.target.value)}
-                                    className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950"
+                                    className={SELECT_INPUT_CLASSNAME}
                                 >
                                     <option value="all">All Roles</option>
                                     <option value="admin">Admin</option>
@@ -238,12 +251,13 @@ const UsersManagementPage = () => {
                                 </select>
                             </div>
                         </div>
-                        {searchTerm || roleFilter !== 'all' ? (
-                            <div className="mt-4 flex items-center gap-2">
-                                <Badge variant="secondary">
-                                    {filteredUsers.length} {filteredUsers.length === 1 ? 'result' : 'results'} found
-                                </Badge>
-                                {(searchTerm || roleFilter !== 'all') && (
+                        {(() => {
+                            const hasActiveFilters = searchTerm || roleFilter !== 'all';
+                            return hasActiveFilters ? (
+                                <div className="mt-4 flex items-center gap-2">
+                                    <Badge variant="secondary">
+                                        {filteredUsers.length} {filteredUsers.length === 1 ? 'result' : 'results'} found
+                                    </Badge>
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -254,9 +268,9 @@ const UsersManagementPage = () => {
                                     >
                                         Clear filters
                                     </Button>
-                                )}
-                            </div>
-                        ) : null}
+                                </div>
+                            ) : null;
+                        })()}
                     </CardContent>
                 </Card>
 
