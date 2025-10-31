@@ -11,6 +11,7 @@
     "create-admin": "dotenv -c -- node scripts/create-admin.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "@mdxeditor/editor": "^3.11.5",

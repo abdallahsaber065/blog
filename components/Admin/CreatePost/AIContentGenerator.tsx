@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 import ContentSettings from './ContentSettings';
 import JSONEditorComponent from '../JSONEditor';
-import LogViewer from './LogViewer';
 import FileSelector from '@/components/Admin/FileSelector';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import { FaFile, FaImage } from 'react-icons/fa';
@@ -34,8 +33,6 @@ interface AIContentGeneratorProps {
     setOutlineDraft: (value: any) => void;
     showJSONEditor: boolean;
     setShowJSONEditor: (value: boolean) => void;
-    showLogViewer: boolean;
-    setShowLogViewer: (value: boolean) => void;
     includeSearchTerms: boolean;
     setIncludeSearchTerms: (value: boolean) => void;
     handleGenerateOutline: () => void;
@@ -88,8 +85,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     setOutlineDraft,
     showJSONEditor,
     setShowJSONEditor,
-    showLogViewer,
-    setShowLogViewer,
     includeSearchTerms,
     setIncludeSearchTerms,
     handleGenerateOutline,
@@ -252,13 +247,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                         {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
                     </Button>
                 )}
-
-                <Button
-                    variant="secondary"
-                    onClick={() => setShowLogViewer(true)}
-                >
-                    View Logs
-                </Button>
             </div>
 
             {showJSONEditor && (
@@ -281,13 +269,6 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                         </div>
                     </div>
                 </div>
-            )}
-
-            {showLogViewer && (
-                <LogViewer
-                    onClose={() => setShowLogViewer(false)}
-                    link='https://generate.api.devtrend.tech/logs'
-                />
             )}
 
             {showFileSelector && (
