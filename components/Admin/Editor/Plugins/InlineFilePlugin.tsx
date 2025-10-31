@@ -1,6 +1,7 @@
 import * as React from "react";
 import { FaFileInvoice } from "react-icons/fa6";
-import FileSelector from "../../FileSelector"; // Adjust the import path as necessary
+import FileSelector from "../../FileSelector";
+import { FILE_EXTENSIONS } from "../../FileIcons";
 import { PluginComponent } from "./types";
 
 interface InlineFilePluginState {
@@ -59,7 +60,7 @@ export default class InlineFilePlugin extends PluginComponent<{}, InlineFilePlug
                         isOpen={this.state.isFileSelectorOpen}
                         onClose={this.closeFileSelector}
                         onSelect={this.handleFileSelect}
-                        allowedTypes={['.jpg', '.jpeg', '.png', '.gif']} // Adjust allowed types as necessary
+                        allowedTypes={FILE_EXTENSIONS}
                     />
                 )}
             </>

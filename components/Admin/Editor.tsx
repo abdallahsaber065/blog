@@ -89,19 +89,47 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef, isFull
                     height: "100%",
                 }}
                 renderHTML={renderHTML}
-                canView={{
-                    menu: true,
-                    md: true,
-                    html: true,
-                    fullScreen: true,
-                    hideMenu: false,
-                    both: false,
+                config={{
+                    view: {
+                        menu: true,
+                        md: true,
+                        html: false,
+                    },
+                    canView: {
+                        menu: true,
+                        md: true,
+                        html: true,
+                        fullScreen: true,
+                        hideMenu: false,
+                        both: false,
+                    },
+                    shortcuts: true,
                 }}
-                view={{
-                    menu: true,
-                    md: true,
-                    html: false,
-                }}
+                plugins={[
+                    'header',
+                    'font-bold',
+                    'font-italic',
+                    'font-underline',
+                    'font-strikethrough',
+                    'list-unordered',
+                    'list-ordered',
+                    'block-quote',
+                    'block-wrap',
+                    'block-code-inline',
+                    'block-code-block',
+                    'table',
+                    'image',
+                    'link',
+                    'ImagePlugin',
+                    'FilePlugin',
+                    'InlineFilePlugin',
+                    'EmbedPlugin',
+                    'SectionPlugin',
+                    'logger',
+                    'clear',
+                    'undo',
+                    'redo',
+                ]}
                 onChange={handleChange}
                 value={markdown}
                 syncScrollMode={['rightFollowLeft', 'leftFollowRight']}
