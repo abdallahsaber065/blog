@@ -1,22 +1,19 @@
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
-import Image from "next/image";
-import Tag from "@/components/Elements/Tag";
-import siteMetadata from "@/lib/siteMetaData";
-import { serialize } from 'next-mdx-remote/serialize';
-import { Options } from "@/lib/articles/mdxconfig";
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { prisma } from '@/lib/prisma';
-import React, { useEffect, useState } from "react";
-import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
-import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
-import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
-import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
-import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
+import Tag from "@/components/Elements/Tag";
 import Embed from "@/components/MdxComponents/Embed/Embed";
-import { getSession } from 'next-auth/react';
+import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
 import FileResource from "@/components/MdxComponents/File/FileResource";
+import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
+import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
+import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
+import { Options } from "@/lib/articles/mdxconfig";
+import { prisma } from '@/lib/prisma';
+import siteMetadata from "@/lib/siteMetaData";
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { serialize } from 'next-mdx-remote/serialize';
+import Image from "next/image";
 import Link from "next/link";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -135,7 +132,7 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
     // Serialize the modified content
     const mdxSource = await serialize(
         finalContent,
-        Options as SerializeOptions
+        Options
     );
 
     // Convert Date objects to strings
@@ -195,7 +192,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                         {deserializedPost.category && (
                             <Tag
                                 name={deserializedPost.category.name}
-                                link={`/categories/${deserializedPost.category.slug}`}
+                                link={`/explore?category=${deserializedPost.category.slug}`}
                                 className="px-6 text-sm py-2"
                             />
                         )}
@@ -232,7 +229,7 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 <div className="flex justify-center mt-4">
                     <div className="flex flex-wrap gap-2 justify-center md:gap-4">
                         {deserializedPost.tags && deserializedPost.tags.map((tag: { name: string; slug: string }) => (
-                            <Link key={tag.slug} href={`/tags/${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
+                            <Link key={tag.slug} href={`/explore?tag=${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
                                 {tag.name}
                             </Link>
                         ))}

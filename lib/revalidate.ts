@@ -1,16 +1,15 @@
-import { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { NextApiResponse } from 'next';
 
 export const REVALIDATE_PATHS = {
   HOME: '/',
-  ALL_TAGS: '/tags/all',
-  ALL_CATEGORIES: '/categories/all',
+  EXPLORE: '/explore',
   AUTHORS: '/authors',
   BLOG: '/blogs',
   ABOUT: '/about',
   getAuthorPath: (username: string) => `/authors/${username}`,
-  getTagPath: (slug: string) => `/tags/${slug}`,
-  getCategoryPath: (slug: string) => `/categories/${slug}`,
+  getExploreTagPath: (slug: string) => `/explore?tag=${slug}`,
+  getExploreCategoryPath: (slug: string) => `/explore?category=${slug}`,
   getBlogPath: (slug: string) => `/blogs/${slug}`,
 };
 
@@ -18,10 +17,10 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
   try {
     console.log('Revalidating paths:', paths);
 
-    // If paths include any Tag-related paths, fetch all Tag slugs
+    // If paths include any Tag-related paths, fetch all Tag slugs and revalidate explore page
     const shouldRevalidateAllTags = paths.some(path =>
-      path === REVALIDATE_PATHS.ALL_TAGS ||
-      path.startsWith('/tags/')
+      path === REVALIDATE_PATHS.EXPLORE ||
+      path.includes('tag=')
     );
 
     if (shouldRevalidateAllTags) {
@@ -30,14 +29,15 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
       });
       paths = [
         ...paths,
-        ...allTags.map(tag => REVALIDATE_PATHS.getTagPath(tag.slug))
+        REVALIDATE_PATHS.EXPLORE,
+        ...allTags.map(tag => REVALIDATE_PATHS.getExploreTagPath(tag.slug))
       ];
     }
 
-    // If paths include any Category-related paths, fetch all Category slugs
+    // If paths include any Category-related paths, fetch all Category slugs and revalidate explore page
     const shouldRevalidateAllCategories = paths.some(path =>
-      path === REVALIDATE_PATHS.ALL_CATEGORIES ||
-      path.startsWith('/categories/')
+      path === REVALIDATE_PATHS.EXPLORE ||
+      path.includes('category=')
     );
 
     if (shouldRevalidateAllCategories) {
@@ -46,7 +46,8 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
       });
       paths = [
         ...paths,
-        ...allCategories.map(category => REVALIDATE_PATHS.getCategoryPath(category.slug))
+        REVALIDATE_PATHS.EXPLORE,
+        ...allCategories.map(category => REVALIDATE_PATHS.getExploreCategoryPath(category.slug))
       ];
     }
 

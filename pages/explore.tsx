@@ -1,4 +1,3 @@
-import BlogLayoutThree from '@/components/Blog/BlogLayoutThree';
 import BlogListCard from '@/components/Blog/BlogListCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,8 +18,6 @@ import {
   Clock,
   Filter,
   Folder,
-  Grid3x3,
-  LayoutList,
   Search,
   SlidersHorizontal,
   Sparkles,
@@ -29,6 +26,7 @@ import {
   X
 } from 'lucide-react';
 import { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Post {
@@ -128,7 +126,9 @@ export const getStaticProps: GetStaticProps = async () => {
 type SortOption = 'newest' | 'oldest' | 'most-viewed' | 'trending';
 
 const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) => {
-  // State management
+  const router = useRouter();
+
+  // Initialize state from URL parameters
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -136,6 +136,25 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Initialize filters from URL query parameters on mount
+  useEffect(() => {
+    if (router.isReady) {
+      const { category, tag, search } = router.query;
+
+      if (category && typeof category === 'string') {
+        setSelectedCategories([category]);
+      }
+
+      if (tag && typeof tag === 'string') {
+        setSelectedTags([tag]);
+      }
+
+      if (search && typeof search === 'string') {
+        setSearchTerm(search);
+      }
+    }
+  }, [router.isReady, router.query]);
 
   // Debounced search
   const [debouncedSearch, setDebouncedSearch] = useState('');

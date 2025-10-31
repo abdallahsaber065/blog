@@ -1,9 +1,9 @@
-import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import TerserPlugin from 'terser-webpack-plugin';
 import dotenv from 'dotenv';
+import path from 'path';
+import remarkGfm from 'remark-gfm';
+import TerserPlugin from 'terser-webpack-plugin';
+import { fileURLToPath } from 'url';
 
 
 dotenv.config();
@@ -55,13 +55,13 @@ const nextConfig = {
   distDir: process.env.BUILD_DIR || '.next',
   transpilePackages: ['@mdxeditor/editor'],
   reactStrictMode: false,
-  
+
   // Turbopack configuration (used in development by default in Next.js 16)
   turbopack: {
     // Turbopack handles most configurations automatically
     // No custom aliases needed - use /path for public assets
   },
-  
+
   // Webpack customizations (used for production builds)
   webpack: (config) => {
     config.experiments = { ...config.experiments, topLevelAwait: true };
@@ -96,12 +96,27 @@ const nextConfig = {
     return [
       {
         source: '/tags',
-        destination: '/tags/all',
+        destination: '/explore',
+        permanent: true,
+      },
+      {
+        source: '/tags/:slug',
+        destination: '/explore?tag=:slug',
         permanent: true,
       },
       {
         source: '/categories',
-        destination: '/categories/all',
+        destination: '/explore',
+        permanent: true,
+      },
+      {
+        source: '/categories/:slug',
+        destination: '/explore?category=:slug',
+        permanent: true,
+      },
+      {
+        source: '/discover',
+        destination: '/explore',
         permanent: true,
       }
     ];

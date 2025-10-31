@@ -1,8 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { REVALIDATE_PATHS } from '@/lib/revalidate';
-import { revalidateRoutes } from '@/lib/revalidate';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -17,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             });
             const routesToRevalidate = [
 
-                REVALIDATE_PATHS.ALL_TAGS
+                REVALIDATE_PATHS.EXPLORE
             ];
             await revalidateRoutes(res, routesToRevalidate);
             res.status(200).json({ message: 'Tags with 0 posts deleted successfully' });

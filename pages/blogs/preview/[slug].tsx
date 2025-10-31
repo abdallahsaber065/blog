@@ -13,7 +13,6 @@ import { prisma } from '@/lib/prisma';
 import siteMetadata from "@/lib/siteMetaData";
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
-import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { serialize } from 'next-mdx-remote/serialize';
 import Image from "next/image";
 import Link from "next/link";
@@ -124,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
     const mdxSource = await serialize(
         finalContent,
-        Options as SerializeOptions
+        Options
     );
 
     const serializedPost = {
@@ -217,7 +216,7 @@ const BlogPreviewPage = ({ post, mdxSource, jsonLd, isAuthorized }: any) => {
                         {deserializedPost.category && (
                             <Tag
                                 name={deserializedPost.category.name}
-                                link={`/categories/${deserializedPost.category.slug}`}
+                                link={`/explore?category=${deserializedPost.category.slug}`}
                                 className="px-6 text-sm py-2"
                             />
                         )}
@@ -251,7 +250,7 @@ const BlogPreviewPage = ({ post, mdxSource, jsonLd, isAuthorized }: any) => {
                 <div className="flex justify-center mt-4">
                     <div className="flex flex-wrap gap-2 justify-center md:gap-4">
                         {deserializedPost.tags && deserializedPost.tags.map((tag: { name: string; slug: string }) => (
-                            <Link key={tag.slug} href={`/tags/${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
+                            <Link key={tag.slug} href={`/explore?tag=${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
                                 {tag.name}
                             </Link>
                         ))}

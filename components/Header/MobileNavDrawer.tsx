@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { signOut, useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
 import {
     Sheet,
     SheetContent,
     SheetHeader,
     SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 interface MobileNavDrawerProps {
     isOpen: boolean;
@@ -71,13 +71,8 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                         {isDiscoverMenuOpen && (
                             <ul className="mt-2 space-y-2">
                                 <li>
-                                    <Link href="/tags" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/tags') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                        Topics
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/categories" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/categories') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                        {process.env.NEXT_PUBLIC_REMOTE_URL?.includes('collage') ? 'Subjects' : 'Categories'}
+                                    <Link href="/explore" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/explore') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
+                                        All Posts
                                     </Link>
                                 </li>
                             </ul>

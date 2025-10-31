@@ -1,9 +1,9 @@
 // pages/api/posts/index.ts
-import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
 
+import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { revalidateRoutes, REVALIDATE_PATHS } from '@/lib/revalidate';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -82,20 +82,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     REVALIDATE_PATHS.getBlogPath(newPost.slug),
                     REVALIDATE_PATHS.HOME,
 
-                    REVALIDATE_PATHS.ALL_TAGS,
-                    REVALIDATE_PATHS.ABOUT,
-                    REVALIDATE_PATHS.ALL_CATEGORIES
+                    REVALIDATE_PATHS.EXPLORE,
+                    REVALIDATE_PATHS.ABOUT
                 ];
 
                 if (body.category?.value) {
                     postRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getCategoryPath(body.category.value)
+                        REVALIDATE_PATHS.getExploreCategoryPath(body.category.value)
                     );
                 }
                 if (body.tags?.length > 0) {
                     body.tags.forEach((tag: { value: string }) => {
                         postRoutesToRevalidate.push(
-                            REVALIDATE_PATHS.getTagPath(tag.value)
+                            REVALIDATE_PATHS.getExploreTagPath(tag.value)
                         );
                     });
                 }
@@ -186,9 +185,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 const routesToRevalidate = [
                     REVALIDATE_PATHS.HOME,
 
-                    REVALIDATE_PATHS.ALL_TAGS,
-                    REVALIDATE_PATHS.ABOUT,
-                    REVALIDATE_PATHS.ALL_CATEGORIES,
+                    REVALIDATE_PATHS.EXPLORE,
                     REVALIDATE_PATHS.ABOUT
                 ];
 
@@ -207,17 +204,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 // Add category paths
                 if (oldPost.category?.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(oldPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getExploreCategoryPath(oldPost.category.slug));
                 }
                 if (updatedPost.category?.slug && oldPost.category?.slug !== updatedPost.category.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getCategoryPath(updatedPost.category.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getExploreCategoryPath(updatedPost.category.slug));
                 }
 
                 // Add tag paths
                 const oldTags = oldPost.tags.map(tag => tag.slug);
                 const newTags = updatedPost.tags.map(tag => tag.slug);
                 [...oldTags, ...newTags].forEach(slug => {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getExploreTagPath(slug));
                 });
 
                 await revalidateRoutes(res, routesToRevalidate);
@@ -256,9 +253,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     REVALIDATE_PATHS.HOME,
                     REVALIDATE_PATHS.ABOUT,
 
-                    REVALIDATE_PATHS.ALL_TAGS,
-
-                    REVALIDATE_PATHS.ALL_CATEGORIES
+                    REVALIDATE_PATHS.EXPLORE
                 ];
 
                 // Add author page to revalidate
@@ -268,13 +263,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 if (postToDelete?.category?.slug) {
                     deleteRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getCategoryPath(postToDelete.category.slug)
+                        REVALIDATE_PATHS.getExploreCategoryPath(postToDelete.category.slug)
                     );
                 }
 
                 postToDelete?.tags.forEach(tag => {
                     deleteRoutesToRevalidate.push(
-                        REVALIDATE_PATHS.getTagPath(tag.slug)
+                        REVALIDATE_PATHS.getExploreTagPath(tag.slug)
                     );
                 });
 

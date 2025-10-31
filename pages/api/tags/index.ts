@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-import { authMiddleware } from '@/middleware/authMiddleware';
 import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
+import { authMiddleware } from '@/middleware/authMiddleware';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -84,10 +84,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 const routesToRevalidate = [
 
-                    REVALIDATE_PATHS.ALL_TAGS
+                    REVALIDATE_PATHS.EXPLORE
                 ];
                 if (updatedTag.slug) {
-                    routesToRevalidate.push(REVALIDATE_PATHS.getTagPath(updatedTag.slug));
+                    routesToRevalidate.push(REVALIDATE_PATHS.getExploreTagPath(updatedTag.slug));
                 }
                 await revalidateRoutes(res, routesToRevalidate);
                 log += `\nResponse Status: 200 OK`;
@@ -111,10 +111,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                 const deleteRoutesToRevalidate = [
 
-                    REVALIDATE_PATHS.ALL_TAGS
+                    REVALIDATE_PATHS.EXPLORE
                 ];
                 if (tagToDelete?.slug) {
-                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getTagPath(tagToDelete.slug));
+                    deleteRoutesToRevalidate.push(REVALIDATE_PATHS.getExploreTagPath(tagToDelete.slug));
                 }
 
                 await revalidateRoutes(res, deleteRoutesToRevalidate);
