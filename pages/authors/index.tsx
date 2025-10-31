@@ -59,7 +59,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({ authors }) => {
                                     {author.profile_image_url ? (
                                         <div className="relative">
                                             <Image
-                                                src={process.env.NEXT_PUBLIC_BASE_URL + "/" + author.profile_image_url}
+                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${author.profile_image_url}`}
                                                 alt={`${author.username}'s profile image`}
                                                 className="rounded-full w-24 h-24 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-lg group-hover:ring-blue-200 dark:group-hover:ring-blue-800 transition-all"
                                                 width={96}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Papa from 'papaparse';
 import axios from 'axios';
@@ -36,6 +36,7 @@ const Subscriptions: React.FC = () => {
     const [editId, setEditId] = useState<number | null>(null);
     const [editEmail, setEditEmail] = useState('');
     const [editSubscribed, setEditSubscribed] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetchSubscriptions();
@@ -294,12 +295,19 @@ const Subscriptions: React.FC = () => {
                                     <Download className="w-4 h-4 mr-2" />
                                     <span className="hidden sm:inline">Export</span>
                                 </Button>
-                                <Button variant="warning" asChild>
-                                    <label className="cursor-pointer">
-                                        <Upload className="w-4 h-4 mr-2" />
-                                        <span className="hidden sm:inline">Import</span>
-                                        <input type="file" accept=".csv" onChange={importFromCSV} className="hidden" />
-                                    </label>
+                                <input 
+                                    type="file" 
+                                    accept=".csv" 
+                                    onChange={importFromCSV} 
+                                    ref={fileInputRef}
+                                    className="hidden" 
+                                />
+                                <Button 
+                                    variant="warning" 
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <Upload className="w-4 h-4 mr-2" />
+                                    <span className="hidden sm:inline">Import</span>
                                 </Button>
                             </div>
                         </div>
