@@ -101,24 +101,32 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
     }, [showImageSelector]);
 
     return (
-        <div className="post-editor-container flex flex-col">
-            <div className="post-editor-title-section mb-4">
-                <label className="post-editor-title-label block text-l font-bold text-gray dark:text-lightgray my-4">
+        <div className="post-editor-container flex flex-col space-y-6">
+            {/* Title Section */}
+            <div className="post-editor-title-section">
+                <label className="post-editor-title-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
                     Title
                 </label>
                 <input
                     type="text"
-                    className="post-editor-title-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
+                    className="post-editor-title-input w-full text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter post title..."
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                 />
             </div>
+
+            {/* Editor and Preview */}
             <EditorWithPreview
                 markdownText={markdownText}
                 onContentChange={handleContentChange}
             />
-            <div className="post-editor-tags-section mb-4">
-                <label className="post-editor-tags-label block text-l font-bold text-gray dark:text-lightgray my-4">
+
+            {/* Tags Section */}
+            <div className="post-editor-tags-section">
+                <label className="post-editor-tags-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-purple-500 rounded-full"></span>
                     Tags
                 </label>
                 <CreatableSelect
@@ -133,10 +141,14 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => String(option.id)}
                     formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
+                    placeholder="Select or create tags..."
                 />
             </div>
-            <div className="post-editor-category-section mb-4">
-                <label className="post-editor-category-label block text-l font-bold text-gray dark:text-lightgray my-4">
+
+            {/* Category Section */}
+            <div className="post-editor-category-section">
+                <label className="post-editor-category-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-orange-500 rounded-full"></span>
                     Category
                 </label>
                 <CreatableSelect
@@ -150,25 +162,31 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => String(option.id)}
                     formatCreateLabel={(inputValue) => `Create new category "${inputValue}"`}
+                    placeholder="Select or create category..."
                 />
             </div>
-            <div className="featured-image mb-4">
-                <label className="block text-l font-bold text-gray dark:text-lightgray my-4">
+
+            {/* Featured Image Section */}
+            <div className="featured-image">
+                <label className="block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-green-500 rounded-full"></span>
                     Featured Image
                 </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                    <Button
-                        onClick={() => setShowImageSelector(true)}
-                    >
-                        Browse
-                    </Button>
-                </div>
+                <Button
+                    onClick={() => setShowImageSelector(true)}
+                    variant="outline"
+                    className="mb-3"
+                >
+                    Browse Images
+                </Button>
                 {currentPost.featured_image_url && (
-                    <img
-                        src={currentPost.featured_image_url}
-                        alt="Featured"
-                        className="featured-image-preview mt-2 max-h-40 object-cover"
-                    />
+                    <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm">
+                        <img
+                            src={currentPost.featured_image_url}
+                            alt="Featured"
+                            className="featured-image-preview w-full max-h-64 object-cover"
+                        />
+                    </div>
                 )}
 
                 <ImageSelector
@@ -179,21 +197,40 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     folder='blog'
                 />
             </div>
-            <div className="post-editor-actions flex gap-4">
+
+            {/* Action Buttons */}
+            <div className="post-editor-actions flex gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                 <Button
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onClick={() => handleSave('published')}
                     disabled={isLoading}
                 >
-                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
+                    {isLoading ? (
+                        <span className="flex items-center gap-2">
+                            <ClipLoader size={18} color={"#fff"} />
+                            <span>Publishing...</span>
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-2">
+                            <FaSave />
+                            <span>Publish</span>
+                        </span>
+                    )}
                 </Button>
                 <Button
                     variant="secondary"
-                    className="flex-1"
+                    className="flex-1 h-11"
                     onClick={() => handleSave('draft')}
                     disabled={isLoading}
                 >
-                    {isLoading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
+                    {isLoading ? (
+                        <span className="flex items-center gap-2">
+                            <ClipLoader size={18} color={"#fff"} />
+                            <span>Saving...</span>
+                        </span>
+                    ) : (
+                        <span>Save Draft</span>
+                    )}
                 </Button>
             </div>
         </div>

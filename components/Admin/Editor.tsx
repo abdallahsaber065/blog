@@ -75,14 +75,18 @@ const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef, isFull
     };
 
     return (
-        <div>
-            {error && <div className="text-red-500 mb-2">{error}</div>}
+        <div className="h-full">
+            {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2 rounded text-sm mb-2">
+                    {error}
+                </div>
+            )}
             <MdEditor
                 className="markdown-editor-main"
                 markdownClass="editor-class"
                 onScroll={onScroll}
                 style={{
-                    height: isFullScreen ? "calc(100vh - 3rem)" : "500px",
+                    height: "100%",
                 }}
                 renderHTML={renderHTML}
                 canView={{
