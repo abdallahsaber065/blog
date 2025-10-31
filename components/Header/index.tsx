@@ -73,26 +73,10 @@ const Header: React.FC<HeaderProps> = () => {
               Contact
             </Link>
           </li>
-          <li className="dropdown dropdown-hover">
-            <Link href="#" className={`${pathname?.startsWith("/tags") || pathname?.startsWith("/categories") ? "text-primary dark:text-accent" : "hover:text-primary dark:hover:text-accent"} flex items-center`}>
-              Discover
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
+          <li>
+            <Link href="/explore" className={`hover:text-primary dark:hover:text-accent ${pathname === '/explore' ? 'font-bold text-primary dark:text-accent' : ''}`}>
+              Explore
             </Link>
-            <ul className="dropdown-content bg-light dark:bg-dark rounded-t-none p-2 left-1/2 transform -translate-x-1/2">
-              <li>
-                <Link href="/tags/all" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/tags') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
-                  Topics
-                </Link>
-              </li>
-              <li>
-                <Link href="/categories/all" className={`hover:text-primary dark:hover:text-accent ${pathname?.startsWith('/categories') ? "dark:text-primary text-accent" : "hover:text-primary dark:hover:text-accent"}`}>
-                  {process.env.NEXT_PUBLIC_REMOTE_URL?.includes('collage') ? 'Subjects' :
-                  'Categories'}
-                </Link>
-              </li>
-            </ul>
           </li>
           {session && RoleList.includes(session.user.role) && (
             <li className="dropdown dropdown-hover">
