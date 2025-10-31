@@ -1,12 +1,27 @@
-import { useState, useEffect } from 'react';
-import { ClipLoader } from 'react-spinners';
+import { useState, useEffect, useRef } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Papa from 'papaparse';
 import axios from 'axios';
-import { FaEdit, FaTrash, FaPlus, FaFileExport, FaFileImport } from 'react-icons/fa';
 import withAuth from '@/components/Admin/withAuth';
 import Link from 'next/link';
-import { FaUserFriends } from 'react-icons/fa';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { 
+    Mail, 
+    Plus, 
+    Download, 
+    Upload, 
+    Edit2, 
+    Trash2, 
+    Save, 
+    X, 
+    Users, 
+    Loader2,
+    Check,
+    AlertCircle
+} from 'lucide-react';
 
 interface Subscription {
     id: number;
@@ -21,9 +36,7 @@ const Subscriptions: React.FC = () => {
     const [editId, setEditId] = useState<number | null>(null);
     const [editEmail, setEditEmail] = useState('');
     const [editSubscribed, setEditSubscribed] = useState(false);
-
-    const commonClassNames = "py-2 text-slate-800 dark:text-white bg-white dark:bg-dark p-2 border border-slate-300 rounded";
-    const buttonClassNames = "flex items-center gap-2 px-3 py-2 rounded transition-colors duration-200";
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetchSubscriptions();
@@ -171,258 +184,257 @@ const Subscriptions: React.FC = () => {
     };
 
     return (
-        <div className="p-4 dark:bg-dark text-slate-800 dark:text-white max-w-7xl mx-auto">
-            {/* Header Section */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <h1 className="text-2xl font-bold">Newsletter Subscriptions</h1>
-
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <Link
-                        href="/admin/users"
-                        className="flex items-center justify-center gap-2 btn btn-secondary w-full sm:w-auto"
-                    >
-                        <FaUserFriends className="shrink-0" />
-                        <span className="whitespace-nowrap">User Management</span>
-                    </Link>
-                </div>
-            </div>
-
-            {/* Breadcrumbs */}
-            <div className="text-sm breadcrumbs mb-4 overflow-x-auto whitespace-nowrap">
-                <ul className="flex flex-wrap gap-2">
-                    <li><Link href="/admin">Admin</Link></li>
-                    <li><Link href="/admin/users">Users</Link></li>
-                    <li>Newsletter Subscriptions</li>
-                </ul>
-            </div>
-
-            {/* Responsive controls */}
-            <div className="mb-4 flex flex-col sm:flex-row gap-2">
-                <input
-                    type="email"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="Enter email"
-                    className={`flex-grow ${commonClassNames}`}
-                />
-                <div className="flex gap-2">
-                    <button
-                        onClick={addSubscription}
-                        className={`${buttonClassNames} bg-blue-500 hover:bg-blue-600 text-white`}
-                    >
-                        <FaPlus /> <span className="hidden sm:inline">Add</span>
-                    </button>
-                    <button
-                        onClick={exportToCSV}
-                        className={`${buttonClassNames} bg-green-500 hover:bg-green-600 text-white`}
-                    >
-                        <FaFileExport /> <span className="hidden sm:inline">Export</span>
-                    </button>
-                    <label className={`${buttonClassNames} bg-yellow-500 hover:bg-yellow-600 text-white cursor-pointer`}>
-                        <FaFileImport /> <span className="hidden sm:inline">Import</span>
-                        <input type="file" accept=".csv" onChange={importFromCSV} className="hidden" />
-                    </label>
-                </div>
-            </div>
-
-            {loading ? (
-                <div className="flex justify-center">
-                    <ClipLoader size={50} color={"#fff"} />
-                </div>
-            ) : (
-                <div className="w-full">
-                    {/* Desktop Table - Hidden on mobile */}
-                    <div className="hidden md:block overflow-x-auto">
-                        <table className="w-full border-collapse">
-                            <thead>
-                                <tr className="bg-slate-100 dark:bg-slate-800">
-                                    <th className="px-4 py-2 text-left text-slate-800 dark:text-white">ID</th>
-                                    <th className="px-4 py-2 text-left text-slate-800 dark:text-white">Email</th>
-                                    <th className="px-4 py-2 text-left text-slate-800 dark:text-white">Subscribed</th>
-                                    <th className="px-4 py-2 text-left text-slate-800 dark:text-white">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {subscriptions.map((sub) => (
-                                    <tr key={sub.id} className="border-b dark:border-slate-700">
-                                        <td className="px-4 py-2 text-slate-800 dark:text-white">{sub.id}</td>
-                                        <td className="px-4 py-2 text-slate-800 dark:text-white">
-                                            {editId === sub.id ? (
-                                                <input
-                                                    type="email"
-                                                    value={editEmail}
-                                                    onChange={(e) => setEditEmail(e.target.value)}
-                                                    className={`w-full ${commonClassNames}`}
-                                                />
-                                            ) : (
-                                                <span title={sub.email}>{truncateEmail(sub.email, 40)}</span>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-2 text-slate-800 dark:text-white">
-                                            {editId === sub.id ? (
-                                                <input
-                                                    type="checkbox"
-                                                    checked={editSubscribed}
-                                                    onChange={(e) => setEditSubscribed(e.target.checked)}
-                                                    className="ml-2"
-                                                />
-                                            ) : (
-                                                <div className="text-slate-800 dark:text-white">
-                                                    {sub.subscribed ? 'Yes' : 'No'}
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-2">
-                                            {editId === sub.id ? (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={updateSubscription}
-                                                        className="text-green-500 hover:text-green-600"
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setEditId(null)}
-                                                        className="text-slate-500 hover:text-slate-600"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => editSubscription(sub)}
-                                                        className="text-blue-500 hover:text-blue-600"
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => deleteSubscription(sub.id)}
-                                                        className="text-red-500 hover:text-red-600"
-                                                    >
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Mobile Card View */}
-                    <div className="md:hidden space-y-4">
-                        {subscriptions.map((sub) => (
-                            <div key={sub.id}
-                                className="bg-white dark:bg-dark rounded-lg shadow-md 
-                                          border border-slate-200 dark:border-slate-700 p-4 space-y-2"
-                            >
-                                {/* Header with ID */}
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <span className="text-slate-500 dark:text-slate-400 text-sm">ID: </span>
-                                        <span className="font-semibold text-slate-800 dark:text-white">{sub.id}</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        {editId === sub.id ? (
-                                            <>
-                                                <button
-                                                    onClick={updateSubscription}
-                                                    className="text-green-500 hover:text-green-600 
-                                                             transition-colors duration-200"
-                                                >
-                                                    Save
-                                                </button>
-                                                <button
-                                                    onClick={() => setEditId(null)}
-                                                    className="text-slate-500 hover:text-slate-600 
-                                                             dark:text-slate-400 dark:hover:text-slate-300 
-                                                             transition-colors duration-200"
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={() => editSubscription(sub)}
-                                                    className="text-blue-500 hover:text-blue-600 
-                                                             transition-colors duration-200"
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                                <button
-                                                    onClick={() => deleteSubscription(sub.id)}
-                                                    className="text-red-500 hover:text-red-600 
-                                                             transition-colors duration-200"
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3">
-                                    {/* Email Section */}
-                                    <div>
-                                        <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">
-                                            Email
-                                        </label>
-                                        {editId === sub.id ? (
-                                            <input
-                                                type="email"
-                                                value={editEmail}
-                                                onChange={(e) => setEditEmail(e.target.value)}
-                                                className={`w-full bg-white dark:bg-dark 
-                                                  text-slate-800 dark:text-white 
-                                                  border border-slate-300 dark:border-slate-700 
-                                                  rounded-md p-2 focus:ring-2 focus:ring-blue-500 
-                                                  focus:border-transparent transition-all duration-200`}
-                                            />
-                                        ) : (
-                                            <div
-                                                className="text-slate-800 dark:text-white font-medium break-words"
-                                                title={sub.email.length > 40 ? sub.email : undefined}
-                                            >
-                                                {sub.email.length > 40 ? truncateEmail(sub.email, 40) : sub.email}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Subscribed Status Section */}
-                                    <div>
-                                        <label className="block text-sm text-slate-500 dark:text-slate-400 mb-1">
-                                            Subscribed
-                                        </label>
-                                        {editId === sub.id ? (
-                                            <div className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={editSubscribed}
-                                                    onChange={(e) => setEditSubscribed(e.target.checked)}
-                                                    className="w-4 h-4 text-blue-500 
-                                                             border-slate-300 dark:border-slate-700 
-                                                             rounded focus:ring-blue-500"
-                                                />
-                                                <span className="ml-2 text-slate-800 dark:text-white font-medium">
-                                                    {editSubscribed ? 'Yes' : 'No'}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <div className="text-slate-800 dark:text-white font-medium">
-                                                {sub.subscribed ? 'Yes' : 'No'}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             <Toaster />
+            
+            {/* Hero Section */}
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                            <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                                <Mail className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                                    Newsletter Subscriptions
+                                </h1>
+                                <p className="text-lg text-slate-600 dark:text-slate-400">
+                                    Manage your newsletter subscribers
+                                </p>
+                            </div>
+                        </div>
+                        <Link href="/admin/users">
+                            <Button variant="secondary" size="lg">
+                                <Users className="w-5 h-5 mr-2" />
+                                User Management
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Main Content */}
+            <main className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
+                {/* Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Total Subscribers</p>
+                                    <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                                        {subscriptions.length}
+                                    </p>
+                                </div>
+                                <Mail className="w-12 h-12 text-blue-600 dark:text-blue-400 opacity-20" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Active</p>
+                                    <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                                        {subscriptions.filter(s => s.subscribed).length}
+                                    </p>
+                                </div>
+                                <Check className="w-12 h-12 text-green-600 dark:text-green-400 opacity-20" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Inactive</p>
+                                    <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                                        {subscriptions.filter(s => !s.subscribed).length}
+                                    </p>
+                                </div>
+                                <AlertCircle className="w-12 h-12 text-red-600 dark:text-red-400 opacity-20" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Add Subscription Form */}
+                <Card className="mb-6">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Plus className="w-5 h-5" />
+                            Add New Subscription
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <Input
+                                type="email"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
+                                placeholder="Enter email address"
+                                className="flex-1"
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        addSubscription();
+                                    }
+                                }}
+                            />
+                            <div className="flex gap-2">
+                                <Button onClick={addSubscription} disabled={loading || !newEmail}>
+                                    {loading ? (
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    ) : (
+                                        <Plus className="w-4 h-4 mr-2" />
+                                    )}
+                                    Add
+                                </Button>
+                                <Button variant="success" onClick={exportToCSV}>
+                                    <Download className="w-4 h-4 mr-2" />
+                                    <span className="hidden sm:inline">Export</span>
+                                </Button>
+                                <input 
+                                    type="file" 
+                                    accept=".csv" 
+                                    onChange={importFromCSV} 
+                                    ref={fileInputRef}
+                                    className="hidden" 
+                                />
+                                <Button 
+                                    variant="warning" 
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <Upload className="w-4 h-4 mr-2" />
+                                    <span className="hidden sm:inline">Import</span>
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Subscriptions List */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                            <span>Subscribers List</span>
+                            <Badge variant="secondary">{subscriptions.length} total</Badge>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-12">
+                                <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400 mb-4" />
+                                <p className="text-slate-600 dark:text-slate-400">Loading subscriptions...</p>
+                            </div>
+                        ) : subscriptions.length === 0 ? (
+                            <div className="text-center py-12">
+                                <Mail className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                                    No subscribers yet
+                                </h3>
+                                <p className="text-slate-600 dark:text-slate-400">
+                                    Add your first subscriber using the form above
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {subscriptions.map((sub) => (
+                                    <div
+                                        key={sub.id}
+                                        className="flex flex-col md:flex-row md:items-center gap-4 p-4 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${sub.subscribed ? 'bg-green-500' : 'bg-red-500'}`} />
+                                            <div className="flex-1 min-w-0">
+                                                {editId === sub.id ? (
+                                                    <Input
+                                                        type="email"
+                                                        value={editEmail}
+                                                        onChange={(e) => setEditEmail(e.target.value)}
+                                                        className="w-full"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate"
+                                                       title={sub.email}>
+                                                        {truncateEmail(sub.email, 40)}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-2">
+                                                {editId === sub.id ? (
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={editSubscribed}
+                                                            onChange={(e) => setEditSubscribed(e.target.checked)}
+                                                            className="w-4 h-4"
+                                                        />
+                                                        <span className="text-sm text-slate-700 dark:text-slate-300">
+                                                            {editSubscribed ? 'Active' : 'Inactive'}
+                                                        </span>
+                                                    </label>
+                                                ) : (
+                                                    <Badge variant={sub.subscribed ? 'default' : 'secondary'}>
+                                                        {sub.subscribed ? 'Active' : 'Inactive'}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="flex gap-2">
+                                                {editId === sub.id ? (
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="success"
+                                                            onClick={updateSubscription}
+                                                            disabled={loading}
+                                                        >
+                                                            <Save className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => setEditId(null)}
+                                                            disabled={loading}
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => editSubscription(sub)}
+                                                            disabled={loading}
+                                                        >
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            onClick={() => deleteSubscription(sub.id)}
+                                                            disabled={loading}
+                                                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </main>
         </div>
     );
 };
