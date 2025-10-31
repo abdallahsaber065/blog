@@ -1,9 +1,20 @@
-This is a [Next.js](https://nextjs.org/) blog application with Prisma ORM, NextAuth authentication, and MDX support.
+This is a [Next.js](https://nextjs.org/) blog application with Prisma ORM, NextAuth authentication, MDX support, and AI-powered content generation using Google's Generative AI.
+
+## Features
+
+- 📝 **AI Content Generation** - Intelligent blog post creation with streaming responses
+- 🔐 **Authentication** - Secure user authentication with NextAuth
+- 📊 **Database** - PostgreSQL with Prisma ORM
+- 🎨 **MDX Support** - Rich content editing with markdown
+- 🏷️ **Categories & Tags** - Organized content management
+- 🔍 **SEO Optimized** - Meta tags, sitemaps, and structured data
+- 📱 **Responsive Design** - Mobile-friendly interface
 
 ## Prerequisites
 
 - Node.js 18+ and npm
 - PostgreSQL database
+- (Optional) Google Gemini API key for AI content generation
 - (Optional) SMTP server for email functionality
 
 ## Getting Started
@@ -28,6 +39,7 @@ Edit `.env` and set your configuration:
 - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
 - `SECRET_KEY`: Your application secret key
 - `CSRF_SECRET`: CSRF protection secret
+- `GEMINI_API_KEY`: (Optional) Your Google Gemini API key for AI features - Get one from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
 ### 3. Database Setup
 
@@ -56,6 +68,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Recent Updates (2025)
 
+### AI Content Generation (Latest)
+- ✨ Integrated Google Generative AI (Gemini 1.5 Flash)
+- 🚀 Real-time streaming content generation
+- 📋 Structured outline generation with JSON output
+- 🏷️ Automatic metadata generation (title, excerpt, tags, categories)
+- 📝 Professional prompt engineering for high-quality content
+- 🔒 Secure API endpoints with authentication
+- 📚 Comprehensive documentation in `docs/AI_CONTENT_GENERATION.md`
+- ✅ Zero security vulnerabilities (CodeQL verified)
+
 ### Security & Package Updates
 - ✅ Updated Next.js to 14.2.33 (latest stable v14)
 - ✅ Fixed 17 security vulnerabilities including:
@@ -76,6 +98,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Tech Stack
 
 - **Framework**: Next.js 14 (App Router + Pages Router)
+- **AI**: Google Generative AI (Gemini 1.5 Flash)
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **Styling**: Tailwind CSS + DaisyUI
