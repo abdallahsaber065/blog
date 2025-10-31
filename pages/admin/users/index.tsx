@@ -119,6 +119,8 @@ const UsersManagementPage = () => {
         router.push('/admin/users/create');
     };
 
+    const hasActiveFilters = searchTerm || roleFilter !== 'all';
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             <Toaster />
@@ -251,26 +253,23 @@ const UsersManagementPage = () => {
                                 </select>
                             </div>
                         </div>
-                        {(() => {
-                            const hasActiveFilters = searchTerm || roleFilter !== 'all';
-                            return hasActiveFilters ? (
-                                <div className="mt-4 flex items-center gap-2">
-                                    <Badge variant="secondary">
-                                        {filteredUsers.length} {filteredUsers.length === 1 ? 'result' : 'results'} found
-                                    </Badge>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                            setSearchTerm('');
-                                            setRoleFilter('all');
-                                        }}
-                                    >
-                                        Clear filters
-                                    </Button>
-                                </div>
-                            ) : null;
-                        })()}
+                        {hasActiveFilters && (
+                            <div className="mt-4 flex items-center gap-2">
+                                <Badge variant="secondary">
+                                    {filteredUsers.length} {filteredUsers.length === 1 ? 'result' : 'results'} found
+                                </Badge>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSearchTerm('');
+                                        setRoleFilter('all');
+                                    }}
+                                >
+                                    Clear filters
+                                </Button>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
@@ -295,11 +294,11 @@ const UsersManagementPage = () => {
                                     No users found
                                 </h3>
                                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                    {searchTerm || roleFilter !== 'all' 
+                                    {hasActiveFilters 
                                         ? 'Try adjusting your search or filter criteria'
                                         : 'Get started by creating your first user'}
                                 </p>
-                                {!searchTerm && roleFilter === 'all' && (
+                                {!hasActiveFilters && (
                                     <Button onClick={handleCreateUser}>
                                         <UserPlus className="w-4 h-4 mr-2" />
                                         Create First User
