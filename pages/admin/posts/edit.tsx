@@ -409,14 +409,14 @@ const PostEditorPage: React.FC = () => {
                 onFinish={() => setShowTour(false)}
             />
             
-            <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold mb-4" id="post-editor-title">Edit Post</h1>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100" id="post-editor-title">Edit Post</h1>
                 <button
-                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    className="flex items-center gap-2 px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800"
                     onClick={() => setShowTour(true)}
                 >
                     <span className="text-lg">❔</span>
-                    Show Guide
+                    <span className="font-medium">Show Guide</span>
                 </button>
             </div>
             

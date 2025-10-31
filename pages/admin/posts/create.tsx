@@ -11,6 +11,7 @@ import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
+import { FaSave } from 'react-icons/fa';
 
 // Using Next.js API routes for AI content generation
 
@@ -315,29 +316,31 @@ const CreatePost: React.FC = () => {
                 setShowContentSettings={setShowContentSettings}
             />
 
-            <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold">Create New Post</h1>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Create New Post</h1>
                 <button
-                    className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    className="flex items-center gap-2 px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800"
                     onClick={() => setShowTour(true)}
                 >
                     <span className="text-lg">❔</span>
-                    Show Guide
+                    <span className="font-medium">Show Guide</span>
                 </button>
             </div>
 
             <div className="mb-6">
                 <button
-                    className="ai-generator-toggle flex items-center gap-2 text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-200"
+                    className="ai-generator-toggle flex items-center gap-2 px-4 py-2.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800 shadow-sm"
                     onClick={() => setShowAIGenerator(!showAIGenerator)}
                 >
                     {showAIGenerator ? (
                         <>
-                            <span className="text-lg">✕</span> Hide AI Generator
+                            <span className="text-lg">✕</span>
+                            <span>Hide AI Generator</span>
                         </>
                     ) : (
                         <>
-                            <span className="text-lg">✨</span> Generate Content with AI
+                            <span className="text-lg">✨</span>
+                            <span>Generate Content with AI</span>
                         </>
                     )}
                 </button>
@@ -397,40 +400,61 @@ const CreatePost: React.FC = () => {
                 isMounted={isMounted}
             />
 
-            <div className="publish-buttons flex space-x-4">
+            <div className="publish-buttons flex gap-4 pt-6 border-t border-slate-200 dark:border-slate-700 mt-6">
                 <button
-                    className="bg-accent text-white p-2 rounded w-full dark:bg-accentDark dark:text-gray hover:bg-accentHover"
+                    className="flex-1 h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     onClick={() => handleSave('published')}
                     disabled={loading}
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Publish'}
+                    {loading ? (
+                        <>
+                            <ClipLoader size={18} color={"#fff"} />
+                            <span>Publishing...</span>
+                        </>
+                    ) : (
+                        <>
+                            <FaSave />
+                            <span>Publish</span>
+                        </>
+                    )}
                 </button>
                 <button
-                    className="bg-slate-500 text-white dark:text-dark p-2 rounded w-full dark:bg-slate-300  hover:bg-slate-700 dark:hover:bg-slate-200 text-bold"
+                    className="flex-1 h-11 px-6 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-slate-100 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     onClick={handleSaveDraft}
                     disabled={loading}
                 >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Save Draft'}
+                    {loading ? (
+                        <>
+                            <ClipLoader size={18} color={"currentColor"} />
+                            <span>Saving...</span>
+                        </>
+                    ) : (
+                        <span>Save Draft</span>
+                    )}
                 </button>
             </div>
 
             {showJSONEditor && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white dark:bg-dark p-4 rounded shadow-lg w-3/4">
-                        <h2 className="text-xl font-bold mb-4 text-gray dark:text-lightgray">Edit Outline</h2>
-                        <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
-                        <div className="flex justify-end space-x-4 mt-4">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-4xl">
+                        <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Edit Outline</h2>
+                        </div>
+                        <div className="p-6">
+                            <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
+                        </div>
+                        <div className="flex justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
                             <button
-                                className="bg-red-500 text-white p-2 rounded"
+                                className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-slate-100 font-medium rounded-lg transition-all duration-200"
                                 onClick={() => setShowJSONEditor(false)}
                             >
                                 Cancel
                             </button>
                             <button
-                                className="bg-blue-500 text-white p-2 rounded"
+                                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm"
                                 onClick={handleSaveOutline}
                             >
-                                Save
+                                Save Outline
                             </button>
                         </div>
                     </div>
