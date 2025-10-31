@@ -84,4 +84,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default authMiddleware(handler, ['admin', 'moderator', 'author']);
+export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
+  return authMiddleware(req, res, handler);
+}
