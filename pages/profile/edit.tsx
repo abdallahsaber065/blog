@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
-import { da } from 'date-fns/locale';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2, Save, UserCog, Mail, User, FileText } from 'lucide-react';
 
 interface User {
     id: string;
@@ -27,6 +32,7 @@ interface EditProfilePageProps {
 const EditProfilePage = ({ user }: EditProfilePageProps) => {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         username: user.username,
@@ -46,6 +52,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         try {
             const data = {
@@ -91,101 +98,181 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
         } catch (error) {
             toast.dismiss();
             toast.error('An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     if (status === 'loading') {
-        return <div className="flex justify-center items-center min-h-screen"><div className="spinner"></div></div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400" />
+                    <p className="text-slate-600 dark:text-slate-400">Loading...</p>
+                </div>
+            </div>
+        );
     }
 
     if (status === 'unauthenticated') {
         return (
-            <main className="container mx-auto py-16 px-4 flex-1 text-slate-900">
-                <div className="max-w-md mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-light">Edit Profile</h1>
-                    <p className="text-slate-800 dark:text-light">You need to be signed in to edit your profile.</p>
-                </div>
-            </main>
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+                <Card className="max-w-md w-full mx-4">
+                    <CardHeader className="text-center space-y-4">
+                        <div className="mx-auto p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg w-fit">
+                            <UserCog className="w-8 h-8 text-white" />
+                        </div>
+                        <CardTitle className="text-3xl">Edit Profile</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-center text-slate-600 dark:text-slate-400">
+                            You need to be signed in to edit your profile.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
         );
     }
 
     return (
-        <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark text-slate-900">
-            <main className="container mx-auto py-16 px-4 flex-1">
-                <div className="max-w-4xl mx-auto bg-light dark:bg-dark p-8 rounded-lg shadow-lg shadow-slate-300 dark:shadow-slate-800">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-slate-800 dark:text-light">Edit Profile</h1>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="form-control">
-                            <label className="label" htmlFor="username">
-                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Username</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
-                                required
-                            />
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            {/* Hero Section */}
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex items-start gap-4">
+                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                            <UserCog className="w-8 h-8 text-white" />
                         </div>
-                        <div className="form-control">
-                            <label className="label" htmlFor="email">
-                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Email</span>
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
-                                required
-                            />
+                        <div>
+                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                                Edit Profile
+                            </h1>
+                            <p className="text-lg text-slate-600 dark:text-slate-400">
+                                Update your personal information
+                            </p>
                         </div>
-                        <div className="form-control">
-                            <label className="label" htmlFor="first_name">
-                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">First Name</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="first_name"
-                                name="first_name"
-                                value={formData.first_name}
-                                onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
-                            />
-                        </div>
-                        <div className="form-control">
-                            <label className="label" htmlFor="last_name">
-                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Last Name</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="last_name"
-                                name="last_name"
-                                value={formData.last_name}
-                                onChange={handleChange}
-                                className="input input-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
-                            />
-                        </div>
-                        <div className="form-control">
-                            <label className="label" htmlFor="bio">
-                                <span className="label-text  block mb-1 text-slate-800 dark:text-light font-bold text-lg">Bio</span>
-                            </label>
-                            <textarea
-                                id="bio"
-                                name="bio"
-                                value={formData.bio}
-                                onChange={handleChange}
-                                className="textarea textarea-bordered w-full bg-white text-black dark:bg-dark dark:text-white"
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary w-full mt-4">
-                            Save Changes
-                        </button>
-                    </form>
+                    </div>
                 </div>
+            </section>
+
+            {/* Main Content */}
+            <main className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Personal Information</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Username */}
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="flex items-center gap-2">
+                                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    Username
+                                </Label>
+                                <Input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="Enter your username"
+                                />
+                            </div>
+
+                            {/* Email */}
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    Email
+                                </Label>
+                                <Input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="Enter your email"
+                                />
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    Changing your email will require verification and sign you out
+                                </p>
+                            </div>
+
+                            {/* First Name */}
+                            <div className="space-y-2">
+                                <Label htmlFor="first_name">First Name</Label>
+                                <Input
+                                    type="text"
+                                    id="first_name"
+                                    name="first_name"
+                                    value={formData.first_name}
+                                    onChange={handleChange}
+                                    placeholder="Enter your first name"
+                                />
+                            </div>
+
+                            {/* Last Name */}
+                            <div className="space-y-2">
+                                <Label htmlFor="last_name">Last Name</Label>
+                                <Input
+                                    type="text"
+                                    id="last_name"
+                                    name="last_name"
+                                    value={formData.last_name}
+                                    onChange={handleChange}
+                                    placeholder="Enter your last name"
+                                />
+                            </div>
+
+                            {/* Bio */}
+                            <div className="space-y-2">
+                                <Label htmlFor="bio" className="flex items-center gap-2">
+                                    <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    Bio
+                                </Label>
+                                <Textarea
+                                    id="bio"
+                                    name="bio"
+                                    value={formData.bio}
+                                    onChange={handleChange}
+                                    placeholder="Tell us about yourself..."
+                                    rows={4}
+                                />
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="flex gap-4 pt-4">
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="flex-1"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Saving Changes...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-4 h-4 mr-2" />
+                                            Save Changes
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => router.push('/profile')}
+                                    disabled={isSubmitting}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </main>
         </div>
     );
