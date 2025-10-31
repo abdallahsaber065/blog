@@ -6,7 +6,33 @@ All notable changes to this project will be documented in this file.
 
 ### Added - October 31, 2025
 
+#### File Management Enhancement
+
+- **File Plugin Support**: Expanded file type support across all file plugins
+  - Added support for 40+ file types including Vue, Svelte, React, GraphQL, XML, Office documents, and archives
+  - Added comprehensive file icon system with color-coded icons for each file type
+  - Updated `InlineFilePlugin` to support all file types (previously limited to images only)
+  - Integrated file type icons from React Icons (Simple Icons, Feather Icons, and Font Awesome)
+  - Unified file extension configuration across all plugins using `FILE_EXTENSIONS` constant
+  - Enhanced `FileSelector` component with better file type filtering
+
 #### UI/UX Modernization
+
+- **Table of Contents**: Complete redesign with modern, feature-rich implementation
+  - Added real-time active section highlighting based on scroll position using Intersection Observer
+  - Implemented reading progress tracking with visual indicators (checkmarks for read sections)
+  - Added dual progress bars: scroll progress (top) and reading progress (with percentage)
+  - Created collapsible/expandable UI with smooth animations
+  - Added section count display (e.g., "3/10" sections read)
+  - Implemented nested heading structure with proper indentation
+  - Enhanced visual hierarchy with level-specific styling (H1, H2, H3)
+  - Added gradient header background for better visual appeal
+  - Improved mobile responsiveness with optimized touch targets
+  - Integrated book icon and modern icons throughout (Feather Icons)
+  - Added smooth scroll behavior with offset compensation for fixed headers
+  - Implemented empty state handling (hides when no headings present)
+  - Enhanced dark mode support with backdrop blur effects
+  - Added glassmorphism effects for modern aesthetic
 
 - **Discover Page**: Brand new unified content discovery page with advanced filtering system
   - Created comprehensive content discovery hub replacing separate category/tag pages
