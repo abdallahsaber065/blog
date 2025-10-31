@@ -484,150 +484,195 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                     />
                 </div>
             )}
-            <ul className="space-y-3">
-                {paginatedPosts.map((post) => (
-                    <li key={post.id} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800/50 hover:shadow-md transition-shadow">
-                        <div className="flex flex-col w-full md:w-1/2 space-y-1">
-                            <Link className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
-                                href={post.status === 'published' ? `/blogs/${post.slug}` : `/blogs/preview/${post.slug}`}
-                                target="_blank">
-                                {post.title}
-                            </Link>
-                            <div className="text-sm text-slate-600 dark:text-slate-400">
-                                by <span className="font-medium">{post.author?.first_name} {post.author?.last_name}</span>
-                                <span className="text-slate-400 dark:text-slate-500">
-                                    {' '}(@{post.author?.username})
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
-                            <div className="flex items-center gap-2">
-                                {editingPostId === post.id ? (
-                                    <>
-                                        {(hasApproveRights || post.author?.id === currentUserId) && (
-                                            <>
-                                                <select
-                                                    value={editedStatus}
-                                                    onChange={(e) => setEditedStatus(e.target.value)}
-                                                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 transition-colors"
-                                                    disabled={isPostProcessing(post.id)}
-                                                >
-                                                    {(hasApproveRights || post.author?.id === currentUserId) ? (
-                                                        <>
-                                                            <option value="published">Published</option>
-                                                            <option value="pending">Pending</option>
-                                                            <option value="draft">Draft</option>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <option value="pending">Request Approval</option>
-                                                            <option value="draft">Draft</option>
-                                                        </>
-                                                    )}
-                                                </select>
-                                                <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
-                                                    onClick={() => handleSaveStatus(post.id)}
-                                                    disabled={isPostProcessing(post.id)}
-                                                >
-                                                    {savingPostIds.has(post.id) ? 'Saving...' : <FaSave />}
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                                                    onClick={() => {
-                                                        setEditingPostId(null);
-                                                        setEditedStatus('');
-                                                    }}
-                                                    disabled={isPostProcessing(post.id)}
-                                                >
-                                                    <FaTimes />
-                                                </Button>
-                                            </>
-                                        )}
-                                    </>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <Badge 
-                                            variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
-                                            className={`${
-                                                post.status === 'published'
-                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200'
-                                                    : post.status === 'pending'
-                                                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200'
-                                                        : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 hover:bg-slate-200'
-                                            }`}
-                                        >
-                                            {post.status === 'pending' && !hasApproveRights
-                                                ? 'Waiting for Approval'
-                                                : post.status}
-                                        </Badge>
-                                        {(hasApproveRights || post.author?.id === currentUserId) && (
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
-                                                onClick={() => {
-                                                    setEditingPostId(post.id);
-                                                    setEditedStatus(post.status);
-                                                }}
-                                                disabled={isPostProcessing(post.id)}
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/50">
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                    Title
+                                </th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell">
+                                    Author
+                                </th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell">
+                                    Category
+                                </th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                    Status
+                                </th>
+                                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paginatedPosts.map((post, index) => (
+                                <tr 
+                                    key={post.id} 
+                                    className={`border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
+                                        index === paginatedPosts.length - 1 ? 'border-b-0' : ''
+                                    }`}
+                                >
+                                    <td className="px-4 py-4">
+                                        <div className="flex flex-col space-y-1">
+                                            <Link 
+                                                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors line-clamp-2"
+                                                href={post.status === 'published' ? `/blogs/${post.slug}` : `/blogs/preview/${post.slug}`}
+                                                target="_blank"
                                             >
-                                                <FaEdit />
-                                            </Button>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            {hasPermissionForPost(post) && (
-                                <div className="flex items-center gap-1.5">
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
-                                        onClick={() => onSelectPost(post.id)}
-                                        disabled={isPostProcessing(post.id)}
-                                        title="Edit Post"
-                                    >
-                                        <FaEdit />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                                        onClick={() => handleDeletePost(post.id)}
-                                        disabled={isPostProcessing(post.id)}
-                                        title="Delete Post"
-                                    >
-                                        {deletingPostIds.has(post.id) ? (
-                                            <span className="text-xs">Deleting...</span>
+                                                {post.title}
+                                            </Link>
+                                            <span className="text-xs text-slate-500 dark:text-slate-400 md:hidden">
+                                                by {post.author?.first_name} {post.author?.last_name}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 hidden md:table-cell">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                                {post.author?.first_name} {post.author?.last_name}
+                                            </span>
+                                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                @{post.author?.username}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4 hidden lg:table-cell">
+                                        <Badge variant="outline" className="font-normal">
+                                            {post.category?.name || 'Uncategorized'}
+                                        </Badge>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        {editingPostId === post.id ? (
+                                            <div className="flex items-center gap-2">
+                                                {(hasApproveRights || post.author?.id === currentUserId) && (
+                                                    <>
+                                                        <select
+                                                            value={editedStatus}
+                                                            onChange={(e) => setEditedStatus(e.target.value)}
+                                                            className="px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 transition-colors"
+                                                            disabled={isPostProcessing(post.id)}
+                                                        >
+                                                            {(hasApproveRights || post.author?.id === currentUserId) ? (
+                                                                <>
+                                                                    <option value="published">Published</option>
+                                                                    <option value="pending">Pending</option>
+                                                                    <option value="draft">Draft</option>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <option value="pending">Request Approval</option>
+                                                                    <option value="draft">Draft</option>
+                                                                </>
+                                                            )}
+                                                        </select>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
+                                                            onClick={() => handleSaveStatus(post.id)}
+                                                            disabled={isPostProcessing(post.id)}
+                                                        >
+                                                            {savingPostIds.has(post.id) ? '...' : <FaSave className="w-3 h-3" />}
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                                            onClick={() => {
+                                                                setEditingPostId(null);
+                                                                setEditedStatus('');
+                                                            }}
+                                                            disabled={isPostProcessing(post.id)}
+                                                        >
+                                                            <FaTimes className="w-3 h-3" />
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
                                         ) : (
-                                            <FaTrash />
+                                            <div className="flex items-center gap-2">
+                                                <Badge 
+                                                    variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
+                                                    className={`text-xs ${
+                                                        post.status === 'published'
+                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800'
+                                                            : post.status === 'pending'
+                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800'
+                                                                : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
+                                                    }`}
+                                                >
+                                                    {post.status === 'pending' && !hasApproveRights
+                                                        ? 'Waiting'
+                                                        : post.status}
+                                                </Badge>
+                                                {(hasApproveRights || post.author?.id === currentUserId) && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="h-7 w-7 p-0 text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                                        onClick={() => {
+                                                            setEditingPostId(post.id);
+                                                            setEditedStatus(post.status);
+                                                        }}
+                                                        disabled={isPostProcessing(post.id)}
+                                                        title="Edit status"
+                                                    >
+                                                        <FaEdit className="w-3 h-3" />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         )}
-                                    </Button>
-                                    {canManagePermissions && (
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
-                                            onClick={() => setSelectedPostForPermissions(post)}
-                                            disabled={isPostProcessing(post.id)}
-                                            title="Manage Permissions"
-                                        >
-                                            <FaUserLock />
-                                        </Button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        {hasPermissionForPost(post) && (
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 p-0 text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                                    onClick={() => onSelectPost(post.id)}
+                                                    disabled={isPostProcessing(post.id)}
+                                                    title="Edit Post"
+                                                >
+                                                    <FaEdit className="w-3.5 h-3.5" />
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 p-0 text-slate-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                                                    onClick={() => handleDeletePost(post.id)}
+                                                    disabled={isPostProcessing(post.id)}
+                                                    title="Delete Post"
+                                                >
+                                                    {deletingPostIds.has(post.id) ? (
+                                                        <span className="text-[10px]">...</span>
+                                                    ) : (
+                                                        <FaTrash className="w-3.5 h-3.5" />
+                                                    )}
+                                                </Button>
+                                                {canManagePermissions && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="h-8 w-8 p-0 text-slate-600 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
+                                                        onClick={() => setSelectedPostForPermissions(post)}
+                                                        disabled={isPostProcessing(post.id)}
+                                                        title="Manage Permissions"
+                                                    >
+                                                        <FaUserLock className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             {!showAll && (
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                     <Button
