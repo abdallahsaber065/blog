@@ -202,7 +202,7 @@ export const FILE_EXTENSIONS = [
 ];
 
 
-export const getFileIcon = (fileName: string): JSX.Element => {
+export const getFileIcon = (fileName: string): React.JSX.Element => {
     const ext = fileName.split('.').pop()?.toLowerCase() || '';
     const iconConfig = FILE_ICONS[ext];
 
