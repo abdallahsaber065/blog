@@ -11,7 +11,7 @@ if (process.env.GEMINI_API_KEY) {
 // Model configurations for different use cases
 export const MODEL_CONFIGS = {
   outline: {
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
     generationConfig: {
       temperature: 0.7,
       topP: 0.95,
@@ -21,7 +21,7 @@ export const MODEL_CONFIGS = {
     },
   },
   content: {
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
     generationConfig: {
       temperature: 0.8,
       topP: 0.95,
@@ -30,7 +30,7 @@ export const MODEL_CONFIGS = {
     },
   },
   metadata: {
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
     generationConfig: {
       temperature: 0.5,
       topP: 0.95,
@@ -48,7 +48,7 @@ export function getModel(configKey: keyof typeof MODEL_CONFIGS) {
   if (!genAI) {
     throw new Error('GEMINI_API_KEY environment variable is not set');
   }
-  
+
   const config = MODEL_CONFIGS[configKey];
   return genAI.getGenerativeModel({
     model: config.model,

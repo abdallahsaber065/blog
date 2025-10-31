@@ -15,7 +15,9 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
+  // Turbopack is now the default bundler in Next.js 16
+  // Enable component caching for better performance
+  cacheComponents: true,
   images: {
     minimumCacheTTL: 600,
     remotePatterns: [
@@ -24,6 +26,11 @@ const nextConfig = {
         hostname: 'localhost',
         port: '3000',
         pathname: '/uploads/**',
+      }, {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/**',
       },
       {
         protocol: 'http',
@@ -41,11 +48,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'devtrend.tech',
         pathname: '/uploads/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'collage.devtrend.tech',
-        pathname: '/uploads/**',
       }
     ]
   },
@@ -53,9 +55,16 @@ const nextConfig = {
   distDir: process.env.BUILD_DIR || '.next',
   transpilePackages: ['@mdxeditor/editor'],
   reactStrictMode: false,
+  
+  // Turbopack configuration (used in development by default in Next.js 16)
+  turbopack: {
+    // Turbopack handles most configurations automatically
+    // No custom aliases needed - use /path for public assets
+  },
+  
+  // Webpack customizations (used for production builds)
   webpack: (config) => {
     config.experiments = { ...config.experiments, topLevelAwait: true };
-    config.resolve.alias['public'] = path.join(__dirname, 'public');
     config.optimization.minimizer = [
       new TerserPlugin({
         terserOptions: {
