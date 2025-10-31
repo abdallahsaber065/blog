@@ -1,23 +1,23 @@
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
-import Image from "next/image";
-import Tag from "@/components/Elements/Tag";
-import siteMetadata from "@/lib/siteMetaData";
-import { serialize } from 'next-mdx-remote/serialize';
-import { Options } from "@/lib/articles/mdxconfig";
-import { GetServerSideProps } from 'next';
-import { prisma } from '@/lib/prisma';
-import React, { useEffect, useState } from "react";
-import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
-import { SerializeOptions } from "next-mdx-remote/dist/types";
 import TableOfContent from "@/components/Blog/TableOfContenet";
-import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
-import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
-import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
+import Tag from "@/components/Elements/Tag";
 import Embed from "@/components/MdxComponents/Embed/Embed";
-import { getSession } from 'next-auth/react';
+import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
 import FileResource from "@/components/MdxComponents/File/FileResource";
+import InlineFileView from '@/components/MdxComponents/File/InlineFileView';
+import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
+import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
+import { Options } from "@/lib/articles/mdxconfig";
+import { prisma } from '@/lib/prisma';
+import siteMetadata from "@/lib/siteMetaData";
+import { GetServerSideProps } from 'next';
+import { getSession } from 'next-auth/react';
+import { SerializeOptions } from "next-mdx-remote/dist/types";
+import { serialize } from 'next-mdx-remote/serialize';
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
     const { slug } = params as { slug: string };
@@ -229,9 +229,9 @@ const BlogPreviewPage = ({ post, mdxSource, jsonLd, isAuthorized }: any) => {
                     </div>
                     <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
                     <Image
-                        src={deserializedPost.featured_image_url || '/static/images/default-image.jpg'}
+                        src={deserializedPost.featured_image_url?.replace(/^https?:\/\/[^\/]+/, '') || '/static/images/default-image.jpg'}
                         placeholder="blur"
-                        blurDataURL={deserializedPost.featured_image_url || '/static/images/default-image.jpg'}
+                        blurDataURL={deserializedPost.featured_image_url?.replace(/^https?:\/\/[^\/]+/, '') || '/static/images/default-image.jpg'}
                         alt={deserializedPost.title}
                         width={800}
                         height={600}
