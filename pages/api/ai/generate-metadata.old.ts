@@ -1,6 +1,6 @@
-// API route for generating post metadata using Google Gemini API
+// API route for generating post metadata using Google Generative AI
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getGeminiWrapper, getConfig } from '@/lib/ai/gemini-wrapper-client';
+import { getModel } from '@/lib/ai/gemini-client';
 import { buildMetadataPrompt } from '@/lib/ai/prompts';
 import type { GenerateMetadataRequest, GenerateMetadataResponse } from '@/lib/ai/types';
 import { authMiddleware } from '@/middleware/authMiddleware';
@@ -25,35 +25,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Build the prompt
     const prompt = buildMetadataPrompt(topic, content, old_tags, old_categories);
 
-    // Get the Gemini wrapper and config
-    const gemini = getGeminiWrapper();
-    const config = getConfig('metadata');
+    // Get the model configured for metadata generation
+    const model = getModel('metadata');
 
     // Generate the metadata with structured output
-    const response = await gemini.text.generateStructured({
-      prompt,
-      schema: {
-        type: 'object',
-        properties: {
-          title: { type: 'string' },
-          excerpt: { type: 'string' },
-          tags: {
-            type: 'array',
-            items: { type: 'string' }
-          },
-          main_category: { type: 'string' }
-        },
-        required: ['title', 'excerpt', 'tags', 'main_category']
-      },
-      config,
-    });
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
 
     // Parse the JSON response
     let metadata: GenerateMetadataResponse;
     try {
-      metadata = JSON.parse(response.text || '{}');
+      metadata = JSON.parse(text);
     } catch (parseError) {
-      console.error('Failed to parse AI response:', response.text);
+      console.error('Failed to parse AI response:', text);
       return res.status(500).json({ 
         error: 'Failed to parse AI response. Please try again.' 
       });
