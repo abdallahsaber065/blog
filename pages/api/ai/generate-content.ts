@@ -1,6 +1,6 @@
-// API route for generating content with streaming using Google Generative AI
+// API route for generating content with streaming using Google Gemini API
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getModel } from '@/lib/ai/gemini-client';
+import { getGeminiWrapper, getConfig } from '@/lib/ai/gemini-wrapper-client';
 import { buildContentPrompt } from '@/lib/ai/prompts';
 import type { GenerateContentRequest } from '@/lib/ai/types';
 import { authMiddleware } from '@/middleware/authMiddleware';
@@ -34,8 +34,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       website_type
     );
 
-    // Get the model configured for content generation
-    const model = getModel('content');
+    // Get the Gemini wrapper and config
+    const gemini = getGeminiWrapper();
+    const config = getConfig('content');
 
     // Set headers for streaming
     res.setHeader('Content-Type', 'text/event-stream');
@@ -43,13 +44,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader('Connection', 'keep-alive');
 
     // Generate content with streaming
-    const result = await model.generateContentStream(prompt);
+    const stream = await gemini.text.generateStream({
+      prompt,
+      config,
+    });
 
     let fullContent = '';
 
     // Stream the response
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
+    for await (const chunk of stream) {
+      const chunkText = chunk.text || '';
       fullContent += chunkText;
       
       // Send the chunk as Server-Sent Event
