@@ -15,6 +15,9 @@ import { Embeddings } from './embeddings';
 import { FileManager } from './file-manager';
 import { CacheManager } from './cache-manager';
 
+// Import enums from @google/genai for re-export
+import { FunctionCallingConfigMode } from '@google/genai';
+
 import type {
   GeminiWrapperConfig,
   TextGenerationOptions,
@@ -31,6 +34,9 @@ import type {
 
 // Re-export all types
 export * from './types';
+
+// Re-export enums
+export { FunctionCallingConfigMode };
 
 // Re-export component classes for advanced usage
 export {

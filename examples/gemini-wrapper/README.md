@@ -2,6 +2,8 @@
 
 This directory contains comprehensive examples demonstrating all features of the Gemini API wrapper.
 
+**Note:** These examples are for reference and demonstration. Some may require adjustments for your specific use case or to match the exact API signatures in the `@google/genai` package.
+
 ## Prerequisites
 
 1. Set your Gemini API key:
