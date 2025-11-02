@@ -1,16 +1,16 @@
 "use client"; // Add this line to mark the component as a client component
 
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
-import MobileNavDrawer from './MobileNavDrawer';
-import Logo from './Logo';
-import SearchBar from './SearchBar';
-import ThemeSwitcher from './ThemeSwitcher'; // Import ThemeSwitcher
 import { MenuIcon } from '@/components/Icons';
 import { Badge } from '@/components/ui/badge';
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import Logo from './Logo';
+import MobileNavDrawer from './MobileNavDrawer';
+import SearchBar from './SearchBar';
+import ThemeSwitcher from './ThemeSwitcher'; // Import ThemeSwitcher
 
 const RoleList = ['admin', 'moderator', 'editor'];
 
@@ -76,6 +76,14 @@ const Header: React.FC<HeaderProps> = () => {
           <li>
             <Link href="/explore" className={`hover:text-primary dark:hover:text-accent ${pathname === '/explore' ? 'font-bold text-primary dark:text-accent' : ''}`}>
               Explore
+            </Link>
+          </li>
+          <li>
+            <Link href="/chatbot" className={`hover:text-primary dark:hover:text-accent ${pathname === '/chatbot' ? 'font-bold text-primary dark:text-accent' : ''} flex items-center gap-1`}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+              AI Chat
             </Link>
           </li>
           {session && RoleList.includes(session.user.role) && (

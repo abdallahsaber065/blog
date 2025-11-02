@@ -1,11 +1,12 @@
-import "../public/styles/globals.css";
-import { cx } from "@/lib";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import { cx } from "@/lib";
 import siteMetadata from "@/lib/siteMetaData";
-import { ReactNode } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { ReactNode } from 'react';
 import { Toaster } from "react-hot-toast";
+import "../public/styles/globals.css";
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -43,6 +44,12 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
+  // Hide footer for admin pages and chatbot
+  const hideFooterRoutes = ['/admin', '/chatbot'];
+  const shouldHideFooter = hideFooterRoutes.some(route => router.pathname.startsWith(route));
+
   return (
     <div
       className={cx(
@@ -74,7 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         }}
       />
       {children}
-      <Footer />
+      {!shouldHideFooter && <Footer />}
     </div>
   );
 }
