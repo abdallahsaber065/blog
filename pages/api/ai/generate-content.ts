@@ -71,31 +71,41 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       tools.push(createCodeExecutionTool());
     }
 
-    const model = (client as any).getGenerativeModel({
-      model: config.model,
-      generationConfig: {
-        temperature: config.temperature,
-        topP: config.topP,
-        topK: config.topK,
-        maxOutputTokens: config.maxOutputTokens,
-        ...(config.thinkingConfig && { thinkingConfig: config.thinkingConfig })
-      },
-      ...(tools.length > 0 && { tools })
-    });
+    // Build generation config
+    const generationConfig: any = {
+      temperature: config.temperature,
+      topP: config.topP,
+      topK: config.topK,
+      maxOutputTokens: config.maxOutputTokens,
+    };
+
+    // Add thinking config if enabled (disable if thinking_budget is 0)
+    if (config.thinkingConfig && config.thinkingConfig.thinkingBudget !== 0) {
+      generationConfig.thinkingConfig = config.thinkingConfig;
+    } else if (thinking_budget === 0) {
+      generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    }
 
     // Set headers for streaming
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
 
-    // Generate content with streaming
-    const result = await model.generateContentStream(prompt);
+    // Generate content with streaming using the new @google/genai API
+    const response = await client.models.generateContentStream({
+      model: config.model,
+      contents: prompt,
+      config: {
+        ...generationConfig,
+        ...(tools.length > 0 && { tools })
+      }
+    });
 
     let fullContent = '';
 
     // Stream the response
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
+    for await (const chunk of response) {
+      const chunkText = chunk.text || '';
       fullContent += chunkText;
 
       // Send the chunk as Server-Sent Event

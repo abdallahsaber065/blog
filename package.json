@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "dotenv -c -- next dev",
     "start": "dotenv -c -- next start",
-    "lint": "next lint",
+    "lint": "next lint .",
     "postinstall": "prisma generate",
     "create-admin": "dotenv -c -- node scripts/create-admin.js"
   },

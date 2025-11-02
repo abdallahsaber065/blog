@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed - November 2, 2025 (Merge Conflict Resolution)
+
+#### Resolved Git Merge Conflicts in AI API Routes
+
+- **Fixed generate-content.ts**:
+  - Resolved conflicts between old `gemini-wrapper-client` and new `@google/genai` client
+  - Kept modern approach using `getAIClient()` and `getModelConfig()`
+  - Fixed streaming implementation with `client.models.generateContentStream()`
+  - Properly integrated thinking config, Google Search, and Code Execution tools
+
+- **Fixed generate-metadata.ts**:
+  - Resolved conflicts between wrapper and direct client approaches
+  - Updated to use `client.models.generateContent()` with structured JSON output
+  - Maintained `responseMimeType: 'application/json'` for metadata generation
+  - Proper error handling for JSON parsing
+
+- **Fixed generate-outline.ts**:
+  - Resolved conflicts in outline generation API
+  - Updated to use modern client with thinking budget support
+  - Fixed structured JSON output with schema validation
+  - Maintained enhanced features (search, files, images support)
+
 ### Fixed - November 1, 2025 (Critical API Fixes)
 
 #### Gemini 2.5 Flash API Compatibility Fixes

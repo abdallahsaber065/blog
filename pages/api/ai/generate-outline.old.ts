@@ -1,10 +1,9 @@
 // API route for generating content outline using Google Generative AI
-import { getAIClient } from '@/lib/ai/client';
-import { getModelConfig } from '@/lib/ai/config';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getModel } from '@/lib/ai/gemini-client';
 import { buildOutlinePrompt } from '@/lib/ai/prompts';
 import type { GenerateOutlineRequest, GenerateOutlineResponse } from '@/lib/ai/types';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -18,75 +17,43 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       user_custom_instructions = '',
       num_of_points = null,
       website_type = 'blog',
-      files = [],
-      images = [],
-      use_search = false,
-      thinking_budget,
     } = req.body as GenerateOutlineRequest;
 
     if (!topic || topic.trim().length === 0) {
       return res.status(400).json({ error: 'Topic is required' });
     }
 
-    // Build the prompt with enhanced options
+    // Build the prompt
     const prompt = buildOutlinePrompt(
       topic,
       num_of_keywords,
       num_of_points,
       user_custom_instructions,
-      website_type,
-      {
-        useSearch: use_search,
-        hasFiles: files.length > 0,
-        hasImages: images.length > 0,
-        enableThinking: thinking_budget !== undefined && thinking_budget !== 0
-      }
+      website_type
     );
 
-    // Get AI client and model configuration
-    const client = getAIClient();
-    let config = getModelConfig('outline');
+    // Get the model configured for outline generation
+    const model = getModel('outline');
 
-    // Override thinking budget if provided
-    if (thinking_budget !== undefined) {
-      config = {
-        ...config,
-        thinkingConfig: {
-          thinkingBudget: thinking_budget
-        }
-      };
-    }
-
-    // Generate the outline with structured JSON output
-    const response = await client.models.generateContent({
-      model: config.model,
-      contents: prompt,
-      config: {
-        temperature: config.temperature,
-        topP: config.topP,
-        topK: config.topK,
-        maxOutputTokens: config.maxOutputTokens,
-        responseMimeType: config.responseMimeType,
-        ...(config.responseSchema && { responseSchema: config.responseSchema }),
-        ...(config.thinkingConfig && { thinkingConfig: config.thinkingConfig })
-      }
-    });
+    // Generate the outline with structured output
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
 
     // Parse the JSON response
-    const text = response.text;
     let outlineData;
     try {
-      outlineData = JSON.parse(text || '{}');
+      outlineData = JSON.parse(text);
     } catch (parseError) {
       console.error('Failed to parse AI response:', text);
-      return res.status(500).json({
-        error: 'Failed to parse AI response. Please try again.'
+      return res.status(500).json({ 
+        error: 'Failed to parse AI response. Please try again.' 
       });
     }
 
     // Extract search terms if present
-    const searchTerms = outlineData.search_terms
-      ? outlineData.search_terms.join(', ')
+    const searchTerms = outlineData.search_terms 
+      ? outlineData.search_terms.join(', ') 
       : '';
 
     const response_data: GenerateOutlineResponse = {
@@ -102,18 +69,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(200).json(response_data);
   } catch (error: unknown) {
     console.error('Error generating outline:', error);
-
+    
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-
+    
     // Check for specific error types
     if (errorMessage.includes('API key')) {
-      return res.status(500).json({
-        error: 'AI service configuration error. Please contact administrator.'
+      return res.status(500).json({ 
+        error: 'AI service configuration error. Please contact administrator.' 
       });
     }
 
-    return res.status(500).json({
-      error: 'Failed to generate outline. Please try again.'
+    return res.status(500).json({ 
+      error: 'Failed to generate outline. Please try again.' 
     });
   }
 }
