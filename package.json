@@ -8,7 +8,14 @@
     "start": "dotenv -c -- next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "create-admin": "dotenv -c -- node scripts/create-admin.js"
+    "create-admin": "dotenv -c -- node scripts/create-admin.js",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:logs": "docker-compose logs -f postgres",
+    "db:reset": "prisma migrate reset --force",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:setup": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -114,7 +121,11 @@
     "cross-env": "^7.0.3",
     "next": "^16.0.0",
     "prisma": "^5.22.0",
-    "terser-webpack-plugin": "^5.3.10"
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-node": "^10.9.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "resolutions": {
     "unified": "^10.0.0",
