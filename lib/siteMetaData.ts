@@ -6,8 +6,8 @@ const siteMetadata = {
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://devtrend.tech/', // your website URL
-  siteLogo: '/logo.png',
-  socialBanner: '/social-banner.png', // add social banner in the public folder
+  siteLogo: '/logo.webp',
+  socialBanner: '/social-banner.webp', // add social banner in the public folder
   email: 'abdallahsaber065@gmail.com',
   github: 'https://github.com/abdallah065',
   twitter: 'https://x.com/DevTrend0',
@@ -15,8 +15,8 @@ const siteMetadata = {
   linkedin: 'https://www.linkedin.com/in/abdallah-saber065/',
   dribbble: 'https://abdallah-saber.vercel.app/',
   locale: 'en-US',
-  logo: 'https://devtrend.tech/static/images/logo.png',
-  dark_logo: 'https://devtrend.tech/static/images/logo-dark.png',
+  logo: 'https://devtrend.tech/static/images/logo.webp',
+  dark_logo: 'https://devtrend.tech/static/images/logo-dark.webp',
 }
 
 export default siteMetadata;

@@ -74,7 +74,7 @@ const AboutPage: React.FC = () => {
             </div>
             <div className="flex-1 w-full max-w-md">
               <Image
-                src="/static/images/mission.jpg"
+                src="/static/images/mission.webp"
                 alt="Our Mission"
                 width={500}
                 height={300}
@@ -94,7 +94,7 @@ const AboutPage: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center gap-8 bg-light/50 dark:bg-dark/50 shadow-lg hover:shadow-xl transition-all rounded-xl p-6 backdrop-blur-sm">
             <div className="flex-shrink-0 w-full max-w-[250px]">
               <Image
-                src="/static/images/profile.jpg"
+                src="/static/images/profile.webp"
                 alt="Team Member"
                 width={300}
                 height={300}
@@ -145,7 +145,7 @@ const AboutPage: React.FC = () => {
             {editors.map((editor) => (
               <div key={editor.id} className="bg-light dark:bg-dark shadow-lg hover:shadow-xl transition-all rounded-xl p-6">
                 <Image
-                  src={editor.profile_image_url || '/static/images/default-profile.jpg'}
+                  src={editor.profile_image_url || '/static/images/profile-holder.webp'}
                   alt={`${editor.first_name} ${editor.last_name}`}
                   width={300}
                   height={300}

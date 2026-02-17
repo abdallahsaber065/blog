@@ -146,7 +146,7 @@ const CreatePost: React.FC = () => {
         setLoading(true);
         try {
             const filesAndImages = [...selectedFiles, ...selectedImages];
-            
+
             // Make POST request to trigger content generation with streaming
             const response = await fetch('/api/ai/generate-content', {
                 method: 'POST',
@@ -223,8 +223,8 @@ const CreatePost: React.FC = () => {
             setExcerpt(excerpt);
             setTags(tags.map((tag: string) => ({ label: tag, value: tag })));
             setCategory(main_category ? { label: main_category, value: main_category } : null);
-            setFeaturedImage('/blogs/placeholder.jpg');
-            
+            setFeaturedImage('/blogs/placeholder.webp');
+
             toast.success('Content generated successfully!');
         } catch (error: any) {
             console.error('Error during content generation:', error);
