@@ -28,9 +28,9 @@ const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
         className="col-span-12 lg:col-span-4 h-full overflow-hidden"
       >
         <Image
-          src={post.featured_image_url || "/static/images/default-image.jpg"}
+          src={post.featured_image_url || "/static/images/default-image.webp"}
           placeholder="blur"
-          blurDataURL={post.featured_image_url || "/static/images/default-image.jpg"}
+          blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
           alt={post.title}
           width={800}
           height={600}

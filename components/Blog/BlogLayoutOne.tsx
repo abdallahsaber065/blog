@@ -30,9 +30,9 @@ const BlogLayoutOne = ({ post }: BlogLayoutOneProps) => {
             "
         />
         <Image
-          src={post.featured_image_url || "/static/images/default-image.jpg"}
+          src={post.featured_image_url || "/static/images/default-image.webp"}
           placeholder="blur"
-          blurDataURL={post.featured_image_url || "/static/images/default-image.jpg"}
+          blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
           alt={post.title}
           width={800}
           height={600}

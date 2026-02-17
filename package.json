@@ -15,7 +15,10 @@
     "db:reset": "prisma migrate reset --force",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:setup": "npm run db:migrate && npm run db:seed"
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "images:convert": "node scripts/convert-images-to-webp.js",
+    "images:convert:delete": "node scripts/convert-images-to-webp.js --delete-originals",
+    "images:update-db": "node scripts/update-post-images.js && node scripts/update-profile-images.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -46,6 +49,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.13.1",
     "bcryptjs": "^2.4.3",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "core-js": "^3.39.0",
@@ -97,7 +101,6 @@
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "request-ip": "^3.3.0",
-    "sharp": "^0.33.5",
     "shiki": "^1.22.2",
     "slug": "^9.1.0",
     "styled-jsx": "^5.1.7",
@@ -121,6 +124,7 @@
     "cross-env": "^7.0.3",
     "next": "^16.0.0",
     "prisma": "^5.22.0",
+    "sharp": "^0.33.5",
     "terser-webpack-plugin": "^5.3.10",
     "ts-node": "^10.9.2"
   },

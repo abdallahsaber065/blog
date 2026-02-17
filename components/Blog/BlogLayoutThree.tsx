@@ -24,9 +24,9 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
     <Card className="group flex flex-col items-center border-none shadow-md hover:shadow-lg transition-shadow overflow-hidden">
       <Link href={`/blogs/${post.slug}`} className="h-full w-full overflow-hidden">
         <Image
-          src={post.featured_image_url || "/static/images/default-image.jpg"}
+          src={post.featured_image_url || "/static/images/default-image.webp"}
           placeholder="blur"
-          blurDataURL={post.featured_image_url || "/static/images/default-image.jpg"}
+          blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
           alt={post.title}
           width={800}
           height={600}
