@@ -14,6 +14,7 @@ export interface PluginProps {
 export abstract class PluginComponent<P = {}, S = {}> extends React.Component<PluginProps & P, S> {
     static pluginName: string;
     static align: "left" | "right";
+    static defaultConfig: Record<string, any> = {};
 
     editor: Editor;
     config: any;

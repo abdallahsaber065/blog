@@ -1,4 +1,4 @@
-import { Area } from 'react-easy-crop/types';
+type Area = { width: number; height: number; x: number; y: number };
 
 export const getCroppedImg = async (imageSrc: string, pixelCrop: Area, rotation = 0): Promise<Blob> => {
     const image = await createImage(imageSrc);

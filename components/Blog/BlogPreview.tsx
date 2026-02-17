@@ -7,7 +7,6 @@ import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import CustomFileView from '@/components/MdxComponents/File/CustomFileView';
 import TableOfContent from "@/components/Blog/TableOfContenet";
 import { serialize } from 'next-mdx-remote/serialize';
-import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetServerSideProps } from 'next';
 import InlineFileView from "../MdxComponents/File/InlineFileView";
@@ -89,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const mdxText = "Your MDX content here"; // Replace with your actual MDX content
 
     // Serialize the MDX content
-    const mdxSource = await serialize(mdxText, Options as SerializeOptions);
+    const mdxSource = await serialize(mdxText, Options);
 
     return {
         props: {

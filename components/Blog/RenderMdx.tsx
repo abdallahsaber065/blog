@@ -1,8 +1,7 @@
 // components/RenderMdx.tsx
 'use client';
 
-import { MDXRemote } from 'next-mdx-remote';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useEffect } from 'react';
 

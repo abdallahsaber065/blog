@@ -9,7 +9,7 @@ import 'highlight.js/styles/github.css'; // You can choose any highlight.js them
 
 const MdEditor = dynamic(
     async () => {
-        const [MdEditor,ImagePlugin, FilePlugin, InlineFilePlugin, EmbedPlugin, SectionPlugin] = await Promise.all([
+        const [MdEditor, ImagePlugin, FilePlugin, InlineFilePlugin, EmbedPlugin, SectionPlugin] = await Promise.all([
             import('react-markdown-editor-lite'),
             import('./Editor/Plugins/ImagePlugin'),
             import('./Editor/Plugins/FilePlugin'),
@@ -18,11 +18,11 @@ const MdEditor = dynamic(
             import('./Editor/Plugins/SectionPlugin'),
             /** Add more plugins, and use below */
         ]);
-        MdEditor.default.use(ImagePlugin.default);
-        MdEditor.default.use(FilePlugin.default);
-        MdEditor.default.use(InlineFilePlugin.default);
-        MdEditor.default.use(EmbedPlugin.default);
-        MdEditor.default.use(SectionPlugin.default);
+        MdEditor.default.use(ImagePlugin.default as any);
+        MdEditor.default.use(FilePlugin.default as any);
+        MdEditor.default.use(InlineFilePlugin.default as any);
+        MdEditor.default.use(EmbedPlugin.default as any);
+        MdEditor.default.use(SectionPlugin.default as any);
         return MdEditor.default;
     },
     {
