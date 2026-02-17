@@ -1,7 +1,5 @@
-import createMDX from '@next/mdx';
 import dotenv from 'dotenv';
 import path from 'path';
-import remarkGfm from 'remark-gfm';
 import TerserPlugin from 'terser-webpack-plugin';
 import { fileURLToPath } from 'url';
 
@@ -24,30 +22,12 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3000',
-        pathname: '/uploads/**',
-      }, {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
         pathname: '/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '5000',
-        pathname: '/uploads/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '5000',
-        pathname: '/blogs/**',
       },
       {
         protocol: 'https',
         hostname: 'devtrend.tech',
-        pathname: '/uploads/**',
+        pathname: '/**',
       }
     ]
   },
@@ -60,6 +40,7 @@ const nextConfig = {
   turbopack: {
     // Turbopack handles most configurations automatically
     // No custom aliases needed - use /path for public assets
+    root: __dirname,
   },
 
   // Webpack customizations (used for production builds)
@@ -76,8 +57,7 @@ const nextConfig = {
     ];
     return config;
   },
-  // Configure `pageExtensions` to include MDX files
-  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
 
   env: {
@@ -124,13 +104,4 @@ const nextConfig = {
 
 };
 
-const withMDX = createMDX({
-  // Add markdown plugins here, as desired
-  options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [],
-  },
-});
-
-// Wrap MDX and Next.js config with each other
-export default withMDX(nextConfig);
+export default nextConfig;

@@ -1,5 +1,4 @@
-import { MDXRemote } from 'next-mdx-remote';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote/dist/types';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useState, useEffect } from 'react';
 import { FaExpand, FaCompress, FaSync } from 'react-icons/fa';
@@ -87,9 +86,9 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     <button className="render-mdx-sync-btn mr-2" onClick={handleSyncScroll}>
                         <FaSync className="text-dark dark:text-white" />
                     </button>
-                    <button 
-                        className="render-mdx-fullscreen-btn" 
-                        onClick={handleToggleFullScreen} 
+                    <button
+                        className="render-mdx-fullscreen-btn"
+                        onClick={handleToggleFullScreen}
                         title={isFullScreen ? "Exit preview full screen" : "Enter preview full screen"}
                     >
                         {isFullScreen ? (

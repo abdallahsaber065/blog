@@ -18,8 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 },
             });
             const routesToRevalidate = [
-
-                REVALIDATE_PATHS.ALL_TAGS
+                REVALIDATE_PATHS.EXPLORE
             ];
             await revalidateRoutes(res, routesToRevalidate);
             res.status(200).json({ message: 'Categories with 0 posts deleted successfully' });

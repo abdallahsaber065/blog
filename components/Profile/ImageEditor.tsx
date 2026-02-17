@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import { Area } from 'react-easy-crop/types';
 import { FaTimes } from 'react-icons/fa';
+
+type Area = { width: number; height: number; x: number; y: number };
 import { getCroppedImg } from '@/lib/cropImage';
 import { Button } from '@/components/ui/button';
 

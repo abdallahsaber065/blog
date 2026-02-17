@@ -6,7 +6,7 @@ interface ResourcesSectionProps {
 }
 
 const ResourcesSection: React.FC<ResourcesSectionProps> = ({ files }) => {
-    if (files.length === 0) {
+    if (!files || files.length === 0) {
         return null;
     }
 
