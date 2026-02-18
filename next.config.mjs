@@ -18,6 +18,9 @@ const nextConfig = {
   cacheComponents: true,
   images: {
     minimumCacheTTL: 600,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: 'http',
@@ -90,6 +93,7 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     // Storage
     STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
+    NEXT_PUBLIC_STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
     STORAGE_S3_BUCKET: process.env.STORAGE_S3_BUCKET,
     STORAGE_S3_REGION: process.env.STORAGE_S3_REGION,
     STORAGE_S3_PUBLIC_URL: process.env.STORAGE_S3_PUBLIC_URL,

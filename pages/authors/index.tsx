@@ -2,7 +2,7 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
+import SmartImage from '@/components/SmartImage';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,9 +58,10 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({ authors }) => {
                                     {/* Profile Image */}
                                     {author.profile_image_url ? (
                                         <div className="relative">
-                                            <Image
-                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/${author.profile_image_url}`}
+                                        <SmartImage
+                                                src={author.profile_image_url || '/default-avatar.webp'}
                                                 alt={`${author.username}'s profile image`}
+                                                imgClassName="rounded-full w-24 h-24 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-lg group-hover:ring-blue-200 dark:group-hover:ring-blue-800 transition-all"
                                                 className="rounded-full w-24 h-24 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-lg group-hover:ring-blue-200 dark:group-hover:ring-blue-800 transition-all"
                                                 width={96}
                                                 height={96}
