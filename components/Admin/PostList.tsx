@@ -281,7 +281,34 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
     const deleteRoles = ['admin'];
 
-    const hasApproveRights = session?.user?.role && ApproveRoles.includes(session.user.role);
+    const hasApproveRights = session?.user?.role ? ApproveRoles.includes(session.user.role) : false;
+
+    const getNextStatus = (currentStatus: string, isApprover: boolean): string => {
+        if (isApprover) {
+            // Admins/moderators cycle: draft -> pending -> published -> draft
+            switch (currentStatus) {
+                case 'draft':
+                    return 'pending';
+                case 'pending':
+                    return 'published';
+                case 'published':
+                    return 'draft';
+                default:
+                    return 'draft';
+            }
+        } else {
+            // Authors cycle: draft -> pending -> draft
+            switch (currentStatus) {
+                case 'draft':
+                    return 'pending';
+                case 'pending':
+                case 'published':
+                    return 'draft';
+                default:
+                    return 'draft';
+            }
+        }
+    };
 
     if (!Array.isArray(posts)) {
         return <div>Error: posts is not an array</div>;
@@ -317,32 +344,35 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
 
     const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
-    const handleSaveStatus = async (postId: number) => {
+    const handleStatusChange = async (post: Post) => {
         try {
-            if (editedStatus === 'published' && !hasApproveRights) {
+            const nextStatus = getNextStatus(post.status, hasApproveRights);
+
+            if (nextStatus === 'published' && !hasApproveRights) {
                 toast.dismiss();
                 toast.error('You do not have permission to publish posts');
                 return;
             }
 
-            setSavingPostIds(prev => new Set(prev).add(postId));
-            const response = await fetch(`/api/posts?id=${postId}`, {
+            setSavingPostIds(prev => new Set(prev).add(post.id));
+            const response = await fetch(`/api/posts?id=${post.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    data: { status: editedStatus },
-                    id: postId,
+                    data: { status: nextStatus },
+                    id: post.id,
                 }),
             });
             if (response.ok) {
                 toast.dismiss();
-                toast.success('Status updated successfully');
+                const statusText = nextStatus === 'published' ? 'published' : nextStatus === 'pending' ? 'submitted for review' : 'saved as draft';
+                toast.success(`Post ${statusText}`);
                 setEditingPostId(null);
                 setEditedStatus('');
-                const updatedPosts = posts.map(post =>
-                    post.id === postId ? { ...post, status: editedStatus } : post
+                const updatedPosts = posts.map(p =>
+                    p.id === post.id ? { ...p, status: nextStatus } : p
                 );
                 setPosts(updatedPosts);
             } else {
@@ -355,7 +385,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
         } finally {
             setSavingPostIds(prev => {
                 const newSet = new Set(prev);
-                newSet.delete(postId);
+                newSet.delete(post.id);
                 return newSet;
             });
         }
@@ -577,85 +607,44 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                         </Badge>
                                     </td>
                                     <td className="px-4 py-4">
-                                        {editingPostId === post.id ? (
-                                            <div className="flex items-center gap-2">
-                                                {(hasApproveRights || post.author?.id === currentUserId) && (
-                                                    <>
-                                                        <select
-                                                            value={editedStatus}
-                                                            onChange={(e) => setEditedStatus(e.target.value)}
-                                                            className="px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold dark:focus:ring-gold transition-all duration-200"
-                                                            disabled={isPostProcessing(post.id)}
-                                                        >
-                                                            {(hasApproveRights || post.author?.id === currentUserId) ? (
-                                                                <>
-                                                                    <option value="published">Published</option>
-                                                                    <option value="pending">Pending</option>
-                                                                    <option value="draft">Draft</option>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <option value="pending">Request Approval</option>
-                                                                    <option value="draft">Draft</option>
-                                                                </>
-                                                            )}
-                                                        </select>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                            className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
-                                                            onClick={() => handleSaveStatus(post.id)}
-                                                            disabled={isPostProcessing(post.id)}
-                                                        >
-                                                            {savingPostIds.has(post.id) ? '...' : <FaSave className="w-3 h-3" />}
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                                                            onClick={() => {
-                                                                setEditingPostId(null);
-                                                                setEditedStatus('');
-                                                            }}
-                                                            disabled={isPostProcessing(post.id)}
-                                                        >
-                                                            <FaTimes className="w-3 h-3" />
-                                                        </Button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <Badge
-                                                    variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
-                                                    className={`text-xs ${post.status === 'published'
-                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800'
+                                        <div className="flex items-center gap-2">
+                                            {(hasApproveRights || post.author?.id === currentUserId) && (
+                                                <button
+                                                    onClick={() => handleStatusChange(post)}
+                                                    disabled={savingPostIds.has(post.id)}
+                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none border ${post.status === 'published'
+                                                        ? 'bg-green-500 border-green-600'
                                                         : post.status === 'pending'
-                                                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800'
-                                                            : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
-                                                        }`}
+                                                            ? 'bg-yellow-500 border-yellow-600'
+                                                            : 'bg-slate-300 dark:bg-slate-600 border-slate-400 dark:border-slate-500'
+                                                        } ${savingPostIds.has(post.id) ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80 cursor-pointer'}`}
+                                                    title={`Click to cycle status (${getNextStatus(post.status, hasApproveRights)})`}
+                                                    aria-label="Toggle post status"
                                                 >
-                                                    {post.status === 'pending' && !hasApproveRights
-                                                        ? 'Waiting'
-                                                        : post.status}
-                                                </Badge>
-                                                {(hasApproveRights || post.author?.id === currentUserId) && (
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        className="h-7 w-7 p-0 text-slate-600 hover:text-gold hover:bg-gold/10 dark:hover:bg-gold/15 transition-all duration-200"
-                                                        onClick={() => {
-                                                            setEditingPostId(post.id);
-                                                            setEditedStatus(post.status);
-                                                        }}
-                                                        disabled={isPostProcessing(post.id)}
-                                                        title="Edit status"
-                                                    >
-                                                        <FaEdit className="w-3 h-3" />
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        )}
+                                                    <span
+                                                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${post.status === 'published'
+                                                            ? 'translate-x-6'
+                                                            : post.status === 'pending'
+                                                                ? 'translate-x-3'
+                                                                : 'translate-x-1'
+                                                            }`}
+                                                    />
+                                                </button>
+                                            )}
+                                            <Badge
+                                                variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
+                                                className={`text-xs ${post.status === 'published'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800'
+                                                    : post.status === 'pending'
+                                                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800'
+                                                        : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
+                                                    }`}
+                                            >
+                                                {post.status === 'pending' && !hasApproveRights
+                                                    ? 'Waiting'
+                                                    : post.status}
+                                            </Badge>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-4">
                                         {hasPermissionForPost(post) && (

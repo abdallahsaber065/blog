@@ -218,6 +218,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     };
                 }
 
+                // Pre-upsert tags to avoid unique constraint conflicts (same as POST)
+                if (updateData.tags?.connectOrCreate) {
+                    const tagConnectsForUpdate: { id: number }[] = [];
+                    for (const op of updateData.tags.connectOrCreate) {
+                        const tag = await findOrCreateTag(op.create.name, op.create.slug);
+                        tagConnectsForUpdate.push({ id: tag.id });
+                    }
+                    updateData.tags = {
+                        set: [],
+                        connect: tagConnectsForUpdate,
+                    };
+                }
+
+                // Pre-upsert category to avoid unique constraint conflicts (same as POST)
+                if (updateData.category?.connectOrCreate) {
+                    const catCreate = updateData.category.connectOrCreate.create;
+                    const cat = await findOrCreateCategory(catCreate.name, catCreate.slug);
+                    updateData.category = { connect: { id: cat.id } };
+                }
+
                 // check if status is being updated to published to add published_at date
                 if (updateData.status === 'published' && (oldPost.status !== 'published' || oldPost.published_at === null)) {
                     updateData.published_at = new Date();

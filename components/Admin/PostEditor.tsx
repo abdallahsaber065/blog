@@ -23,6 +23,7 @@ interface Post {
     tags: Tag[];
     category: Category;
     permissions?: PostPermission[];
+    status?: string;
 }
 
 interface Tag {
@@ -46,6 +47,7 @@ interface PostEditorProps {
 const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave, isLoading }) => {
     const [currentPost, setCurrentPost] = useState<Post>(post);
     const [markdownText, setMarkdownText] = useState<string>(post.content);
+    const [postStatus, setPostStatus] = useState<string>(post.status || 'draft');
     const [showImageSelector, setShowImageSelector] = useState(false);
 
     const handleContentChange = async (value: string) => {
@@ -79,13 +81,9 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
         }
     };
 
-    const handleSave = async (status: string) => {
-        const { permissions, ...postData } = currentPost;
-        const postToUpdate = {
-            ...postData
-        };
-        
-        await onSave(postToUpdate, status);
+    const handleSave = async () => {
+        const { permissions, status: _status, ...postData } = currentPost;
+        await onSave(postData, postStatus);
     };
 
     useEffect(() => {
@@ -199,28 +197,33 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
             </div>
 
             {/* Action Buttons */}
-            <div className="post-editor-actions flex gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div className="post-editor-actions flex flex-col gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                {/* Status Toggle */}
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Status:</span>
+                    <button
+                        type="button"
+                        onClick={() => setPostStatus(postStatus === 'published' ? 'draft' : 'published')}
+                        className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-200 focus:outline-none border ${postStatus === 'published'
+                                ? 'bg-green-500 border-green-600'
+                                : 'bg-slate-300 dark:bg-slate-600 border-slate-400 dark:border-slate-500'
+                            }`}
+                        aria-label="Toggle post status"
+                    >
+                        <span
+                            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ${postStatus === 'published' ? 'translate-x-8' : 'translate-x-1'
+                                }`}
+                        />
+                    </button>
+                    <span className={`text-sm font-medium ${postStatus === 'published' ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        {postStatus === 'published' ? 'Published' : 'Draft'}
+                    </span>
+                </div>
+
+                {/* Save Button */}
                 <Button
-                    className="flex-1 h-11"
-                    onClick={() => handleSave('published')}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <span className="flex items-center gap-2">
-                            <ClipLoader size={18} color={"#fff"} />
-                            <span>Publishing...</span>
-                        </span>
-                    ) : (
-                        <span className="flex items-center gap-2">
-                            <FaSave />
-                            <span>Publish</span>
-                        </span>
-                    )}
-                </Button>
-                <Button
-                    variant="secondary"
-                    className="flex-1 h-11"
-                    onClick={() => handleSave('draft')}
+                    className="h-11 w-full sm:w-auto"
+                    onClick={handleSave}
                     disabled={isLoading}
                 >
                     {isLoading ? (
@@ -229,7 +232,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                             <span>Saving...</span>
                         </span>
                     ) : (
-                        <span>Save Draft</span>
+                        <span className="flex items-center gap-2">
+                            <FaSave />
+                            <span>Save</span>
+                        </span>
                     )}
                 </Button>
             </div>
