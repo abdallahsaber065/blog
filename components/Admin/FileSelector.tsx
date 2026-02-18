@@ -39,7 +39,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfir
             <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
                 <h3 className="text-lg font-semibold mb-4">Delete File</h3>
                 <p className="mb-6">
-                    Are you sure you want to delete <span className="font-semibold break-all">{fileName}</span>? 
+                    Are you sure you want to delete <span className="font-semibold break-all">{fileName}</span>?
                     This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-3">
@@ -74,7 +74,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
     const [uploadLoading, setUploadLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<FileProps | null>(null);
     const { data: session } = useSession();
-    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_REMOTE_URL;
+    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_REMOTE_URL || process.env.NEXT_PUBLIC_BASE_URL || '';
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         file: FileProps | null;
@@ -104,12 +104,14 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         setLoading(true);
         try {
             const response = await axios.get(`/api/files?folder=${folder}`);
-            const filesWithFullUrls = await Promise.all(response.data.map(async (file: any) => {
-                const fileUrl = `${NEXT_PUBLIC_BASE_URL}/${file.file_url}`;
-                const exists = await checkFileExists(fileUrl);
-                return exists ? { ...file, file_url: fileUrl } : null;
-            }));
-            setFiles(filesWithFullUrls.filter(Boolean));
+            // API now returns public_url alongside the DB record
+            const filesWithUrls = response.data
+                .filter((file: any) => file.public_url || file.file_url)
+                .map((file: any) => ({
+                    ...file,
+                    display_url: file.public_url || file.file_url,
+                }));
+            setFiles(filesWithUrls);
         } catch (error) {
             toast.error('Failed to fetch files');
         }
@@ -146,7 +148,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
             const response = await axios.post('/api/files/upload', formData);
             const fileWithFullUrl = {
                 ...response.data.file,
-                file_url: `${NEXT_PUBLIC_BASE_URL}/${response.data.file.file_url}`
+                display_url: response.data.file.public_url || response.data.file.file_url,
             };
             setFiles([...files, fileWithFullUrl]);
             setSelectedFile(fileWithFullUrl);
@@ -174,15 +176,15 @@ const FileSelector: React.FC<FileSelectorProps> = ({
 
     const handleConfirmDelete = async () => {
         if (!confirmDialog.file) return;
-        
+
         try {
             await axios.delete(`/api/files?id=${confirmDialog.file.id}`);
             setFiles(files.filter(f => f.id !== confirmDialog.file!.id));
-            
+
             if (selectedFile?.id === confirmDialog.file.id) {
                 setSelectedFile(null);
             }
-            
+
             toast.success('File deleted successfully');
         } catch (error) {
             toast.error('Failed to delete file');
@@ -191,7 +193,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         }
     };
 
-    const filteredFiles = files.filter(file => 
+    const filteredFiles = files.filter(file =>
         file.file_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -251,8 +253,8 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                                             key={file.id}
                                             onClick={() => setSelectedFile(file)}
                                             className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
-                                                ${selectedFile?.id === file.id 
-                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' 
+                                                ${selectedFile?.id === file.id
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                                                     : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                                                 }`}
                                         >

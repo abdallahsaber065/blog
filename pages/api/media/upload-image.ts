@@ -1,90 +1,101 @@
-// pages/api/upload-image.ts
+// pages/api/media/upload-image.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Formidable, IncomingForm } from 'formidable';
+import { Formidable } from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { getStorageProvider } from '@/lib/storage';
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: {
+    bodyParser: false,
+  },
 };
 
-const uploadDir = path.join(process.cwd(), 'public/uploads/temp');
-
-// Ensure the upload directory exists
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+// Temp dir for formidable to park the file before we stream it to storage
+const tempDir = path.join(process.cwd(), 'public/uploads/temp');
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const form = new Formidable({
+    uploadDir: tempDir,
+    keepExtensions: true,
+    maxFileSize: 5 * 1024 * 1024, // 5 MB
+  });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error parsing the files' });
     }
 
-    const form = new Formidable({
-        uploadDir,
-        keepExtensions: true,
-        maxFileSize: 5 * 1024 * 1024, // 5MB
-    });
+    const userId = Array.isArray(fields.userId) ? fields.userId[0] : fields.userId;
+    const file = Array.isArray(files.file) ? files.file[0] : files.file;
+    const saveDir = Array.isArray(fields.saveDir) ? fields.saveDir[0] : fields.saveDir;
 
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error parsing the files' });
-        }
+    if (!saveDir) {
+      return res.status(400).json({ error: 'Save directory is required' });
+    }
+    if (!userId || !file) {
+      return res.status(400).json({ error: 'User ID and file are required' });
+    }
 
-        const userId = Array.isArray(fields.userId) ? fields.userId[0] : fields.userId;
-        const file = Array.isArray(files.file) ? files.file[0] : files.file;
-        const saveDir = Array.isArray(fields.saveDir) ? fields.saveDir[0] : fields.saveDir;
+    try {
+      // Read temp file into a buffer
+      const buffer = fs.readFileSync(file.filepath);
 
-        // make sure the saveDir exists
-        if (!saveDir) {
-            return res.status(400).json({ error: 'Save directory is required' });
-        }
-        const saveDirPath = path.join(process.cwd(), 'public/uploads', saveDir);
-        const localImageUploadPath = path.join('uploads', saveDir);
+      // Get image dimensions
+      const metadata = await sharp(buffer).metadata();
+      const { width, height } = metadata;
 
-        if (!fs.existsSync(saveDirPath)) {
-            fs.mkdirSync(saveDirPath, { recursive: true });
-        }
+      // Build the storage key: "uploads/<saveDir>/<filename>"
+      // saveDir is 'media' for blog images, 'avatars' for profile images
+      const storageKey = `uploads/${saveDir}/${file.newFilename}`;
 
-        if (!userId || !file) {
-            return res.status(400).json({ error: 'User ID and file are required' });
-        }
+      const storage = getStorageProvider();
+      const uploadResult = await storage.upload(
+        buffer,
+        storageKey,
+        file.mimetype || 'application/octet-stream',
+      );
 
-        const localImageFilePath = path.join(localImageUploadPath, file.newFilename);
+      // Clean up temp file
+      try { fs.unlinkSync(file.filepath); } catch { /* ignore */ }
 
-        try {
-            // Get image dimensions using sharp
-            const image = sharp(file.filepath);
-            const metadata = await image.metadata();
-            const { width, height } = metadata;
+      // Persist metadata in DB — store the key, not the full URL
+      const mediaEntry = await prisma.mediaLibrary.create({
+        data: {
+          file_name: uploadResult.file_name,
+          file_type: uploadResult.file_type,
+          file_size: uploadResult.file_size,
+          file_url: uploadResult.file_url,   // e.g. "uploads/media/abc.webp"
+          width: width ?? null,
+          height: height ?? null,
+          uploaded_by_id: parseInt(userId, 10),
+        },
+      });
 
-            // Save the uploaded image to the MediaLibrary table
-            const mediaEntry = await prisma.mediaLibrary.create({
-                data: {
-                    file_name: file.newFilename,
-                    file_type: file.mimetype,
-                    file_size: file.size,
-                    file_url: localImageFilePath,
-                    width: width || null,
-                    height: height || null,
-                    uploaded_by_id: parseInt(userId, 10),
-
-                },
-            });
-            fs.renameSync(file.filepath, path.join(saveDirPath, file.newFilename));
-
-            return res.status(200).json({ message: 'Profile image updated successfully', media: mediaEntry });
-        } catch (error) {
-            return res.status(500).json({ error: 'Error updating profile image' });
-        }
-    });
-};
+      return res.status(200).json({
+        message: 'Profile image updated successfully',
+        media: {
+          ...mediaEntry,
+          public_url: uploadResult.public_url, // absolute URL, ready to use immediately
+        },
+      });
+    } catch (error) {
+      console.error('[upload-image]', error);
+      return res.status(500).json({ error: 'Error uploading image' });
+    }
+  });
+}
 
 export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
-    return authMiddleware(req, res, handler);
+  return authMiddleware(req, res, handler);
 }

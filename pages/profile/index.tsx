@@ -100,7 +100,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         const file = new File([croppedBlob], selectedFile?.name || 'cropped-image.jpg', { type: 'image/jpeg' });
         formData.append('file', file);
         formData.append('userId', user?.id.toString() || '');
-        formData.append('saveDir', 'profile-images');
+        formData.append('saveDir', 'avatars');
 
         const res = await fetch('/api/media/upload-image', {
             method: 'POST',

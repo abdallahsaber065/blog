@@ -28,7 +28,25 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'devtrend.tech',
         pathname: '/**',
-      }
+      },
+      {
+        // AWS S3 buckets — covers *.s3.amazonaws.com and *.s3.<region>.amazonaws.com
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+        pathname: '/**',
+      },
+      {
+        // MinIO / R2 / any custom S3-compatible endpoint (adjust hostname as needed)
+        protocol: 'https',
+        hostname: '**.r2.dev',
+        pathname: '/**',
+      },
+      {
+        // ImageKit CDN
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
+        pathname: '/**',
+      },
     ]
   },
 
@@ -70,6 +88,15 @@ const nextConfig = {
     NEXT_PUBLIC_CSRF_TOKEN: process.env.CSRF_SECRET,
     WEBSITE_TYPE: process.env.WEBSITE_TYPE,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    // Storage
+    STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
+    STORAGE_S3_BUCKET: process.env.STORAGE_S3_BUCKET,
+    STORAGE_S3_REGION: process.env.STORAGE_S3_REGION,
+    STORAGE_S3_PUBLIC_URL: process.env.STORAGE_S3_PUBLIC_URL,
+    // ImageKit (public key & endpoint are safe to expose; private key stays server-only)
+    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
+    IMAGEKIT_FOLDER: process.env.IMAGEKIT_FOLDER,
   },
 
   async redirects() {
