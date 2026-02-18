@@ -20,6 +20,7 @@ interface Post {
     category: Category;
     permissions?: PostPermission[];
     author: Author;
+    status: string;
 }
 
 interface PostPermission {
@@ -123,7 +124,7 @@ const PostEditorPage: React.FC = () => {
                     }
                 }
             });
-            
+
             const postUrl = `/api/posts?where=${postWhere}&select=${postSelect}`;
             const postData = await fetch(postUrl).then(res => res.json());
             const post = postData[0];
@@ -141,7 +142,7 @@ const PostEditorPage: React.FC = () => {
             }
 
             // Check permissions
-            const hasPermission = post.permissions?.some((p: { user_id: number; role: string | undefined; }) => 
+            const hasPermission = post.permissions?.some((p: { user_id: number; role: string | undefined; }) =>
                 (p.user_id === userId) || (p.role === userRole)
             );
 
@@ -166,6 +167,7 @@ const PostEditorPage: React.FC = () => {
                 title: true,
                 featured_image_url: true,
                 content: true,
+                status: true,
                 author: {
                     select: {
                         id: true,
@@ -174,7 +176,7 @@ const PostEditorPage: React.FC = () => {
                         last_name: true,
                     },
                 },
-                permissions: {  // Add permissions to the select
+                permissions: {
                     select: {
                         user_id: true,
                         role: true,
@@ -234,7 +236,7 @@ const PostEditorPage: React.FC = () => {
 
     const handleSave = async (updatedPostRecieved: any, status: string) => {
         // Add permission check
-        if (!ApproveRoles.includes(session?.user?.role || '') && 
+        if (!ApproveRoles.includes(session?.user?.role || '') &&
             author?.id !== Number(session?.user?.id)) {
             toast.dismiss();
             toast.error('You do not have permission to edit this post');
@@ -242,10 +244,10 @@ const PostEditorPage: React.FC = () => {
         }
 
         setLoading(true);
-        // Get the status based on the user role
-        status = getStatusByRole(session?.user?.role || 'reader', status);
+        // Enforce status rules based on role
+        const resolvedStatus = getStatusByRole(session?.user?.role || 'reader', status);
 
-        let updatedPost = { ...updatedPostRecieved, status };
+        let updatedPost = { ...updatedPostRecieved, status: resolvedStatus };
         try {
             // Format tags - handle both existing and new tags
             updatedPost.tags = {
@@ -272,7 +274,7 @@ const PostEditorPage: React.FC = () => {
                     }
                 })
             };
-    
+
             // Format category
             updatedPost.category = {
                 connectOrCreate: {
@@ -285,14 +287,14 @@ const PostEditorPage: React.FC = () => {
                     }
                 }
             };
-    
+
             let finalPost = { ...updatedPost };
             delete finalPost.id;
             finalPost.reading_time = Math.round(readingTime(finalPost.content).minutes);
             // add slug to finalPost
             finalPost.slug = slug(finalPost.title);
 
-    
+
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
                 headers: {
@@ -303,11 +305,13 @@ const PostEditorPage: React.FC = () => {
                     id: updatedPost.id
                 }),
             });
-    
+
             if (response.ok) {
                 toast.dismiss();
-                if (status === 'published') {
-                    toast.success('Post updated successfully');
+                if (resolvedStatus === 'published') {
+                    toast.success('Post published successfully');
+                } else if (resolvedStatus === 'pending') {
+                    toast.success('Post submitted for review');
                 } else {
                     toast.success('Draft saved successfully');
                 }
@@ -339,7 +343,7 @@ const PostEditorPage: React.FC = () => {
                         <div>
                             <p className="font-bold">Invalid Post ID</p>
                             <p>The post ID provided is invalid or missing.</p>
-                            <button 
+                            <button
                                 onClick={() => router.push('/admin/posts')}
                                 className="mt-2 text-red-600 hover:text-red-800 underline"
                             >
@@ -363,7 +367,7 @@ const PostEditorPage: React.FC = () => {
                         <div>
                             <p className="font-bold">Post Not Found</p>
                             <p>The post you're looking for doesn't exist or has been deleted.</p>
-                            <button 
+                            <button
                                 onClick={() => router.push('/admin/posts')}
                                 className="mt-2 text-yellow-600 hover:text-yellow-800 underline"
                             >
@@ -387,7 +391,7 @@ const PostEditorPage: React.FC = () => {
                         <div>
                             <p className="font-bold">Access Denied</p>
                             <p>You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
-                            <button 
+                            <button
                                 onClick={() => router.push('/admin/posts')}
                                 className="mt-2 text-red-600 hover:text-red-800 underline"
                             >
@@ -404,11 +408,11 @@ const PostEditorPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4 text-slate-900 dark:text-slate-300" id="post-editor-container">
-            <EditTourGuide 
-                run={showTour} 
+            <EditTourGuide
+                run={showTour}
                 onFinish={() => setShowTour(false)}
             />
-            
+
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100" id="post-editor-title">Edit Post</h1>
                 <button
@@ -419,7 +423,7 @@ const PostEditorPage: React.FC = () => {
                     <span className="font-medium">Show Guide</span>
                 </button>
             </div>
-            
+
             {loadingPost && (
                 <div className="flex items-center justify-center p-4" id="post-editor-loading">
                     <ClipLoader />
