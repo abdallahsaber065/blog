@@ -99,7 +99,7 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                     </button>
                 </div>
                 <div
-                    style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1rem' }}
+                    style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1.5rem' }}
                     ref={previewRef}
                 >
                     {isFullScreen ? (
