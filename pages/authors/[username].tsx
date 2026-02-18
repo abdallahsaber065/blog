@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import SmartImage from '../../components/SmartImage';
 
 interface AuthorProps {
     author: {
@@ -40,9 +41,10 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
             <div className="max-w-2xl w-full bg-white dark:bg-dark p-8 rounded-lg shadow-lg shadow-accent dark:shadow-accentDark">
                 <div className="flex flex-col items-center">
                     {author.profile_image_url ? (
-                        <Image
-                            src={process.env.NEXT_PUBLIC_BASE_URL + "/" + author.profile_image_url}
+                        <SmartImage
+                            src={author.profile_image_url}
                             alt={`${author.username}'s profile image`}
+                            imgClassName="rounded-full w-24 h-24 object-cover"
                             className="rounded-full w-24 h-24 object-cover"
                             width={96}
                             height={96}

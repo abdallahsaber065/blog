@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSession, signIn, signOut, getSession } from 'next-auth/react';
-import Image from 'next/image';
+import SmartImage from '@/components/SmartImage';
+import { resolveImageUrl } from '@/lib/utils';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
@@ -115,7 +116,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
             try {
                 const data = {
-                    profile_image_url: media.file_url,
+                    profile_image_url: media.public_url,  // Store full URL, not relative key
                 };
 
                 const response = await fetch('/api/users', {
@@ -132,7 +133,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                     toast.dismiss();
                     toast.success('Profile image updated successfully.');
                     const scrollPosition = window.scrollY;
-                    update({ profile_image_url: media.file_url }).then(() => {
+                    update({ profile_image_url: media.public_url }).then(() => {
                         window.scrollTo(0, 40);
                     });
                 } else {
@@ -226,10 +227,11 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                 <div className="flex flex-col items-center gap-6">
                                     {/* Profile Image Display */}
                                     <div className="relative group">
-                                        {!imageError ? (
-                                            <Image
-                                                src={currentImage || process.env.NEXT_PUBLIC_BASE_URL + `/${user.profile_image_url}`}
+                                        {!imageError && (currentImage || user.profile_image_url) ? (
+                                            <SmartImage
+                                                src={currentImage || resolveImageUrl(user.profile_image_url)}
                                                 alt="Profile Image"
+                                                imgClassName="rounded-full w-32 h-32 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-xl"
                                                 className="rounded-full w-32 h-32 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-xl"
                                                 onError={() => setImageError(true)}
                                                 width={128}

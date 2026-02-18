@@ -131,16 +131,16 @@ const Header: React.FC<HeaderProps> = () => {
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar" aria-label="User Menu">
             <div className="w-10 rounded-full">
-              {!imageError ? (
+              {!imageError && session?.user?.profile_image_url ? (
                 <img
-                  src={session?.user.profile_image_url ? `/${session?.user.profile_image_url}` : '/static/images/profile-holder.webp'}
-                  alt={userName.split(" ")[0]}
+                  src={session.user.profile_image_url || '/default-avatar.webp'}
+                  alt={userName.split(" ")[0] || 'User'}
                   className="rounded-full w-full h-full object-cover p-1"
                   onError={() => setImageError(true)}
                 />
               ) : (
                 <div className="flex items-center justify-center bg-slate-950 rounded-full w-full h-full text-white text-xl font-bold ">
-                  {initials}
+                  {initials || '?'}
                 </div>
               )}
             </div>
@@ -154,8 +154,8 @@ const Header: React.FC<HeaderProps> = () => {
                 <li className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md">
                   <Link href="/profile" className="flex items-center space-x-2 p-2">
                     <span className="text-slate-800 dark:text-light font-bold">{session?.user.name.split(' ')[0]}</span>
-                    {RoleList.includes(session?.user.role) && (
-                      <Badge variant="default" className="ml-2">{session?.user.role.toUpperCase()}</Badge>
+                    {session?.user?.role && RoleList.includes(session.user.role) && (
+                      <Badge variant="default" className="ml-2">{session.user.role.toUpperCase()}</Badge>
                     )}
                   </Link>
                 </li>
