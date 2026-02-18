@@ -8,16 +8,16 @@ import { ReactNode } from 'react';
 import ClientProvider from './ClientProvider';
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
+    subsets: ["latin"],
+    variable: "--font-inter",
+    display: "swap",
 });
 
 const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+    subsets: ["latin"],
+    variable: "--font-sora",
+    display: "swap",
+    weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata = {
@@ -55,7 +55,7 @@ export const metadata = {
     },
 };
 
-export default function RootLayout({ children}: { children: ReactNode}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
             <head>
@@ -72,20 +72,9 @@ export default function RootLayout({ children}: { children: ReactNode}) {
                     dangerouslySetInnerHTML={{
                         __html: `
               (function() {
-                const preferDarkQuery = '(prefers-color-scheme: dark)';
-                const storageKey = 'theme';
-                // Suppress transitions during initial theme application
+                // Force dark mode always
                 document.documentElement.classList.add('no-transition');
-                try {
-                  const userPref = localStorage.getItem(storageKey);
-                  const prefersDark = window.matchMedia(preferDarkQuery).matches;
-                  
-                  if (userPref === 'dark' || (userPref === 'system' && prefersDark) || (!userPref && prefersDark)) {
-                    document.documentElement.classList.add('dark');
-                  } else if (userPref === 'light' || (userPref === 'system' && !prefersDark) || (!userPref && !prefersDark)) {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {}
+                document.documentElement.classList.add('dark');
                 // Re-enable transitions after the first paint
                 window.requestAnimationFrame(function() {
                   window.requestAnimationFrame(function() {
@@ -97,7 +86,7 @@ export default function RootLayout({ children}: { children: ReactNode}) {
                     }}
                 />
             </head>
-            <body className={cx(inter.variable, sora.variable, "font-inter bg-light dark:bg-dark antialiased")}>
+            <body className={cx(inter.variable, sora.variable, "font-inter bg-dark antialiased")}>
                 <ClientProvider>
                     <Header />
                     {children}
