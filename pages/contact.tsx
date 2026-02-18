@@ -1,145 +1,168 @@
 import React, { useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
-import { ClipLoader } from 'react-spinners';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { Mail, MessageSquare, User, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
-// Add this social links data array
 const socialLinks = [
-  { url: 'https://x.com/DevTrend0', platform: 'twitter', color: '#1DA1F2' },
-  { url: 'https://www.linkedin.com/in/abdallah-saber065', platform: 'linkedin', color: '#0077B5' },
-  { url: 'https://github.com/abdallah065', platform: 'github', color: '#333333' },
-
-  { url: 'https://www.facebook.com/devtrends', platform: 'facebook', color: '#3b5998' },
-  { url: 'https://instagram.com/yourinstagramhandle', platform: 'instagram', color: '#E1306C' },
+  { url: 'https://x.com/DevTrend0',                      color: '#1DA1F2' },
+  { url: 'https://www.linkedin.com/in/abdallah-saber065', color: '#0077B5' },
+  { url: 'https://github.com/abdallah065',                 color: '#333333' },
+  { url: 'https://www.facebook.com/devtrends',             color: '#3b5998' },
 ];
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess(false);
-    setLoading(true);
-
+    setError(''); setSuccess(false); setLoading(true);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
-      if (res.ok) {
-        setSuccess(true);
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        const data = await res.json();
-        setError(data.error || 'Failed to send message');
-      }
-    } catch (error) {
-      setError('Failed to send message');
-    } finally {
-      setLoading(false);
-    }
+      if (res.ok) { setSuccess(true); setFormData({ name: '', email: '', message: '' }); }
+      else { const d = await res.json(); setError(d.error || 'Failed to send message'); }
+    } catch { setError('Failed to send message'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-light dark:bg-dark">
-      <main className="container mx-auto py-8 md:py-16 px-4 flex-1">
-        <section className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-accent dark:text-accentDark mb-4">Contact Us</h1>
-          <p className="text-base md:text-lg text-gray dark:text-light max-w-2xl mx-auto px-4">
-            Have questions, feedback, or want to contribute to Dev Trend? Get in touch with us using the form below or connect with us on social media!
-          </p>
-        </section>
-        <section className="max-w-2xl mx-auto px-4">
-          <Card>
-            <CardContent className="p-4 md:p-8">
-              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-accent dark:text-accentDark">
-                    Your Name
-                  </Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter your name"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-accent dark:text-accentDark">
-                    Your Email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-accent dark:text-accentDark">
-                    Message
-                  </Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Enter your message"
-                    rows={5}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? <ClipLoader size={24} color="#ffffff" /> : 'Send Message'}
-                </Button>
-                {success && <p className="text-green-500 mt-4">Message sent successfully!</p>}
-                {error && <p className="text-red-500 mt-4">{error}</p>}
-              </form>
-            </CardContent>
-          </Card>
-        </section>
-        <section className="mt-8 md:mt-16 text-center px-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-accent dark:text-accentDark">Connect with Us</h2>
-          <p className="text-base md:text-lg text-gray dark:text-light mb-6 md:mb-8">
-            Follow us on social media to stay updated with the latest articles, news, and more!
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            {socialLinks.map((social, index) => (
-              <SocialIcon
-                key={index}
-                url={social.url}
-                fgColor="#ffffff"
-                bgColor={social.color}
-                className="transition-transform hover:scale-110"
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            ))}
+    <div className="min-h-screen bg-light dark:bg-dark">
+      <main className="max-w-5xl mx-auto px-6 py-16 md:py-24">
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/25 text-gold text-xs font-semibold tracking-wider uppercase mb-5">
+            <Mail className="w-3 h-3" />
+            Get in Touch
           </div>
-        </section>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
+            Contact <span className="text-gold">Us</span>
+          </h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Have questions, feedback, or want to contribute? Drop us a message.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-5 gap-10">
+
+          {/* Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="md:col-span-3"
+          >
+            <div className="p-8 rounded-2xl bg-card border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark">
+              <form className="space-y-5" onSubmit={handleSubmit}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="name" className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-gold" /> Your Name
+                  </Label>
+                  <Input id="name" type="text" name="name" value={formData.name}
+                    onChange={handleChange} placeholder="Enter your name" required />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-gold" /> Email Address
+                  </Label>
+                  <Input id="email" type="email" name="email" value={formData.email}
+                    onChange={handleChange} placeholder="Enter your email" required />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="message" className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-gold" /> Message
+                  </Label>
+                  <Textarea id="message" name="message" value={formData.message}
+                    onChange={handleChange} placeholder="Write your message..." rows={5} required
+                    className="resize-none" />
+                </div>
+
+                <Button type="submit" className="w-full gap-2" disabled={loading}>
+                  {loading ? (
+                    <span className="inline-block w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <><Send className="w-4 h-4" /> Send Message</>
+                  )}
+                </Button>
+
+                {success && (
+                  <div className="flex items-center gap-2 text-emerald-500 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    Message sent successfully! We&apos;ll get back to you soon.
+                  </div>
+                )}
+                {error && (
+                  <div className="flex items-center gap-2 text-red-500 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" /> {error}
+                  </div>
+                )}
+              </form>
+            </div>
+          </motion.div>
+
+          {/* Social / info */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="md:col-span-2 space-y-6"
+          >
+            <div className="p-6 rounded-2xl bg-card border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark">
+              <h3 className="font-display font-bold text-foreground mb-1">Connect with us</h3>
+              <p className="text-xs text-muted-foreground mb-5">
+                Follow us on social media for the latest articles and updates.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {socialLinks.map((s, i) => (
+                  <motion.div key={i} whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.95 }}>
+                    <SocialIcon
+                      url={s.url}
+                      fgColor="#ffffff"
+                      bgColor={s.color}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ width: '40px', height: '40px' }}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-gold/[0.06] border border-gold/20">
+              <h3 className="font-display font-bold text-foreground mb-2 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-gold" /> Direct Email
+              </h3>
+              <a href="mailto:contact@devtrend.com" className="text-sm text-gold hover:underline">
+                contact@devtrend.com
+              </a>
+              <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
+                We typically respond within 24–48 hours on business days.
+              </p>
+            </div>
+          </motion.div>
+
+        </div>
       </main>
     </div>
   );

@@ -75,7 +75,7 @@ export class S3StorageProvider implements StorageProvider {
         Body: buffer,
         ContentType: mimeType,
         // For public-read buckets; remove if using pre-signed URLs instead
-        ...(process.env.STORAGE_S3_ACL ? { ACL: process.env.STORAGE_S3_ACL } : {}),
+        ...(process.env.STORAGE_S3_ACL ? { ACL: process.env.STORAGE_S3_ACL as import('@aws-sdk/client-s3').ObjectCannedACL } : {}),
       }),
     );
 

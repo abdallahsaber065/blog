@@ -16,8 +16,8 @@ interface StepTwoProps {
 const StepTwo: React.FC<StepTwoProps> = ({ firstName, setFirstName, lastName, setLastName, bio, setBio, handlePrevStep }) => {
     return (
         <div className="space-y-4">
-            <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="firstName" className="text-sm font-medium text-foreground">
                     First Name
                 </Label>
                 <Input
@@ -29,8 +29,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ firstName, setFirstName, lastName, se
                     placeholder="First Name"
                 />
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="lastName" className="text-sm font-medium text-foreground">
                     Last Name
                 </Label>
                 <Input
@@ -42,8 +42,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ firstName, setFirstName, lastName, se
                     placeholder="Last Name"
                 />
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="bio" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="bio" className="text-sm font-medium text-foreground">
                     Bio
                 </Label>
                 <Textarea

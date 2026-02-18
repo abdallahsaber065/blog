@@ -5,27 +5,44 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 shadow-sm hover:shadow-md active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold tracking-wide ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 active:scale-[0.97] select-none cursor-pointer",
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800",
+        // Gold — the primary CTA
+        default:
+          "bg-gradient-to-r from-gold to-goldDark text-dark shadow-gold-sm hover:shadow-gold hover:from-goldLight hover:to-gold transition-all duration-200",
+        // Gold with glow ring — hero CTAs
+        glow:
+          "bg-gradient-to-r from-gold to-goldDark text-dark shadow-gold animate-glow-pulse hover:shadow-gold-lg transition-all duration-300",
+        // Danger
         destructive:
-          "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 dark:from-red-600 dark:to-red-700 dark:hover:from-red-700 dark:hover:to-red-800",
+          "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-sm hover:from-red-600 hover:to-red-700 hover:shadow-md transition-all duration-200",
+        // Gold border, transparent fill
         outline:
-          "border-2 border-blue-500 bg-transparent text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950/30",
+          "border-2 border-gold/60 bg-transparent text-gold hover:bg-gold/10 hover:border-gold transition-all duration-200 dark:border-gold/50 dark:text-gold",
+        // Subdued — dark surface
         secondary:
-          "bg-gradient-to-r from-slate-500 to-slate-600 text-white hover:from-slate-600 hover:to-slate-700 dark:from-slate-600 dark:to-slate-700 dark:hover:from-slate-700 dark:hover:to-slate-800",
-        ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100",
-        link: "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
-        success: "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800",
-        warning: "bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 dark:from-amber-600 dark:to-amber-700 dark:hover:from-amber-700 dark:hover:to-amber-800",
+          "bg-darkSurface border border-darkBorder text-slate-200 hover:bg-darkElevated hover:border-gold/30 hover:text-gold transition-all duration-200 dark:bg-darkSurface dark:border-darkBorder",
+        // Transparent with hover
+        ghost:
+          "hover:bg-gold/10 hover:text-gold text-foreground transition-all duration-200",
+        // Text link
+        link:
+          "text-gold underline-offset-4 hover:underline transition-colors duration-150",
+        // Success
+        success:
+          "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-sm hover:from-emerald-600 hover:to-emerald-700 hover:shadow-md transition-all duration-200",
+        // Warning / Amber
+        warning:
+          "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-sm hover:from-amber-600 hover:to-amber-700 hover:shadow-md transition-all duration-200",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3 text-xs",
-        lg: "h-11 rounded-md px-8 text-base",
-        icon: "h-10 w-10",
+        default: "h-10 px-5 py-2",
+        sm:      "h-9 rounded-lg px-4 text-xs",
+        lg:      "h-12 rounded-xl px-8 text-base",
+        xl:      "h-14 rounded-2xl px-10 text-lg",
+        icon:    "h-10 w-10",
       },
     },
     defaultVariants: {

@@ -1,15 +1,14 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from 'react';
-import { ClipLoader } from 'react-spinners';
 import ContentSettings from './ContentSettings';
 import JSONEditorComponent from '../JSONEditor';
 import FileSelector from '@/components/Admin/FileSelector';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import { FaFile, FaImage } from 'react-icons/fa';
-// expand icon
 import { AiOutlineExpand } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
+import { Sparkles, Wand2, FileJson, CheckCheck, X } from 'lucide-react';
 
 interface AIContentGeneratorProps {
     className?: string;
@@ -138,134 +137,144 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     };
 
     return (
-        <div className={`mb-8 border border-slate-200 dark:border-slate-700 rounded-lg p-4 ${className}`}>
-            <div className="flex flex-col">
-                <div className="flex items-center">
-                    <input
-                        className="topic-input w-full text-gray dark:text-lightgray bg-white dark:bg-dark p-2 border border-slate-300 rounded"
-                        type="text"
-                        placeholder="Enter your post topic here"
-                        value={topic}
-                        onChange={(e) => setTopic(e.target.value)}
-                    />
-                    <button
-                        className="ml-2 text-blue-500 hover:text-blue-600"
-                        onClick={() => setShowFileSelector(true)}
-                    >
-                        <FaFile />
-                    </button>
-                    <button
-                        className="ml-2 text-green-500 hover:text-green-600"
-                        onClick={() => setShowImageSelector(true)}
-                    >
-                        <FaImage />
-                    </button>
+        <div className={`mb-8 rounded-2xl overflow-hidden border border-darkBorder bg-dark ${className}`}>
+            {/* Header */}
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-darkBorder bg-darkSurface">
+                <div className="p-1.5 rounded-lg bg-gold/10 border border-gold/25">
+                    <Sparkles className="w-4 h-4 text-gold" />
                 </div>
-
-                <div className="flex flex-wrap gap-2 mb-2 mt-1">
-                    {selectedFiles.map((file, index) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded flex items-center truncate max-w-xs">
-                            {file.name}
-                            <button
-                                className="ml-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                                onClick={() => removeFile(file.url)}
-                                title="Remove file"
-                            >
-                                &times;
-                            </button>
-                        </span>
-                    ))}
-                    {selectedImages.map((imageUrl, index) => (
-                        <div key={index} className="relative group">
-                            <span className="absolute top-0 right-0">
-                                <button
-                                    className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                                    onClick={() => removeImage(imageUrl)}
-                                    title="Remove image"
-                                >
-                                    &times;
-                                </button>
-                            </span>
-                            <img src={imageUrl} className="w-16 h-16 object-cover rounded" />
-                            <button
-                                className="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => handleShowPreview(imageUrl)}
-                                title="Show Preview"
-                            >
-                                <AiOutlineExpand />
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                <span className="text-sm font-semibold text-foreground font-display tracking-wide">AI Content Generator</span>
+                <span className="ml-auto text-[10px] uppercase tracking-widest font-bold text-gold/70 bg-gold/10 px-2 py-0.5 rounded-full">Beta</span>
             </div>
 
-            <ContentSettings
-                topic={topic}
-                setTopic={setTopic}
-                numOfTerms={numOfTerms}
-                setNumOfTerms={setNumOfTerms}
-                numOfKeywords={numOfKeywords}
-                setNumOfKeywords={setNumOfKeywords}
-                numOfPoints={numOfPoints}
-                setNumOfPoints={setNumOfPoints}
-                enableNumOfPoints={enableNumOfPoints}
-                setEnableNumOfPoints={setEnableNumOfPoints}
-                userCustomInstructions={userCustomInstructions}
-                setUserCustomInstructions={setUserCustomInstructions}
-                showContentSettings={showContentSettings}
-                setShowContentSettings={setShowContentSettings}
-                includeSearchTerms={includeSearchTerms}
-                setIncludeSearchTerms={setIncludeSearchTerms}
-                includeImages={includeImages}
-                setIncludeImages={setIncludeImages}
-            />
+            {/* Body */}
+            <div className="p-5 space-y-4">
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                        <input
+                            className="topic-input flex-1 bg-darkElevated border border-darkBorder rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
+                            type="text"
+                            placeholder="Enter your post topic here…"
+                            value={topic}
+                            onChange={(e) => setTopic(e.target.value)}
+                        />
+                        <button
+                            className="p-2.5 rounded-xl border border-darkBorder hover:border-gold/40 hover:bg-gold/5 text-muted-foreground hover:text-gold transition-colors"
+                            onClick={() => setShowFileSelector(true)}
+                            title="Attach file"
+                        >
+                            <FaFile className="w-4 h-4" />
+                        </button>
+                        <button
+                            className="p-2.5 rounded-xl border border-darkBorder hover:border-gold/40 hover:bg-gold/5 text-muted-foreground hover:text-gold transition-colors"
+                            onClick={() => setShowImageSelector(true)}
+                            title="Attach image"
+                        >
+                            <FaImage className="w-4 h-4" />
+                        </button>
+                    </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <Button
-                    className="generate-outline-btn"
-                    onClick={handleGenerateOutline}
-                    disabled={loading}
-                >
-                    {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Outline'}
-                </Button>
+                    {/* Selected files & images */}
+                    {(selectedFiles.length > 0 || selectedImages.length > 0) && (
+                        <div className="flex flex-wrap gap-2">
+                            {selectedFiles.map((file, i) => (
+                                <span key={i} className="flex items-center gap-1.5 bg-gold/10 border border-gold/25 text-gold text-xs font-medium px-3 py-1 rounded-full max-w-[200px]">
+                                    <FaFile className="w-3 h-3 flex-shrink-0" />
+                                    <span className="truncate">{file.name}</span>
+                                    <button onClick={() => removeFile(file.url)} className="flex-shrink-0 ml-1 hover:text-red-400 transition-colors">
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </span>
+                            ))}
+                            {selectedImages.map((imageUrl, i) => (
+                                <div key={i} className="relative group">
+                                    <button
+                                        className="absolute -top-1.5 -right-1.5 z-10 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                        onClick={() => removeImage(imageUrl)}
+                                    >&times;</button>
+                                    <img src={imageUrl} className="w-14 h-14 object-cover rounded-lg border border-darkBorder" />
+                                    <button
+                                        className="absolute bottom-0 left-0 right-0 flex items-center justify-center bg-dark/70 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity py-1"
+                                        onClick={() => handleShowPreview(imageUrl)}
+                                    >
+                                        <AiOutlineExpand className="w-3.5 h-3.5 text-gold" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
-                <Button
-                    className="edit-outline-btn"
-                    variant="warning"
-                    onClick={() => setShowJSONEditor(true)}
-                >
-                    Edit Outline
-                </Button>
+                <ContentSettings
+                    topic={topic}
+                    setTopic={setTopic}
+                    numOfTerms={numOfTerms}
+                    setNumOfTerms={setNumOfTerms}
+                    numOfKeywords={numOfKeywords}
+                    setNumOfKeywords={setNumOfKeywords}
+                    numOfPoints={numOfPoints}
+                    setNumOfPoints={setNumOfPoints}
+                    enableNumOfPoints={enableNumOfPoints}
+                    setEnableNumOfPoints={setEnableNumOfPoints}
+                    userCustomInstructions={userCustomInstructions}
+                    setUserCustomInstructions={setUserCustomInstructions}
+                    showContentSettings={showContentSettings}
+                    setShowContentSettings={setShowContentSettings}
+                    includeSearchTerms={includeSearchTerms}
+                    setIncludeSearchTerms={setIncludeSearchTerms}
+                    includeImages={includeImages}
+                    setIncludeImages={setIncludeImages}
+                />
 
-                {outline && (
+                <div className="flex flex-col sm:flex-row gap-3">
                     <Button
-                        className="generate-content-btn"
-                        variant="success"
-                        onClick={handleAcceptOutline}
+                        className="generate-outline-btn gap-2 flex-1"
+                        onClick={handleGenerateOutline}
                         disabled={loading}
                     >
-                        {loading ? <ClipLoader size={20} color={"#fff"} /> : 'Generate Content'}
+                        {loading ? (
+                            <span className="inline-block w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                            <><Wand2 className="w-4 h-4" /> Generate Outline</>
+                        )}
                     </Button>
-                )}
+
+                    <Button
+                        className="edit-outline-btn gap-2"
+                        variant="warning"
+                        onClick={() => setShowJSONEditor(true)}
+                    >
+                        <FileJson className="w-4 h-4" /> Edit Outline
+                    </Button>
+
+                    {outline && (
+                        <Button
+                            className="generate-content-btn gap-2"
+                            variant="success"
+                            onClick={handleAcceptOutline}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <span className="inline-block w-4 h-4 border-2 border-dark border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                <><CheckCheck className="w-4 h-4" /> Generate Content</>
+                            )}
+                        </Button>
+                    )}
+                </div>
             </div>
 
+            {/* JSON Editor Modal */}
             {showJSONEditor && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg w-3/4">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Edit Outline</h2>
+                <div className="fixed inset-0 bg-dark/80 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-darkSurface border border-darkBorder p-6 rounded-2xl shadow-2xl w-3/4 max-w-2xl">
+                        <h2 className="text-lg font-display font-bold text-foreground mb-4 flex items-center gap-2">
+                            <FileJson className="w-5 h-5 text-gold" /> Edit Outline
+                        </h2>
                         <JSONEditorComponent value={outlineDraft || outline} onChange={setOutlineDraft} />
-                        <div className="flex justify-end gap-4 mt-4">
-                            <Button
-                                variant="destructive"
-                                onClick={() => setShowJSONEditor(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleSaveOutline}
-                            >
-                                Save
-                            </Button>
+                        <div className="flex justify-end gap-3 mt-4">
+                            <Button variant="destructive" onClick={() => setShowJSONEditor(false)}>Cancel</Button>
+                            <Button onClick={handleSaveOutline}>Save</Button>
                         </div>
                     </div>
                 </div>
@@ -289,15 +298,15 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
             )}
 
             {previewImage && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-4 rounded shadow-lg w-3/4">
-                        <h2 className="text-xl font-bold mb-4">Image Preview</h2>
-                        <img src={previewImage} alt="Preview" className="w-full h-auto" />
+                <div className="fixed inset-0 bg-dark/80 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-darkSurface border border-darkBorder p-5 rounded-2xl w-3/4 max-w-2xl">
+                        <h2 className="text-lg font-display font-bold text-foreground mb-4">Image Preview</h2>
+                        <img src={previewImage} alt="Preview" className="w-full h-auto rounded-xl" />
                         <button
-                            className="mt-4 bg-red-500 text-white p-2 rounded"
+                            className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm hover:bg-red-500/20 transition-colors"
                             onClick={() => setPreviewImage(null)}
                         >
-                            Close
+                            <X className="w-4 h-4" /> Close
                         </button>
                     </div>
                 </div>

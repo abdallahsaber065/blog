@@ -3,60 +3,66 @@
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import * as React from "react"
+import { motion } from "framer-motion"
 
 const ThemeSwitcher = () => {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
-  // Avoid hydration mismatch
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Don't render anything until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <button 
-        className="relative ml-2 w-14 h-7 rounded-full bg-slate-300 dark:bg-slate-600 cursor-pointer transition-colors duration-300"
-        aria-label="Toggle theme"
-      >
-        <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md" />
-      </button>
+      <div className="relative ml-1 w-14 h-7 rounded-full bg-lightElevated dark:bg-darkElevated cursor-pointer flex-shrink-0">
+        <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-lightSurface dark:bg-darkSurface shadow-sm" />
+      </div>
     )
   }
 
   const isDark = resolvedTheme === 'dark'
 
-  const toggleTheme = () => {
-    setTheme(isDark ? 'light' : 'dark')
-  }
-
   return (
     <button
-      onClick={toggleTheme}
-      className="relative ml-2 w-14 h-7 rounded-full bg-gradient-to-r transition-all duration-300 ease-in-out shadow-inner hover:shadow-lg
-        from-amber-400 to-orange-400 dark:from-indigo-600 dark:to-purple-700"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className={`relative ml-1 flex-shrink-0 w-14 h-7 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/50 transition-colors duration-300 ${
+        isDark
+          ? 'bg-darkElevated border border-darkBorder'
+          : 'bg-lightElevated border border-lightBorder'
+      }`}
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
-      {/* Toggle slider */}
-      <div 
-        className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ease-in-out flex items-center justify-center
-          ${isDark ? 'translate-x-7' : 'translate-x-0.5'}`}
-      >
-        {/* Icon inside the slider */}
-        {isDark ? (
-          <Moon className="h-4 w-4 text-indigo-600 animate-in fade-in duration-300" />
-        ) : (
-          <Sun className="h-4 w-4 text-amber-500 animate-in fade-in duration-300" />
-        )}
+      {/* Track icons */}
+      <div className="absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none">
+        <Sun className={`w-3 h-3 transition-opacity duration-300 ${isDark ? 'opacity-25 text-slate-400' : 'opacity-100 text-amber-500'}`} />
+        <Moon className={`w-3 h-3 transition-opacity duration-300 ${isDark ? 'opacity-100 text-gold' : 'opacity-25 text-slate-400'}`} />
       </div>
 
-      {/* Background icons */}
-      <div className="absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none">
-        <Sun className={`h-3.5 w-3.5 text-white transition-opacity duration-300 ${isDark ? 'opacity-30' : 'opacity-100'}`} />
-        <Moon className={`h-3.5 w-3.5 text-white transition-opacity duration-300 ${isDark ? 'opacity-100' : 'opacity-30'}`} />
-      </div>
+      {/* Animated thumb */}
+      <motion.div
+        layout
+        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+        className={`absolute top-0.5 w-6 h-6 rounded-full shadow-md flex items-center justify-center ${
+          isDark
+            ? 'right-0.5 bg-dark border border-gold/40'
+            : 'left-0.5 bg-white border border-lightBorder'
+        }`}
+      >
+        <motion.div
+          key={isDark ? 'moon' : 'sun'}
+          initial={{ rotate: -30, opacity: 0, scale: 0.5 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 30, opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.2 }}
+        >
+          {isDark
+            ? <Moon className="w-3.5 h-3.5 text-gold" />
+            : <Sun className="w-3.5 h-3.5 text-amber-500" />
+          }
+        </motion.div>
+      </motion.div>
     </button>
   )
 }

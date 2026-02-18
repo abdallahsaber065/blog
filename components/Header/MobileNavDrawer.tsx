@@ -8,6 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, LayoutDashboard, PenSquare, Folder, Users, LogOut, User } from 'lucide-react';
 
 interface MobileNavDrawerProps {
     isOpen: boolean;
@@ -52,100 +53,90 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
                             About
                         </Link>
                     </li>
+
                     <li>
                         <Link href="/contact" className={`hover:text-primary font-semibold dark:hover:text-accent
                             ${pathname === '/contact' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
                             Contact
                         </Link>
                     </li>
-                    <li className="mt-4"></li>
-                    <li>
+
+                    <div className="mt-2">
                         <button
-                            className={`text-lg font-semibold flex justify-between items-center w-full focus:ring-2 
-                            ${isDiscoverMenuOpen || pathname?.startsWith("/tags") || pathname?.startsWith("/categories") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
+                            className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
+                                isDiscoverMenuOpen || pathname?.startsWith('/explore')
+                                    ? 'bg-gold/10 text-gold'
+                                    : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'
+                            }`}
                             onClick={() => setIsDiscoverMenuOpen(!isDiscoverMenuOpen)}
                         >
                             Discover
-                            <span>{isDiscoverMenuOpen ? '-' : '+'}</span>
+                            {isDiscoverMenuOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                         {isDiscoverMenuOpen && (
-                            <ul className="mt-2 space-y-2">
-                                <li>
-                                    <Link href="/explore" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname?.startsWith('/explore') ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                        All Posts
-                                    </Link>
-                                </li>
-                            </ul>
+                            <div className="mt-1 ml-3 border-l border-gold/20 pl-3 space-y-1">
+                                <Link href="/explore" onClick={onClose} className={`block px-3 py-2 rounded-xl text-sm font-medium transition-colors ${pathname?.startsWith('/explore') ? 'bg-gold/10 text-gold font-semibold' : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'}`}>All Posts</Link>
+                            </div>
                         )}
-                    </li>
+                    </div>
                     {session && RoleList.includes(session.user.role) && (
-                        <li className="mt-4">
+                        <div className="mt-2">
                             <button
-                                className={`text-lg font-semibold flex justify-between items-center w-full focus:ring-2 
-                                    
-                                ${isAdminMenuOpen || pathname?.startsWith("/admin/posts") ? 'text-white bg-primary dark:bg-accent dark:text-white focus:bg-primary focus:dark:bg-accent focus:text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white focus:ring-primary dark:focus:ring-accent focus:text-slate-800 focus:dark:text-white'}`}
+                                className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
+                                    isAdminMenuOpen || pathname?.startsWith('/admin')
+                                        ? 'bg-gold/10 text-gold'
+                                        : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'
+                                }`}
                                 onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
                             >
                                 Admin
-                                <span>{isAdminMenuOpen ? '-' : '+'}</span>
+                                {isAdminMenuOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                             </button>
                             {isAdminMenuOpen && (
-                                <ul className="mt-2 space-y-2">
-                                    <li>
-                                        <Link href="/admin/posts" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                            Dashboard
+                                <div className="mt-1 ml-3 border-l border-gold/20 pl-3 space-y-1">
+                                    <Link href="/admin/posts" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
+                                        <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
+                                    </Link>
+                                    <Link href="/admin/categories" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
+                                        <Folder className="w-3.5 h-3.5" /> Categories
+                                    </Link>
+                                    <Link href="/admin/posts/create" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
+                                        <PenSquare className="w-3.5 h-3.5" /> Create Post
+                                    </Link>
+                                    {session && 'admin' === session.user.role && (
+                                        <Link href="/admin/users" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
+                                            <Users className="w-3.5 h-3.5" /> Manage Users
                                         </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/admin/categories" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/categories' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                            Edit Categories
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/admin/posts/create" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/posts/create' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                            Create Post
-                                        </Link>
-                                    </li>
-
-                                    {session && "admin" === session.user.role && (
-                                        <li>
-                                            <Link href="/admin/users" className={`hover:text-primary font-semibold dark:hover:text-accent ${pathname === '/admin/users' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                                                Manage Users
-                                            </Link>
-                                        </li>
                                     )}
-                                </ul>
+                                </div>
                             )}
-                        </li>
+                        </div>
                     )}
-                    {session ? (
-                        <>
-                            <li>
-                                <Link href="/profile" onClick={onClose} className={`hover:text-primary text-lg font-semibold dark:hover:text-accent 
-                                    ${pathname === '/profile' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-white'}`}>
 
+                    <div className="mt-4 pt-4 border-t border-lightBorder dark:border-darkBorder space-y-1">
+                        {session ? (
+                            <>
+                                <Link href="/profile" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
+                                    <User className="w-4 h-4" />
                                     Profile
                                     {session.user.role === 'admin' && (
-                                        <span className="badge badge-primary ml-2">Admin</span>
+                                        <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-gold bg-gold/10 px-2 py-0.5 rounded-full">Admin</span>
                                     )}
                                 </Link>
-                            </li>
-                            <li>
-                                <button onClick={() => { signOut(); onClose(); }} className="text-danger text-lg font-semibold">
-                                    Logout
+                                <button
+                                    onClick={() => { signOut(); onClose(); }}
+                                    className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
+                                >
+                                    <LogOut className="w-4 h-4" /> Logout
                                 </button>
-                            </li>
-                        </>
-                    ) : (
-                        <>
-                            <li>
-                                <Link href="/login" onClick={onClose} className={`hover:text-primary font-semibold dark:hover:text-accent text-lg ${pathname === '/login' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-white'}`}>Login</Link>
-                            </li>
-                            <li>
-                                <Link href="/signup" onClick={onClose} className={`hover:text-primary font-semibold dark:hover:text-accent text-lg ${pathname === '/signup' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-white'}`}>Sign Up</Link>
-                            </li>
-                        </>
-                    )}
+                            </>
+                        ) : (
+                            <>
+                                <Link href="/login" onClick={onClose} className="block px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">Login</Link>
+                                <Link href="/signup" onClick={onClose} className="block px-4 py-2 rounded-xl text-sm font-semibold bg-gold text-dark hover:bg-goldDark transition-colors text-center">Sign Up</Link>
+                            </>
+                        )}
+                    </div>
                 </ul>
             </SheetContent>
         </Sheet>
