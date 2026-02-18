@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Shield, Users } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -111,6 +112,8 @@ const PermissionsModal: React.FC<{
         }
     }, [isOpen, post]);
 
+    if (!isOpen) return null;
+
     const filteredUsers = availableUsers.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -139,92 +142,116 @@ const PermissionsModal: React.FC<{
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 text-slate-900 dark:text-slate-300">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
-                <h2 className="text-xl font-bold mb-4">Manage Permissions</h2>
+        <div className="fixed inset-0 bg-dark/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 text-slate-900 dark:text-slate-300 animate-fade-in font-mr">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl p-7 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-gold/10 border border-lightBorder dark:border-darkBorder relative">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-gold via-goldLight to-gold rounded-t-2xl"></div>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-3 text-slate-900 dark:text-slate-100">
+                        <div className="p-2 bg-gold/10 rounded-lg">
+                            <FaUserLock className="text-gold" />
+                        </div>
+                        Permissions
+                    </h2>
+                    <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0 rounded-full hover:bg-gold/10 hover:text-gold transition-colors">
+                        <FaTimes />
+                    </Button>
+                </div>
 
-                <div className="mb-4">
-                    <h3 className="font-semibold mb-2">Users</h3>
-                    <input
-                        type="text"
-                        placeholder="Search users..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full p-2 mb-2 border rounded dark:bg-slate-700 dark:border-slate-600"
-                    />
-                    <div className="max-h-48 overflow-y-auto border rounded p-2 dark:border-slate-600">
-                        {filteredUsers.map(user => {
-                            const isAdmin = user.role === 'admin';
-                            return (
+                <div className="space-y-6">
+                    <div>
+                        <h3 className="text-sm font-bold mb-2 text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <Users className="w-4 h-4 text-gold" />
+                            Users
+                        </h3>
+                        <input
+                            type="text"
+                            placeholder="Search users..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full p-2.5 mb-3 rounded-lg bg-light dark:bg-dark border border-lightBorder dark:border-darkBorder focus:ring-2 focus:ring-gold transition-all outline-none text-sm"
+                        />
+                        <div className="max-h-48 overflow-y-auto border border-lightBorder dark:border-darkBorder rounded-xl p-2 bg-light/50 dark:bg-dark/30 space-y-1">
+                            {filteredUsers.map(user => {
+                                const isAdmin = user.role === 'admin';
+                                return (
+                                    <label
+                                        key={user.id}
+                                        className={`flex items-center space-x-3 p-2 hover:bg-gold/5 dark:hover:bg-gold/10 rounded-lg cursor-pointer transition-colors ${isAdmin ? 'opacity-60 cursor-not-allowed' : ''
+                                            }`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedUsers.includes(user.id)}
+                                            onChange={() => handleUserToggle(user.id, isAdmin)}
+                                            disabled={isAdmin}
+                                            className="w-4 h-4 rounded border-lightBorder text-gold focus:ring-gold"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{user.username}</span>
+                                            {isAdmin && <span className="text-[10px] text-gold font-bold uppercase tracking-wider">Admin</span>}
+                                        </div>
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="space-y-3 pt-2">
+                        <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-gold" />
+                            Grant by Global Roles
+                        </h3>
+                        <div className="grid grid-cols-1 gap-2">
+                            {['admin', 'moderator', 'editor'].map(role => (
                                 <label
-                                    key={user.id}
-                                    className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
-                                        ${isAdmin ? 'opacity-75' : ''}`}
+                                    key={role}
+                                    className={`flex items-center space-x-3 p-3 border rounded-xl cursor-pointer transition-all duration-200 ${selectedRoles.includes(role)
+                                        ? 'border-gold bg-gold/5 dark:bg-gold/10 ring-1 ring-gold/20'
+                                        : 'border-lightBorder dark:border-darkBorder hover:border-gold/40 hover:bg-gold/5'
+                                        } ${role === 'admin' ? 'opacity-80' : ''}`}
                                 >
                                     <input
                                         type="checkbox"
-                                        checked={selectedUsers.includes(user.id)}
-                                        onChange={() => handleUserToggle(user.id, isAdmin)}
-                                        disabled={isAdmin}
-                                        className="rounded"
+                                        checked={selectedRoles.includes(role)}
+                                        onChange={(e) => {
+                                            if (role === 'admin') return; // Prevent changing admin role
+                                            if (e.target.checked) {
+                                                setSelectedRoles([...selectedRoles, role]);
+                                            } else {
+                                                setSelectedRoles(selectedRoles.filter(r => r !== role));
+                                            }
+                                        }}
+                                        disabled={role === 'admin'}
+                                        className="w-4 h-4 rounded border-lightBorder text-gold focus:ring-gold"
                                     />
-                                    <span>
-                                        {user.username}
-                                        {isAdmin && <span className="ml-2 text-xs text-slate-500">(Admin)</span>}
-                                    </span>
+                                    <div className="flex items-center justify-between flex-1">
+                                        <span className="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+                                            {role}
+                                        </span>
+                                        {role === 'admin' && <span className="text-[10px] text-slate-400 font-medium italic">(Always included)</span>}
+                                    </div>
                                 </label>
-                            );
-                        })}
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="mb-4">
-                    <h3 className="font-semibold mb-2">Roles</h3>
-                    {['admin', 'moderator', 'editor'].map(role => (
-                        <label
-                            key={role}
-                            className={`flex items-center space-x-2 p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded
-                                ${role === 'admin' ? 'opacity-75' : ''}`}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={selectedRoles.includes(role)}
-                                onChange={(e) => {
-                                    if (role === 'admin') return; // Prevent changing admin role
-                                    if (e.target.checked) {
-                                        setSelectedRoles([...selectedRoles, role]);
-                                    } else {
-                                        setSelectedRoles(selectedRoles.filter(r => r !== role));
-                                    }
-                                }}
-                                disabled={role === 'admin'}
-                                className="rounded"
-                            />
-                            <span className="capitalize">
-                                {role}
-                                {role === 'admin' && <span className="ml-2 text-xs text-slate-500">(Required)</span>}
-                            </span>
-                        </label>
-                    ))}
-                </div>
-
-                <div className="flex justify-end space-x-2">
+                <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-lightBorder dark:border-darkBorder">
                     <Button
                         onClick={onClose}
-                        variant="outline"
+                        variant="ghost"
                         disabled={loading}
+                        className="flex-1 font-bold h-11 border border-lightBorder dark:border-darkBorder"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSave}
                         disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                        className="flex-1 bg-gold hover:bg-goldDark text-dark font-bold h-11 shadow-gold hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
-                        {loading ? 'Saving...' : 'Save'}
+                        {loading ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </div>
             </div>
@@ -263,8 +290,8 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     const filteredPosts = posts.filter(post => {
         const matchesSearchTerm = post.title.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = categoryFilter === 'All' || post.category?.name === categoryFilter;
-        const matchesAuthor = !authorFilter || 
-            post.author?.first_name?.toLowerCase().includes(authorFilter.toLowerCase()) || 
+        const matchesAuthor = !authorFilter ||
+            post.author?.first_name?.toLowerCase().includes(authorFilter.toLowerCase()) ||
             post.author?.last_name?.toLowerCase().includes(authorFilter.toLowerCase());
         const matchesDate = !dateFilter || post.created_at.includes(dateFilter);
         return matchesSearchTerm && matchesCategory && matchesAuthor && matchesDate;
@@ -418,7 +445,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
     return (
         <div className="space-y-4">
             {/* Search and Filter Bar */}
-            <div className="flex flex-col md:flex-row gap-3 flex-wrap">
+            <div className="flex flex-col md:flex-row gap-3 flex-wrap bg-white dark:bg-darkSurface p-4 rounded-xl border border-lightBorder dark:border-darkBorder shadow-sm">
                 <div className="relative flex-1 min-w-[200px]">
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
                     <Input
@@ -426,13 +453,13 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                         placeholder="Search posts..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus:border-gold"
                     />
                 </div>
                 <select
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="px-3 py-2 border border-lightBorder dark:border-darkBorder rounded-md bg-white dark:bg-dark text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold focus:border-gold dark:focus:ring-gold transition-all duration-200"
                 >
                     <option value="All">All Categories</option>
                     {Array.from(new Set(posts.map(post => post.category ? post.category.name : 'Unknown')))
@@ -443,22 +470,22 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 </select>
                 <Button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    variant="secondary"
-                    className="whitespace-nowrap"
+                    variant="outline"
+                    className="whitespace-nowrap border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:text-gold hover:border-gold/50"
                 >
                     Sort {sortOrder === 'asc' ? '↓' : '↑'}
                 </Button>
                 <Button
                     onClick={() => setShowAll(!showAll)}
-                    variant="secondary"
-                    className="whitespace-nowrap"
+                    variant="outline"
+                    className="whitespace-nowrap border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:text-gold hover:border-gold/50"
                 >
                     {showAll ? 'Paginate' : 'Show All'}
                 </Button>
                 <select
                     value={postsPerPage}
                     onChange={(e) => setPostsPerPage(Number(e.target.value))}
-                    className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="px-3 py-2 border border-lightBorder dark:border-darkBorder rounded-md bg-white dark:bg-dark text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold focus:border-gold dark:focus:ring-gold transition-all duration-200"
                 >
                     {[5, 10, 20, 50].map(number => (
                         <option key={number} value={number}>{number} per page</option>
@@ -467,33 +494,35 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                 <Button
                     onClick={() => setAdvancedSearch(!advancedSearch)}
                     variant="outline"
-                    className="whitespace-nowrap"
+                    className="whitespace-nowrap border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:text-gold hover:border-gold/50"
                 >
                     <FaFilter className="mr-2" />
                     {advancedSearch ? 'Hide Filters' : 'More Filters'}
                 </Button>
             </div>
             {advancedSearch && (
-                <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50 space-y-3">
+                <div className="p-4 border border-lightBorder dark:border-darkBorder rounded-lg bg-light dark:bg-darkSurface/50 space-y-3 animate-slide-up">
                     <Input
                         type="text"
                         placeholder="Filter by author..."
                         value={authorFilter}
                         onChange={(e) => setAuthorFilter(e.target.value)}
+                        className="bg-light dark:bg-dark border-lightBorder dark:border-darkBorder"
                     />
                     <Input
                         type="date"
                         placeholder="Filter by date..."
                         value={dateFilter}
                         onChange={(e) => setDateFilter(e.target.value)}
+                        className="bg-light dark:bg-dark border-lightBorder dark:border-darkBorder"
                     />
                 </div>
             )}
-            <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900/50">
+            <div className="rounded-lg border border-lightBorder dark:border-darkBorder overflow-hidden bg-white dark:bg-darkSurface shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                            <tr className="border-b border-lightBorder dark:border-darkBorder bg-light dark:bg-dark">
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-300">
                                     Title
                                 </th>
@@ -513,16 +542,15 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                         </thead>
                         <tbody>
                             {paginatedPosts.map((post, index) => (
-                                <tr 
-                                    key={post.id} 
-                                    className={`border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${
-                                        index === paginatedPosts.length - 1 ? 'border-b-0' : ''
-                                    }`}
+                                <tr
+                                    key={post.id}
+                                    className={`border-b border-lightBorder dark:border-darkBorder hover:bg-gold/5 dark:hover:bg-gold/10 transition-all duration-200 group ${index === paginatedPosts.length - 1 ? 'border-b-0' : ''
+                                        }`}
                                 >
                                     <td className="px-4 py-4">
                                         <div className="flex flex-col space-y-1">
-                                            <Link 
-                                                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors line-clamp-2"
+                                            <Link
+                                                className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold font-medium hover:underline transition-all duration-200 line-clamp-2"
                                                 href={post.status === 'published' ? `/blogs/${post.slug}` : `/blogs/preview/${post.slug}`}
                                                 target="_blank"
                                             >
@@ -556,7 +584,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                         <select
                                                             value={editedStatus}
                                                             onChange={(e) => setEditedStatus(e.target.value)}
-                                                            className="px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 transition-colors"
+                                                            className="px-2 py-1 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold dark:focus:ring-gold transition-all duration-200"
                                                             disabled={isPostProcessing(post.id)}
                                                         >
                                                             {(hasApproveRights || post.author?.id === currentUserId) ? (
@@ -598,15 +626,14 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                             </div>
                                         ) : (
                                             <div className="flex items-center gap-2">
-                                                <Badge 
+                                                <Badge
                                                     variant={post.status === 'published' ? 'default' : post.status === 'pending' ? 'secondary' : 'outline'}
-                                                    className={`text-xs ${
-                                                        post.status === 'published'
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800'
-                                                            : post.status === 'pending'
-                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800'
-                                                                : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
-                                                    }`}
+                                                    className={`text-xs ${post.status === 'published'
+                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800'
+                                                        : post.status === 'pending'
+                                                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800'
+                                                            : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
+                                                        }`}
                                                 >
                                                     {post.status === 'pending' && !hasApproveRights
                                                         ? 'Waiting'
@@ -616,7 +643,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-7 w-7 p-0 text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                                        className="h-7 w-7 p-0 text-slate-600 hover:text-gold hover:bg-gold/10 dark:hover:bg-gold/15 transition-all duration-200"
                                                         onClick={() => {
                                                             setEditingPostId(post.id);
                                                             setEditedStatus(post.status);
@@ -636,7 +663,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
-                                                    className="h-8 w-8 p-0 text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                                    className="h-8 w-8 p-0 text-slate-600 hover:text-gold hover:bg-gold/10 dark:hover:bg-gold/15 transition-all duration-200"
                                                     onClick={() => onSelectPost(post.id)}
                                                     disabled={isPostProcessing(post.id)}
                                                     title="Edit Post"

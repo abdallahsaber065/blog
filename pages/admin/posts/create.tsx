@@ -255,7 +255,7 @@ const CreatePost: React.FC = () => {
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Create New Post</h1>
                 <button
-                    className="flex items-center gap-2 px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800"
+                    className="flex items-center gap-2 px-4 py-2 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40"
                     onClick={() => setShowTour(true)}
                 >
                     <span className="text-lg">❔</span>
@@ -265,7 +265,7 @@ const CreatePost: React.FC = () => {
 
             <div className="mb-6">
                 <button
-                    className="ai-generator-toggle flex items-center gap-2 px-4 py-2.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold rounded-lg transition-all duration-200 border border-blue-200 dark:border-blue-800 shadow-sm"
+                    className="ai-generator-toggle flex items-center gap-2 px-4 py-2.5 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 font-semibold rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40 shadow-sm"
                     onClick={() => setShowAIGenerator(!showAIGenerator)}
                 >
                     {showAIGenerator ? (
@@ -318,7 +318,7 @@ const CreatePost: React.FC = () => {
 
             <div className="publish-buttons flex gap-4 pt-6 border-t border-slate-200 dark:border-slate-700 mt-6">
                 <button
-                    className="flex-1 h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-11 px-6 bg-gold hover:bg-goldDark text-slate-900 dark:text-slate-900 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     onClick={() => handleSave('published')}
                     disabled={loading}
                 >

@@ -61,7 +61,7 @@ export default function CategoryList({ categories, refreshCategories }: Category
                 <li key={category.id} className="mb-2 text-dark dark:text-white">
                     <div className="flex justify-between items-center">
                         <span onClick={() => fetchCategoryPosts(category.id)} className="cursor-pointer">
-                            {category.name} <span className="text-blue-500">({category.postCount})</span>
+                            {category.name} <span className="text-gold">({category.postCount})</span>
                         </span>
                         <button
                             onClick={() => handleDelete(category.id)}
@@ -75,7 +75,7 @@ export default function CategoryList({ categories, refreshCategories }: Category
                         <ul className="mt-2 ml-4">
                             {categoryPosts[category.id]?.map(post => (
                                 <li key={post.id} className="truncate">
-                                    <Link href={`/blogs/${post.slug}`} className="text-blue-500 hover:underline">
+                                    <Link href={`/blogs/${post.slug}`} className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold hover:underline transition-all duration-200">
                                         {post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title}
                                     </Link>
                                 </li>

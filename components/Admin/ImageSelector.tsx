@@ -263,7 +263,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                     />
                                     <label
                                         htmlFor="image-upload"
-                                        className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm cursor-pointer flex items-center justify-center sm:w-auto"
+                                        className="bg-gold text-slate-900 px-3 py-1.5 rounded text-sm cursor-pointer flex items-center justify-center sm:w-auto"
                                     >
                                         <FiUpload className="w-4 h-4 mr-2" />
                                         Upload Image
@@ -309,7 +309,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                 {images.map((image) => (
                                     <div
                                         key={image.id}
-                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${selectedImage === (image.display_url || image.public_url || image.file_url) ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${selectedImage === (image.display_url || image.public_url || image.file_url) ? 'border-gold ring-2 ring-gold' : ''
                                             }`}
                                         onClick={() => handleImageSelect(image)}
                                     >

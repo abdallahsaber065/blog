@@ -130,7 +130,7 @@ const DashboardPage: React.FC = () => {
                         </CardTitle>
                         <Button
                             onClick={handleCreate}
-                            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-md transition-all"
+                            className="bg-gold hover:bg-goldDark dark:bg-gold dark:hover:bg-goldDark text-slate-900 shadow-md transition-all"
                             size="lg"
                         >
                             <Plus className="mr-2 h-5 w-5" />
@@ -141,7 +141,7 @@ const DashboardPage: React.FC = () => {
                 <CardContent>
                     {loading ? (
                         <div className="flex justify-center items-center py-12">
-                            <ClipLoader color="#3b82f6" size={50} />
+                            <ClipLoader color="var(--gold)" size={50} />
                         </div>
                     ) : (
                         <PostList posts={posts} onSelectPost={handleEdit} onDeletePost={handleDelete} setPosts={setPosts} />

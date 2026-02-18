@@ -30,10 +30,10 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({ authors }) => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-start gap-4 mb-6">
-                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
                             <Users className="w-8 h-8 text-white" />
                         </div>
                         <div>
@@ -61,18 +61,18 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({ authors }) => {
                                         <SmartImage
                                                 src={author.profile_image_url || '/default-avatar.webp'}
                                                 alt={`${author.username}'s profile image`}
-                                                imgClassName="rounded-full w-24 h-24 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-lg group-hover:ring-blue-200 dark:group-hover:ring-blue-800 transition-all"
-                                                className="rounded-full w-24 h-24 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-lg group-hover:ring-blue-200 dark:group-hover:ring-blue-800 transition-all"
+                                                imgClassName="rounded-full w-24 h-24 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-lg group-hover:ring-gold/50 dark:group-hover:ring-gold/60 transition-all"
+                                                className="rounded-full w-24 h-24 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-lg group-hover:ring-gold/50 dark:group-hover:ring-gold/60 transition-all"
                                                 width={96}
                                                 height={96}
                                             />
-                                            <div className="absolute -bottom-2 -right-2 p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg">
+                                            <div className="absolute -bottom-2 -right-2 p-2 bg-gradient-to-br from-gold to-goldDark rounded-full shadow-lg">
                                                 <Sparkles className="w-4 h-4 text-white" />
                                             </div>
                                         </div>
                                     ) : (
                                         <div className="relative">
-                                            <div className="flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 rounded-full w-24 h-24 text-white shadow-lg ring-4 ring-blue-100 dark:ring-blue-900">
+                                            <div className="flex items-center justify-center bg-gradient-to-br from-gold to-goldDark rounded-full w-24 h-24 text-slate-900 shadow-lg ring-4 ring-gold/30 dark:ring-gold/40">
                                                 <User className="w-12 h-12" />
                                             </div>
                                             <div className="absolute -bottom-2 -right-2 p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full shadow-lg">
@@ -114,8 +114,8 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({ authors }) => {
                 {uniqueAuthors.length === 0 && (
                     <Card className="border-dashed border-2 border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                         <CardContent className="flex flex-col items-center justify-center py-16 md:py-24">
-                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 mb-6">
-                                <Users className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gold/20 to-goldDark/20 dark:from-gold/10 dark:to-goldDark/10 mb-6">
+                                <Users className="w-10 h-10 text-gold dark:text-goldLight" />
                             </div>
                             <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
                                 No Authors Yet

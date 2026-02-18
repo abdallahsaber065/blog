@@ -227,7 +227,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                     {getFileIcon(filename)}
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
-                        <button className="text-blue-500 hover:text-blue-600 flex-shrink-0">
+                        <button className="text-gold hover:text-goldDark flex-shrink-0">
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
                         </button>
                     )}
@@ -235,7 +235,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                 <div className="flex items-center gap-2 ml-2">
                     <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
-                        className="p-2 text-blue-500 hover:text-blue-600"
+                        className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >
@@ -246,7 +246,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                             e.stopPropagation();
                             setShowSelector(true);
                         }}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        className="px-3 py-1 bg-gold text-slate-900 rounded hover:bg-goldDark"
                     >
                         Change File
                     </button>

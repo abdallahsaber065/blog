@@ -42,19 +42,19 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     js: { icon: SiJavascript, color: "text-yellow-400" },
     jsx: { icon: SiReact, color: "text-cyan-400" },
     mjs: { icon: SiJavascript, color: "text-yellow-400" },
-    ts: { icon: SiTypescript, color: "text-blue-400" },
+    ts: { icon: SiTypescript, color: "text-gold" },
     tsx: { icon: SiReact, color: "text-cyan-500" },
     html: { icon: SiHtml5, color: "text-orange-500" },
     htm: { icon: SiHtml5, color: "text-orange-500" },
-    css: { icon: SiCss3, color: "text-blue-600" },
-    scss: { icon: SiCss3, color: "text-blue-600" },
-    sass: { icon: SiCss3, color: "text-blue-600" },
+    css: { icon: SiCss3, color: "text-gold" },
+    scss: { icon: SiCss3, color: "text-gold" },
+    sass: { icon: SiCss3, color: "text-gold" },
     php: { icon: SiPhp, color: "text-purple-500" },
     vue: { icon: SiVuedotjs, color: "text-green-500" },
     svelte: { icon: SiSvelte, color: "text-orange-600" },
 
     // Systems Programming
-    c: { icon: SiC, color: "text-blue-500" },
+    c: { icon: SiC, color: "text-gold" },
     cpp: { icon: SiCplusplus, color: "text-pink-500" },
     cc: { icon: SiCplusplus, color: "text-pink-500" },
     cxx: { icon: SiCplusplus, color: "text-pink-500" },
@@ -62,7 +62,7 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     hpp: { icon: SiCplusplus, color: "text-purple-500" },
     cs: { icon: TbBrandCSharp, color: "text-green-600" },
     rs: { icon: SiRust, color: "text-orange-600" },
-    go: { icon: SiGo, color: "text-blue-400" },
+    go: { icon: SiGo, color: "text-gold" },
 
     // Mobile Development
     swift: { icon: SiSwift, color: "text-orange-500" },
@@ -71,8 +71,8 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     java: { icon: FaJava, color: "text-red-500" },
 
     // Scripting Languages
-    py: { icon: SiPython, color: "text-blue-500" },
-    pyw: { icon: SiPython, color: "text-blue-500" },
+    py: { icon: SiPython, color: "text-gold" },
+    pyw: { icon: SiPython, color: "text-gold" },
     rb: { icon: SiRuby, color: "text-red-600" },
     sh: { icon: SiShell, color: "text-slate-600" },
     bash: { icon: SiShell, color: "text-slate-600" },
@@ -85,23 +85,23 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     xml: { icon: SiXml, color: "text-orange-500" },
     graphql: { icon: SiGraphql, color: "text-pink-500" },
     gql: { icon: SiGraphql, color: "text-pink-500" },
-    md: { icon: SiMarkdown, color: "text-blue-300" },
-    markdown: { icon: SiMarkdown, color: "text-blue-300" },
-    sql: { icon: TbSql, color: "text-blue-400" },
+    md: { icon: SiMarkdown, color: "text-gold" },
+    markdown: { icon: SiMarkdown, color: "text-gold" },
+    sql: { icon: TbSql, color: "text-gold" },
 
     // Node.js specific
     node: { icon: SiNodedotjs, color: "text-green-600" },
 
     // DevOps & Tools
-    dockerfile: { icon: SiDocker, color: "text-blue-400" },
+    dockerfile: { icon: SiDocker, color: "text-gold" },
     gitignore: { icon: SiGit, color: "text-orange-600" },
     git: { icon: SiGit, color: "text-orange-600" },
 
     // Documents
     pdf: { icon: FiFileText, color: "text-red-500" },
     txt: { icon: FiFileText, color: "text-slate-500" },
-    doc: { icon: FaFileWord, color: "text-blue-600" },
-    docx: { icon: FaFileWord, color: "text-blue-600" },
+    doc: { icon: FaFileWord, color: "text-gold" },
+    docx: { icon: FaFileWord, color: "text-gold" },
     xls: { icon: FaFileExcel, color: "text-green-600" },
     xlsx: { icon: FaFileExcel, color: "text-green-600" },
     ppt: { icon: FaFilePowerpoint, color: "text-orange-600" },
@@ -117,11 +117,11 @@ export const FILE_ICONS: Record<string, FileIconConfig> = {
     // Images
     jpg: { icon: FiImage, color: "text-green-500" },
     jpeg: { icon: FiImage, color: "text-green-500" },
-    png: { icon: FiImage, color: "text-blue-500" },
+    png: { icon: FiImage, color: "text-gold" },
     gif: { icon: FiImage, color: "text-pink-500" },
     svg: { icon: FiImage, color: "text-yellow-500" },
     webp: { icon: FiImage, color: "text-purple-500" },
-    ico: { icon: FiImage, color: "text-blue-400" },
+    ico: { icon: FiImage, color: "text-gold" },
 };
 // list of file extensions text alone {with dot}
 export const FILE_EXTENSIONS = [

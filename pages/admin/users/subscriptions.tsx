@@ -192,11 +192,11 @@ const Subscriptions: React.FC = () => {
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div className="flex items-start gap-4">
-                            <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                            <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
                                 <Mail className="w-8 h-8 text-white" />
                             </div>
                             <div>
@@ -231,7 +231,7 @@ const Subscriptions: React.FC = () => {
                                         {subscriptions.length}
                                     </p>
                                 </div>
-                                <Mail className="w-12 h-12 text-blue-600 dark:text-blue-400 opacity-20" />
+                                <Mail className="w-12 h-12 text-gold dark:text-goldLight opacity-20" />
                             </div>
                         </CardContent>
                     </Card>
@@ -329,7 +329,7 @@ const Subscriptions: React.FC = () => {
                     <CardContent>
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-12">
-                                <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400 mb-4" />
+                                <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight mb-4" />
                                 <p className="text-slate-600 dark:text-slate-400">Loading subscriptions...</p>
                             </div>
                         ) : subscriptions.length === 0 ? (

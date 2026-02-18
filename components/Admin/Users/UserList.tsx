@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
 const RoleList = ['admin', 'moderator', 'editor', 'user', 'reader'];
 
@@ -92,29 +93,30 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <ClipLoader size={50} />
+            <div className="flex flex-col justify-center items-center py-20">
+                <ClipLoader size={50} color="var(--gold)" />
+                <p className="mt-4 text-slate-500 font-medium animate-pulse">Loading user directory...</p>
             </div>
         );
     }
 
     return (
-        <div className="overflow-x-auto">
-            <table className="table w-full">
+        <div className="overflow-x-auto rounded-xl border border-lightBorder dark:border-darkBorder bg-white dark:bg-darkSurface shadow-sm">
+            <table className="w-full text-sm">
                 <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Posts</th>
-                        <th>Actions</th>
+                    <tr className="border-b border-lightBorder dark:border-darkBorder bg-light dark:bg-dark/50">
+                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Full Name</th>
+                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Username</th>
+                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Email</th>
+                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Role</th>
+                        <th className="px-5 py-4 text-center font-bold text-slate-900 dark:text-slate-100">Posts</th>
+                        <th className="px-5 py-4 text-right font-bold text-slate-900 dark:text-slate-100">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-lightBorder dark:divide-darkBorder">
                     {users.map(user => (
-                        <tr key={user.id}>
-                            <td>
+                        <tr key={user.id} className="hover:bg-gold/5 dark:hover:bg-gold/10 transition-colors duration-200 group">
+                            <td className="px-5 py-4">
                                 {editingUserId === user.id ? (
                                     <div className="flex gap-2">
                                         <Input
@@ -122,83 +124,93 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                                             name="first_name"
                                             value={editedUser.first_name || ''}
                                             onChange={handleChange}
-                                            className="w-32"
+                                            className="w-24 h-9 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus:ring-gold"
                                         />
                                         <Input
                                             type="text"
                                             name="last_name"
                                             value={editedUser.last_name || ''}
                                             onChange={handleChange}
-                                            className="w-32"
+                                            className="w-24 h-9 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus:ring-gold"
                                         />
                                     </div>
                                 ) : (
-                                    `${user.first_name} ${user.last_name}`
+                                    <span className="font-medium text-slate-900 dark:text-slate-100">
+                                        {user.first_name} {user.last_name}
+                                    </span>
                                 )}
                             </td>
-                            <td>
+                            <td className="px-5 py-4 text-slate-600 dark:text-slate-400">
                                 {editingUserId === user.id ? (
                                     <Input
                                         type="text"
                                         name="username"
                                         value={editedUser.username || ''}
                                         onChange={handleChange}
+                                        className="h-9 w-32 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus:ring-gold"
                                     />
                                 ) : (
-                                    user.username
+                                    `@${user.username}`
                                 )}
                             </td>
-                            <td>
+                            <td className="px-5 py-4 text-slate-600 dark:text-slate-400 font-mr">
                                 {editingUserId === user.id ? (
                                     <Input
                                         type="email"
                                         name="email"
                                         value={editedUser.email || ''}
                                         onChange={handleChange}
+                                        className="h-9 w-48 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus:ring-gold"
                                     />
                                 ) : (
                                     user.email
                                 )}
                             </td>
-                            <td>
+                            <td className="px-5 py-4">
                                 {editingUserId === user.id ? (
                                     <select
                                         name="role"
                                         value={editedUser.role || ''}
                                         onChange={handleChange}
-                                        className="select select-bordered"
+                                        className="h-9 px-2 rounded-md border border-lightBorder dark:border-darkBorder bg-light dark:bg-dark text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold transition-all outline-none"
                                     >
                                         {RoleList.map(role => (
                                             <option key={role} value={role}>
-                                                {role}
+                                                {role.charAt(0).toUpperCase() + role.slice(1)}
                                             </option>
                                         ))}
                                     </select>
                                 ) : (
-                                    user.role
+                                    <Badge variant="secondary" className="bg-gold/10 text-gold border-gold/20 font-semibold px-2.5 py-0.5">
+                                        {user.role}
+                                    </Badge>
                                 )}
                             </td>
-                            <td>{user.posts}</td>
-                            <td>
-                                {editingUserId === user.id ? (
-                                    <>
-                                        <Button size="sm" onClick={() => handleSave(user.id)} className="mr-2">
-                                            <FaSave />
-                                        </Button>
-                                        <Button variant="secondary" size="sm" onClick={handleCancel}>
-                                            <FaTimes />
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Button variant="secondary" size="sm" onClick={() => handleEdit(user)} className="mr-2">
-                                            <FaEdit />
-                                        </Button>
-                                        <Button variant="destructive" size="sm" onClick={() => openDeleteConfirmation(user.id)}>
-                                            <FaTrash />
-                                        </Button>
-                                    </>
-                                )}
+                            <td className="px-5 py-4 text-center font-bold text-gold">
+                                {user.posts}
+                            </td>
+                            <td className="px-5 py-4">
+                                <div className="flex justify-end gap-2">
+                                    {editingUserId === user.id ? (
+                                        <>
+                                            <Button size="sm" onClick={() => handleSave(user.id)} className="bg-success hover:bg-success/90 h-8 w-8 p-0">
+                                                <FaSave className="w-4 h-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" onClick={handleCancel} className="h-8 w-8 p-0 border border-lightBorder dark:border-darkBorder">
+                                                <FaTimes className="w-4 h-4" />
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Button variant="ghost" size="sm" onClick={() => handleEdit(user)} className="h-8 w-8 p-0 hover:bg-gold/10 hover:text-gold border border-lightBorder dark:border-darkBorder">
+                                                <FaEdit className="w-3.5 h-3.5" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" onClick={() => openDeleteConfirmation(user.id)} className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500 border border-lightBorder dark:border-darkBorder">
+                                                <FaTrash className="w-3.5 h-3.5" />
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))}
@@ -206,13 +218,16 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             </table>
 
             {showDeleteConfirmation && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Confirm Deletion</h2>
-                        <p className="text-slate-700 dark:text-slate-100 mb-6">Are you sure you want to delete this user?</p>
-                        <div className="flex justify-end gap-4">
-                            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
-                            <Button variant="secondary" onClick={closeDeleteConfirmation}>Cancel</Button>
+                <div className="fixed inset-0 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-sm z-50 animate-fade-in">
+                    <div className="bg-white dark:bg-darkSurface p-8 rounded-2xl shadow-gold/10 border border-lightBorder dark:border-darkBorder max-w-md w-full relative">
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500 rounded-t-2xl"></div>
+                        <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-slate-100">Confirm Deletion</h2>
+                        <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                            This action is permanent. Are you sure you want to delete the user <span className="font-bold text-slate-900 dark:text-slate-100">{users.find(u => u.id === userToDelete)?.username}</span>?
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button variant="ghost" onClick={closeDeleteConfirmation} className="px-6 font-semibold">Cancel</Button>
+                            <Button variant="destructive" onClick={handleDelete} className="px-6 font-semibold bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20">Delete User</Button>
                         </div>
                     </div>
                 </div>

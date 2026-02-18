@@ -45,7 +45,7 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
     return (
         <div className="mb-4 outline-settings">
             <button
-                className="text-blue-500 underline mt-2"
+                className="text-gold underline mt-2"
                 onClick={() => setShowContentSettings(!showContentSettings)}
             >
                 {showContentSettings ? 'Hide' : 'Show'} Content Advanced Settings
@@ -68,7 +68,7 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
                                 <input
                                     type="checkbox"
                                     id="includeSearchTerms"
-                                    className="form-checkbox h-4 w-4 text-blue-500 rounded border-slate-300 focus:ring-blue-500
+                                    className="form-checkbox h-4 w-4 text-gold rounded border-slate-300 focus:ring-gold
                                     include-search-terms-toggle
                                     "
                                     checked={includeSearchTerms}
@@ -119,7 +119,7 @@ const ContentSettings: React.FC<ContentSettingsProps> = ({
                         <input
                             type="checkbox"
                             id="includeImages"
-                            className="form-checkbox h-4 w-4 text-blue-500 rounded border-slate-300 focus:ring-blue-500"
+                            className="form-checkbox h-4 w-4 text-gold rounded border-slate-300 focus:ring-gold"
                             checked={includeImages}
                             onChange={() => setIncludeImages(!includeImages)}
                         />

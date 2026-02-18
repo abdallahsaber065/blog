@@ -188,7 +188,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     {fileSize > MAX_PREVIEW_SIZE && (
                         <Link                             href={src}
                             download
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors inline-flex items-center gap-2"
+                            className="px-4 py-2 bg-gold text-slate-900 rounded-lg hover:bg-goldDark transition-colors inline-flex items-center gap-2"
                         >
                             <FiDownload /> Download File
                         </Link>
@@ -245,7 +245,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     <div className="absolute bottom-4 right-4 flex gap-2">
                         <button
                             onClick={handleCopyContent}
-                            className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                            className="p-2 bg-gold text-slate-900 rounded-full shadow-lg hover:bg-goldDark transition-colors"
                             title="Copy code"
                         >
                             {isCopied ? <FiCheck /> : <FiCopy />}
@@ -280,7 +280,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     <span className="font-medium truncate" title={filename}>{filename}</span>
                     {(isProgrammingFile(filename) || isPdfFile(filename)) && (
                         <button
-                            className="text-blue-500 hover:text-blue-600 flex-shrink-0"
+                            className="text-gold hover:text-goldDark flex-shrink-0"
                             aria-label={isExpanded ? "Collapse" : "Expand"}
                         >
                             {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
@@ -294,7 +294,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                                 e.stopPropagation();
                                 handleCopyContent();
                             }}
-                            className="p-2 text-blue-500 hover:text-blue-600"
+                            className="p-2 text-gold hover:text-goldDark"
                             title="Copy code"
                         >
                             {isCopied ? <FiCheck /> : <FiCopy />}
@@ -302,7 +302,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                     )}
                     <Link                         href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
-                        className="p-2 text-blue-500 hover:text-blue-600"
+                        className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
                     >

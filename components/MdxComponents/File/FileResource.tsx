@@ -29,7 +29,7 @@ const FileResource: React.FC<FileResourceProps> = ({ src, filename }) => {
                 <div className="flex items-center gap-2 ml-2">
                     <Link href={`/api/files/download?file_url_name=${file_url_name}`}
                         download
-                        className="p-2 text-blue-500 hover:text-blue-600"
+                        className="p-2 text-gold hover:text-goldDark"
                         title="Download file"
                     >
                         <FiDownload />

@@ -22,7 +22,7 @@ import {
 import Link from 'next/link';
 
 // Standard select input styling matching the project's design system
-const SELECT_INPUT_CLASSNAME = "flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950";
+const SELECT_INPUT_CLASSNAME = "flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950";
 
 interface User {
     id: number;
@@ -122,28 +122,32 @@ const UsersManagementPage = () => {
     const hasActiveFilters = searchTerm || roleFilter !== 'all';
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="min-h-screen bg-light dark:bg-[#0f0f10]">
             
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
-                <div className="max-w-7xl mx-auto">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-light dark:bg-[#0f0f10] border-b border-lightBorder dark:border-darkBorder overflow-hidden">
+                {/* Decorative blooms for "Gold Bloom" effect */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+                <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto relative z-10">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                         <div className="flex items-start gap-4">
-                            <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                                <Users className="w-8 h-8 text-white" />
+                            <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-gold shrink-0">
+                                <Users className="w-8 h-8 text-dark" />
                             </div>
                             <div>
                                 <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
                                     User Management
                                 </h1>
-                                <p className="text-lg text-slate-600 dark:text-slate-400">
+                                <p className="text-lg text-slate-600 dark:text-slate-400 font-medium">
                                     Manage and oversee all user accounts
                                 </p>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-3">
                             <Link href="/admin/users/create">
-                                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+                                <Button size="lg" className="bg-gold hover:bg-goldDark dark:bg-gold dark:hover:bg-goldDark text-slate-900">
                                     <UserPlus className="w-5 h-5 mr-2" />
                                     Create User
                                 </Button>
@@ -160,58 +164,70 @@ const UsersManagementPage = () => {
             </section>
 
             {/* Main Content */}
-            <main className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
+            <main className="container mx-auto px-4 py-8 md:py-12 max-w-7xl relative z-10">
                 {/* Statistics */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <Card>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <Card className="bg-white dark:bg-darkSurface border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark overflow-hidden group hover:border-gold/30 transition-all duration-300">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Users</p>
+                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Total Users</p>
                                     <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
                                         {users.length}
                                     </p>
                                 </div>
-                                <Users className="w-12 h-12 text-blue-600 dark:text-blue-400 opacity-20" />
+                                <div className="p-3 bg-gold/10 rounded-xl">
+                                    <Users className="w-6 h-6 text-gold" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="bg-white dark:bg-darkSurface border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark overflow-hidden group hover:border-gold/30 transition-all duration-300">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Admins</p>
-                                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Admins</p>
+                                    <p className="text-3xl font-bold text-gold">
                                         {getRoleCount('admin')}
                                     </p>
                                 </div>
-                                <Shield className="w-12 h-12 text-purple-600 dark:text-purple-400 opacity-20" />
+                                <div className="p-3 bg-gold/10 rounded-xl">
+                                    <Shield className="w-6 h-6 text-gold" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="bg-white dark:bg-darkSurface border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark overflow-hidden group hover:border-gold/30 transition-all duration-300">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Moderators</p>
-                                    <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Moderators</p>
+                                    <p className="text-3xl font-bold text-goldLight">
                                         {getRoleCount('moderator')}
                                     </p>
                                 </div>
-                                <UserCog className="w-12 h-12 text-green-600 dark:text-green-400 opacity-20" />
+                                <div className="p-3 bg-gold/10 rounded-xl">
+                                    <UserCog className="w-6 h-6 text-goldLight" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="bg-white dark:bg-darkSurface border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark overflow-hidden group hover:border-gold/30 transition-all duration-300">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Editors</p>
-                                    <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Editors</p>
+                                    <p className="text-3xl font-bold text-goldLight">
                                         {getRoleCount('editor')}
                                     </p>
                                 </div>
-                                <UserCog className="w-12 h-12 text-orange-600 dark:text-orange-400 opacity-20" />
+                                <div className="p-3 bg-gold/10 rounded-xl">
+                                    <UserCog className="w-6 h-6 text-goldLight" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -283,7 +299,7 @@ const UsersManagementPage = () => {
                     <CardContent>
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-12">
-                                <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400 mb-4" />
+                                <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight mb-4" />
                                 <p className="text-slate-600 dark:text-slate-400">Loading users...</p>
                             </div>
                         ) : filteredUsers.length === 0 ? (

@@ -87,7 +87,7 @@ const EditUser = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400" />
+                    <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight" />
                     <p className="text-slate-600 dark:text-slate-400">Loading user data...</p>
                 </div>
             </div>
@@ -98,10 +98,10 @@ const EditUser = () => {
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-start gap-4">
-                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
                             <UserCog className="w-8 h-8 text-white" />
                         </div>
                         <div>
@@ -127,7 +127,7 @@ const EditUser = () => {
                             {/* Username */}
                             <div className="space-y-2">
                                 <Label htmlFor="username" className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <User className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Username *
                                 </Label>
                                 <Input
@@ -144,7 +144,7 @@ const EditUser = () => {
                             {/* Email */}
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <Mail className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Email *
                                 </Label>
                                 <Input
@@ -187,7 +187,7 @@ const EditUser = () => {
                             {/* Role */}
                             <div className="space-y-2">
                                 <Label htmlFor="role" className="flex items-center gap-2">
-                                    <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <Shield className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Role
                                 </Label>
                                 <select
@@ -195,7 +195,7 @@ const EditUser = () => {
                                     name="role"
                                     value={user.role || ''}
                                     onChange={handleChange}
-                                    className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950 dark:placeholder:text-slate-400"
+                                    className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950 dark:placeholder:text-slate-400"
                                 >
                                     {RoleList.map(role => (
                                         <option key={role} value={role}>
