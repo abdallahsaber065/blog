@@ -1,17 +1,29 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
 const prisma = new PrismaClient();
 
 async function createAdminUser() {
+    const adminEmail = (process.env.ADMIN_EMAIL || '').trim();
+    const adminPassword = (process.env.ADMIN_PASSWORD || '').trim();
+    const adminUsername = (process.env.ADMIN_USERNAME || 'admin').trim();
+    const adminFirstName = (process.env.ADMIN_FIRST_NAME || 'Admin').trim();
+    const adminLastName = (process.env.ADMIN_LAST_NAME || 'User').trim();
+
+    if (!adminEmail || !adminPassword) {
+        console.error('❌ ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env');
+        process.exit(1);
+    }
+
     try {
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
-            where: { email: 'abdallahsaber065@gmail.com' }
+            where: { email: adminEmail }
         });
 
         if (existingUser) {
-            console.log('❌ User with email abdallahsaber065@gmail.com already exists!');
+            console.log(`❌ User with email ${adminEmail} already exists!`);
             console.log('User details:', {
                 id: existingUser.id,
                 username: existingUser.username,
@@ -23,15 +35,15 @@ async function createAdminUser() {
         }
 
         // Create admin user
-        const hashedPassword = await bcrypt.hash('admin123', 10); // Change this password!
+        const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
         const adminUser = await prisma.user.create({
             data: {
-                username: 'abdallahsaber065',
-                email: 'abdallahsaber065@gmail.com',
+                username: adminUsername,
+                email: adminEmail,
                 password: hashedPassword,
-                first_name: 'Abdallah',
-                last_name: 'Saber',
+                first_name: adminFirstName,
+                last_name: adminLastName,
                 role: 'admin',
                 email_verified: true,
                 bio: 'Admin user - Blog owner and developer'
@@ -46,7 +58,6 @@ async function createAdminUser() {
             role: adminUser.role,
             created_at: adminUser.created_at
         });
-        console.log('🔑 Default password: admin123 (Please change this after first login!)');
 
     } catch (error) {
         console.error('❌ Error creating admin user:', error);

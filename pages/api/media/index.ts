@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { getStorageProvider } from '@/lib/storage';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -38,15 +38,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     try {
         switch (method) {
-            case 'GET':
+            case 'GET': {
+                const storage = getStorageProvider();
                 const mediaItems = await prisma.mediaLibrary.findMany({
                     where: query.where ? JSON.parse(query.where as string) : undefined,
                     ...(query.include ? { include: JSON.parse(query.include as string) } : {}),
                     ...(query.select ? { select: JSON.parse(query.select as string) } : {}),
                 });
-                res.status(200).json(mediaItems);
+                const mediaWithUrls = mediaItems.map((item) => ({
+                    ...item,
+                    public_url: storage.getPublicUrl(item.file_url),
+                }));
+                res.status(200).json(mediaWithUrls);
                 log += `\nResponse Status: 200 OK`;
                 break;
+            }
 
             case 'POST':
                 const postValidationError = validateRequiredFields(['file_name', 'file_url'], body);
@@ -86,12 +92,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 log += `\nResponse Status: 200 OK`;
                 break;
 
-            case 'DELETE':
+            case 'DELETE': {
                 const deleteIdError = validateId(query.id);
                 if (deleteIdError) {
                     log += `\nResponse Status: 400 ${deleteIdError}`;
 
                     return res.status(400).json({ error: deleteIdError });
+                }
+
+                const mediaToDelete = await prisma.mediaLibrary.findUnique({
+                    where: { id: Number(query.id) },
+                });
+
+                if (mediaToDelete) {
+                    const storage = getStorageProvider();
+                    await storage.delete(mediaToDelete.file_url);
                 }
 
                 await prisma.mediaLibrary.delete({
@@ -100,6 +115,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 res.status(200).json({ message: 'Media item deleted' });
                 log += `\nResponse Status: 200 OK`;
                 break;
+            }
 
             default:
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);

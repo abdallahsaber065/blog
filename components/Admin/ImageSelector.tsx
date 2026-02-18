@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { FiUpload, FiTrash2 } from 'react-icons/fi';
+import { useImageConverter } from '@/lib/hooks/useImageConverter';
+import { formatFileSize } from '@/lib/imageConverter';
 
 interface ImageProps {
     id: string;
@@ -75,7 +77,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     const [selectedImage, setSelectedImage] = useState(currentImage);
     const [selectedImageDetails, setSelectedImageDetails] = useState<ImageProps | null>(null);
     const { data: session } = useSession();
-    const NEXT_PUBLIC_BASE_URL =  process.env.NEXT_PUBLIC_REMOTE_URL;
+    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_REMOTE_URL || process.env.NEXT_PUBLIC_BASE_URL || '';
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         image: ImageProps | null;
@@ -97,12 +99,15 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             } else {
                 response = await axios.get(`/api/media?where={"file_url":{ "contains":"uploads/${folder}" }}`);
             }
-            const imagesWithFullUrls = await Promise.all(response.data.map(async (image: any) => {
-                const imageUrl = `${NEXT_PUBLIC_BASE_URL}/${image.file_url}`;
-                const exists = await checkImageExists(imageUrl);
-                return exists ? { ...image, file_url: imageUrl } : null;
-            }));
-            setImages(imagesWithFullUrls.filter(Boolean));
+            // API now returns public_url alongside the DB record
+            const imagesWithFullUrls = response.data
+                .filter((image: any) => image.public_url)
+                .map((image: any) => ({
+                    ...image,
+                    // Use public_url for display; keep file_url (DB key) untouched
+                    display_url: image.public_url,
+                }));
+            setImages(imagesWithFullUrls);
         } catch (error) {
             toast.dismiss();
             toast.error('Failed to fetch images');
@@ -119,25 +124,42 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
         }
     };
 
+    const { convertImage } = useImageConverter({
+        maxSizeMB: 2,
+        maxWidthOrHeight: 1920,
+        quality: 0.85,
+        convertToWebP: true,
+    });
+
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', session?.user?.id as string);
-        formData.append('saveDir', 'blog');
-
         setUploadLoading(true);
         try {
+            // Convert to WebP first
+            const conversionResult = await convertImage(file);
+
+            if (!conversionResult || !conversionResult.success) {
+                toast.error('Failed to process image');
+                setUploadLoading(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', conversionResult.file);
+            formData.append('userId', session?.user?.id as string);
+            formData.append('saveDir', 'media');
+
             const response = await axios.post('/api/media/upload-image', formData);
             const mediaWithFullUrl = {
                 ...response.data.media,
-                file_url: `${NEXT_PUBLIC_BASE_URL}/${response.data.media.file_url}`
+                display_url: response.data.media.public_url,
             };
             setImages([...images, mediaWithFullUrl]);
-            setSelectedImage(mediaWithFullUrl.file_url);
+            setSelectedImage(mediaWithFullUrl.display_url);
             setSelectedImageDetails(mediaWithFullUrl);
+            toast.success('Image uploaded successfully');
         } catch (error) {
             toast.dismiss();
             toast.error('Failed to upload image');
@@ -154,20 +176,30 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             const blob = await response.blob();
             const file = new File([blob], 'image.jpg', { type: blob.type });
 
+            // Convert to WebP
+            const conversionResult = await convertImage(file);
+
+            if (!conversionResult || !conversionResult.success) {
+                toast.error('Failed to process image');
+                setUploadLoading(false);
+                return;
+            }
+
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', conversionResult.file);
             formData.append('userId', session?.user?.id as string);
-            formData.append('saveDir', 'blog');
+            formData.append('saveDir', 'media');
 
             const uploadResponse = await axios.post('/api/media/upload-image', formData);
             const mediaWithFullUrl = {
                 ...uploadResponse.data.media,
-                file_url: `${NEXT_PUBLIC_BASE_URL}/${uploadResponse.data.media.file_url}`
+                display_url: uploadResponse.data.media.public_url,
             };
             setImages([...images, mediaWithFullUrl]);
-            setSelectedImage(mediaWithFullUrl.file_url);
+            setSelectedImage(mediaWithFullUrl.display_url);
             setSelectedImageDetails(mediaWithFullUrl);
             setUrlInput('');
+            toast.success('Image uploaded successfully');
         } catch (error) {
             toast.dismiss();
             toast.error('Failed to upload image from URL');
@@ -176,7 +208,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     };
 
     const handleImageSelect = (image: any) => {
-        setSelectedImage(image.file_url);
+        setSelectedImage(image.display_url || image.public_url || image.file_url);
         setSelectedImageDetails(image);
     };
 
@@ -192,7 +224,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             await axios.delete(`/api/media?id=${confirmDialog.image.id}`);
             setImages(images.filter(img => img.id !== confirmDialog.image!.id));
 
-            if (selectedImage === confirmDialog.image.file_url) {
+            if (selectedImage === (confirmDialog.image.display_url || confirmDialog.image.public_url || confirmDialog.image.file_url)) {
                 setSelectedImage(undefined);
                 setSelectedImageDetails(null);
             }
@@ -275,13 +307,13 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                 {images.map((image) => (
                                     <div
                                         key={image.id}
-                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${selectedImage === image.file_url ? 'border-blue-500 ring-2 ring-blue-500' : ''
+                                        className={`relative cursor-pointer border rounded p-1 sm:p-2 min-w-[140px] ${selectedImage === (image.display_url || image.public_url || image.file_url) ? 'border-blue-500 ring-2 ring-blue-500' : ''
                                             }`}
                                         onClick={() => handleImageSelect(image)}
                                     >
                                         <div className="relative aspect-square mb-2 sm:mb-4 overflow-hidden">
                                             <Image
-                                                src={image.file_url}
+                                                src={image.display_url || image.public_url || image.file_url}
                                                 alt={image.file_name}
                                                 layout="fill"
                                                 objectFit="contain"
@@ -337,7 +369,14 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                             <button
                                 onClick={() => {
                                     if (selectedImageDetails) {
-                                        onSelect(selectedImageDetails);
+                                        // Normalise: always pass the absolute public URL in file_url
+                                        // so all consumers (ImagePlugin, CustomImageUpload, etc.) get a valid URL.
+                                        onSelect({
+                                            ...selectedImageDetails,
+                                            file_url: selectedImageDetails.display_url
+                                                || selectedImageDetails.public_url
+                                                || selectedImageDetails.file_url,
+                                        });
                                     }
                                     onClose();
                                 }}

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "dotenv -c -- next dev",
+    "dev": "dotenv -c -- next dev -p 3444",
     "start": "dotenv -c -- next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -21,7 +21,9 @@
     "images:update-db": "node scripts/update-post-images.js && node scripts/update-profile-images.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.992.0",
     "@google/generative-ai": "^0.24.1",
+    "@imagekit/next": "^2.1.4",
     "@mdx-js/react": "^3.0.1",
     "@mdxeditor/editor": "^3.11.5",
     "@next-auth/prisma-adapter": "^1.0.7",

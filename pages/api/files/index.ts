@@ -1,7 +1,8 @@
-// pages/api/files.ts
+// pages/api/files/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { getStorageProvider } from '@/lib/storage';
 import fs from 'fs';
 import path from 'path';
 
@@ -10,7 +11,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
 
     try {
         switch (method) {
-            case 'GET':
+            case 'GET': {
+                const storage = getStorageProvider();
                 const files = await prisma.fileLibrary.findMany({
                     where: {
                         ...(query.folder && query.folder !== 'all'
@@ -30,8 +32,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                         }
                     }
                 });
-
-                return res.status(200).json(files);
+                const filesWithUrls = files.map((f) => ({
+                    ...f,
+                    public_url: storage.getPublicUrl(f.file_url),
+                }));
+                return res.status(200).json(filesWithUrls);
+            }
 
             case 'DELETE':
                 const fileId = query.id;
@@ -51,7 +57,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                     return;
                 }
 
-                // Delete the physical file
+                // Delete the physical file via the storage provider
+                const storageForDelete = getStorageProvider();
+                await storageForDelete.delete(fileToDelete.file_url);
                 const filePath = path.join(process.cwd(), 'public', fileToDelete.file_url);
                 if (fs.existsSync(filePath)) {
                     try {
