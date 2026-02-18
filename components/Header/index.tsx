@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MobileNavDrawer from './MobileNavDrawer';
 import Logo from './Logo';
 import SearchBar from './SearchBar';
-import ThemeSwitcher from './ThemeSwitcher';
 import { MenuIcon } from '@/components/Icons';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, LogOut, User, LayoutDashboard, PenSquare, Folder, Users } from 'lucide-react';
@@ -24,9 +23,9 @@ const navLinks = [
 ];
 
 const adminLinks = [
-  { href: '/admin/posts',        label: 'Dashboard',       icon: LayoutDashboard },
-  { href: '/admin/posts/create', label: 'Create Post',     icon: PenSquare },
-  { href: '/admin/categories',   label: 'Edit Categories', icon: Folder },
+  { href: '/admin/posts', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/posts/create', label: 'Create Post', icon: PenSquare },
+  { href: '/admin/categories', label: 'Edit Categories', icon: Folder },
 ];
 
 const Header: React.FC = () => {
@@ -57,11 +56,10 @@ const Header: React.FC = () => {
       initial={{ y: -8, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className={`sticky top-0 z-[49] w-full transition-all duration-300 ${
-        scrolled
-          ? 'bg-light/85 dark:bg-dark/85 backdrop-blur-xl shadow-elevated border-b border-lightBorder dark:border-darkBorder'
-          : 'bg-light/60 dark:bg-dark/60 backdrop-blur-md border-b border-transparent'
-      }`}
+      className={`sticky top-0 z-[49] w-full transition-all duration-300 ${scrolled
+          ? 'bg-dark/85 backdrop-blur-xl shadow-elevated border-b border-darkBorder'
+          : 'bg-dark/60 backdrop-blur-md border-b border-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
 
@@ -91,11 +89,10 @@ const Header: React.FC = () => {
               >
                 <Link
                   href={link.href}
-                  className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                    isActive
+                  className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isActive
                       ? 'text-gold'
                       : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
-                  }`}
+                    }`}
                 >
                   {link.label}
                   {isActive && (
@@ -118,9 +115,8 @@ const Header: React.FC = () => {
               onMouseLeave={() => setAdminOpen(false)}
             >
               <button
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                  isAdmin ? 'text-gold' : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
-                }`}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isAdmin ? 'text-gold' : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
+                  }`}
               >
                 Admin
                 <motion.span
@@ -145,7 +141,7 @@ const Header: React.FC = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 4, scale: 0.97 }}
                     transition={{ duration: 0.18, ease: 'easeOut' }}
-                    className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-52 rounded-2xl border border-lightBorder dark:border-darkBorder bg-light/95 dark:bg-darkSurface/95 backdrop-blur-xl shadow-elevated p-1.5"
+                    className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-52 rounded-2xl border border-darkBorder bg-darkSurface/95 backdrop-blur-xl shadow-elevated p-1.5"
                   >
                     {adminLinks.map((item) => {
                       const Icon = item.icon;
@@ -153,11 +149,10 @@ const Header: React.FC = () => {
                         <Link
                           key={item.href}
                           href={item.href}
-                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 ${
-                            pathname === item.href
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 ${pathname === item.href
                               ? 'text-gold bg-gold/10'
                               : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
-                          }`}
+                            }`}
                         >
                           <Icon className="w-4 h-4 opacity-70" />
                           {item.label}
@@ -167,11 +162,10 @@ const Header: React.FC = () => {
                     {session && session.user.role === 'admin' && (
                       <Link
                         href="/admin/users"
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-0.5 border-t border-lightBorder dark:border-darkBorder ${
-                          pathname === '/admin/users'
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-0.5 border-t border-lightBorder dark:border-darkBorder ${pathname === '/admin/users'
                             ? 'text-gold bg-gold/10'
                             : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
-                        }`}
+                          }`}
                       >
                         <Users className="w-4 h-4 opacity-70" />
                         Manage Users
@@ -184,13 +178,12 @@ const Header: React.FC = () => {
           )}
         </nav>
 
-        {/* ── Right: search + theme + avatar ── */}
+        {/* ── Right: search + avatar ── */}
         <div className="flex items-center gap-2">
           <SearchBar />
-          <ThemeSwitcher />
 
           {/* Avatar dropdown */}
-          <div className="relative group">
+          <div className="relative group pt-2">
             <button
               className="relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-transparent group-hover:ring-gold/50 transition-all duration-200"
               aria-label="User Menu"

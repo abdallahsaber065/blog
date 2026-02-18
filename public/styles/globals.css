@@ -4,44 +4,7 @@
 
 @layer base {
   :root {
-    /* ── Light mode ─────────────────────────────────────── */
-    --background:      43 25% 97%;      /* #FAFAF8 warm off-white */
-    --foreground:      20 10% 12%;      /* near-black warm */
-
-    --card:            38 22% 93%;      /* #F0EDE6 */
-    --card-foreground: 20 10% 12%;
-
-    --popover:         43 25% 97%;
-    --popover-foreground: 20 10% 12%;
-
-    --primary:         43 93% 63%;      /* #F8CC4D gold */
-    --primary-foreground: 20 10% 12%;  /* dark text on gold */
-
-    --secondary:       38 18% 88%;
-    --secondary-foreground: 20 10% 20%;
-
-    --muted:           38 15% 92%;
-    --muted-foreground: 20 6% 48%;
-
-    --accent:          43 93% 63%;
-    --accent-foreground: 20 10% 12%;
-
-    --destructive:     0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border:          35 15% 86%;      /* #E2DDD6 */
-    --input:           35 15% 86%;
-    --ring:            43 93% 63%;      /* gold ring */
-
-    --radius:          0.625rem;
-
-    /* Raw value tokens for JS/CSS usage */
-    --gold:     #F8CC4D;
-    --gold-dark:#E6A817;
-  }
-
-  .dark {
-    /* ── Dark mode ──────────────────────────────────────── */
+    /* ── Dark mode (always active) ─────────────────────────────────────── */
     --background:      240 4% 9%;       /* #161618 */
     --foreground:      210 12% 88%;     /* warm off-white text */
 
@@ -68,10 +31,57 @@
 
     --border:          234 4% 17%;      /* #2A2A2E */
     --input:           234 4% 17%;
+    --ring:            43 93% 63%;      /* gold ring */
+
+    --radius:          0.625rem;
+
+    /* Raw value tokens for JS/CSS usage */
+    --gold:     #F8CC4D;
+    --gold-dark:#E6A817;
+
+    /* Gold accent HSL (Responsive) */
+    --gold-accent-h: 46;
+    --gold-accent-s: 93%;
+    --gold-accent-l: 63%;
+  }
+
+  .dark {
+    /* Already applied by default, kept for compatibility */
+    --background:      240 4% 9%;
+    --foreground:      210 12% 88%;
+
+    --card:            225 5% 11%;
+    --card-foreground: 210 12% 88%;
+
+    --popover:         225 5% 12%;
+    --popover-foreground: 210 12% 88%;
+
+    --primary:         43 93% 63%;
+    --primary-foreground: 240 4% 9%;
+
+    --secondary:       225 4% 13%;
+    --secondary-foreground: 210 12% 75%;
+
+    --muted:           225 4% 14%;
+    --muted-foreground: 220 8% 52%;
+
+    --accent:          43 93% 63%;
+    --accent-foreground: 240 4% 9%;
+
+    --destructive:     0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:          234 4% 17%;
+    --input:           234 4% 17%;
     --ring:            43 93% 63%;
 
     --gold:     #F8CC4D;
     --gold-dark:#E6A817;
+
+    /* Gold accent HSL (Responsive) */
+    --gold-accent-h: 46;
+    --gold-accent-s: 93%;
+    --gold-accent-l: 63%;
   }
 }
 

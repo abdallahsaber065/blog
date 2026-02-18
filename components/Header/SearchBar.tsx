@@ -70,7 +70,7 @@ const SearchBar: React.FC<{ className?: string }> = ({ className = "" }) => {
 
     return (
         <>
-            <div className={"relative flex items-center " + className}>
+            <div className={"relative flex items-center mr-4 " + className}>
                 <Input
                     type="text"
                     placeholder="Search..."
