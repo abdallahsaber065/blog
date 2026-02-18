@@ -86,12 +86,17 @@ const PermissionsModal: React.FC<{
     useEffect(() => {
         if (isOpen && post) {
             // Load available users with their roles
-            fetch('/api/users').then(res => res.json()).then(users => {
-                setAvailableUsers(users);
-                // Auto-select admin users
-                const adminUsers = users.filter((user: { role?: string; id: number }) => user.role === 'admin').map((user: { id: number }) => user.id);
-                setSelectedUsers(prevSelected => [...new Set([...prevSelected, ...adminUsers])]);
-            });
+            fetch('/api/users')
+                .then(res => res.json())
+                .then(users => {
+                    setAvailableUsers(users);
+                    // Auto-select admin users
+                    const adminUsers = users.filter((user: { role?: string; id: number }) => user.role === 'admin').map((user: { id: number }) => user.id);
+                    setSelectedUsers(prevSelected => [...new Set([...prevSelected, ...adminUsers])]);
+                })
+                .catch(() => {
+                    toast.error('Failed to load users for permissions panel');
+                });
 
             // Set initial selections based on existing permissions
             const userIds = (post.permissions || [])

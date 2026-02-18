@@ -42,9 +42,10 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             setUsers(users.map(user => (user.id === userId ? { ...user, ...editedUser } : user)));
             toast.dismiss();
             toast.success('User updated successfully');
-        } catch (error) {
+        } catch (error: any) {
             toast.dismiss();
-            toast.error('Failed to update user');
+            const message = error?.response?.data?.error || 'Failed to update user';
+            toast.error(message);
         } finally {
             setEditingUserId(null);
             setEditedUser({});
@@ -68,9 +69,10 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                 setUsers(users.filter(user => user.id !== userToDelete));
                 toast.dismiss();
                 toast.success('User deleted successfully');
-            } catch (error) {
+            } catch (error: any) {
                 toast.dismiss();
-                toast.error('Failed to delete user');
+                const message = error?.response?.data?.error || 'Failed to delete user';
+                toast.error(message);
             } finally {
                 setShowDeleteConfirmation(false);
                 setUserToDelete(null);

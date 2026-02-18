@@ -24,13 +24,19 @@ export default function CategoryForm({ refreshCategories }: CategoryFormProps) {
         setLoading(true);
         const newSlug = slugger(name);
         try {
-            await fetch('/api/categories', {
+            const res = await fetch('/api/categories', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ name, slug: newSlug, description }),
             });
+            const data = await res.json();
+            if (!res.ok) {
+                toast.dismiss();
+                toast.error(data.error || 'Failed to add category.');
+                return;
+            }
             setName('');
             setDescription('');
             refreshCategories();

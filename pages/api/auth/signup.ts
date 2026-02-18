@@ -7,6 +7,9 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import createEmailConfirmationForm from '@/lib/html_forms/EmailConfirmationForm';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { applyRateLimit } from '@/lib/applyRateLimit';
+import rateLimiters from '@/lib/rateLimit';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 interface SignupFields {
     username: string;
@@ -30,19 +33,23 @@ export const config = {
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
-    // // check rate limit
-    // const rateLimitCheck = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/rate-limit?apiRoute=signup`);
+    // Apply rate limiting
+    const clientIp =
+        (Array.isArray(req.headers['x-forwarded-for'])
+            ? req.headers['x-forwarded-for'][0]
+            : req.headers['x-forwarded-for']) ||
+        req.socket?.remoteAddress ||
+        'unknown';
 
-    // if (!rateLimitCheck.ok) {
-    //     const errorText = await rateLimitCheck.text();
-    //     console.error('Rate limit error:', errorText);
-    //     res.status(429).json({ error: errorText });
-    //     return;
-    // }
+    try {
+        await applyRateLimit(req, res, rateLimiters.signup, clientIp);
+    } catch {
+        return;
+    }
+    if (res.headersSent) return;
 
     if (method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
-        res.status(405).end(`Method ${method} Not Allowed`);
+        return methodNotAllowed(res, ['POST']);
     }
 
     const form = new IncomingForm();
@@ -124,12 +131,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${verificationToken}`;
 
-            await transporter.sendMail({
-                from: process.env.MAILGUN_USER,
-                to: parsedFields.email,
-                subject: 'Verify your email',
-                html: createEmailConfirmationForm(verificationUrl,parsedFields.username,parsedFields.email),
-            });
+            try {
+                await transporter.sendMail({
+                    from: process.env.MAILGUN_USER,
+                    to: parsedFields.email,
+                    subject: 'Verify your email',
+                    html: createEmailConfirmationForm(verificationUrl, parsedFields.username, parsedFields.email),
+                });
+            } catch (emailError) {
+                console.error('Failed to send verification email:', emailError);
+                // Don't block signup if email delivery fails — user was created successfully.
+            }
 
             res.status(201).json(newUser);
         } catch (error) {

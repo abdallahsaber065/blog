@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import withAuth from '@/components/Admin/withAuth';
 import UserList from '@/components/Admin/Users/UserList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -123,7 +123,6 @@ const UsersManagementPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-            <Toaster />
             
             {/* Hero Section */}
             <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">

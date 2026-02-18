@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { REVALIDATE_PATHS } from '@/lib/revalidate';
 import { revalidateRoutes } from '@/lib/revalidate';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'DELETE') {
@@ -23,11 +24,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             await revalidateRoutes(res, routesToRevalidate);
             res.status(200).json({ message: 'Categories with 0 posts deleted successfully' });
         } catch (error) {
-            res.status(500).json({ error: 'Failed to delete categories' });
+            console.error('delete-zero categories error:', error);
+            return apiError(res, 500, 'Failed to delete categories');
         }
     } else {
-        res.setHeader('Allow', ['DELETE']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+        return methodNotAllowed(res, ['DELETE']);
     }
 }
 

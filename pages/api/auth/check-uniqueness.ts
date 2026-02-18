@@ -2,31 +2,36 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {prisma} from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { applyRateLimit } from '@/lib/applyRateLimit';
+import rateLimiters from '@/lib/rateLimit';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method } = req;
 
-    // // check rate limit
-    // const rateLimitCheck = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/rate-limit?apiRoute=checkUniqueness`);
+    // Apply rate limiting
+    const clientIp =
+        (Array.isArray(req.headers['x-forwarded-for'])
+            ? req.headers['x-forwarded-for'][0]
+            : req.headers['x-forwarded-for']) ||
+        req.socket?.remoteAddress ||
+        'unknown';
 
-    // if (!rateLimitCheck.ok) {
-    //     const errorText = await rateLimitCheck.text();
-    //     console.error('Rate limit error:', errorText);
-    //     res.status(429).json({ error: errorText });
-    //     return;
-    // }
+    try {
+        await applyRateLimit(req, res, rateLimiters.checkUniqueness, clientIp);
+    } catch {
+        return;
+    }
+    if (res.headersSent) return;
 
     if (method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
-        res.status(405).end(`Method ${method} Not Allowed`);
-        return 
+        return methodNotAllowed(res, ['POST']);
     }
 
     const { username, email } = req.body;
 
     if (!username || !email) {
-        res.status(400).json({ error: 'Username and email are required' });
-        return 
+        return apiError(res, 400, 'Username and email are required');
     }
 
     try {
@@ -40,14 +45,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
 
         if (existingUser) {
-            res.status(400).json({ error: 'Email or username already exists' });
-            return 
+            return apiError(res, 400, 'Email or username already exists');
         }
 
         res.status(200).json({ message: 'Username and email are unique' });
     } catch (error) {
-        console.error('Internal server error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('check-uniqueness error:', error);
+        return apiError(res, 500, 'Internal server error');
     }
 }
 

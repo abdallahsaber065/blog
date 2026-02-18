@@ -17,6 +17,7 @@ import { Category, Tag } from '@prisma/client';
 import dotenv from 'dotenv';
 import { Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 dotenv.config();
 
@@ -34,7 +35,7 @@ const Dashboard: React.FC = () => {
                 setTagList(tags);
                 setCategoryList(categories);
             } catch (error) {
-                console.error('Failed to fetch data:', error);
+                toast.error('Failed to load tags and categories');
             }
         };
 
@@ -46,7 +47,7 @@ const Dashboard: React.FC = () => {
             const Tags = await getTags();
             setTagList(Tags);
         } catch (error) {
-            console.error('Failed to refresh tags:', error);
+            toast.error('Failed to refresh tags');
         }
     };
 
@@ -55,22 +56,29 @@ const Dashboard: React.FC = () => {
             const Categories = await getCategories();
             setCategoryList(Categories);
         } catch (error) {
-            console.error('Failed to refresh categories:', error);
+            toast.error('Failed to refresh categories');
         }
     };
 
     const handleDeleteZeroCount = async (type: 'tags' | 'categories') => {
         setShowConfirm(false);
         try {
+            let res: Response;
             if (type === 'tags') {
-                await fetch('/api/tags/delete-zero', { method: 'DELETE' });
-                refreshTags();
+                res = await fetch('/api/tags/delete-zero', { method: 'DELETE' });
             } else {
-                await fetch('/api/categories/delete-zero', { method: 'DELETE' });
-                refreshCategories();
+                res = await fetch('/api/categories/delete-zero', { method: 'DELETE' });
             }
+            if (!res.ok) {
+                const data = await res.json();
+                toast.error(data.error || `Failed to delete ${type} with 0 posts`);
+                return;
+            }
+            toast.success(`Deleted ${type} with 0 posts successfully`);
+            if (type === 'tags') refreshTags();
+            else refreshCategories();
         } catch (error) {
-            console.error(`Failed to delete ${type} with 0 posts:`, error);
+            toast.error(`Failed to delete ${type} with 0 posts`);
         }
     };
 

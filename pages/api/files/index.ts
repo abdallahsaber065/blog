@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { getStorageProvider } from '@/lib/storage';
+import { methodNotAllowed } from '@/lib/apiError';
 import fs from 'fs';
 import path from 'path';
 
@@ -81,8 +82,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                 });
 
             default:
-                res.setHeader('Allow', ['GET', 'DELETE']);
-                res.status(405).end(`Method ${method} Not Allowed`);
+                methodNotAllowed(res, ['GET', 'DELETE']);
                 return;
         }
     } catch (error) {
