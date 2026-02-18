@@ -9,10 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Gold — the primary CTA
+        // Gold - the primary CTA
         default:
           "bg-gradient-to-r from-gold to-goldDark text-dark shadow-gold-sm hover:shadow-gold hover:from-goldLight hover:to-gold transition-all duration-200",
-        // Gold with glow ring — hero CTAs
+        // Gold with glow ring - hero CTAs
         glow:
           "bg-gradient-to-r from-gold to-goldDark text-dark shadow-gold animate-glow-pulse hover:shadow-gold-lg transition-all duration-300",
         // Danger
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         // Gold border, transparent fill
         outline:
           "border-2 border-gold/60 bg-transparent text-gold hover:bg-gold/10 hover:border-gold transition-all duration-200 dark:border-gold/50 dark:text-gold",
-        // Subdued — dark surface
+        // Subdued - dark surface
         secondary:
           "bg-darkSurface border border-darkBorder text-slate-200 hover:bg-darkElevated hover:border-gold/30 hover:text-gold transition-all duration-200 dark:bg-darkSurface dark:border-darkBorder",
         // Transparent with hover
@@ -39,10 +39,10 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-5 py-2",
-        sm:      "h-9 rounded-lg px-4 text-xs",
-        lg:      "h-12 rounded-xl px-8 text-base",
-        xl:      "h-14 rounded-2xl px-10 text-lg",
-        icon:    "h-10 w-10",
+        sm: "h-9 rounded-lg px-4 text-xs",
+        lg: "h-12 rounded-xl px-8 text-base",
+        xl: "h-14 rounded-2xl px-10 text-lg",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
@@ -54,7 +54,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 

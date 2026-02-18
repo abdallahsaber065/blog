@@ -68,7 +68,7 @@ const SignupPage = () => {
             {[
               { icon: BookOpen, label: "Access 100+ in-depth articles" },
               { icon: Sparkles, label: "AI-powered content recommendations" },
-              { icon: Zap,      label: "Weekly developer digest" },
+              { icon: Zap, label: "Weekly developer digest" },
             ].map(({ icon: Icon, label }, i) => (
               <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-darkSurface border border-darkBorder">
                 <div className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0">
@@ -85,7 +85,7 @@ const SignupPage = () => {
         </p>
       </div>
 
-      {/* Right — form panel */}
+      {/* Right - form panel */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
         <motion.div
           initial={{ opacity: 0, x: 24 }}

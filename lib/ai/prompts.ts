@@ -8,8 +8,8 @@ export function buildOutlinePrompt(
   userCustomInstructions: string,
   websiteType: string = 'blog'
 ): string {
-  const pointsInstruction = numOfPoints 
-    ? `Each section should contain approximately ${numOfPoints} key points.` 
+  const pointsInstruction = numOfPoints
+    ? `Each section should contain approximately ${numOfPoints} key points.`
     : '';
 
   return `You are an expert content strategist for a ${websiteType}. Create a comprehensive and well-structured outline for a blog post about: "${topic}"
@@ -51,7 +51,7 @@ export function buildContentPrompt(
   userCustomInstructions: string,
   websiteType: string = 'blog'
 ): string {
-  const imageInstruction = includeImages 
+  const imageInstruction = includeImages
     ? '\n- Include image placeholders in markdown format: ![Image description](placeholder)'
     : '';
 
@@ -87,11 +87,11 @@ export function buildMetadataPrompt(
   oldTags: string[],
   oldCategories: string[]
 ): string {
-  const tagsSection = oldTags.length > 0 
-    ? `\nExisting tags to consider: ${oldTags.join(', ')}` 
+  const tagsSection = oldTags.length > 0
+    ? `\nExisting tags to consider: ${oldTags.join(', ')}`
     : '';
-  const categoriesSection = oldCategories.length > 0 
-    ? `\nExisting categories to consider: ${oldCategories.join(', ')}` 
+  const categoriesSection = oldCategories.length > 0
+    ? `\nExisting categories to consider: ${oldCategories.join(', ')}`
     : '';
 
   return `Analyze the following blog post and generate appropriate metadata.
@@ -149,7 +149,7 @@ ${voiceSection}
 
 Requirements:
 1. Write in markdown format with proper heading hierarchy (## for sections, ### for subsections)
-2. Produce a compelling, SEO-optimised article — aim for 1500-2500 words
+2. Produce a compelling, SEO-optimised article - aim for 1500-2500 words
 3. Incorporate facts, data, and insights from the research above
 4. Include code examples if technically relevant (use fenced code blocks with language)
 5. Use bullet points and numbered lists for readability

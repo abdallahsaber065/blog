@@ -27,7 +27,7 @@ export class LocalStorageProvider implements StorageProvider {
     fs.writeFileSync(dest, buffer);
 
     return {
-      file_url: key,                       // stored in DB  — relative, no leading slash
+      file_url: key,                       // stored in DB  - relative, no leading slash
       public_url: this.getPublicUrl(key),  // returned to client
       file_name: path.basename(key),
       file_type: mimeType,

@@ -1,5 +1,5 @@
 /**
- * Unified storage interface — swap between local disk and S3
+ * Unified storage interface - swap between local disk and S3
  * by setting STORAGE_PROVIDER=local|s3 in your .env
  */
 

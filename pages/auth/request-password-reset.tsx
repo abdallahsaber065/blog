@@ -33,7 +33,7 @@ const RequestPasswordResetPage = () => {
             }
         } catch {
             toast.dismiss();
-            toast.error('Network error — check your connection');
+            toast.error('Network error - check your connection');
         } finally {
             setLoading(false);
         }

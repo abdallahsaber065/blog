@@ -29,7 +29,7 @@ export function getStorageProvider(): StorageProvider {
  * Safe to call from both API routes and React components (via NEXT_PUBLIC_* vars).
  */
 export function resolvePublicUrl(fileUrl: string): string {
-  // Already an absolute URL (http/https) — return as-is
+  // Already an absolute URL (http/https) - return as-is
   if (/^https?:\/\//i.test(fileUrl)) return fileUrl;
 
   // Client-side: we cannot instantiate the full provider, so we build the URL

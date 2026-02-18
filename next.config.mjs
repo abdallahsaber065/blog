@@ -33,7 +33,7 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        // AWS S3 buckets — covers *.s3.amazonaws.com and *.s3.<region>.amazonaws.com
+        // AWS S3 buckets - covers *.s3.amazonaws.com and *.s3.<region>.amazonaws.com
         protocol: 'https',
         hostname: '**.amazonaws.com',
         pathname: '/**',

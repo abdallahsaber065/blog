@@ -14,7 +14,7 @@ export const applyRateLimit = async (req: ExtendedNextApiRequest, res: NextApiRe
     return new Promise<void>((resolve, reject) => {
         limiter(req as any, res as any, (result: any) => {
             if (result instanceof Error) {
-                // express-rate-limit calls next(err) — treat as 429
+                // express-rate-limit calls next(err) - treat as 429
                 res.status(429).json({ error: result.message || 'Too many requests. Please try again later.' });
                 return reject(result);
             }

@@ -113,7 +113,7 @@ const LoginPage = () => {
         ]}
       />
 
-      {/* Right — form panel */}
+      {/* Right - form panel */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
         <motion.div
           initial={{ opacity: 0, x: 24 }}

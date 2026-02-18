@@ -77,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Clean up temp file
     try { fs.unlinkSync(file.filepath); } catch { /* ignore */ }
 
-    // Persist metadata in DB — store the key, not the full URL
+    // Persist metadata in DB - store the key, not the full URL
     const mediaEntry = await prisma.mediaLibrary.create({
       data: {
         file_name: uploadResult.file_name,
