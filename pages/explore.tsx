@@ -271,34 +271,34 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
     <div className="space-y-7">
       {/* Categories */}
       <div>
-        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
-          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-            <Folder className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder">
+          <div className="p-1.5 bg-gold/10 rounded-lg">
+            <Folder className="w-3.5 h-3.5 text-gold" />
           </div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-sm font-semibold text-foreground">
             Categories
           </h3>
           {selectedCategories.length > 0 && (
-            <Badge variant="secondary" className="ml-auto h-5 px-2 text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-0">
+            <Badge className="ml-auto h-5 px-2 text-xs bg-gold text-dark border-0">
               {selectedCategories.length}
             </Badge>
           )}
         </div>
-        <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+        <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
           {categories.map((category) => (
             <div 
               key={category.slug} 
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200 group"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-lightElevated dark:hover:bg-darkElevated transition-all duration-200 group"
             >
               <Checkbox
                 id={`cat-${category.slug}`}
                 checked={selectedCategories.includes(category.slug)}
                 onCheckedChange={() => toggleCategory(category.slug)}
-                className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+                className="data-[state=checked]:bg-gold data-[state=checked]:border-gold"
               />
               <Label
                 htmlFor={`cat-${category.slug}`}
-                className="text-sm cursor-pointer flex-1 text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors font-medium"
+                className="text-sm cursor-pointer flex-1 text-muted-foreground group-hover:text-foreground transition-colors font-medium"
               >
                 {category.name}
               </Label>
@@ -309,40 +309,40 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
 
       {/* Tags */}
       <div>
-        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
-          <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-            <TagIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder">
+          <div className="p-1.5 bg-gold/10 rounded-lg">
+            <TagIcon className="w-3.5 h-3.5 text-gold" />
           </div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="text-sm font-semibold text-foreground">
             Tags
           </h3>
           {selectedTags.length > 0 && (
-            <Badge variant="secondary" className="ml-auto h-5 px-2 text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-0">
+            <Badge className="ml-auto h-5 px-2 text-xs bg-gold text-dark border-0">
               {selectedTags.length}
             </Badge>
           )}
         </div>
 
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             type="text"
             placeholder="Search tags..."
             value={tagSearchTerm}
             onChange={(e) => setTagSearchTerm(e.target.value)}
-            className="pl-9 h-10 text-sm border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500/20"
+            className="pl-9 h-10 text-sm"
           />
         </div>
 
-        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
           {filteredTags.map((tag) => (
             <Badge
               key={tag.id}
               variant={selectedTags.includes(tag.slug) ? 'default' : 'outline'}
               className={`cursor-pointer transition-all duration-200 hover:scale-105 ${
                 selectedTags.includes(tag.slug)
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-sm'
-                  : 'hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-700'
+                  ? 'bg-gold text-dark border-gold shadow-gold-sm'
+                  : 'border-gold/30 text-muted-foreground hover:bg-gold/10 hover:border-gold/60 hover:text-gold'
               }`}
               onClick={() => toggleTag(tag.slug)}
             >
@@ -356,7 +356,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
       {hasActiveFilters && (
         <Button
           variant="outline"
-          className="w-full h-10 border-slate-300 dark:border-slate-700 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-800 transition-all duration-200"
+          className="w-full h-10 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-all duration-200"
           onClick={clearAllFilters}
         >
           <X className="w-4 h-4 mr-2" />
@@ -397,42 +397,42 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-light dark:bg-dark">
       {/* Hero Section */}
-      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-indigo-400/10 to-pink-400/10 rounded-full blur-3xl"></div>
+      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-20 bg-light dark:bg-dark border-b border-lightBorder dark:border-darkBorder overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gold/[0.05] rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/[0.04] rounded-full blur-3xl pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex items-start gap-5 mb-8">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
-              <div className="relative p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-xl">
-                <Sparkles className="w-8 h-8 text-white" />
+              <div className="absolute inset-0 bg-gold rounded-2xl blur-xl opacity-25 group-hover:opacity-40 transition-opacity"></div>
+              <div className="relative p-4 bg-gold rounded-2xl shadow-gold">
+                <Sparkles className="w-8 h-8 text-dark" />
               </div>
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent mb-3">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-3">
                 Discover Content
               </h1>
-              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium">
-                Explore <span className="font-bold text-blue-600 dark:text-blue-400">{posts.length}</span> articles across all topics
+              <p className="text-lg md:text-xl text-muted-foreground font-medium">
+                Explore <span className="font-bold text-gold">{posts.length}</span> articles across all topics
               </p>
             </div>
           </div>
 
           {/* Search Bar */}
           <div className="relative max-w-3xl">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-lg opacity-20"></div>
+            <div className="absolute -inset-1 bg-gold rounded-2xl blur-lg opacity-10"></div>
             <div className="relative">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10" />
               <Input
                 type="text"
                 placeholder="Search articles by title or content..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-14 pr-5 h-16 text-base bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl focus:border-blue-500 dark:focus:border-blue-500 transition-all duration-200 font-medium"
+                className="pl-14 pr-5 h-16 text-base bg-card border-2 border-lightBorder dark:border-darkBorder rounded-xl shadow-card dark:shadow-card-dark hover:border-gold/40 focus:border-gold dark:focus:border-gold transition-all duration-200 font-medium"
               />
             </div>
           </div>
@@ -444,18 +444,18 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-80 flex-shrink-0">
           <div className="sticky top-6">
-            <Card className="shadow-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 h-1"></div>
+            <Card className="shadow-card dark:shadow-card-dark border-lightBorder dark:border-darkBorder bg-card overflow-hidden">
+              <div className="bg-gradient-to-r from-gold via-goldLight to-gold h-0.5"></div>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2.5">
-                    <div className="p-1.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                      <SlidersHorizontal className="w-4 h-4 text-white" />
+                  <h2 className="text-lg font-bold text-foreground flex items-center gap-2.5">
+                    <div className="p-1.5 bg-gold/10 border border-gold/20 rounded-lg">
+                      <SlidersHorizontal className="w-4 h-4 text-gold" />
                     </div>
                     Filters
                   </h2>
                   {hasActiveFilters && (
-                    <Badge variant="secondary" className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 shadow-md px-3 py-1 font-semibold">
+                    <Badge className="bg-gold text-dark border-0 shadow-gold-sm px-3 py-1 font-semibold">
                       {selectedCategories.length + selectedTags.length}
                     </Badge>
                   )}
@@ -472,7 +472,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             <SheetTrigger asChild>
               <Button
                 size="lg"
-                className="rounded-full h-16 w-16 shadow-2xl bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 hover:scale-105"
+                className="rounded-full h-16 w-16 shadow-gold bg-gold hover:bg-goldDark text-dark transition-all duration-200 hover:scale-105"
               >
                 <Filter className="w-6 h-6" />
                 {hasActiveFilters && (
@@ -485,8 +485,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2.5 text-xl">
-                  <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                    <SlidersHorizontal className="w-5 h-5 text-white" />
+                  <div className="p-2 bg-gold/10 border border-gold/20 rounded-lg">
+                    <SlidersHorizontal className="w-5 h-5 text-gold" />
                   </div>
                   Filter Articles
                 </SheetTitle>
@@ -504,9 +504,9 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
           <div className="mb-8 space-y-5">
             {/* Active Filters */}
             {hasActiveFilters && (
-              <div className="flex flex-wrap gap-2.5 items-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex flex-wrap gap-2.5 items-center p-4 bg-gold/[0.04] rounded-xl border border-gold/20">
+                <span className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-gold" />
                   Active filters:
                 </span>
                 {selectedCategories.map((catSlug) => {
@@ -514,13 +514,12 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                   return cat ? (
                     <Badge
                       key={catSlug}
-                      variant="secondary"
-                      className="gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-100 to-purple-50 dark:from-purple-900 dark:to-purple-800 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700 hover:shadow-md transition-all duration-200"
+                      className="gap-1.5 px-3 py-1.5 bg-gold/10 text-gold border border-gold/30 hover:shadow-gold-sm transition-all duration-200"
                     >
                       <Folder className="w-3.5 h-3.5" />
                       {cat.name}
                       <X
-                        className="w-3.5 h-3.5 cursor-pointer hover:text-purple-900 dark:hover:text-purple-100 hover:scale-110 transition-transform"
+                        className="w-3.5 h-3.5 cursor-pointer hover:scale-110 transition-transform"
                         onClick={() => removeFilter('category', catSlug)}
                       />
                     </Badge>
@@ -531,13 +530,12 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                   return tag ? (
                     <Badge
                       key={tagSlug}
-                      variant="secondary"
-                      className="gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 hover:shadow-md transition-all duration-200"
+                      className="gap-1.5 px-3 py-1.5 bg-gold/10 text-gold border border-gold/30 hover:shadow-gold-sm transition-all duration-200"
                     >
                       <TagIcon className="w-3.5 h-3.5" />
                       {tag.name}
                       <X
-                        className="w-3.5 h-3.5 cursor-pointer hover:text-blue-900 dark:hover:text-blue-100 hover:scale-110 transition-transform"
+                        className="w-3.5 h-3.5 cursor-pointer hover:scale-110 transition-transform"
                         onClick={() => removeFilter('tag', tagSlug)}
                       />
                     </Badge>
@@ -549,8 +547,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             {/* View Controls */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex items-center gap-3">
-                <Badge variant="outline" className="px-4 py-2 text-sm font-semibold border-2 border-slate-300 dark:border-slate-700">
-                  <span className="text-blue-600 dark:text-blue-400 font-bold mr-1">{filteredAndSortedPosts.length}</span>
+                <Badge variant="outline" className="px-4 py-2 text-sm font-semibold border border-lightBorder dark:border-darkBorder">
+                  <span className="text-gold font-bold mr-1">{filteredAndSortedPosts.length}</span>
                   {filteredAndSortedPosts.length === 1 ? 'article' : 'articles'} found
                 </Badge>
               </div>

@@ -10,13 +10,13 @@ interface BlogDetailsProps {
 
 const BlogDetails = ({ post}: BlogDetailsProps) => {
   return (
-    <div className="px-2 md:px-10 bg-accent dark:bg-accentDark text-light dark:text-dark py-2 flex items-center justify-around flex-wrap text-lg sm:text-xl font-medium mx-5 md:mx-10 rounded-lg">
+    <div className="px-4 md:px-10 bg-gold/10 border border-gold/20 text-foreground py-2.5 flex items-center justify-around flex-wrap text-sm font-medium mx-5 md:mx-10 rounded-xl gap-y-1">
       <time className="mb-1 md:mb-0 md:mr-2 text-sm md:text-base font-bold">
         {post.published_at ? format(parseISO(post.published_at.toISOString()), "LLLL d, yyyy") : "Unpublished"}
       </time>
 
-      <div className="flex items-center mb-1 md:mb-0 md:mr-2 text-sm md:text-base font-bold">
-        By: <Link href={`/authors/${slug(post.author.username)}`} className="ml-1 text-accentDark dark:text-accent hover:underline">
+      <div className="flex items-center mb-1 md:mb-0 md:mr-2 text-sm font-bold">
+        By: <Link href={`/authors/${slug(post.author.username)}`} className="ml-1 text-gold hover:underline">
           @{post.author.username}
         </Link>
       </div>

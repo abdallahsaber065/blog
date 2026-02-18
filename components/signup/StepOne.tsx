@@ -73,8 +73,8 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
 
     return (
         <div className="space-y-4">
-            <div className="space-y-2">
-                <Label htmlFor="username" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="username" className="text-sm font-medium text-foreground">
                     Username
                 </Label>
                 <Input
@@ -87,8 +87,8 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     placeholder="Username"
                 />
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-sm font-medium text-foreground">
                     Email
                 </Label>
                 <Input
@@ -101,8 +101,8 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     placeholder="Email address"
                 />
             </div>
-            <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-900 font-bold dark:text-slate-300">
+            <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-sm font-medium text-foreground">
                     Password
                 </Label>
                 <Input
@@ -115,7 +115,7 @@ const StepOne: React.FC<StepOneProps> = ({ username, setUsername, email, setEmai
                     placeholder="Password"
                 />
             </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
             <div className="flex justify-end mt-4">
                 <Button
                     type="button"

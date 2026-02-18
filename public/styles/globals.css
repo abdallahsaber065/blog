@@ -4,67 +4,74 @@
 
 @layer base {
   :root {
-    /* Light mode - Professional and clean color palette */
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    /* ── Light mode ─────────────────────────────────────── */
+    --background:      43 25% 97%;      /* #FAFAF8 warm off-white */
+    --foreground:      20 10% 12%;      /* near-black warm */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card:            38 22% 93%;      /* #F0EDE6 */
+    --card-foreground: 20 10% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover:         43 25% 97%;
+    --popover-foreground: 20 10% 12%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary:         43 93% 63%;      /* #F8CC4D gold */
+    --primary-foreground: 20 10% 12%;  /* dark text on gold */
 
-    --secondary: 220 13% 91%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary:       38 18% 88%;
+    --secondary-foreground: 20 10% 20%;
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 220 9% 46%;
+    --muted:           38 15% 92%;
+    --muted-foreground: 20 6% 48%;
 
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent:          43 93% 63%;
+    --accent-foreground: 20 10% 12%;
 
-    --destructive: 0 84% 60%;
+    --destructive:     0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --border:          35 15% 86%;      /* #E2DDD6 */
+    --input:           35 15% 86%;
+    --ring:            43 93% 63%;      /* gold ring */
 
-    --radius: 0.5rem;
+    --radius:          0.625rem;
+
+    /* Raw value tokens for JS/CSS usage */
+    --gold:     #F8CC4D;
+    --gold-dark:#E6A817;
   }
 
   .dark {
-    /* Dark mode - Professional and easy on the eyes */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* ── Dark mode ──────────────────────────────────────── */
+    --background:      240 4% 9%;       /* #161618 */
+    --foreground:      210 12% 88%;     /* warm off-white text */
 
-    --card: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
+    --card:            225 5% 11%;      /* #191B1D */
+    --card-foreground: 210 12% 88%;
 
-    --popover: 222 47% 15%;
-    --popover-foreground: 210 40% 98%;
+    --popover:         225 5% 12%;
+    --popover-foreground: 210 12% 88%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
+    --primary:         43 93% 63%;      /* #F8CC4D gold */
+    --primary-foreground: 240 4% 9%;   /* dark text on gold */
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary:       225 4% 13%;
+    --secondary-foreground: 210 12% 75%;
 
-    --muted: 215 28% 17%;
-    --muted-foreground: 217 11% 65%;
+    --muted:           225 4% 14%;
+    --muted-foreground: 220 8% 52%;
 
-    --accent: 217 91% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent:          43 93% 63%;
+    --accent-foreground: 240 4% 9%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive:     0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
+    --border:          234 4% 17%;      /* #2A2A2E */
+    --input:           234 4% 17%;
+    --ring:            43 93% 63%;
+
+    --gold:     #F8CC4D;
+    --gold-dark:#E6A817;
   }
 }
 
@@ -74,15 +81,77 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background-color: rgba(248, 204, 77, 0.3);
+    color: inherit;
   }
 }
 
-/* Smooth theme transition */
-html,
-body,
-body * {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
+/* ─────────────────────────────────────────────────────────
+   SMOOTH THEME TRANSITION  — no flash, no jank
+   We block transition on the very first paint by relying on
+   the inline script adding `.no-transition` during SSR, but
+   since this project has no SSR guard for that, we use a
+   shorter duration that doesn't feel sluggish yet still
+   looks intentional. Critical: we do NOT transition
+   `transform` or `filter` here — only color tokens.
+───────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  /* Prevent layout shift during theme switch */
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+/* Apply transitions only to color-related properties.
+   Using `color-scheme` above handles the scrollbar colour.
+   We deliberately exclude `transform`, `opacity` and
+   `box-shadow` so Framer Motion animations aren't dampened. */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    color            0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color     0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    fill             0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke           0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Suppress transitions for elements that are animating
+   (Framer Motion adds this class automatically). */
+[data-framer-no-transition],
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   CUSTOM SCROLLBAR  (slimmer, gold accent)
+───────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(248, 204, 77, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(248, 204, 77, 0.6);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(248, 204, 77, 0.3) transparent;
 }
 
 html {
@@ -124,12 +193,12 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 }
 
 [data-highlighted-line] {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(248, 204, 77, 0.08) !important;
   padding: 2px;
   padding-left: 0;
   padding-right: 4px;
   border-radius: 2px;
-  border-left: 2px solid #3b82f6;
+  border-left: 2px solid #F8CC4D;
 }
 
 [data-highlighted-chars] {
@@ -145,11 +214,12 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 [data-rehype-pretty-code-title] {
   position: absolute;
   right: 0;
-  background-color: #3b82f6;
-  color: #fff;
-  padding: 4px 8px;
-  font-size: 1rem;
-  border-end-start-radius: 4px;
+  background: linear-gradient(135deg, #F8CC4D 0%, #E6A817 100%);
+  color: #161618;
+  padding: 4px 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-end-start-radius: 6px;
 }
 
 [data-rehype-pretty-code-caption] {

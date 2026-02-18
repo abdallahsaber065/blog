@@ -14,6 +14,8 @@ interface ImageProps {
     file_type: string;
     file_size: number;
     file_url: string;
+    display_url?: string;
+    public_url?: string;
     width: number;
     height: number;
 }

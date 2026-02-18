@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
-import { ClipLoader } from 'react-spinners';
 import { Button } from '@/components/ui/button';
 
 const SignupForm = () => {
@@ -90,8 +89,8 @@ const SignupForm = () => {
                     handlePrevStep={handlePrevStep}
                 />
             )}
-            {error && <p className="mt-2 text-sm text-error">{error}</p>}
-            {loading && <ClipLoader size={24} color="#ffffff" />}
+            {error && <p className="mt-2 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
+            {loading && <span className="inline-block w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />}
             {step === 2 && (
                 <div className="flex justify-between mt-4 gap-4">
                     <Button

@@ -1,10 +1,24 @@
 import "../public/styles/globals.css";
+import { Inter, Sora } from "next/font/google";
 import { cx } from "@/lib";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import siteMetadata from "@/lib/siteMetaData";
 import { ReactNode } from 'react';
 import ClientProvider from './ClientProvider';
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
 
 export const metadata = {
     metadataBase: new URL(siteMetadata.siteUrl),
@@ -60,6 +74,8 @@ export default function RootLayout({ children}: { children: ReactNode}) {
               (function() {
                 const preferDarkQuery = '(prefers-color-scheme: dark)';
                 const storageKey = 'theme';
+                // Suppress transitions during initial theme application
+                document.documentElement.classList.add('no-transition');
                 try {
                   const userPref = localStorage.getItem(storageKey);
                   const prefersDark = window.matchMedia(preferDarkQuery).matches;
@@ -70,12 +86,18 @@ export default function RootLayout({ children}: { children: ReactNode}) {
                     document.documentElement.classList.remove('dark');
                   }
                 } catch (e) {}
+                // Re-enable transitions after the first paint
+                window.requestAnimationFrame(function() {
+                  window.requestAnimationFrame(function() {
+                    document.documentElement.classList.remove('no-transition');
+                  });
+                });
               })();
             `,
                     }}
                 />
             </head>
-            <body className={cx("font-mr bg-light dark:bg-dark")} style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+            <body className={cx(inter.variable, sora.variable, "font-inter bg-light dark:bg-dark antialiased")}>
                 <ClientProvider>
                     <Header />
                     {children}

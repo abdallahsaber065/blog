@@ -2,9 +2,6 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { Post, Tag as PrismaTag } from "@prisma/client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface BlogLayoutTwoProps {
   post: {
@@ -22,45 +19,43 @@ interface BlogLayoutTwoProps {
 
 const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
   return (
-    <Card className="group grid grid-cols-12 gap-4 items-center border-none shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+    <div className="group grid grid-cols-12 gap-0 items-stretch overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300">
+      {/* Thumbnail */}
       <Link
         href={`/blogs/${post.slug}`}
-        className="col-span-12 lg:col-span-4 h-full overflow-hidden"
+        className="col-span-12 lg:col-span-5 overflow-hidden block"
       >
         <Image
           src={post.featured_image_url || "/static/images/default-image.webp"}
           placeholder="blur"
           blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
           alt={post.title}
-          width={800}
-          height={600}
-          className="aspect-square w-full h-full object-cover object-center group-hover:scale-105 transition-all ease duration-300"
+          width={400}
+          height={300}
+          className="aspect-video lg:aspect-square w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           sizes="(max-width: 640px) 100vw,(max-width: 1024px) 50vw, 33vw"
         />
       </Link>
 
-      <CardContent className="col-span-12 lg:col-span-8 w-full p-4 lg:p-6">
+      {/* Text content */}
+      <div className="col-span-12 lg:col-span-7 p-5 lg:p-6 flex flex-col justify-center bg-card">
         {post.category && (
-          <Badge variant="secondary" className="mb-2">
-            {post.category.name.toUpperCase()}
-          </Badge>
+          <span className="inline-block mb-2.5 text-xs font-semibold uppercase tracking-wider text-gold">
+            {post.category.name}
+          </span>
         )}
-        <Link href={`/blogs/${post.slug}`} className="inline-block my-1">
-          <h2 className="font-semibold capitalize text-base sm:text-lg text-dark dark:text-light">
-            <span
-              className="bg-gradient-to-r from-accent/50 dark:from-accentDark/50 to-accent/50 dark:to-accentDark/50 bg-[length:0px_6px]
-                group-hover:bg-[length:100%_6px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 "
-            >
+        <Link href={`/blogs/${post.slug}`} className="block">
+          <h2 className="font-display font-semibold capitalize text-base sm:text-lg leading-snug text-foreground">
+            <span className="bg-gradient-to-r from-gold/60 to-gold/60 bg-[length:0px_2px] group-hover:bg-[length:100%_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500">
               {post.title}
             </span>
           </h2>
         </Link>
-
-        <span className="inline-block w-full capitalize text-gray dark:text-light/50 font-semibold text-xs sm:text-base">
-          {post.published_at ? format(new Date(post.published_at), "MMMM dd, yyyy") : "Unpublished"}
+        <span className="mt-3 text-xs text-muted-foreground font-medium">
+          {post.published_at ? format(new Date(post.published_at), "MMM dd, yyyy") : "Unpublished"}
         </span>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
