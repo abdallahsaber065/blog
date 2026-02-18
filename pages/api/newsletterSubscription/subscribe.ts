@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return apiError(res, 400, 'Email is required');
         }
 
-        // Attempt to retrieve the subscriber's IP — degrade gracefully if the lookup fails
+        // Attempt to retrieve the subscriber's IP - degrade gracefully if the lookup fails
         let ip = 'unknown';
         try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');

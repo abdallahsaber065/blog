@@ -23,7 +23,7 @@ export function resolveImageUrl(
   // Already a usable URL
   if (/^(https?|blob|data):/.test(value)) return value;
 
-  // Relative path — resolve against provider
+  // Relative path - resolve against provider
   const provider = (process.env.NEXT_PUBLIC_STORAGE_PROVIDER || 'local').toLowerCase();
 
   if (provider === 'imagekit') {

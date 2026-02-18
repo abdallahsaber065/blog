@@ -84,7 +84,7 @@ const DashboardPage: React.FC = () => {
             }
             setPosts(data);
         } catch (err) {
-            toast.error('Network error — could not load posts');
+            toast.error('Network error - could not load posts');
         } finally {
             setLoading(false);
         }

@@ -2,7 +2,7 @@ import path from 'path';
 import type { StorageProvider, UploadResult, DeleteResult } from './types';
 
 /**
- * ImageKit storage provider — server-side uploads via Upload API v1.
+ * ImageKit storage provider - server-side uploads via Upload API v1.
  *
  * Nested folder structure under the project root:
  *
@@ -26,7 +26,7 @@ import type { StorageProvider, UploadResult, DeleteResult } from './types';
 export class ImageKitStorageProvider implements StorageProvider {
   private readonly privateKey: string;
   private readonly urlEndpoint: string;
-  /** Root folder in the ImageKit media library — no leading/trailing slashes. */
+  /** Root folder in the ImageKit media library - no leading/trailing slashes. */
   private readonly rootFolder: string;
 
   constructor() {
@@ -69,7 +69,7 @@ export class ImageKitStorageProvider implements StorageProvider {
 
   async upload(buffer: Buffer, key: string, mimeType: string): Promise<UploadResult> {
     const fileName = path.basename(key);
-    const folder   = this.folderForKey(key);
+    const folder = this.folderForKey(key);
 
     const formData = new FormData();
     formData.append('file', new Blob([buffer], { type: mimeType }), fileName);
@@ -90,10 +90,10 @@ export class ImageKitStorageProvider implements StorageProvider {
     }
 
     const data = await res.json() as {
-      fileId:   string;
-      name:     string;
-      url:      string;
-      size:     number;
+      fileId: string;
+      name: string;
+      url: string;
+      size: number;
       filePath: string;  // e.g. "/my-blog/media/abc.webp"
       mimeType: string;
     };
@@ -103,11 +103,11 @@ export class ImageKitStorageProvider implements StorageProvider {
     const storedKey = data.filePath.replace(/^\/+/, '');
 
     return {
-      file_url:  storedKey,
+      file_url: storedKey,
       public_url: data.url,
-      file_name:  data.name,
-      file_type:  data.mimeType || mimeType,
-      file_size:  data.size   ?? buffer.byteLength,
+      file_name: data.name,
+      file_type: data.mimeType || mimeType,
+      file_size: data.size ?? buffer.byteLength,
     };
   }
 

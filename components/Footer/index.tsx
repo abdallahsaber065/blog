@@ -41,7 +41,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="mt-16 bg-dark text-slate-300 relative overflow-hidden">
+    <footer className="bg-dark text-slate-300 relative overflow-hidden">
       {/* Gold top separator */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
 
@@ -57,14 +57,14 @@ const Footer = () => {
               Dev<span className="text-gold">Trend</span>
             </h3>
             <p className="text-sm text-slate-400 leading-relaxed">
-              A modern blog for developers — exploring the bleeding edge of web dev, AI, and engineering craft.
+              A modern blog for developers - exploring the bleeding edge of web dev, AI, and engineering craft.
             </p>
             {/* Social links */}
             <div className="flex items-center gap-3 pt-1">
               {[
                 { href: siteMetadata.linkedin, icon: LinkedinIcon, label: "LinkedIn" },
-                { href: siteMetadata.twitter,  icon: TwitterIcon,  label: "Twitter" },
-                { href: siteMetadata.github,   icon: GithubIcon,   label: "GitHub" },
+                { href: siteMetadata.twitter, icon: TwitterIcon, label: "Twitter" },
+                { href: siteMetadata.github, icon: GithubIcon, label: "GitHub" },
               ].map(({ href, icon: Icon, label }) => (
                 <motion.div key={label} whileHover={{ scale: 1.15, rotate: 5 }} whileTap={{ scale: 0.92 }}>
                   <Link
@@ -86,9 +86,9 @@ const Footer = () => {
             <h4 className="text-white font-semibold text-sm uppercase tracking-widest">Quick Links</h4>
             <ul className="space-y-2.5">
               {[
-                { href: '/',        label: 'Home' },
+                { href: '/', label: 'Home' },
                 { href: '/explore', label: 'Explore' },
-                { href: '/about',   label: 'About' },
+                { href: '/about', label: 'About' },
                 { href: '/contact', label: 'Contact' },
               ].map(({ href, label }) => (
                 <li key={href}>

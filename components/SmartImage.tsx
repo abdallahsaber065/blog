@@ -1,5 +1,5 @@
 /**
- * SmartImage — renders external / blob / data URLs with a plain <img> tag
+ * SmartImage - renders external / blob / data URLs with a plain <img> tag
  * (no Next.js image proxy overhead, no cold-start cost on serverless).
  * For local static assets (paths starting with "/", no host) it falls back
  * to next/image so you still get optimisation for your own bundled assets.
@@ -31,7 +31,7 @@ export default function SmartImage({
   const resolved = src || fallback;
 
   if (isExternal(resolved)) {
-    // Plain <img> — zero proxy, zero cold-start, works on any host
+    // Plain <img> - zero proxy, zero cold-start, works on any host
     return (
       <img
         src={resolved}
@@ -47,7 +47,7 @@ export default function SmartImage({
     );
   }
 
-  // Local static asset — use next/image for optimisation
+  // Local static asset - use next/image for optimisation
   return (
     <NextImage
       src={resolved}

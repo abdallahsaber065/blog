@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         check('message').notEmpty().withMessage('Message is required').run(req)
     ]);
 
-    // Check for validation errors — collapse to single { error } string
+    // Check for validation errors - collapse to single { error } string
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorMessage = errors.array().map(e => e.msg).join('. ');

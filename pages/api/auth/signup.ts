@@ -140,7 +140,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 });
             } catch (emailError) {
                 console.error('Failed to send verification email:', emailError);
-                // Don't block signup if email delivery fails — user was created successfully.
+                // Don't block signup if email delivery fails - user was created successfully.
             }
 
             res.status(201).json(newUser);

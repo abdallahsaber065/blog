@@ -43,7 +43,7 @@ const AboutPage: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed"
         >
-          Dev Trend is your essential source for web development, AI engineering, and modern tech —
+          Dev Trend is your essential source for web development, AI engineering, and modern tech -
           providing deep-dive articles, tutorials, and insights that help you ship better software.
         </motion.p>
       </section>
@@ -53,8 +53,8 @@ const AboutPage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {(
             [
-              { value: '50+',  label: 'Articles published' },
-              { value: '3+',   label: 'Years of experience' },
+              { value: '50+', label: 'Articles published' },
+              { value: '3+', label: 'Years of experience' },
               { value: '10k+', label: 'Monthly readers' },
               { value: '100%', label: 'Open to community' },
             ] as { value: string; label: string }[]
@@ -96,9 +96,9 @@ const AboutPage: React.FC = () => {
             <ul className="space-y-3">
               {(
                 [
-                  { icon: Code2,     text: 'Practical, production-ready code examples' },
+                  { icon: Code2, text: 'Practical, production-ready code examples' },
                   { icon: Lightbulb, text: 'AI & emerging tech deep-dives' },
-                  { icon: Users,     text: 'Community-first, free forever' },
+                  { icon: Users, text: 'Community-first, free forever' },
                 ] as { icon: React.ElementType; text: string }[]
               ).map(({ icon: Icon, text }, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">

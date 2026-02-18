@@ -102,13 +102,13 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SMOOTH THEME TRANSITION  — no flash, no jank
+   SMOOTH THEME TRANSITION  - no flash, no jank
    We block transition on the very first paint by relying on
    the inline script adding `.no-transition` during SSR, but
    since this project has no SSR guard for that, we use a
    shorter duration that doesn't feel sluggish yet still
    looks intentional. Critical: we do NOT transition
-   `transform` or `filter` here — only color tokens.
+   `transform` or `filter` here - only color tokens.
 ───────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
