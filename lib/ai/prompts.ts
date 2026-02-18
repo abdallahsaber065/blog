@@ -120,6 +120,46 @@ Requirements:
 Respond ONLY with valid JSON.`;
 }
 
+/**
+ * Prompt used in the outline-free (direct) generation flow.
+ * The model receives pre-fetched web research as context and writes
+ * the full blog post in one shot.
+ */
+export function buildDirectContentPrompt(
+  topic: string,
+  researchSummary: string,
+  voiceNoteTranscript: string,
+  includeImages: boolean,
+  userCustomInstructions: string,
+  websiteType: string = 'blog'
+): string {
+  const imageInstruction = includeImages
+    ? '\n- Include image placeholders in markdown format: ![Image description](placeholder)'
+    : '';
+
+  const voiceSection = voiceNoteTranscript
+    ? `\n\nVoice notes from the author (use as directional guidance):\n${voiceNoteTranscript}`
+    : '';
+
+  return `You are an expert content writer for a ${websiteType}. Write a comprehensive, high-quality blog post about: "${topic}".
+
+Research & Context:
+${researchSummary}
+${voiceSection}
+
+Requirements:
+1. Write in markdown format with proper heading hierarchy (## for sections, ### for subsections)
+2. Produce a compelling, SEO-optimised article — aim for 1500-2500 words
+3. Incorporate facts, data, and insights from the research above
+4. Include code examples if technically relevant (use fenced code blocks with language)
+5. Use bullet points and numbered lists for readability
+6. Write in a professional yet conversational tone
+7. Add a compelling call-to-action in the conclusion${imageInstruction}
+
+${userCustomInstructions ? `Additional Instructions from the author: ${userCustomInstructions}\n` : ''}
+Write the complete blog post now:`;
+}
+
 export function buildFileContextPrompt(fileContent: string, fileName: string): string {
   return `\n\nAdditional Context from "${fileName}":\n${fileContent}\n\nPlease incorporate relevant information from this file into the content where appropriate.`;
 }
