@@ -71,12 +71,8 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
             </div>
 
             <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-                <div className="col-span-12 lg:col-span-3">
-                    <div className="sticky top-20">
-                        <TableOfContent mdxContent={placeholderPost.content} />
-                    </div>
-                </div>
-                <div className="col-span-12 lg:col-span-9">
+                <TableOfContent mdxContent={placeholderPost.content} />
+                <div className="col-span-12 lg:col-span-8">
                     {mdxSource && <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />}
                 </div>
             </div>

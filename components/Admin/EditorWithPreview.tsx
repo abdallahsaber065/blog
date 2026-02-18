@@ -319,7 +319,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                     </div>
                     <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-slate-900" 
                          style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
-                        <div className="h-full overflow-y-auto p-6">
+                        <div className="h-full overflow-y-auto">
                             {error ? (
                                 <div className="flex items-center justify-center h-full">
                                     <p className="text-red-500 font-medium">{error}</p>
