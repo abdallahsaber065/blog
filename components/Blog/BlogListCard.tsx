@@ -35,10 +35,10 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
 
   return (
     <Link href={`/blogs/${post.slug}`}>
-      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5 bg-white dark:bg-darkSurface rounded-2xl border border-lightBorder dark:border-darkBorder hover:border-gold hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         {/* Image and Author Info Container */}
         <div className="flex flex-col gap-2 sm:w-32 md:w-40 flex-shrink-0">
-          <div className="relative w-full h-48 sm:h-32 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+          <div className="relative w-full h-48 sm:h-32 rounded-xl overflow-hidden bg-lightElevated dark:bg-darkElevated">
             <Image
               src={post.featured_image_url}
               alt={post.title}
@@ -67,7 +67,7 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
         <div className="flex-1 flex flex-col justify-between min-w-0">
           {/* Title & Excerpt */}
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-gold dark:group-hover:text-goldLight transition-colors duration-200">
               {post.title}
             </h2>
 
@@ -109,8 +109,8 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
                 <Badge
                   key={tag.slug}
                   variant="outline"
-                  className="text-xs bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
-                >
+                  className="text-xs bg-gold/10 dark:bg-gold/10 border-gold/30 dark:border-gold/30 text-gold dark:text-goldLight hover:bg-gold/20 dark:hover:bg-gold/20 transition-all duration-200">
+                
                   #{tag.name}
                 </Badge>
               ))}

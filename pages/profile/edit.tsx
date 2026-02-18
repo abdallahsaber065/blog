@@ -107,7 +107,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400" />
+                    <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight" />
                     <p className="text-slate-600 dark:text-slate-400">Loading...</p>
                 </div>
             </div>
@@ -119,7 +119,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <Card className="max-w-md w-full mx-4">
                     <CardHeader className="text-center space-y-4">
-                        <div className="mx-auto p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg w-fit">
+                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg w-fit">
                             <UserCog className="w-8 h-8 text-white" />
                         </div>
                         <CardTitle className="text-3xl">Edit Profile</CardTitle>
@@ -137,10 +137,10 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-start gap-4">
-                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
                             <UserCog className="w-8 h-8 text-white" />
                         </div>
                         <div>
@@ -166,7 +166,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                             {/* Username */}
                             <div className="space-y-2">
                                 <Label htmlFor="username" className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <User className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Username
                                 </Label>
                                 <Input
@@ -183,7 +183,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                             {/* Email */}
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <Mail className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Email
                                 </Label>
                                 <Input
@@ -229,7 +229,7 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
                             {/* Bio */}
                             <div className="space-y-2">
                                 <Label htmlFor="bio" className="flex items-center gap-2">
-                                    <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                    <FileText className="w-4 h-4 text-gold dark:text-goldLight" />
                                     Bio
                                 </Label>
                                 <Textarea

@@ -126,7 +126,7 @@ const renderTOC = ({
                                     ${heading.level === 'two' ? 'font-medium text-sm ml-4' : ''}
                                     ${heading.level === 'three' ? 'text-sm ml-8' : ''}
                                     ${isActive 
-                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-l-4 border-blue-500 -ml-1 pl-4' 
+                                        ? 'bg-gold/10 dark:bg-gold/10 text-gold dark:text-goldLight border-l-4 border-gold -ml-1 pl-4 transition-all duration-200' 
                                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                                     }
                                     ${isRead && !isActive ? 'opacity-60' : ''}
@@ -275,13 +275,13 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
             <div className="sticky top-[88px] max-h-[calc(100vh-120px)] overflow-hidden">
                 <div className="border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg bg-white dark:bg-slate-900/50 backdrop-blur-sm overflow-hidden">
                     {/* Header */}
-                    <div className="border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
+                    <div className="border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-gold/10 to-goldLight/10 dark:from-slate-800 dark:to-slate-900">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors"
                         >
                             <div className="flex items-center gap-3">
-                                <FiBookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                <FiBookOpen className="w-5 h-5 text-gold dark:text-goldLight transition-colors duration-200" />
                                 <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
                                     Table of Contents
                                 </h2>
@@ -301,7 +301,7 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
                         {/* Progress Bar */}
                         <div className="h-1 bg-slate-200 dark:bg-slate-700">
                             <div
-                                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
+                                className="h-full bg-gradient-to-r from-gold to-goldLight transition-all duration-300"
                                 style={{ width: `${scrollProgress}%` }}
                             />
                         </div>

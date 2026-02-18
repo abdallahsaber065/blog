@@ -86,7 +86,7 @@ const EditTourGuide: React.FC<EditTourGuideProps> = ({ run, onFinish }) => {
             showSkipButton
             styles={{
                 options: {
-                    primaryColor: '#2563eb', // Tailwind blue-600
+                    primaryColor: '#F8CC4D', // Tailwind gold
                     zIndex: 1000,
                 }
             }}

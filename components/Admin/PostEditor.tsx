@@ -105,12 +105,12 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
             {/* Title Section */}
             <div className="post-editor-title-section">
                 <label className="post-editor-title-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-blue-500 rounded-full"></span>
+                    <span className="w-1 h-5 bg-gold rounded-full"></span>
                     Title
                 </label>
                 <input
                     type="text"
-                    className="post-editor-title-input w-full text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="post-editor-title-input w-full text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all duration-200"
                     placeholder="Enter post title..."
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}

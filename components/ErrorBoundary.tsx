@@ -7,7 +7,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error, resetError
     <div role="alert" className="p-4 border border-red-500 bg-red-100 rounded">
       <p className="text-red-500">Something went wrong:</p>
       <pre className="text-red-500 whitespace-pre-wrap break-words">{error.message}</pre>
-      <button onClick={resetErrorBoundary} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+      <button onClick={resetErrorBoundary} className="mt-2 bg-gold text-slate-900 px-4 py-2 rounded">
         Try again
       </button>
     </div>

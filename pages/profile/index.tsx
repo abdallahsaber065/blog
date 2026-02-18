@@ -156,7 +156,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400" />
+                    <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight" />
                     <p className="text-slate-600 dark:text-slate-400">Loading your profile...</p>
                 </div>
             </div>
@@ -168,7 +168,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <Card className="max-w-md w-full mx-4">
                     <CardHeader className="text-center space-y-4">
-                        <div className="mx-auto p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg w-fit">
+                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg w-fit">
                             <UserIcon className="w-8 h-8 text-white" />
                         </div>
                         <CardTitle className="text-3xl">Profile Access</CardTitle>
@@ -193,10 +193,10 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-start gap-4 mb-6">
-                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
                             <UserIcon className="w-8 h-8 text-white" />
                         </div>
                         <div>
@@ -217,9 +217,9 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                     <div className="space-y-6">
                         {/* Profile Image Card */}
                         <Card className="overflow-hidden">
-                            <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
+                            <CardHeader className="bg-gradient-to-r from-gold/10 via-gold/5 to-goldDark/10 dark:from-gold/5 dark:via-gold/2 dark:to-goldDark/5 border-b border-gold/20 dark:border-gold/10">
                                 <CardTitle className="flex items-center gap-2">
-                                    <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                    <Sparkles className="w-5 h-5 text-gold dark:text-goldLight" />
                                     Profile Picture
                                 </CardTitle>
                             </CardHeader>
@@ -231,14 +231,14 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                                             <SmartImage
                                                 src={currentImage || resolveImageUrl(user.profile_image_url)}
                                                 alt="Profile Image"
-                                                imgClassName="rounded-full w-32 h-32 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-xl"
-                                                className="rounded-full w-32 h-32 object-cover ring-4 ring-blue-100 dark:ring-blue-900 shadow-xl"
+                                                imgClassName="rounded-full w-32 h-32 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-xl"
+                                                className="rounded-full w-32 h-32 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-xl"
                                                 onError={() => setImageError(true)}
                                                 width={128}
                                                 height={128}
                                             />
                                         ) : (
-                                            <div className="flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 rounded-full w-32 h-32 text-white text-4xl font-bold shadow-xl ring-4 ring-blue-100 dark:ring-blue-900">
+                                            <div className="flex items-center justify-center bg-gradient-to-br from-gold to-goldDark rounded-full w-32 h-32 text-slate-900 text-4xl font-bold shadow-xl ring-4 ring-gold/30 dark:ring-gold/40">
                                                 {initials}
                                             </div>
                                         )}
@@ -301,7 +301,7 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                 ) : (
                     <Card>
                         <CardContent className="p-12 text-center">
-                            <Loader2 className="w-12 h-12 animate-spin text-blue-600 dark:text-blue-400 mx-auto mb-4" />
+                            <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight mx-auto mb-4" />
                             <p className="text-slate-600 dark:text-slate-400">Loading user data...</p>
                         </CardContent>
                     </Card>

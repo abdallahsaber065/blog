@@ -254,7 +254,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                             <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Editor</span>
                             <input
                                 type="checkbox"
-                                className="toggle toggle-sm border-blue-500 bg-blue-500 [--tglbg:yellow] hover:bg-blue-700"
+                                className="toggle toggle-sm border-gold bg-gold [--tglbg:yellow] hover:bg-goldDark"
                                 checked={view === 'preview'}
                                 onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
                             />
@@ -265,7 +265,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                 
                 {/* Focus Mode Button */}
                 <button 
-                    className="ml-auto px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-slate-300 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-700 flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    className="ml-auto px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-gold/10 dark:hover:bg-gold/15 border border-slate-300 dark:border-slate-600 hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-slate-700 dark:text-slate-300 hover:text-gold dark:hover:text-goldLight"
                     onClick={() => setIsFullScreen(!isFullScreen)}
                     title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
                 >
@@ -282,7 +282,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                 <div className={`editor-preview-editor-section w-full sm:w-1/2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
                     <div className="flex items-center justify-between mb-3">
                         <label className="editor-preview-content-label text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
+                            <span className="w-1 h-6 bg-gold rounded-full"></span>
                             Content
                         </label>
                         <button
@@ -290,7 +290,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
                                 .then(res => res.text())
                                 .then(text => onContentChange(text))
                                 .catch(err => console.error('Error loading example:', err))}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 shadow-sm hover:shadow"
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-gold hover:bg-goldDark text-slate-900 transition-all duration-200 shadow-sm hover:shadow"
                             title="Load example content"
                         >
                             <FaBookOpen className="text-sm" />

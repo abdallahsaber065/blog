@@ -60,7 +60,7 @@ export default function TagList({ tags, refreshTags }: TagListProps) {
                 <li key={tag.id} className="mb-2 text-dark dark:text-white">
                     <div className="flex justify-between items-center">
                         <span onClick={() => fetchTagPosts(tag.id)} className="cursor-pointer">
-                            {tag.name} <span className="text-blue-500">({tag.postCount})</span>
+                            {tag.name} <span className="text-gold">({tag.postCount})</span>
                         </span>
                         <button
                             onClick={() => handleDelete(tag.id)}
@@ -74,7 +74,7 @@ export default function TagList({ tags, refreshTags }: TagListProps) {
                         <ul className="mt-2 ml-4">
                             {tagPosts[tag.id]?.map(post => (
                                 <li key={post.id} className="truncate">
-                                    <Link href={`/blogs/${post.slug}`} className="text-blue-500 hover:underline">
+                                    <Link href={`/blogs/${post.slug}`} className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold hover:underline transition-all duration-200">
                                         {post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title}
                                     </Link>
                                 </li>

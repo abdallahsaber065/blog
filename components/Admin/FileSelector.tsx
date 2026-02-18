@@ -217,7 +217,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                     <div className="px-4 py-2 flex justify-between items-center gap-4">
                         <div className="flex-shrink-0">
                             <input type="file" accept={allowedTypes.join(',')} onChange={handleFileUpload} className="hidden" id="file-upload" />
-                            <label htmlFor="file-upload" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg cursor-pointer inline-flex items-center gap-2">
+                            <label htmlFor="file-upload" className="bg-gold hover:bg-goldDark text-slate-900 px-4 py-2 rounded-lg cursor-pointer inline-flex items-center gap-2">
                                 <FiUpload className="text-lg" />
                                 Upload File
                             </label>
@@ -254,7 +254,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                                             onClick={() => setSelectedFile(file)}
                                             className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
                                                 ${selectedFile?.id === file.id
-                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                                                    ? 'border-gold bg-gold/10 dark:bg-gold/20'
                                                     : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                                                 }`}
                                         >
