@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -23,10 +24,47 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any, message: string) => {
-    res.status(500).json({ error: message });
+    console.error('posts API error:', error);
+    apiError(res, 500, error?.message || message);
 };
 
 // API Handler
+// Helper: find or create a tag robustly (handles name+slug uniqueness)
+async function findOrCreateTag(name: string, requestedSlug: string) {
+    // Try to find existing tag by name (case-insensitive) first
+    const existing = await prisma.tag.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } }
+    });
+    if (existing) return existing;
+    // Try creating; if concurrent creation races, fall back to findFirst
+    try {
+        return await prisma.tag.create({ data: { name, slug: requestedSlug } });
+    } catch {
+        const found = await prisma.tag.findFirst({
+            where: { name: { equals: name, mode: 'insensitive' } }
+        });
+        if (found) return found;
+        throw new Error(`Could not find or create tag: ${name}`);
+    }
+}
+
+// Helper: find or create a category robustly
+async function findOrCreateCategory(name: string, requestedSlug: string) {
+    const existing = await prisma.category.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } }
+    });
+    if (existing) return existing;
+    try {
+        return await prisma.category.create({ data: { name, slug: requestedSlug } });
+    } catch {
+        const found = await prisma.category.findFirst({
+            where: { name: { equals: name, mode: 'insensitive' } }
+        });
+        if (found) return found;
+        throw new Error(`Could not find or create category: ${name}`);
+    }
+}
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query, body } = req;
 
@@ -74,8 +112,35 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     });
                 }
 
+                // Pre-upsert tags to avoid unique constraint conflicts on name/slug
+                const tagConnects: { id: number }[] = [];
+                if (body.tags?.connectOrCreate) {
+                    for (const op of body.tags.connectOrCreate) {
+                        const tag = await findOrCreateTag(op.create.name, op.create.slug);
+                        tagConnects.push({ id: tag.id });
+                    }
+                }
+
+                // Pre-upsert category
+                let categoryConnect: { id: number } | undefined;
+                if (body.category?.connectOrCreate) {
+                    const catCreate = body.category.connectOrCreate.create;
+                    const cat = await findOrCreateCategory(catCreate.name, catCreate.slug);
+                    categoryConnect = { id: cat.id };
+                }
+
+                // Build clean post data replacing connectOrCreate with connect
+                const { tags: _bodyTags, category: _bodyCategory, ...restPostBody } = body;
+                const postCreateData: any = { ...restPostBody };
+                if (tagConnects.length > 0) {
+                    postCreateData.tags = { connect: tagConnects };
+                }
+                if (categoryConnect) {
+                    postCreateData.category = { connect: categoryConnect };
+                }
+
                 const newPost = await prisma.post.create({
-                    data: body,
+                    data: postCreateData,
                 });
 
                 const postRoutesToRevalidate = [
@@ -281,7 +346,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             default:
                 res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
                 log += `\nResponse Status: 405 Method ${method} Not Allowed`;
-                res.status(405).end(`Method ${method} Not Allowed`);
+                methodNotAllowed(res);
         }
         console.log(log);
     } catch (error) {

@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 // Helper Functions
 const validateRequiredFields = (fields: string[], body: any) => {
@@ -21,7 +22,8 @@ const validateId = (id: any) => {
 };
 
 const handleError = (res: NextApiResponse, error: any) => {
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('categories API error:', error);
+    apiError(res, 500, error?.message || 'Internal Server Error');
 };
 
 // API Handler
@@ -145,9 +147,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 break;
 
             default:
-                res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
                 log += `\nResponse Status: 405 Method ${method} Not Allowed`;
-                res.status(405).end(`Method ${method} Not Allowed`);
+                methodNotAllowed(res);
         }
     } catch (error) {
         handleError(res, error);

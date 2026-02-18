@@ -20,22 +20,27 @@ const ResetPasswordPage = () => {
 
         setLoading(true);
 
-        const res = await fetch('/api/auth/reset-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, password }),
-        });
+        try {
+            const res = await fetch('/api/auth/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, password }),
+            });
 
-        setLoading(false);
-
-        if (res.ok) {
+            if (res.ok) {
+                toast.dismiss();
+                toast.success('Password reset successfully');
+                router.push('/login');
+            } else {
+                const data = await res.json();
+                toast.dismiss();
+                toast.error(data.error || 'Something went wrong');
+            }
+        } catch {
             toast.dismiss();
-            toast.success('Password reset successfully');
-            router.push('/login');
-        } else {
-            const data = await res.json();
-            toast.dismiss();
-            toast.error(data.error || 'Something went wrong');
+            toast.error('Network error — check your connection');
+        } finally {
+            setLoading(false);
         }
     };
 

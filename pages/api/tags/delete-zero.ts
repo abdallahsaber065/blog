@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { REVALIDATE_PATHS, revalidateRoutes } from '@/lib/revalidate';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,11 +22,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             await revalidateRoutes(res, routesToRevalidate);
             res.status(200).json({ message: 'Tags with 0 posts deleted successfully' });
         } catch (error) {
-            res.status(500).json({ error: 'Failed to delete tags' });
+            console.error('delete-zero tags error:', error);
+            return apiError(res, 500, 'Failed to delete tags');
         }
     } else {
-        res.setHeader('Allow', ['DELETE']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+        return methodNotAllowed(res, ['DELETE']);
     }
 }
 

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { options } from '@/pages/api/auth/[...nextauth]';
+import { apiError } from '@/lib/apiError';
 
 const publicEndpoints = [
     '/api/auth/signup',
@@ -57,6 +58,9 @@ export async function authMiddleware(
             error: error instanceof Error ? error.message : 'Unknown error',
             stack: error instanceof Error ? error.stack : undefined
         });
-        throw error;
+        // Always respond with JSON so consumers can parse error.json() safely.
+        if (!res.headersSent) {
+            apiError(res, 500, error instanceof Error ? error.message : 'Internal server error');
+        }
     }
 }

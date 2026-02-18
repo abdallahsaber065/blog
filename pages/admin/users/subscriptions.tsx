@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Papa from 'papaparse';
 import axios from 'axios';
 import withAuth from '@/components/Admin/withAuth';
@@ -47,9 +47,10 @@ const Subscriptions: React.FC = () => {
         try {
             const response = await axios.get('/api/newsletterSubscription');
             setSubscriptions(response.data);
-        } catch (error) {
+        } catch (error: any) {
             toast.dismiss();
-            toast.error('Failed to fetch subscriptions');
+            const message = error?.response?.data?.error || 'Failed to fetch subscriptions';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -72,9 +73,10 @@ const Subscriptions: React.FC = () => {
             setNewEmail('');
             toast.dismiss();
             toast.success('Subscription added');
-        } catch (error) {
+        } catch (error: any) {
             toast.dismiss();
-            toast.error('Failed to add subscription');
+            const message = error?.response?.data?.error || 'Failed to add subscription';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -87,9 +89,10 @@ const Subscriptions: React.FC = () => {
             setSubscriptions(subscriptions.filter(sub => sub.id !== id));
             toast.dismiss();
             toast.success('Subscription deleted');
-        } catch (error) {
+        } catch (error: any) {
             toast.dismiss();
-            toast.error('Failed to delete subscription');
+            const message = error?.response?.data?.error || 'Failed to delete subscription';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -118,9 +121,10 @@ const Subscriptions: React.FC = () => {
             setEditSubscribed(false);
             toast.dismiss();
             toast.success('Subscription updated');
-        } catch (error) {
+        } catch (error: any) {
             toast.dismiss();
-            toast.error('Failed to update subscription');
+            const message = error?.response?.data?.error || 'Failed to update subscription';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -153,9 +157,10 @@ const Subscriptions: React.FC = () => {
                         fetchSubscriptions();
                         toast.dismiss();
                         toast.success('Subscriptions imported');
-                    } catch (error) {
+                    } catch (error: any) {
                         toast.dismiss();
-                        toast.error('Failed to import subscriptions');
+                        const message = error?.response?.data?.error || 'Failed to import subscriptions';
+                        toast.error(message);
                     } finally {
                         setLoading(false);
                     }
@@ -185,7 +190,6 @@ const Subscriptions: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-            <Toaster />
             
             {/* Hero Section */}
             <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">

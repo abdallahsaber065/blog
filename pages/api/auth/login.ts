@@ -2,69 +2,59 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {prisma} from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import rateLimit, { ValueDeterminingMiddleware } from 'express-rate-limit';
-import { Request, Response } from 'express';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import axios from 'axios';
+import { applyRateLimit } from '@/lib/applyRateLimit';
+import rateLimiters from '@/lib/rateLimit';
+import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key';
 
-const keyGenerator: ValueDeterminingMiddleware<string> = (req: Request) => {
-    const ipAddress = axios.get('https://api64.ipify.org?format=json').then((response) => response.data.ip);
-    return Array.isArray(ipAddress) ? ipAddress[0] : ipAddress;
-};
-
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: 'Too many login attempts from this IP, please try again after 15 minutes',
-    keyGenerator,
-});
-
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await new Promise((resolve, reject) => {
-        limiter(req as any, res as any, (result: any) => {
-            if (result instanceof Error) {
-                return reject(result);
-            }
-            resolve(result);
-        });
-    });
+    // Apply rate limiting using synchronous IP extraction
+    const clientIp =
+        (Array.isArray(req.headers['x-forwarded-for'])
+            ? req.headers['x-forwarded-for'][0]
+            : req.headers['x-forwarded-for']) ||
+        req.socket?.remoteAddress ||
+        'unknown';
+
+    try {
+        await applyRateLimit(req, res, rateLimiters.login, clientIp);
+    } catch {
+        // applyRateLimit already sent a 429 JSON response
+        return;
+    }
+    // If the limiter itself sent a 429 (its own handler), bail out
+    if (res.headersSent) return;
 
     const { method } = req;
 
     if (method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
-        res.status(405).end(`Method ${method} Not Allowed`);
-        return 
+        return methodNotAllowed(res, ['POST']);
     }
 
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(400).json({ error: 'Email and password are required' });
-        return 
+        return apiError(res, 400, 'Email and password are required');
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        res.status(400).json({ error: 'Invalid email format' });
-        return 
+        return apiError(res, 400, 'Invalid email format');
     }
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
-            res.status(401).json({ error: 'Invalid email or password' });
-            return 
+            return apiError(res, 401, 'Invalid email or password');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            res.status(401).json({ error: 'Invalid email or password' });
-            return 
+            return apiError(res, 401, 'Invalid email or password');
         }
 
         const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
@@ -78,8 +68,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
         res.status(200).json({ message: 'Login successful' });
     } catch (error) {
-        console.error('Internal server error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Login error:', error);
+        return apiError(res, 500, 'Internal server error');
     }
 }
 

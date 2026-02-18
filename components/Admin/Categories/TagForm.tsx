@@ -23,13 +23,19 @@ export default function TagForm({ refreshTags }: TagFormProps) {
         setLoading(true);
         const newSlug = slugger(name);
         try {
-            await fetch('/api/tags', {
+            const res = await fetch('/api/tags', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ name, slug: newSlug }),
             });
+            const data = await res.json();
+            if (!res.ok) {
+                toast.dismiss();
+                toast.error(data.error || 'Failed to add tag.');
+                return;
+            }
             setName('');
             refreshTags();
             toast.dismiss();

@@ -18,9 +18,14 @@ export default function TagList({ tags, refreshTags }: TagListProps) {
         setLoadingId(id);
         toast.dismiss();
         try {
-            await fetch(`/api/tags?id=${id}`, {
+            const res = await fetch(`/api/tags?id=${id}`, {
                 method: 'DELETE',
             });
+            const data = await res.json();
+            if (!res.ok) {
+                toast.error(data.error || 'Failed to delete tag.');
+                return;
+            }
             refreshTags();
             toast.success('Tag deleted successfully!');
         } catch (error) {

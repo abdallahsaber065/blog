@@ -75,9 +75,19 @@ const DashboardPage: React.FC = () => {
             },
         });
 
-        const postsData = await fetch('/api/posts?select=' + blogPostSelectFields).then((res) => res.json());
-        setPosts(postsData);
-        setLoading(false);
+        try {
+            const res = await fetch('/api/posts?select=' + blogPostSelectFields);
+            const data = await res.json();
+            if (!res.ok) {
+                toast.error(data.error || 'Failed to load posts');
+                return;
+            }
+            setPosts(data);
+        } catch (err) {
+            toast.error('Network error — could not load posts');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDelete = async (id: number) => {
