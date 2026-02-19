@@ -286,8 +286,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
         </div>
         <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
           {categories.map((category) => (
-            <div 
-              key={category.slug} 
+            <div
+              key={category.slug}
               className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-lightElevated dark:hover:bg-darkElevated/50 transition-all duration-200 group border border-transparent hover:border-gold/10"
             >
               <Checkbox
@@ -339,11 +339,10 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             <Badge
               key={tag.id}
               variant={selectedTags.includes(tag.slug) ? 'default' : 'outline'}
-              className={`cursor-pointer px-3 py-1.5 text-xs transition-all duration-300 hover:scale-105 border-0 ${
-                selectedTags.includes(tag.slug)
+              className={`cursor-pointer px-3 py-1.5 text-xs transition-all duration-300 hover:scale-105 border-0 ${selectedTags.includes(tag.slug)
                   ? 'bg-gold text-dark shadow-gold-sm ring-1 ring-gold'
                   : 'bg-light dark:bg-darkSurface text-muted-foreground border border-lightBorder dark:border-darkBorder hover:border-gold/60 hover:text-gold'
-              }`}
+                }`}
               onClick={() => toggleTag(tag.slug)}
             >
               #{tag.name}
@@ -397,13 +396,13 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
   };
 
   return (
-    <div className="min-h-screen bg-light dark:bg-[#0f0f10]">
+    <div className="min-h-screen bg-light dark:bg-dark">
       {/* Hero Section */}
-      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-20 bg-light dark:bg-[#0f0f10] border-b border-lightBorder dark:border-darkBorder overflow-hidden">
+      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-20 bg-light dark:bg-dark border-b border-lightBorder dark:border-darkBorder overflow-hidden">
         {/* Decorative blooms for "Gold Bloom" effect */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
         <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
-        
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex items-start gap-5 mb-8">
             <div className="relative group">
@@ -557,8 +556,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                 {/* Sort Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="gap-2.5 h-10 px-4 border-2 border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:border-gold/40 hover:text-gold transition-all duration-200 font-semibold"
                     >
                       <div className="p-1 bg-gold/10 rounded">
@@ -568,28 +567,28 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => setSortBy('newest')}
                       className="cursor-pointer font-medium"
                     >
                       <Sparkles className="w-4 h-4 mr-3 text-yellow-500" />
                       Newest First
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => setSortBy('oldest')}
                       className="cursor-pointer font-medium"
                     >
                       <Clock className="w-4 h-4 mr-3 text-slate-500" />
                       Oldest First
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => setSortBy('most-viewed')}
                       className="cursor-pointer font-medium"
                     >
                       <TrendingUp className="w-4 h-4 mr-3 text-green-500" />
                       Most Viewed
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => setSortBy('trending')}
                       className="cursor-pointer font-medium"
                     >
@@ -623,7 +622,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             <Card className="border-dashed border-2 border-lightBorder dark:border-darkBorder bg-gradient-to-br from-light to-white dark:from-darkSurface/50 dark:to-dark/50 overflow-hidden relative shadow-card dark:shadow-card-dark">
               {/* Decorative background */}
               <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-gold/5 dark:from-gold/5 dark:via-transparent dark:to-gold/5"></div>
-              
+
               <CardContent className="flex flex-col items-center justify-center py-20 md:py-28 relative z-10">
                 <div className="relative mb-8">
                   <div className="absolute inset-0 bg-gold rounded-full blur-2xl opacity-20 animate-pulse"></div>
@@ -631,7 +630,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                     <Search className="w-12 h-12 text-gold dark:text-goldLight" />
                   </div>
                 </div>
-                
+
                 <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
                   No articles found
                 </h3>
@@ -641,8 +640,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                     : 'No articles match your current filters. Try selecting different categories or tags'}
                 </p>
                 {hasActiveFilters && (
-                  <Button 
-                    onClick={clearAllFilters} 
+                  <Button
+                    onClick={clearAllFilters}
                     variant="outline"
                     className="h-12 px-8 border-2 border-gold/30 hover:bg-gold/10 hover:text-gold hover:border-gold/60 transition-all duration-300 font-bold rounded-xl shadow-sm hover:shadow-gold-sm hover:-translate-y-0.5"
                   >
@@ -656,43 +655,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
         </main>
       </div>
 
-      {/* Custom Scrollbar Styles */}
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #475569;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #64748b;
-        }
-        
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-in {
-          animation: fade-in 0.5s ease-out;
-        }
-      `}</style>
+
     </div>
   );
 };

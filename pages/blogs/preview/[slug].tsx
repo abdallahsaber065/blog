@@ -1,6 +1,6 @@
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
-import TableOfContent from "@/components/Blog/TableOfContenet";
+import TableOfContent from "@/components/Blog/TableOfContent";
 import Tag from "@/components/Elements/Tag";
 import Embed from "@/components/MdxComponents/Embed/Embed";
 import CustomFileView from "@/components/MdxComponents/File/CustomFileView";

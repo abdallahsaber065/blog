@@ -10,7 +10,7 @@ import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
-import { FaSave } from 'react-icons/fa';
+import { Save } from 'lucide-react';
 
 
 interface ImageProps {
@@ -244,16 +244,16 @@ const CreatePost: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4  bg-white dark:bg-dark dark:text-white text-slate-900">
+        <div className="container mx-auto p-4 bg-card text-foreground">
             <TourGuide
                 run={showTour}
                 onFinish={() => setShowTour(false)}
                 setShowAIGenerator={setShowAIGenerator}
-                setShowContentSettings={() => {}}
+                setShowContentSettings={() => { }}
             />
 
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Create New Post</h1>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-lightBorder dark:border-darkBorder">
+                <h1 className="text-3xl font-display font-bold text-foreground">Create New Post</h1>
                 <button
                     className="flex items-center gap-2 px-4 py-2 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40"
                     onClick={() => setShowTour(true)}
@@ -316,7 +316,7 @@ const CreatePost: React.FC = () => {
                 isMounted={isMounted}
             />
 
-            <div className="publish-buttons flex gap-4 pt-6 border-t border-slate-200 dark:border-slate-700 mt-6">
+            <div className="publish-buttons flex gap-4 pt-6 border-t border-lightBorder dark:border-darkBorder mt-6">
                 <button
                     className="flex-1 h-11 px-6 bg-gold hover:bg-goldDark text-slate-900 dark:text-slate-900 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     onClick={() => handleSave('published')}
@@ -329,13 +329,13 @@ const CreatePost: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <FaSave />
+                            <Save className="w-4 h-4" />
                             <span>Publish</span>
                         </>
                     )}
                 </button>
                 <button
-                    className="flex-1 h-11 px-6 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-slate-100 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-11 px-6 bg-darkElevated hover:bg-darkBorder text-foreground font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     onClick={handleSaveDraft}
                     disabled={loading}
                 >

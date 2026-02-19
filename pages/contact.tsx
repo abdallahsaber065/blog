@@ -40,7 +40,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="bg-dark overflow-hidden" style={{ minHeight: 'calc(100vh - 4rem)' }}>
+    <div className="bg-light dark:bg-dark overflow-hidden" style={{ minHeight: 'calc(100vh - 4rem)' }}>
       <main className="relative max-w-5xl mx-auto px-6 py-16 md:py-24">
         {/* Decorative blooms for "Gold Bloom" effect */}
         <div className="absolute top-0 -right-32 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>

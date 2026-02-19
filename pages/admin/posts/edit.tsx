@@ -333,19 +333,17 @@ const PostEditorPage: React.FC = () => {
     const renderErrorMessage = () => {
         if (!isValidId) {
             return (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                    <div className="flex">
-                        <div className="py-1">
-                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-5 mb-4 rounded-xl" role="alert">
+                    <div className="flex items-start gap-3">
+                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
                         <div>
-                            <p className="font-bold">Invalid Post ID</p>
-                            <p>The post ID provided is invalid or missing.</p>
+                            <p className="font-semibold text-red-300">Invalid Post ID</p>
+                            <p className="text-sm mt-1">The post ID provided is invalid or missing.</p>
                             <button
                                 onClick={() => router.push('/admin/posts')}
-                                className="mt-2 text-red-600 hover:text-red-800 underline"
+                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
                             >
                                 Return to Posts List
                             </button>
@@ -357,19 +355,17 @@ const PostEditorPage: React.FC = () => {
 
         if (postNotFound && hasPermission) {
             return (
-                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
-                    <div className="flex">
-                        <div className="py-1">
-                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
+                <div className="bg-gold/10 border border-gold/30 text-gold p-5 mb-4 rounded-xl" role="alert">
+                    <div className="flex items-start gap-3">
+                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
                         <div>
-                            <p className="font-bold">Post Not Found</p>
-                            <p>The post you're looking for doesn't exist or has been deleted.</p>
+                            <p className="font-semibold text-gold">Post Not Found</p>
+                            <p className="text-sm text-muted-foreground mt-1">The post you're looking for doesn't exist or has been deleted.</p>
                             <button
                                 onClick={() => router.push('/admin/posts')}
-                                className="mt-2 text-yellow-600 hover:text-yellow-800 underline"
+                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
                             >
                                 Return to Posts List
                             </button>
@@ -381,19 +377,17 @@ const PostEditorPage: React.FC = () => {
 
         if (hasPermission === false) {
             return (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
-                    <div className="flex">
-                        <div className="py-1">
-                            <svg className="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-5 mb-4 rounded-xl" role="alert">
+                    <div className="flex items-start gap-3">
+                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
                         <div>
-                            <p className="font-bold">Access Denied</p>
-                            <p>You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
+                            <p className="font-semibold text-red-300">Access Denied</p>
+                            <p className="text-sm mt-1">You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
                             <button
                                 onClick={() => router.push('/admin/posts')}
-                                className="mt-2 text-red-600 hover:text-red-800 underline"
+                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
                             >
                                 Return to Posts List
                             </button>
@@ -407,14 +401,14 @@ const PostEditorPage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 text-slate-900 dark:text-slate-300" id="post-editor-container">
+        <div className="container mx-auto p-4 text-foreground" id="post-editor-container">
             <EditTourGuide
                 run={showTour}
                 onFinish={() => setShowTour(false)}
             />
 
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100" id="post-editor-title">Edit Post</h1>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-lightBorder dark:border-darkBorder">
+                <h1 className="text-3xl font-display font-bold text-foreground" id="post-editor-title">Edit Post</h1>
                 <button
                     className="flex items-center gap-2 px-4 py-2 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40"
                     onClick={() => setShowTour(true)}

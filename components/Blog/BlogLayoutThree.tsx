@@ -17,7 +17,7 @@ interface BlogLayoutThreeProps {
 
 const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
   return (
-    <div className="group flex flex-col items-start overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300 bg-card">
+    <div className="group flex flex-col items-start overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300 bg-card card-tilt">
       {/* Image */}
       <Link href={`/blogs/${post.slug}`} className="w-full overflow-hidden block">
         <Image

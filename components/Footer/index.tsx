@@ -69,7 +69,7 @@ const Footer = () => {
                 <motion.div key={label} whileHover={{ scale: 1.15, rotate: 5 }} whileTap={{ scale: 0.92 }}>
                   <Link
                     href={href}
-                    className="w-9 h-9 rounded-xl border border-darkBorder flex items-center justify-center text-slate-400 hover:text-gold hover:border-gold/40 hover:bg-gold/8 transition-colors duration-200"
+                    className="social-icon-glow w-9 h-9 rounded-xl border border-darkBorder flex items-center justify-center text-slate-400 hover:text-gold hover:border-gold/40 hover:bg-gold/8 transition-colors duration-200"
                     aria-label={label}
                     target="_blank"
                     rel="noopener noreferrer"

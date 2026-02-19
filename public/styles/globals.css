@@ -164,9 +164,8 @@ html.dark {
   scrollbar-color: rgba(248, 204, 77, 0.3) transparent;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+
+
 
 h1 > a > .icon.icon-link:before,
 h2 > a > .icon.icon-link:before,
@@ -321,4 +320,98 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 .embed-container {
   max-width: 100%;
   overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────
+   CARD TILT ON HOVER - 3D perspective effect
+───────────────────────────────────────────────────────── */
+.card-tilt {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.card-tilt:hover {
+  transform: rotateX(-2deg) rotateY(2deg) scale(1.01);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─────────────────────────────────────────────────────────
+   SOCIAL ICON HOVER GLOW
+───────────────────────────────────────────────────────── */
+.social-icon-glow {
+  position: relative;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.social-icon-glow::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(248, 204, 77, 0);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  z-index: -1;
+}
+
+.social-icon-glow:hover {
+  transform: translateY(-2px) scale(1.1);
+}
+
+.social-icon-glow:hover::after {
+  background: rgba(248, 204, 77, 0.1);
+  box-shadow: 0 0 20px rgba(248, 204, 77, 0.15);
+}
+
+/* ─────────────────────────────────────────────────────────
+   SEARCH INPUT FOCUS ANIMATION
+───────────────────────────────────────────────────────── */
+.search-input-animated {
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
+}
+
+.search-input-animated:focus {
+  box-shadow: 0 0 0 3px rgba(248, 204, 77, 0.15),
+              0 0 20px rgba(248, 204, 77, 0.08);
+  border-color: rgba(248, 204, 77, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────
+   FADE IN ANIMATION UTILITY
+───────────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─────────────────────────────────────────────────────────
+   SKIP TO CONTENT (Accessibility)
+───────────────────────────────────────────────────────── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 0.75rem 1.5rem;
+  background: #F8CC4D;
+  color: #161618;
+  font-weight: 600;
+  border-radius: 0 0 0.75rem 0.75rem;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
 }

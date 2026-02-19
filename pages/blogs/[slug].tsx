@@ -1,6 +1,6 @@
 import BlogDetails from "@/components/Blog/BlogDetails";
 import RenderMdx from "@/components/Blog/RenderMdx";
-import TableOfContent from "@/components/Blog/TableOfContenet";
+import TableOfContent from "@/components/Blog/TableOfContent";
 import Tag from "@/components/Elements/Tag";
 import Embed from "@/components/MdxComponents/Embed/Embed";
 import CustomFileView from "@/components/MdxComponents/File/CustomFileView";
@@ -160,6 +160,11 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
     };
 };
 
+import ReadingProgressBar from "@/components/Blog/ReadingProgressBar";
+import ShareButtons from "@/components/Blog/ShareButtons";
+import Breadcrumb from "@/components/Elements/Breadcrumb";
+import siteMetadataShare from "@/lib/siteMetaData";
+
 const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
     // Convert strings back to Date objects
     const deserializedPost = {
@@ -182,12 +187,13 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
 
     return (
         <>
+            <ReadingProgressBar />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <article className="mb-8 ">
-                <div className="text-center relative w-full h-[70vh] bg-dark">
+                <div className="text-center relative w-full h-[70vh] bg-light dark:bg-dark">
                     <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         {deserializedPost.category && (
                             <Tag
@@ -216,24 +222,31 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                     />
                 </div>
 
-
+                <Breadcrumb items={[
+                    { label: "Blog", href: "/explore" },
+                    ...(deserializedPost.category ? [{ label: deserializedPost.category.name, href: `/explore?category=${deserializedPost.category.slug}` }] : []),
+                    { label: deserializedPost.title },
+                ]} />
 
                 <BlogDetails post={deserializedPost} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
                     <TableOfContent mdxContent={post.content} />
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>
-                <hr className="my-8" />
 
-                {/* Modern Tags Section */}
-                <div className="flex justify-center mt-4">
-                    <div className="flex flex-wrap gap-2 justify-center md:gap-4">
+                {/* Separator */}
+                <hr className="my-8 border-darkBorder" />
+
+                {/* Tags + Share */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-5 md:px-10 mb-8">
+                    <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                         {deserializedPost.tags && deserializedPost.tags.map((tag: { name: string; slug: string }) => (
-                            <Link key={tag.slug} href={`/explore?tag=${tag.slug}`} className="bg-light dark:bg-dark text-dark dark:text-light rounded-full px-3 py-1 text-sm font-semibold transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-slate-500 dark:hover:shadow-slate-700 md:px-4 md:py-2">
+                            <Link key={tag.slug} href={`/explore?tag=${tag.slug}`} className="bg-gold/10 text-gold border border-gold/30 rounded-full px-4 py-1.5 text-sm font-semibold transition-all duration-200 hover:bg-gold/20 hover:border-gold/50 hover:scale-105">
                                 {tag.name}
                             </Link>
                         ))}
                     </div>
+                    <ShareButtons title={deserializedPost.title} slug={deserializedPost.slug} siteUrl={siteMetadataShare.siteUrl} />
                 </div>
             </article>
         </>
