@@ -99,7 +99,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
             if (folder === 'all') {
                 response = await axios.get('/api/media');
             } else {
-                response = await axios.get(`/api/media?where={"file_url":{ "contains":"uploads/${folder}" }}`);
+                response = await axios.get(`/api/media?where={"file_url":{ "contains":"${folder}" }}`);
             }
             // API now returns public_url alongside the DB record
             const imagesWithFullUrls = response.data

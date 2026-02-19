@@ -263,6 +263,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                             onClose={() => setShowSelector(false)}
                             onSelect={handleFileSelect}
                             currentFile={src}
+                            folder="all"
                         />
                     </div>
                 </div>

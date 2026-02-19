@@ -6,12 +6,18 @@ import CustomFileUpload from '@/components/MdxComponents/File/CustomFileUpload';
 import InlineFileUpload from '@/components/MdxComponents/File/InlineFileUpload';
 import FileResource from '@/components/MdxComponents/File/FileResource';
 import Embed from '@/components/MdxComponents/Embed/Embed';
-import { FaExpand, FaCompress, FaBookOpen } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaBookOpen, FaEye, FaArrowLeft } from 'react-icons/fa';
+import BlogTemplate from '@/components/Blog/BlogTemplate';
 
 interface EditorWithPreviewProps {
     markdownText: string;
     onContentChange: (value: string) => void;
     className?: string;
+    title?: string;
+    category?: { label: string; value: string } | null;
+    tags?: { label: string; value: string }[];
+    featuredImage?: string;
+    excerpt?: string;
 }
 
 interface ImageProps {
@@ -32,16 +38,25 @@ interface FileProps {
     file_url: string;
 }
 
-const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onContentChange }) => {
+const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
+    markdownText,
+    onContentChange,
+    title = "Untitled Post",
+    category,
+    tags = [],
+    featuredImage,
+    excerpt
+}) => {
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [view, setView] = useState<'editor' | 'preview'>('editor');
     const previewRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLivePreview, setIsLivePreview] = useState(false);
 
     useEffect(() => {
-        if (isFullScreen) {
+        if (isFullScreen || isLivePreview) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -50,7 +65,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [isFullScreen]);
+    }, [isFullScreen, isLivePreview]);
 
     const replaceImagesInMarkdown = (text: string): string => {
         const imageRegexes = {
@@ -166,25 +181,11 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
     const handleEditorScroll = (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>) => {
         const editorElement = e.target as HTMLTextAreaElement | HTMLDivElement;
         const scrollPercentage = editorElement.scrollTop / (editorElement.scrollHeight - editorElement.clientHeight);
-        
-        console.log('Editor Scroll Event:', {
-            scrollTop: editorElement.scrollTop,
-            scrollHeight: editorElement.scrollHeight,
-            clientHeight: editorElement.clientHeight,
-            percentage: scrollPercentage
-        });
 
         if (previewRef.current) {
             const previewElement = previewRef.current;
             const newScrollTop = scrollPercentage * (previewElement.scrollHeight - previewElement.clientHeight);
-            console.log('Preview Scroll Calculation:', {
-                previewScrollHeight: previewElement.scrollHeight,
-                previewClientHeight: previewElement.clientHeight,
-                newScrollTop
-            });
             previewElement.scrollTop = newScrollTop;
-        } else {
-            console.log('Preview ref is not available');
         }
     };
 
@@ -241,106 +242,157 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({ markdownText, onC
         Embed: (props: any) => <Embed {...props} />,
     };
 
+    const mockPost = {
+        title: title,
+        excerpt: excerpt,
+        content: markdownText,
+        featured_image_url: featuredImage,
+        tags: tags.map(tag => ({ name: tag.label, slug: tag.value })),
+        category: category ? { name: category.label, slug: category.value } : null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        published_at: null,
+        status: 'draft'
+    };
+
     return (
-        <div className={`editor-preview-container text-slate-900 dark:text-slate-300
-            ${isFullScreen ? 'fixed top-[64px] left-0 right-0 bottom-0 z-40 bg-white dark:bg-dark p-4' : 'relative'}`}>
-            
-            {/* Header with Focus Mode Button */}
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                    {/* Mobile Toggle */}
-                    <div className="sm:hidden">
-                        <label className="flex cursor-pointer gap-2 items-center bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600">
-                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Editor</span>
-                            <input
-                                type="checkbox"
-                                className="toggle toggle-sm border-gold bg-gold [--tglbg:yellow] hover:bg-goldDark"
-                                checked={view === 'preview'}
-                                onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
-                            />
-                            <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Preview</span>
-                        </label>
+        <>
+            {/* Live Preview Overlay */}
+            {isLivePreview && (
+                <div className="fixed inset-0 z-[100] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
+                    <div className="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between shadow-sm">
+                        <button
+                            onClick={() => setIsLivePreview(false)}
+                            className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-full font-medium transition-all duration-200"
+                        >
+                            <FaArrowLeft />
+                            Back to Editor
+                        </button>
+                        <span className="font-semibold text-slate-500 dark:text-slate-400">Live Preview Mode</span>
+                        <div className="w-24"></div> {/* Spacer for centering */}
+                    </div>
+                    <div>
+                        {mdxSource ? (
+                            <BlogTemplate post={mockPost} mdxSource={mdxSource} isPreview={true} />
+                        ) : (
+                            <div className="h-[80vh] flex items-center justify-center">
+                                <p className="text-xl text-slate-400">Loading content...</p>
+                            </div>
+                        )}
                     </div>
                 </div>
-                
-                {/* Focus Mode Button */}
-                <button 
-                    className="ml-auto px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-gold/10 dark:hover:bg-gold/15 border border-slate-300 dark:border-slate-600 hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-slate-700 dark:text-slate-300 hover:text-gold dark:hover:text-goldLight"
-                    onClick={() => setIsFullScreen(!isFullScreen)}
-                    title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
-                >
-                    <span className="text-sm font-medium">
-                        {isFullScreen ? "Exit Focus" : "Focus Mode"}
-                    </span>
-                    {isFullScreen ? <FaCompress className="text-sm" /> : <FaExpand className="text-sm" />}
-                </button>
-            </div>
+            )}
 
-            {/* Editor and Preview Container */}
-            <div className="flex flex-col sm:flex-row gap-4 h-full">
-                {/* Editor Section */}
-                <div className={`editor-preview-editor-section w-full sm:w-1/2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
-                    <div className="flex items-center justify-between mb-3">
-                        <label className="editor-preview-content-label text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-gold rounded-full"></span>
-                            Content
-                        </label>
+            <div className={`editor-preview-container text-slate-900 dark:text-slate-300
+                ${isFullScreen ? 'fixed top-[64px] left-0 right-0 bottom-0 z-40 bg-white dark:bg-dark p-4' : 'relative'}`}>
+
+                {/* Header with Focus Mode Button */}
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                        {/* Mobile Toggle */}
+                        <div className="sm:hidden">
+                            <label className="flex cursor-pointer gap-2 items-center bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600">
+                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Editor</span>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-sm border-gold bg-gold [--tglbg:yellow] hover:bg-goldDark"
+                                    checked={view === 'preview'}
+                                    onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
+                                />
+                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Preview</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 ml-auto">
                         <button
-                            onClick={() => fetch('/static/editor_guide.md')
-                                .then(res => res.text())
-                                .then(text => onContentChange(text))
-                                .catch(err => console.error('Error loading example:', err))}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-gold hover:bg-goldDark text-slate-900 transition-all duration-200 shadow-sm hover:shadow"
-                            title="Load example content"
+                            className="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white border border-green-600 flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200"
+                            onClick={() => setIsLivePreview(true)}
+                            title="Open full Screen Live Preview"
                         >
-                            <FaBookOpen className="text-sm" />
-                            <span>Load Example</span>
+                            <FaEye className="text-sm" />
+                            <span className="text-sm font-medium">Live Preview</span>
+                        </button>
+
+                        <button
+                            className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-gold/10 dark:hover:bg-gold/15 border border-slate-300 dark:border-slate-600 hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-slate-700 dark:text-slate-300 hover:text-gold dark:hover:text-goldLight"
+                            onClick={() => setIsFullScreen(!isFullScreen)}
+                            title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
+                        >
+                            <span className="text-sm font-medium">
+                                {isFullScreen ? "Exit Focus" : "Focus Mode"}
+                            </span>
+                            {isFullScreen ? <FaCompress className="text-sm" /> : <FaExpand className="text-sm" />}
                         </button>
                     </div>
-                    <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm" 
-                         style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
-                        <Editor
-                            markdown={markdownText}
-                            onChange={onContentChange}
-                            onScroll={handleEditorScroll}
-                            editorRef={editorRef as MutableRefObject<HTMLDivElement>}
-                            isFullScreen={isFullScreen}
-                        />
-                    </div>
                 </div>
 
-                {/* Preview Section */}
-                <div className={`editor-preview-preview-section w-full sm:w-1/2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
-                    <div className="flex items-center mb-3">
-                        <h2 className="editor-preview-preview-title text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-green-500 rounded-full"></span>
-                            Preview
-                        </h2>
+                {/* Editor and Preview Container */}
+                <div className="flex flex-col sm:flex-row gap-4 h-full">
+                    {/* Editor Section */}
+                    <div className={`editor-preview-editor-section w-full sm:w-1/2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
+                        <div className="flex items-center justify-between mb-3">
+                            <label className="editor-preview-content-label text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-gold rounded-full"></span>
+                                Content
+                            </label>
+                            <button
+                                onClick={() => fetch('/static/editor_guide.md')
+                                    .then(res => res.text())
+                                    .then(text => onContentChange(text))
+                                    .catch(err => console.error('Error loading example:', err))}
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-gold hover:bg-goldDark text-slate-900 transition-all duration-200 shadow-sm hover:shadow"
+                                title="Load example content"
+                            >
+                                <FaBookOpen className="text-sm" />
+                                <span>Load Example</span>
+                            </button>
+                        </div>
+                        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm"
+                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
+                            <Editor
+                                markdown={markdownText}
+                                onChange={onContentChange}
+                                onScroll={handleEditorScroll}
+                                editorRef={editorRef as MutableRefObject<HTMLDivElement>}
+                                isFullScreen={isFullScreen}
+                            />
+                        </div>
                     </div>
-                    <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-slate-900" 
-                         style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
-                        <div className="h-full overflow-y-auto">
-                            {error ? (
-                                <div className="flex items-center justify-center h-full">
-                                    <p className="text-red-500 font-medium">{error}</p>
-                                </div>
-                            ) : !mdxSource ? (
-                                <div className="flex items-center justify-center h-full text-slate-400 dark:text-slate-500">
-                                    <p className="text-sm">No content to preview</p>
-                                </div>
-                            ) : (
-                                <RenderMdxDev 
-                                    mdxSource={mdxSource} 
-                                    additionalComponents={mdxComponents} 
-                                    mdxText={markdownText} 
-                                    previewRef={previewRef as MutableRefObject<HTMLDivElement>} 
-                                />
-                            )}
+
+                    {/* Preview Section */}
+                    <div className={`editor-preview-preview-section w-full sm:w-1/2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
+                        <div className="flex items-center mb-3">
+                            <h2 className="editor-preview-preview-title text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-green-500 rounded-full"></span>
+                                Preview
+                            </h2>
+                        </div>
+                        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-slate-900"
+                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
+                            <div className="h-full overflow-y-auto">
+                                {error ? (
+                                    <div className="flex items-center justify-center h-full">
+                                        <p className="text-red-500 font-medium">{error}</p>
+                                    </div>
+                                ) : !mdxSource ? (
+                                    <div className="flex items-center justify-center h-full text-slate-400 dark:text-slate-500">
+                                        <p className="text-sm">No content to preview</p>
+                                    </div>
+                                ) : (
+                                    <RenderMdxDev
+                                        mdxSource={mdxSource}
+                                        additionalComponents={mdxComponents}
+                                        mdxText={markdownText}
+                                        previewRef={previewRef as MutableRefObject<HTMLDivElement>}
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

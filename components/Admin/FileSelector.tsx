@@ -141,7 +141,8 @@ const FileSelector: React.FC<FileSelectorProps> = ({
         const formData = new FormData();
         formData.append('file', file);
         formData.append('userId', session?.user?.id as string);
-        formData.append('saveDir', folder);
+        const saveDir = folder === 'all' ? 'files' : folder;
+        formData.append('saveDir', saveDir);
 
         setUploadLoading(true);
         try {

@@ -72,11 +72,11 @@ export class ImageKitStorageProvider implements StorageProvider {
     const folder = this.folderForKey(key);
 
     const formData = new FormData();
-    formData.append('file', new Blob([buffer], { type: mimeType }), fileName);
+    formData.append('file', new Blob([buffer as any], { type: mimeType }), fileName);
     formData.append('fileName', fileName);
     formData.append('folder', folder);
-    // Overwrite if same name exists in that folder (mirrors local behaviour)
-    formData.append('useUniqueFileName', 'false');
+    // Use unique filename to leverage ImageKit's auto-generated IDs feature
+    formData.append('useUniqueFileName', 'true');
 
     const res = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
       method: 'POST',

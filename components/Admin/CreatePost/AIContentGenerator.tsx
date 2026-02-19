@@ -409,7 +409,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                     isOpen={showImageSelector}
                     onClose={() => setShowImageSelector(false)}
                     onSelect={handleImageSelect}
-                    folder="blog"
+                    folder="media"
                 />
             )}
 

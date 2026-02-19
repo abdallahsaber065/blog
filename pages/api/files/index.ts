@@ -17,7 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                 const files = await prisma.fileLibrary.findMany({
                     where: {
                         ...(query.folder && query.folder !== 'all'
-                            ? { file_url: { contains: `uploads/${query.folder}` } }
+                            ? { file_url: { contains: `${query.folder}` } }
                             : {}
                         )
                     },

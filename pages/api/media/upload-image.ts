@@ -65,7 +65,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // Build the storage key: "uploads/<saveDir>/<filename>"
     // saveDir is 'media' for blog images, 'avatars' for profile images
-    const storageKey = `uploads/${saveDir}/${file.newFilename}`;
+    // Use originalFilename to preserve meaningful names, ImageKit handles uniqueness
+    const originalName = file.originalFilename?.replace(/[^a-zA-Z0-9.-]/g, '_') || file.newFilename;
+    const storageKey = `uploads/${saveDir}/${originalName}`;
 
     const storage = getStorageProvider();
     const uploadResult = await storage.upload(
