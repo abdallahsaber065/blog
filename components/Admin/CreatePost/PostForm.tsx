@@ -107,6 +107,11 @@ const PostForm: React.FC<PostFormProps> = ({
                 <EditorWithPreview
                     markdownText={content}
                     onContentChange={handleContentChange}
+                    title={title}
+                    category={category}
+                    tags={tags}
+                    featuredImage={featuredImage}
+                    excerpt={excerpt}
                 />
             </div>
             {isMounted && (
@@ -166,7 +171,7 @@ const PostForm: React.FC<PostFormProps> = ({
                     onClose={() => setShowImageSelector(false)}
                     onSelect={setFeaturedImage}
                     currentImage={featuredImage}
-                    folder='blog'
+                    folder='media'
                 />
             </div>
         </div>

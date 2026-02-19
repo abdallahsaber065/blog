@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "../Icons";
 import Link from "next/link";
@@ -39,6 +39,12 @@ const Footer = () => {
       setLoading(false);
     }
   };
+
+  const [currentYear, setCurrentYear] = useState(2026);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="bg-dark text-slate-300 relative overflow-hidden">
@@ -129,7 +135,7 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-darkBorder flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500">
-          <span>&copy; {new Date().getFullYear()} Dev Trend. All rights reserved.</span>
+          <span>&copy; {currentYear} Dev Trend. All rights reserved.</span>
           <span>
             Made with{" "}
             <span className="text-gold">♥</span>

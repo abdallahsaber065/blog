@@ -47,8 +47,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     try {
       const buffer = fs.readFileSync(file.filepath);
-      const originalName = file.originalFilename || file.newFilename;
-      const storageKey = `uploads/${saveDir}/${file.newFilename}`;
+      const originalFileName = file.originalFilename || file.newFilename;
+      const sanitizedName = originalFileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const storageKey = `uploads/${saveDir}/${sanitizedName}`;
 
       const storage = getStorageProvider();
       const uploadResult = await storage.upload(
@@ -62,7 +63,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const fileEntry = await prisma.fileLibrary.create({
         data: {
-          file_name: originalName,
+          file_name: originalFileName,
           file_type: uploadResult.file_type,
           file_size: uploadResult.file_size,
           file_url: uploadResult.file_url,   // e.g. "uploads/files/doc.pdf"

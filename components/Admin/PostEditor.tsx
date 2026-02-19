@@ -82,7 +82,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
     };
 
     const handleSave = async () => {
-        const { permissions, status: _status, ...postData } = currentPost;
+        const { permissions: _permissions, status: _status, ...postData } = currentPost;
         await onSave(postData, postStatus);
     };
 
@@ -119,6 +119,11 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
             <EditorWithPreview
                 markdownText={markdownText}
                 onContentChange={handleContentChange}
+                title={currentPost.title}
+                category={currentPost.category ? { label: currentPost.category.name, value: String(currentPost.category.id) } : null}
+                tags={currentPost.tags.map(tag => ({ label: tag.name, value: String(tag.id) }))}
+                featuredImage={currentPost.featured_image_url}
+                excerpt={currentPost.content.substring(0, 100) + '...'} // Use simplified excerpt if not available
             />
 
             {/* Tags Section */}
@@ -192,7 +197,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     onClose={() => setShowImageSelector(false)}
                     onSelect={(image) => handleFieldChange('featured_image_url', image.file_url)}
                     currentImage={currentPost.featured_image_url}
-                    folder='blog'
+                    folder='media'
                 />
             </div>
 
@@ -205,8 +210,8 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                         type="button"
                         onClick={() => setPostStatus(postStatus === 'published' ? 'draft' : 'published')}
                         className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-200 focus:outline-none border ${postStatus === 'published'
-                                ? 'bg-green-500 border-green-600'
-                                : 'bg-slate-300 dark:bg-slate-600 border-slate-400 dark:border-slate-500'
+                            ? 'bg-green-500 border-green-600'
+                            : 'bg-slate-300 dark:bg-slate-600 border-slate-400 dark:border-slate-500'
                             }`}
                         aria-label="Toggle post status"
                     >
