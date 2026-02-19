@@ -48,7 +48,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={cx(
         "font-mr bg-light dark:bg-dark"
       )}
-      style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
     >
       <Head>
         <link rel="manifest" href="/manifest.json" />
@@ -65,6 +64,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* mstile 150x150 */}
         <meta name="msapplication-TileImage" content="/static/images/icons/mstile-150x150.png" />
       </Head>
+      <a href="#main-content" className="skip-to-content">
+        Skip to content
+      </a>
       <Header />
       <Toaster
         position="top-right"
@@ -73,7 +75,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           right: '1rem',
         }}
       />
-      {children}
+      <main id="main-content">
+        {children}
+      </main>
       <Footer />
     </div>
   );

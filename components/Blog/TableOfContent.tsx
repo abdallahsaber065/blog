@@ -25,7 +25,7 @@ export function generateTOC(content: string): Heading[] {
         .map((match) => {
             const [, flag, text] = match;
             const level = flag.length;
-            return { level, text: text || '', slug: text ? slugger.slug(text) : '' };
+            return { level, text: text || '', slug: text ? slugger.slug(text.trim()) : '' };
         })
         .filter(h => h.level >= 2 && h.level <= 3); // Only H2 and H3
 

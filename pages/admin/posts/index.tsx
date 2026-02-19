@@ -125,7 +125,7 @@ const DashboardPage: React.FC = () => {
             <Card>
                 <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <CardTitle className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-200">
+                        <CardTitle className="text-2xl md:text-3xl font-bold text-foreground">
                             Posts Dashboard
                         </CardTitle>
                         <Button

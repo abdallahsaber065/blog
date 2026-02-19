@@ -20,7 +20,7 @@ interface BlogLayoutOneProps {
 
 const BlogLayoutOne = ({ post }: BlogLayoutOneProps) => {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder h-full min-h-[320px] shadow-card dark:shadow-card-dark hover:shadow-elevated transition-all duration-300 hover:border-gold/30">
+    <div className="group relative overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder h-full min-h-[320px] shadow-card dark:shadow-card-dark hover:shadow-elevated transition-all duration-300 hover:border-gold/30 card-tilt">
       {/* Gradient overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-dark/95 via-dark/40 to-transparent rounded-2xl" />
 

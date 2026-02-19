@@ -19,7 +19,7 @@ interface BlogLayoutTwoProps {
 
 const BlogLayoutTwo = ({ post }: BlogLayoutTwoProps) => {
   return (
-    <div className="group grid grid-cols-12 gap-0 items-stretch overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300">
+    <div className="group grid grid-cols-12 gap-0 items-stretch overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300 card-tilt">
       {/* Thumbnail */}
       <Link
         href={`/blogs/${post.slug}`}
