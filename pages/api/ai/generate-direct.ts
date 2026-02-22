@@ -14,7 +14,7 @@ import type { GenerateDirectRequest } from '@/lib/ai/types';
 import { authMiddleware } from '@/middleware/authMiddleware';
 
 const gemini = new GeminiService({
-  defaultModel: 'gemini-2.5-flash',
+  defaultModel: 'gemini-3-flash',
   defaultGenerationConfig: {
     temperature: 0.75,
     maxOutputTokens: 8192,
@@ -68,7 +68,7 @@ Summarise: key concepts, latest developments, real-world examples, statistics, a
       model: 'gemini-2.5-flash',
       prompt: researchPrompt,
       contextUrls: context_urls,
-      config: { temperature: 0.3, maxOutputTokens: 4096 },
+      config: { temperature: 0.3, maxOutputTokens: 8192 },
     });
 
     // ── 3. Stream the final blog post ───────────────────────────────────────

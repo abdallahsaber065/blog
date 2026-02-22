@@ -7,18 +7,6 @@
 
 import { GoogleGenAI } from '@google/genai';
 import path from 'node:path';
-// `file-type` and `mime` are runtime dependencies used for MIME detection.
-// They may not have type declarations available in all environments, so we
-// import them via `require` and type them loosely to keep this library usable
-// without additional @types packages.
-// eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
-const { fileTypeFromFile }: { fileTypeFromFile: (path: string) => Promise<{ mime?: string } | undefined> } =
-  // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-  require('file-type');
-// eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
-const mime: { getType: (path: string) => string | null } =
-  // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-assignment
-  require('mime');
 import {
   GeminiCandidate,
   GeminiContent,
@@ -49,7 +37,12 @@ export async function detectMimeType(
   }
 
   // 2) Try file-type (content-based detection).
+  // Using dynamic import for ESM-only module compatibility
   try {
+    const fileType = await import('file-type');
+    const fileTypeFromFile = fileType.fileTypeFromFile as (
+      path: string,
+    ) => Promise<{ mime?: string } | undefined>;
     const result = await fileTypeFromFile(filePath);
     if (result?.mime) {
       return result.mime;
@@ -59,8 +52,14 @@ export async function detectMimeType(
   }
 
   // 3) Fallback to mime.getType (extension-based).
-  const byExt = mime.getType(filePath);
-  return byExt ?? undefined;
+  try {
+    const mimeModule = await import('mime');
+    const getType = mimeModule.getType as (path: string) => string | null;
+    const byExt = getType(filePath);
+    return byExt ?? undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
