@@ -102,13 +102,13 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
         <div className="post-editor-container flex flex-col space-y-6">
             {/* Title Section */}
             <div className="post-editor-title-section">
-                <label className="post-editor-title-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                <label className="post-editor-title-label text-base font-semibold text-foreground mb-2 flex items-center gap-2">
                     <span className="w-1 h-5 bg-gold rounded-full"></span>
                     Title
                 </label>
                 <input
                     type="text"
-                    className="post-editor-title-input w-full text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all duration-200"
+                    className="post-editor-title-input w-full text-foreground bg-white dark:bg-dark px-4 py-2.5 border border-lightBorder dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all duration-200"
                     placeholder="Enter post title..."
                     value={currentPost.title || ''}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
@@ -128,8 +128,8 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
 
             {/* Tags Section */}
             <div className="post-editor-tags-section">
-                <label className="post-editor-tags-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-purple-500 rounded-full"></span>
+                <label className="post-editor-tags-label text-base font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-gold/70 rounded-full"></span>
                     Tags
                 </label>
                 <CreatableSelect
@@ -150,8 +150,8 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
 
             {/* Category Section */}
             <div className="post-editor-category-section">
-                <label className="post-editor-category-label block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-orange-500 rounded-full"></span>
+                <label className="post-editor-category-label text-base font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-goldLight rounded-full"></span>
                     Category
                 </label>
                 <CreatableSelect
@@ -171,8 +171,8 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
 
             {/* Featured Image Section */}
             <div className="featured-image">
-                <label className="block text-base font-semibold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-green-500 rounded-full"></span>
+                <label className="text-base font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-success rounded-full"></span>
                     Featured Image
                 </label>
                 <Button
@@ -183,7 +183,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                     Browse Images
                 </Button>
                 {currentPost.featured_image_url && (
-                    <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm">
+                    <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm">
                         <img
                             src={currentPost.featured_image_url}
                             alt="Featured"
@@ -202,16 +202,16 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
             </div>
 
             {/* Action Buttons */}
-            <div className="post-editor-actions flex flex-col gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div className="post-editor-actions flex flex-col gap-4 pt-4 border-t border-lightBorder dark:border-darkBorder">
                 {/* Status Toggle */}
                 <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Status:</span>
+                    <span className="text-sm font-semibold text-muted-foreground">Status:</span>
                     <button
                         type="button"
                         onClick={() => setPostStatus(postStatus === 'published' ? 'draft' : 'published')}
                         className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-200 focus:outline-none border ${postStatus === 'published'
-                            ? 'bg-green-500 border-green-600'
-                            : 'bg-slate-300 dark:bg-slate-600 border-slate-400 dark:border-slate-500'
+                            ? 'bg-success border-success/20'
+                            : 'bg-light dark:bg-dark border-lightBorder dark:border-darkBorder'
                             }`}
                         aria-label="Toggle post status"
                     >
@@ -220,7 +220,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                                 }`}
                         />
                     </button>
-                    <span className={`text-sm font-medium ${postStatus === 'published' ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                    <span className={`text-sm font-medium ${postStatus === 'published' ? 'text-success' : 'text-muted-foreground'}`}>
                         {postStatus === 'published' ? 'Published' : 'Draft'}
                     </span>
                 </div>

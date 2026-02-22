@@ -49,7 +49,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfir
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600"
+                        className="px-4 py-2 rounded-lg border border-lightBorder dark:border-darkBorder text-foreground hover:bg-light dark:hover:bg-darkSurface transition-all duration-200"
                     >
                         Cancel
                     </button>
@@ -263,7 +263,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                     />
                                     <label
                                         htmlFor="image-upload"
-                                        className="bg-gold text-slate-900 px-3 py-1.5 rounded text-sm cursor-pointer flex items-center justify-center sm:w-auto"
+                                        className="bg-gold text-dark px-3 py-1.5 rounded text-sm cursor-pointer flex items-center justify-center sm:w-auto font-semibold shadow-gold transition-all duration-200"
                                     >
                                         <FiUpload className="w-4 h-4 mr-2" />
                                         Upload Image
@@ -276,7 +276,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                             value={urlInput}
                                             onChange={(e) => setUrlInput(e.target.value)}
                                             placeholder="Enter image URL"
-                                            className="flex-1 min-w-0 border rounded px-2 py-1.5 text-sm dark:bg-slate-800 dark:border-slate-700"
+                                            className="flex-1 min-w-0 border border-lightBorder dark:border-darkBorder rounded px-2 py-1.5 text-sm bg-white dark:bg-dark text-foreground"
                                         />
                                         <button
                                             onClick={handleUrlUpload}
