@@ -10,7 +10,8 @@ import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
-import { Save } from 'lucide-react';
+import { Save, CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 interface ImageProps {
@@ -55,6 +56,9 @@ const CreatePost: React.FC = () => {
     const [showTour, setShowTour] = useState(false);
     const [includeImages, setIncludeImages] = useState(false);
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [savedPostId, setSavedPostId] = useState<number | null>(null);
 
     // Inside the CreatePost component
     const router = useRouter();
@@ -239,12 +243,31 @@ const CreatePost: React.FC = () => {
         try {
             const postId = await handleSave('draft');
             if (postId) {
-                router.push(`/admin/posts/edit?id=${postId}`);
+                setSavedPostId(postId);
+                setIsRedirecting(true);
+                setTimeout(() => {
+                    router.push(`/admin/posts/edit?id=${postId}`);
+                }, 1500);
             }
         } catch (error) {
             console.error('Error saving draft:', error);
         }
     };
+
+    const handlePublish = async () => {
+        try {
+            const postId = await handleSave('published');
+            if (postId) {
+                setSavedPostId(postId);
+                setIsRedirecting(true);
+                setTimeout(() => {
+                    router.push(`/admin/posts/edit?id=${postId}`);
+                }, 1500);
+            }
+        } catch (error) {
+            console.error('Error publishing post:', error);
+        }
+    }
 
     return (
         <div className="container mx-auto p-4 bg-card text-foreground">
@@ -322,7 +345,7 @@ const CreatePost: React.FC = () => {
             <div className="publish-buttons flex gap-4 pt-6 border-t border-lightBorder dark:border-darkBorder mt-6">
                 <button
                     className="flex-1 h-11 px-6 bg-gold hover:bg-goldDark text-slate-900 dark:text-slate-900 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    onClick={() => handleSave('published')}
+                    onClick={handlePublish}
                     disabled={loading}
                 >
                     {loading ? (
@@ -352,6 +375,40 @@ const CreatePost: React.FC = () => {
                     )}
                 </button>
             </div>
+            <AnimatePresence>
+                {isRedirecting && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            className="bg-card border border-lightBorder dark:border-darkBorder p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                                className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6"
+                            >
+                                <CheckCircle className="w-10 h-10 text-gold" />
+                            </motion.div>
+                            <h2 className="text-2xl font-display font-bold mb-2">Post Created!</h2>
+                            <p className="text-muted-foreground mb-8">
+                                Wrapping things up and taking you to the editor...
+                            </p>
+                            <div className="flex items-center justify-center gap-3 text-gold animate-pulse">
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <span className="font-medium">Redirecting</span>
+                                <ArrowRight className="w-4 h-4" />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

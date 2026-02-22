@@ -10,6 +10,7 @@ import readingTime from "reading-time"
 import { slug } from 'github-slugger';
 import { useSession } from 'next-auth/react';
 import EditTourGuide from '@/components/Admin/EditTourGuide';
+import { motion } from 'framer-motion';
 
 interface Post {
     id: number;
@@ -401,7 +402,13 @@ const PostEditorPage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 text-foreground" id="post-editor-container">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="container mx-auto p-4 text-foreground"
+            id="post-editor-container"
+        >
             <EditTourGuide
                 run={showTour}
                 onFinish={() => setShowTour(false)}
@@ -438,7 +445,7 @@ const PostEditorPage: React.FC = () => {
                     />
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 };
 

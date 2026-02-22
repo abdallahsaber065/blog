@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Save, UserCog, Mail, User, FileText } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface User {
     id: string;
@@ -105,10 +106,10 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
 
     if (status === 'loading') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight" />
-                    <p className="text-slate-600 dark:text-slate-400">Loading...</p>
+                    <p className="text-muted-foreground">Loading...</p>
                 </div>
             </div>
         );
@@ -116,16 +117,16 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
 
     if (status === 'unauthenticated') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-                <Card className="max-w-md w-full mx-4">
+            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
+                <Card className="max-w-md w-full mx-4 border-lightBorder dark:border-darkBorder bg-card shadow-card dark:shadow-card-dark">
                     <CardHeader className="text-center space-y-4">
-                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg w-fit">
+                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-gold w-fit">
                             <UserCog className="w-8 h-8 text-white" />
                         </div>
-                        <CardTitle className="text-3xl">Edit Profile</CardTitle>
+                        <CardTitle className="text-3xl text-foreground">Edit Profile</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-center text-slate-600 dark:text-slate-400">
+                        <p className="text-center text-muted-foreground">
                             You need to be signed in to edit your profile.
                         </p>
                     </CardContent>
@@ -135,144 +136,153 @@ const EditProfilePage = ({ user }: EditProfilePageProps) => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-            {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex items-start gap-4">
-                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
-                            <UserCog className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                                Edit Profile
-                            </h1>
-                            <p className="text-lg text-slate-600 dark:text-slate-400">
-                                Update your personal information
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div className="min-h-screen bg-light dark:bg-dark overflow-hidden relative">
+            {/* Decorative blooms for "Gold Bloom" effect */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+            <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
 
             {/* Main Content */}
-            <main className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Username */}
-                            <div className="space-y-2">
-                                <Label htmlFor="username" className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-gold dark:text-goldLight" />
-                                    Username
-                                </Label>
-                                <Input
-                                    type="text"
-                                    id="username"
-                                    name="username"
-                                    value={formData.username}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter your username"
-                                />
+            <main className="container mx-auto px-4 pt-12 max-w-3xl relative z-10 pb-12">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Card className="border-lightBorder dark:border-darkBorder shadow-elevated overflow-hidden bg-card">
+                        <CardHeader className="bg-lightSurface/50 dark:bg-darkSurface/50 border-b border-lightBorder dark:border-darkBorder pb-6">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-gradient-to-br from-gold to-goldDark rounded-xl shadow-gold-sm">
+                                    <UserCog className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-2xl text-foreground font-display">Edit Profile</CardTitle>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                        Update your personal information and preferences
+                                    </p>
+                                </div>
                             </div>
+                        </CardHeader>
+                        <CardContent className="p-6 md:p-8">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* First Name */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="first_name" className="text-foreground font-medium">First Name</Label>
+                                        <Input
+                                            type="text"
+                                            id="first_name"
+                                            name="first_name"
+                                            value={formData.first_name}
+                                            onChange={handleChange}
+                                            placeholder="Enter your first name"
+                                            className="h-12 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus-visible:ring-gold"
+                                        />
+                                    </div>
 
-                            {/* Email */}
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-gold dark:text-goldLight" />
-                                    Email
-                                </Label>
-                                <Input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Enter your email"
-                                />
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                    Changing your email will require verification and sign you out
-                                </p>
-                            </div>
+                                    {/* Last Name */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="last_name" className="text-foreground font-medium">Last Name</Label>
+                                        <Input
+                                            type="text"
+                                            id="last_name"
+                                            name="last_name"
+                                            value={formData.last_name}
+                                            onChange={handleChange}
+                                            placeholder="Enter your last name"
+                                            className="h-12 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus-visible:ring-gold"
+                                        />
+                                    </div>
+                                </div>
 
-                            {/* First Name */}
-                            <div className="space-y-2">
-                                <Label htmlFor="first_name">First Name</Label>
-                                <Input
-                                    type="text"
-                                    id="first_name"
-                                    name="first_name"
-                                    value={formData.first_name}
-                                    onChange={handleChange}
-                                    placeholder="Enter your first name"
-                                />
-                            </div>
+                                {/* Username */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="username" className="flex items-center gap-2 text-foreground font-medium">
+                                        <User className="w-4 h-4 text-gold dark:text-goldLight" />
+                                        Username
+                                    </Label>
+                                    <Input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter your username"
+                                        className="h-12 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus-visible:ring-gold"
+                                    />
+                                </div>
 
-                            {/* Last Name */}
-                            <div className="space-y-2">
-                                <Label htmlFor="last_name">Last Name</Label>
-                                <Input
-                                    type="text"
-                                    id="last_name"
-                                    name="last_name"
-                                    value={formData.last_name}
-                                    onChange={handleChange}
-                                    placeholder="Enter your last name"
-                                />
-                            </div>
+                                {/* Email */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="email" className="flex items-center gap-2 text-foreground font-medium">
+                                        <Mail className="w-4 h-4 text-gold dark:text-goldLight" />
+                                        Email
+                                    </Label>
+                                    <Input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter your email"
+                                        className="h-12 bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus-visible:ring-gold"
+                                    />
+                                    <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
+                                        * Changing your email will require verification and sign you out immediately.
+                                    </p>
+                                </div>
 
-                            {/* Bio */}
-                            <div className="space-y-2">
-                                <Label htmlFor="bio" className="flex items-center gap-2">
-                                    <FileText className="w-4 h-4 text-gold dark:text-goldLight" />
-                                    Bio
-                                </Label>
-                                <Textarea
-                                    id="bio"
-                                    name="bio"
-                                    value={formData.bio}
-                                    onChange={handleChange}
-                                    placeholder="Tell us about yourself..."
-                                    rows={4}
-                                />
-                            </div>
+                                {/* Bio */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="bio" className="flex items-center gap-2 text-foreground font-medium">
+                                        <FileText className="w-4 h-4 text-gold dark:text-goldLight" />
+                                        Bio
+                                    </Label>
+                                    <Textarea
+                                        id="bio"
+                                        name="bio"
+                                        value={formData.bio}
+                                        onChange={handleChange}
+                                        placeholder="Tell us a little bit about yourself..."
+                                        rows={5}
+                                        className="resize-none bg-light dark:bg-dark border-lightBorder dark:border-darkBorder focus-visible:ring-gold p-4 transition-shadow hover:border-gold/30"
+                                    />
+                                </div>
 
-                            {/* Submit Button */}
-                            <div className="flex gap-4 pt-4">
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="flex-1"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                            Saving Changes...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save className="w-4 h-4 mr-2" />
-                                            Save Changes
-                                        </>
-                                    )}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => router.push('/profile')}
-                                    disabled={isSubmitting}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                                {/* Actions */}
+                                <div className="flex flex-col sm:flex-row gap-3 pt-6 mt-6 border-t border-lightBorder dark:border-darkBorder">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => router.push('/profile')}
+                                        disabled={isSubmitting}
+                                        className="flex-1 h-12 border-lightBorder dark:border-darkBorder hover:bg-lightSurface dark:hover:bg-darkSurface transition-colors"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="flex-[2] h-12 bg-gradient-to-r from-gold to-goldDark hover:from-goldDark hover:to-gold text-dark shadow-gold transition-all duration-300 hover:shadow-gold-lg"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                                Saving Changes...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="w-5 h-5 mr-2" />
+                                                Save Changes
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </main>
         </div>
     );

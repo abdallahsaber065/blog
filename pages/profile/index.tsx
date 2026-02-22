@@ -7,12 +7,14 @@ import toast from 'react-hot-toast';
 import { GetServerSideProps } from 'next';
 import ProfileInfo from '@/components/Profile/ProfileInfo';
 import AccountDetails from '@/components/Profile/AccountDetails';
-import ProfileActions from '@/components/Profile/ProfileActions';
+import DangerZone from '@/components/Profile/DangerZone';
+import ChangePasswordDialog from '@/components/Profile/ChangePasswordDialog';
 import ImageEditor from '@/components/Profile/ImageEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Upload, ImageIcon, User as UserIcon, Loader2, Sparkles } from 'lucide-react';
+import { Upload, ImageIcon, User as UserIcon, Loader2, Sparkles, Camera, Calendar, Edit } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface User {
     id: string;
@@ -83,22 +85,13 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
         }
     };
 
-    const handleSave = (croppedImage: Blob) => {
+    const handleSave = async (croppedImage: Blob) => {
         setCurrentImage(URL.createObjectURL(croppedImage));
         setCroppedBlob(croppedImage);
-        setIsEditorOpen(false);
-    };
-
-    const handleUpload = async () => {
-        if (!croppedBlob) {
-            toast.dismiss();
-            toast.error('Please select a file to upload.');
-            return;
-        }
 
         setIsUploading(true);
         const formData = new FormData();
-        const file = new File([croppedBlob], selectedFile?.name || 'cropped-image.jpg', { type: 'image/jpeg' });
+        const file = new File([croppedImage], selectedFile?.name || 'cropped-image.jpg', { type: 'image/jpeg' });
         formData.append('file', file);
         formData.append('userId', user?.id.toString() || '');
         formData.append('saveDir', 'avatars');
@@ -150,14 +143,16 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
             toast.error(data.error || 'Something went wrong');
         }
         setIsUploading(false);
+        setIsEditorOpen(false);
+        setCroppedBlob(null);
     };
 
     if (status === 'loading') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight" />
-                    <p className="text-slate-600 dark:text-slate-400">Loading your profile...</p>
+                    <p className="text-muted-foreground">Loading your profile...</p>
                 </div>
             </div>
         );
@@ -165,21 +160,21 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
 
     if (status === 'unauthenticated') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-                <Card className="max-w-md w-full mx-4">
+            <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
+                <Card className="max-w-md w-full mx-4 border-lightBorder dark:border-darkBorder bg-card shadow-card dark:shadow-card-dark">
                     <CardHeader className="text-center space-y-4">
-                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg w-fit">
+                        <div className="mx-auto p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-gold w-fit">
                             <UserIcon className="w-8 h-8 text-white" />
                         </div>
-                        <CardTitle className="text-3xl">Profile Access</CardTitle>
+                        <CardTitle className="text-3xl text-foreground font-display">Profile Access</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-center text-slate-600 dark:text-slate-400">
+                        <p className="text-center text-muted-foreground">
                             You need to be signed in to view your profile.
                         </p>
                         <Button
                             onClick={() => signIn()}
-                            className="w-full"
+                            className="w-full bg-gradient-to-r from-gold to-goldDark hover:from-goldDark hover:to-gold text-dark shadow-gold transition-all duration-300 hover:shadow-gold-lg"
                             size="lg"
                         >
                             Sign In
@@ -191,120 +186,124 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-            {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-gradient-to-br from-gold/5 via-gold/2 to-gold/5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-b border-slate-200 dark:border-slate-800">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex items-start gap-4 mb-6">
-                        <div className="p-4 bg-gradient-to-br from-gold to-goldDark rounded-2xl shadow-lg">
-                            <UserIcon className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                                My Profile
-                            </h1>
-                            <p className="text-lg text-slate-600 dark:text-slate-400">
-                                Manage your account settings and preferences
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div className="min-h-screen bg-light dark:bg-dark overflow-hidden relative">
+            {/* Decorative blooms for "Gold Bloom" effect */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+            <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
 
             {/* Main Content */}
-            <main className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl pt-12 relative z-10 pb-12">
                 {user ? (
-                    <div className="space-y-6">
-                        {/* Profile Image Card */}
-                        <Card className="overflow-hidden">
-                            <CardHeader className="bg-gradient-to-r from-gold/10 via-gold/5 to-goldDark/10 dark:from-gold/5 dark:via-gold/2 dark:to-goldDark/5 border-b border-gold/20 dark:border-gold/10">
-                                <CardTitle className="flex items-center gap-2">
-                                    <Sparkles className="w-5 h-5 text-gold dark:text-goldLight" />
-                                    Profile Picture
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6">
-                                <div className="flex flex-col items-center gap-6">
-                                    {/* Profile Image Display */}
-                                    <div className="relative group">
-                                        {!imageError && (currentImage || user.profile_image_url) ? (
-                                            <SmartImage
-                                                src={currentImage || resolveImageUrl(user.profile_image_url)}
-                                                alt="Profile Image"
-                                                imgClassName="rounded-full w-32 h-32 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-xl"
-                                                className="rounded-full w-32 h-32 object-cover ring-4 ring-gold/30 dark:ring-gold/40 shadow-xl"
-                                                onError={() => setImageError(true)}
-                                                width={128}
-                                                height={128}
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center bg-gradient-to-br from-gold to-goldDark rounded-full w-32 h-32 text-slate-900 text-4xl font-bold shadow-xl ring-4 ring-gold/30 dark:ring-gold/40">
-                                                {initials}
-                                            </div>
-                                        )}
-                                        {croppedBlob && (
-                                            <Badge className="absolute -top-2 -right-2 bg-green-500">
-                                                New
-                                            </Badge>
-                                        )}
-                                    </div>
+                    <div className="flex flex-col lg:flex-row gap-8">
 
-                                    {/* Image Upload Controls */}
-                                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleFileChange}
-                                            className="hidden"
-                                            accept="image/*"
-                                        />
-                                        <Button
-                                            onClick={handleButtonClick}
-                                            variant="outline"
-                                            className="flex-1"
-                                        >
-                                            <ImageIcon className="w-4 h-4 mr-2" />
-                                            Choose Image
-                                        </Button>
-                                        <Button
-                                            onClick={handleUpload}
-                                            disabled={!croppedBlob || isUploading}
-                                            variant="success"
-                                            className="flex-1"
-                                        >
-                                            {isUploading ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Uploading...
-                                                </>
+                        {/* Left Sidebar - Profile Summary & Picture */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="w-full lg:w-1/3 flex flex-col gap-6"
+                        >
+                            <Card className="overflow-hidden border-lightBorder dark:border-darkBorder bg-card shadow-elevated">
+                                <CardContent className="p-0">
+                                    <div className="p-6 flex flex-col items-center">
+                                        {/* Profile Image Display */}
+                                        <div className="relative group mb-4">
+                                            <div className="absolute inset-0 bg-gold rounded-full blur-md opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                                            {!imageError && (currentImage || user.profile_image_url) ? (
+                                                <SmartImage
+                                                    src={currentImage || resolveImageUrl(user.profile_image_url)}
+                                                    alt="Profile Image"
+                                                    imgClassName="relative rounded-full w-32 h-32 object-cover ring-4 ring-light dark:ring-dark shadow-xl z-10 transition-transform duration-300 group-hover:scale-[1.02]"
+                                                    className="relative rounded-full w-32 h-32 object-cover ring-4 ring-light dark:ring-dark shadow-xl z-10 transition-transform duration-300 group-hover:scale-[1.02]"
+                                                    onError={() => setImageError(true)}
+                                                    width={128}
+                                                    height={128}
+                                                />
                                             ) : (
-                                                <>
-                                                    <Upload className="w-4 h-4 mr-2" />
-                                                    Save Image
-                                                </>
+                                                <div className="relative flex items-center justify-center bg-gradient-to-br from-gold to-goldDark rounded-full w-32 h-32 text-dark text-4xl font-bold font-display shadow-xl ring-4 ring-light dark:ring-dark z-10 transition-transform duration-300 group-hover:scale-[1.02]">
+                                                    {initials}
+                                                </div>
                                             )}
-                                        </Button>
+                                            {croppedBlob && (
+                                                <Badge className="absolute top-0 right-0 z-20 bg-success border-2 border-light dark:border-dark text-white font-semibold">
+                                                    New
+                                                </Badge>
+                                            )}
+
+                                            <button
+                                                onClick={handleButtonClick}
+                                                className="absolute bottom-0 right-0 z-20 p-2.5 bg-card text-foreground rounded-full shadow-lg border border-lightBorder dark:border-darkBorder hover:text-gold dark:hover:text-gold transition-colors"
+                                                title="Change Profile Picture"
+                                            >
+                                                <Camera className="w-4 h-4" />
+                                            </button>
+                                        </div>
+
+                                        <h1 className="text-2xl font-bold font-display text-foreground text-center mb-1">
+                                            {user.first_name || user.last_name ? `${user.first_name || ''} ${user.last_name || ''}` : user.username}
+                                        </h1>
+                                        <p className="text-sm font-medium text-muted-foreground text-center mb-6">
+                                            @{user.username}
+                                        </p>
+
+                                        <div className="w-full flex flex-col gap-2">
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                                accept="image/*"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
 
-                        {/* Profile Info Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <ProfileInfo user={user} />
-                            <AccountDetails user={user} />
-                        </div>
+                                    <div className="border-t border-lightBorder dark:border-darkBorder bg-lightSurface/50 dark:bg-darkSurface/50 p-4">
 
-                        {/* Profile Actions */}
-                        <ProfileActions handleDeleteAccount={handleDeleteAccount} />
+                                        <div className="flex flex-col gap-3">
+                                            <Button
+                                                onClick={() => router.push('/profile/edit')}
+                                                variant="outline"
+                                                className="w-full flex items-center justify-center gap-2 border-lightBorder dark:border-darkBorder hover:bg-lightSurface dark:hover:bg-darkSurface transition-colors"
+                                            >
+                                                <Edit className="w-4 h-4" />
+                                                Edit Profile
+                                            </Button>
+                                            <ChangePasswordDialog userId={user.id} />
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+
+                        {/* Right Content Area */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="w-full lg:w-2/3 flex flex-col gap-6"
+                        >
+                            {/* Profile Info Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                                <ProfileInfo user={user} />
+                                <AccountDetails user={user} />
+                            </div>
+
+                            <DangerZone handleDeleteAccount={handleDeleteAccount} />
+
+                        </motion.div>
                     </div>
                 ) : (
-                    <Card>
-                        <CardContent className="p-12 text-center">
-                            <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight mx-auto mb-4" />
-                            <p className="text-slate-600 dark:text-slate-400">Loading user data...</p>
-                        </CardContent>
-                    </Card>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex flex-col items-center justify-center p-12 bg-card rounded-2xl border border-lightBorder dark:border-darkBorder shadow-elevated"
+                    >
+                        <div className="inline-flex p-4 rounded-full bg-gold/10 text-gold mb-6 animate-pulse">
+                            <Loader2 className="w-12 h-12 animate-spin" />
+                        </div>
+                        <h2 className="text-xl font-bold font-display text-foreground mb-2">Loading Profile</h2>
+                        <p className="text-muted-foreground">Fetching your account details...</p>
+                    </motion.div>
                 )}
             </main>
 
@@ -313,9 +312,10 @@ const ProfilePage = ({ user }: ProfilePageProps) => {
                     imageSrc={currentImage}
                     onClose={() => setIsEditorOpen(false)}
                     onSave={handleSave}
+                    isUploading={isUploading}
                 />
             )}
-        </div>
+        </div >
     );
 };
 
