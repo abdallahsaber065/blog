@@ -141,7 +141,11 @@ export function buildDirectContentPrompt(
     ? `\n\nVoice notes from the author (use as directional guidance):\n${voiceNoteTranscript}`
     : '';
 
+  const BLOG_CONTEXT = `This is the author's personal tech blog, used for sharing updates on tech they follow, technical knowledge from their personal projects, insights, and general thoughts on the tech industry. The tone should be authoritative yet personal, insightful, and clear.`;
+
   return `You are an expert content writer for a ${websiteType}. Write a comprehensive, high-quality blog post about: "${topic}".
+
+${BLOG_CONTEXT}
 
 Research & Context:
 ${researchSummary}

@@ -54,7 +54,7 @@ export async function detectMimeType(
   // 3) Fallback to mime.getType (extension-based).
   try {
     const mimeModule = await import('mime');
-    const getType = mimeModule.getType as (path: string) => string | null;
+    const getType = mimeModule.default.getType as (path: string) => string | null;
     const byExt = getType(filePath);
     return byExt ?? undefined;
   } catch {
@@ -90,6 +90,33 @@ export class GeminiService {
     this.defaultModel = resolved.defaultModel;
     this.defaultSystemInstruction = resolved.defaultSystemInstruction;
     this.defaultGenerationConfig = resolved.defaultGenerationConfig;
+  }
+
+  /**
+   * Plain text / multimodal generation with streaming support.
+   */
+  async *generateTextStream(options: GeminiTextOptions & { tools?: any[] }): AsyncGenerator<string, void, unknown> {
+    const { model = this.defaultModel, systemInstruction, config, tools } = options;
+    const contents = this.buildContents(options);
+
+    const callConfig = this.buildConfig(systemInstruction, config);
+    if (tools) (callConfig as any).tools = tools;
+
+    const streamResponse = await this.client.models.generateContentStream({
+      model,
+      contents,
+      config: callConfig as any,
+    });
+
+    for await (const chunk of streamResponse as any) {
+      const chunkText: string =
+        typeof chunk.text === 'function'
+          ? chunk.text()
+          : (chunk?.candidates?.[0]?.content?.parts?.[0]?.text ?? '');
+      if (chunkText) {
+        yield chunkText;
+      }
+    }
   }
 
   /**
@@ -201,7 +228,7 @@ export class GeminiService {
       contents: fullPrompt,
       config: {
         ...this.buildConfig(systemInstruction, config),
-        tools: [{ googleSearch: {} }],
+        tools: [{ googleSearch: {} }, { urlContext: {} }],
       } as any,
     })) as unknown as GeminiGenerateResponse;
 
@@ -230,7 +257,9 @@ export class GeminiService {
     for (let i = 0; i < bytes.length; i++) {
       binary += String.fromCharCode(bytes[i]);
     }
-    const base64 = Buffer.from(bytes).toString('base64');
+    const base64 = Buffer.isBuffer(bytes)
+      ? bytes.toString('base64')
+      : Buffer.from(bytes as Uint8Array).toString('base64');
 
     const parts: any[] = [
       { inlineData: { data: base64, mimeType } },

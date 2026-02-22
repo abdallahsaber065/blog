@@ -59,6 +59,7 @@ export interface GenerateDirectRequest {
   include_images?: boolean;
   user_custom_instructions?: string;
   website_type?: string;
+  enable_web_search?: boolean;
 }
 
 export interface GenerateMetadataRequest {
