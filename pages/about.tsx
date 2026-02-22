@@ -109,29 +109,11 @@ const AboutPage: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <Link href="/contact">
+            <Link href="/contact" className="inline-block ">
               <Button size="lg" className="gap-2">
                 Get in touch <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.65 }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gold/[0.08] rounded-3xl blur-2xl scale-105 pointer-events-none" />
-            <Image
-              src="/static/images/mission.webp"
-              alt="Our Mission"
-              width={600}
-              height={400}
-              className="relative rounded-2xl w-full object-cover border border-lightBorder dark:border-darkBorder"
-              priority
-            />
           </motion.div>
         </div>
       </section>
@@ -143,13 +125,13 @@ const AboutPage: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className=" mb-12"
         >
-          <div className="flex items-center justify-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4">
             <div className="w-1 h-8 rounded-full bg-gold" />
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">The Team</h2>
           </div>
-          <p className="text-muted-foreground max-w-md mx-auto text-sm">
+          <p className="text-center text-muted-foreground max-w-md mx-auto text-sm">
             A small, focused team obsessed with developer experience and quality content.
           </p>
         </motion.div>

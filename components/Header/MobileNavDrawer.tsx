@@ -8,7 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp, LayoutDashboard, PenSquare, Folder, Users, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, PenSquare, Folder, Users, LogOut, User, Home, Info, Mail, Compass, ShieldAlert } from 'lucide-react';
 
 interface MobileNavDrawerProps {
     isOpen: boolean;
@@ -21,8 +21,6 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
     const pathname = usePathname();
     const { data: session } = useSession();
     const [mounted, setMounted] = useState(false);
-    const [isDiscoverMenuOpen, setIsDiscoverMenuOpen] = useState(false);
-    const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -32,115 +30,103 @@ const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) =>
         return null;
     }
 
+    const navItems = [
+        { name: 'Home', href: '/', icon: Home },
+        { name: 'Discover', href: '/explore', icon: Compass },
+        { name: 'About', href: '/about', icon: Info },
+        { name: 'Contact', href: '/contact', icon: Mail },
+    ];
+
     return (
         <Sheet open={isOpen} onOpenChange={onClose}>
-            <SheetContent side="left" className="w-64 p-4">
-                <SheetHeader>
-                    <SheetTitle className="text-left">Menu</SheetTitle>
-                </SheetHeader>
-                <ul className="menu menu-vertical mt-4 space-y-2">
-                    <li>
-                        <Link href="/" className={`hover:text-primary font-semibold dark:hover:text-accent
-                            ${pathname === '/' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                            Home
-                        </Link>
-                    </li>
-
-                    <li>
-                        <Link href="/about" className={
-                            `hover:text-primary font-semibold dark:hover:text-accent
-                            ${pathname === '/about' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                            About
-                        </Link>
-                    </li>
-
-                    <li>
-                        <Link href="/contact" className={`hover:text-primary font-semibold dark:hover:text-accent
-                            ${pathname === '/contact' ? 'font-bold text-primary dark:text-accent' : 'text-slate-800 dark:text-slate-300'}`} onClick={onClose}>
-                            Contact
-                        </Link>
-                    </li>
-
-                    <div className="mt-2">
-                        <button
-                            className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                                isDiscoverMenuOpen || pathname?.startsWith('/explore')
-                                    ? 'bg-gold/10 text-gold'
-                                    : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'
-                            }`}
-                            onClick={() => setIsDiscoverMenuOpen(!isDiscoverMenuOpen)}
-                        >
-                            Discover
-                            {isDiscoverMenuOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                        </button>
-                        {isDiscoverMenuOpen && (
-                            <div className="mt-1 ml-3 border-l border-gold/20 pl-3 space-y-1">
-                                <Link href="/explore" onClick={onClose} className={`block px-3 py-2 rounded-xl text-sm font-medium transition-colors ${pathname?.startsWith('/explore') ? 'bg-gold/10 text-gold font-semibold' : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'}`}>All Posts</Link>
-                            </div>
-                        )}
+            <SheetContent side="left" className="w-[85vw] max-w-[320px] p-0 border-r-0 bg-background/95 backdrop-blur-xl">
+                <div className="flex flex-col h-full overflow-y-auto">
+                    <div className="p-6 border-b border-border/50">
+                        <SheetTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold to-gold/70">
+                            Menu
+                        </SheetTitle>
                     </div>
-                    {session && RoleList.includes(session.user.role) && (
-                        <div className="mt-2">
-                            <button
-                                className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                                    isAdminMenuOpen || pathname?.startsWith('/admin')
-                                        ? 'bg-gold/10 text-gold'
-                                        : 'text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated'
-                                }`}
-                                onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                            >
-                                Admin
-                                {isAdminMenuOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            </button>
-                            {isAdminMenuOpen && (
-                                <div className="mt-1 ml-3 border-l border-gold/20 pl-3 space-y-1">
-                                    <Link href="/admin/posts" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
-                                        <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
+
+                    <div className="flex-1 py-4 px-3 space-y-6">
+                        <div className="space-y-1">
+                            {navItems.map((item) => {
+                                const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        onClick={onClose}
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200 ${isActive
+                                            ? 'bg-gold/10 text-gold shadow-sm shadow-gold/5'
+                                            : 'text-foreground/70 hover:text-foreground hover:bg-foreground/5'
+                                            }`}
+                                    >
+                                        <item.icon className="w-5 h-5" />
+                                        {item.name}
                                     </Link>
-                                    <Link href="/admin/categories" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
-                                        <Folder className="w-3.5 h-3.5" /> Categories
+                                );
+                            })}
+                        </div>
+
+                        {session && RoleList.includes(session.user.role) && (
+                            <div className="space-y-2 px-1">
+                                <p className="px-3 text-xs font-semibold text-foreground/40 uppercase tracking-wider flex items-center gap-1.5">
+                                    <ShieldAlert className="w-3.5 h-3.5" />
+                                    Admin View
+                                </p>
+                                <div className="space-y-1">
+                                    <Link href="/admin/posts" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-colors">
+                                        <LayoutDashboard className="w-4 h-4" /> Dashboard
                                     </Link>
-                                    <Link href="/admin/posts/create" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
-                                        <PenSquare className="w-3.5 h-3.5" /> Create Post
+                                    <Link href="/admin/categories" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-colors">
+                                        <Folder className="w-4 h-4" /> Categories
+                                    </Link>
+                                    <Link href="/admin/posts/create" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-colors">
+                                        <PenSquare className="w-4 h-4" /> Create Post
                                     </Link>
                                     {session && 'admin' === session.user.role && (
-                                        <Link href="/admin/users" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
-                                            <Users className="w-3.5 h-3.5" /> Manage Users
+                                        <Link href="/admin/users" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-foreground/5 transition-colors">
+                                            <Users className="w-4 h-4" /> Manage Users
                                         </Link>
                                     )}
                                 </div>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="mt-4 pt-4 border-t border-lightBorder dark:border-darkBorder space-y-1">
-                        {session ? (
-                            <>
-                                <Link href="/profile" onClick={onClose} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">
-                                    <User className="w-4 h-4" />
-                                    Profile
-                                    {session.user.role === 'admin' && (
-                                        <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-gold bg-gold/10 px-2 py-0.5 rounded-full">Admin</span>
-                                    )}
-                                </Link>
-                                <button
-                                    onClick={() => { signOut(); onClose(); }}
-                                    className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
-                                >
-                                    <LogOut className="w-4 h-4" /> Logout
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/login" onClick={onClose} className="block px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-lightElevated dark:hover:bg-darkElevated transition-colors">Login</Link>
-                                <Link href="/signup" onClick={onClose} className="block px-4 py-2 rounded-xl text-sm font-semibold bg-gold text-dark hover:bg-goldDark transition-colors text-center">Sign Up</Link>
-                            </>
+                            </div>
                         )}
                     </div>
-                </ul>
+
+                    <div className="p-4 border-t border-border/50 bg-foreground/5 mt-auto">
+                        <div className="space-y-2">
+                            {session ? (
+                                <>
+                                    <Link href="/profile" onClick={onClose} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:bg-foreground/10 transition-colors">
+                                        <div className="bg-gold/20 p-1.5 rounded-full text-gold">
+                                            <User className="w-4 h-4" />
+                                        </div>
+                                        Profile
+                                        {session.user.role === 'admin' && (
+                                            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-gold bg-gold/10 px-2 py-0.5 rounded-full ring-1 ring-gold/20">Admin</span>
+                                        )}
+                                    </Link>
+                                    <button
+                                        onClick={() => { signOut(); onClose(); }}
+                                        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 hover:text-red-600 transition-colors"
+                                    >
+                                        <LogOut className="w-5 h-5" /> Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Link href="/login" onClick={onClose} className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-foreground/10 transition-colors">Login</Link>
+                                    <Link href="/signup" onClick={onClose} className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold bg-gold text-dark hover:bg-gold/90 transition-colors shadow-sm shadow-gold/20">Sign Up</Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </SheetContent>
         </Sheet>
     );
 };
 
 export default MobileNavDrawer;
+

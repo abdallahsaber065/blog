@@ -193,36 +193,38 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <article className="mb-8 ">
-                <div className="text-center relative w-full h-[70vh] bg-light dark:bg-dark">
-                    <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="relative w-full min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] bg-light dark:bg-dark flex items-center justify-center pt-24 pb-12 overflow-hidden">
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
+                            placeholder="blur"
+                            blurDataURL={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
+                            alt={deserializedPost.title}
+                            fill
+                            className="object-cover object-center"
+                            priority
+                            sizes="100vw"
+                        />
+                        <div className="absolute inset-0 bg-dark/60 z-10 transition-opacity" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/70 to-transparent z-10" />
+                    </div>
+
+                    <div className="relative z-20 w-full px-5 md:px-10 flex flex-col items-center text-center mt-12">
                         {deserializedPost.category && (
                             <Tag
                                 name={deserializedPost.category.name}
                                 link={`/explore?category=${deserializedPost.category.slug}`}
-                                className="px-6 text-sm py-2"
+                                className="px-6 text-sm py-2 mb-6 shadow-xl"
                             />
                         )}
-                        <h1
-                            className="inline-block mt-6 font-semibold capitalize text-light text-2xl md:text-3xl lg:text-5xl !leading-normal relative w-5/6"
-                        >
+                        <h1 className="font-bold capitalize text-light text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight sm:!leading-snug max-w-5xl break-words w-full drop-shadow-lg">
                             {deserializedPost.title}
                         </h1>
                     </div>
-                    <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-gradient-to-t from-dark/90 via-dark/70 to-transparent" />
-                    <Image
-                        src={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
-                        placeholder="blur"
-                        blurDataURL={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
-                        alt={deserializedPost.title}
-                        width={800}
-                        height={600}
-                        className="aspect-square w-full h-full object-cover object-center"
-                        priority
-                        sizes="100vw"
-                    />
                 </div>
 
-                <Breadcrumb items={[
+                <Breadcrumb
+                    items={[
                     { label: "Blog", href: "/explore" },
                     ...(deserializedPost.category ? [{ label: deserializedPost.category.name, href: `/explore?category=${deserializedPost.category.slug}` }] : []),
                     { label: deserializedPost.title },

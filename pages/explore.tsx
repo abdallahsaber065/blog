@@ -2,7 +2,6 @@ import BlogListCard from '@/components/Blog/BlogListCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { prisma } from '@/lib/prisma';
 import {
   ArrowUpDown,
+  ChevronDown,
   Clock,
   Filter,
   Folder,
@@ -28,7 +27,7 @@ import {
 } from 'lucide-react';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface Post {
   slug: string;
@@ -139,12 +138,16 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
 
   // Initialize state from URL parameters
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categorySearchTerm, setCategorySearchTerm] = useState('');
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagSearchTerm, setTagSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   // Initialize filters from URL query parameters on mount
   useEffect(() => {
@@ -152,7 +155,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
       const { category, tag, search } = router.query;
 
       if (category && typeof category === 'string') {
-        setSelectedCategories([category]);
+        setSelectedCategory(category);
       }
 
       if (tag && typeof tag === 'string') {
@@ -186,10 +189,10 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
       );
     }
 
-    // Apply category filter (OR logic)
-    if (selectedCategories.length > 0) {
+    // Apply category filter
+    if (selectedCategory) {
       filtered = filtered.filter(
-        (post) => post.category && selectedCategories.includes(post.category.slug)
+        (post) => post.category?.slug === selectedCategory
       );
     }
 
@@ -225,7 +228,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
     }
 
     return sorted;
-  }, [posts, debouncedSearch, selectedCategories, selectedTags, sortBy]);
+  }, [posts, debouncedSearch, selectedCategory, selectedTags, sortBy]);
 
   // Filtered tags for search
   const filteredTags = useMemo(() => {
@@ -235,11 +238,31 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
     );
   }, [tags, tagSearchTerm]);
 
+  // Filtered categories for dropdown search
+  const filteredCategories = useMemo(() => {
+    if (!categorySearchTerm) return categories;
+    return categories.filter((c) =>
+      c.name.toLowerCase().includes(categorySearchTerm.toLowerCase())
+    );
+  }, [categories, categorySearchTerm]);
+
+  // Close category dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
+        setIsCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const INITIAL_TAG_LIMIT = 12;
+
   // Toggle functions
   const toggleCategory = (slug: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
-    );
+    setSelectedCategory((prev) => (prev === slug ? null : slug));
+    setIsCategoryDropdownOpen(false);
   };
 
   const toggleTag = (slug: string) => {
@@ -249,7 +272,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
   };
 
   const clearAllFilters = () => {
-    setSelectedCategories([]);
+    setSelectedCategory(null);
     setSelectedTags([]);
     setSearchTerm('');
     setSortBy('newest');
@@ -257,113 +280,187 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
 
   const removeFilter = (type: 'category' | 'tag', slug: string) => {
     if (type === 'category') {
-      setSelectedCategories((prev) => prev.filter((s) => s !== slug));
+      setSelectedCategory(null);
     } else {
       setSelectedTags((prev) => prev.filter((s) => s !== slug));
     }
   };
 
   const hasActiveFilters =
-    selectedCategories.length > 0 || selectedTags.length > 0 || searchTerm;
+    selectedCategory !== null || selectedTags.length > 0 || searchTerm;
 
-  // Filter Panel Component
-  const FilterPanel = () => (
-    <div className="space-y-7">
-      {/* Categories */}
-      <div>
-        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder/50">
-          <div className="p-1.5 bg-gold/10 rounded-lg border border-gold/20">
-            <Folder className="w-3.5 h-3.5 text-gold" />
-          </div>
-          <h3 className="text-sm font-semibold text-foreground">
-            Categories
-          </h3>
-          {selectedCategories.length > 0 && (
-            <Badge className="ml-auto h-5 px-2 text-xs bg-gold text-dark border-0 shadow-gold-sm">
-              {selectedCategories.length}
-            </Badge>
-          )}
-        </div>
-        <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
-          {categories.map((category) => (
-            <div
-              key={category.slug}
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-lightElevated dark:hover:bg-darkElevated/50 transition-all duration-200 group border border-transparent hover:border-gold/10"
-            >
-              <Checkbox
-                id={`cat-${category.slug}`}
-                checked={selectedCategories.includes(category.slug)}
-                onCheckedChange={() => toggleCategory(category.slug)}
-                className="data-[state=checked]:bg-gold data-[state=checked]:border-gold border-lightBorder dark:border-darkBorder"
-              />
-              <Label
-                htmlFor={`cat-${category.slug}`}
-                className="text-sm cursor-pointer flex-1 text-muted-foreground group-hover:text-gold transition-colors font-medium"
-              >
-                {category.name}
-              </Label>
+  // Render Filter Panel Content
+  const renderFilterPanel = () => {
+    const activeCategory = categories.find((c) => c.slug === selectedCategory);
+
+    return (
+      <div className="space-y-7">
+        {/* Categories — Polished single-select dropdown */}
+        <div>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder/50">
+            <div className="p-1.5 bg-gold/10 rounded-lg border border-gold/20">
+              <Folder className="w-3.5 h-3.5 text-gold" />
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tags */}
-      <div>
-        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder/50">
-          <div className="p-1.5 bg-gold/10 rounded-lg border border-gold/20">
-            <TagIcon className="w-3.5 h-3.5 text-gold" />
+            <h3 className="text-sm font-semibold text-foreground tracking-wide">Category</h3>
+            {selectedCategory && (
+              <Badge className="ml-auto h-5 px-2 text-[10px] bg-gold text-dark border-0 animate-in fade-in zoom-in duration-300">
+                Selected
+              </Badge>
+            )}
           </div>
-          <h3 className="text-sm font-semibold text-foreground">
-            Tags
-          </h3>
-          {selectedTags.length > 0 && (
-            <Badge className="ml-auto h-5 px-2 text-xs bg-gold text-dark border-0 shadow-gold-sm">
-              {selectedTags.length}
-            </Badge>
-          )}
-        </div>
 
-        <div className="relative mb-5">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            type="text"
-            placeholder="Search tags..."
-            value={tagSearchTerm}
-            onChange={(e) => setTagSearchTerm(e.target.value)}
-            className="pl-9 h-11 text-sm bg-light dark:bg-darkSurface border-lightBorder dark:border-darkBorder focus:border-gold"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
-          {filteredTags.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant={selectedTags.includes(tag.slug) ? 'default' : 'outline'}
-              className={`cursor-pointer px-3 py-1.5 text-xs transition-all duration-300 hover:scale-105 border-0 ${selectedTags.includes(tag.slug)
-                  ? 'bg-gold text-dark shadow-gold-sm ring-1 ring-gold'
-                  : 'bg-light dark:bg-darkSurface text-muted-foreground border border-lightBorder dark:border-darkBorder hover:border-gold/60 hover:text-gold'
+          <div className="relative" ref={categoryDropdownRef}>
+            <button
+              onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+              className={`w-full flex items-center justify-between px-4 h-11 rounded-xl border transition-all duration-300 bg-light dark:bg-darkSurface/50 backdrop-blur-sm group
+                ${isCategoryDropdownOpen
+                  ? 'border-gold ring-2 ring-gold/10'
+                  : 'border-lightBorder dark:border-darkBorder hover:border-gold/40'
                 }`}
-              onClick={() => toggleTag(tag.slug)}
             >
-              #{tag.name}
-            </Badge>
-          ))}
-        </div>
-      </div>
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className={`p-1 rounded-md transition-colors duration-300 ${activeCategory ? 'bg-gold/10' : 'bg-muted/10 group-hover:bg-muted/20'}`}>
+                  <Folder className={`w-3.5 h-3.5 ${activeCategory ? 'text-gold' : 'text-muted-foreground'}`} />
+                </div>
+                <span className={`text-sm font-medium truncate ${activeCategory ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  {activeCategory ? activeCategory.name : 'All Categories'}
+                </span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180 text-gold' : 'group-hover:text-gold'}`} />
+            </button>
 
-      {/* Clear Filters */}
-      {hasActiveFilters && (
-        <Button
-          variant="outline"
-          className="w-full h-10 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-all duration-200"
-          onClick={clearAllFilters}
-        >
-          <X className="w-4 h-4 mr-2" />
-          Clear All Filters
-        </Button>
-      )}
-    </div>
-  );
+            {/* Dropdown list */}
+            {isCategoryDropdownOpen && (
+              <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-card border border-lightBorder dark:border-darkBorder rounded-xl shadow-elevated z-[60] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                {/* Search inside dropdown */}
+                <div className="p-2 border-b border-lightBorder dark:border-darkBorder/50">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Search categories..."
+                      value={categorySearchTerm}
+                      onChange={(e) => setCategorySearchTerm(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 text-xs bg-muted/20 rounded-lg outline-none focus:ring-1 focus:ring-gold/30 transition-all font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div className="max-h-52 overflow-y-auto py-1 custom-scrollbar">
+                  <div
+                    className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors duration-150 hover:bg-gold/5 group
+                      ${!selectedCategory ? 'bg-gold/5' : ''}`}
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setCategorySearchTerm('');
+                      setIsCategoryDropdownOpen(false);
+                    }}
+                  >
+                    <span className={`text-sm flex-1 font-medium ${!selectedCategory ? 'text-gold' : 'text-foreground'}`}>
+                      All Categories
+                    </span>
+                    {!selectedCategory && <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-gold-sm" />}
+                  </div>
+
+                  {filteredCategories.map((category) => {
+                    const active = selectedCategory === category.slug;
+                    return (
+                      <div
+                        key={category.slug}
+                        className={`flex items-center px-4 py-2.5 cursor-pointer transition-colors duration-150 hover:bg-gold/5 group
+                          ${active ? 'bg-gold/5' : ''}`}
+                        onClick={() => toggleCategory(category.slug)}
+                      >
+                        <span className={`text-sm flex-1 font-medium ${active ? 'text-gold' : 'text-foreground group-hover:text-gold transition-colors'}`}>
+                          {category.name}
+                        </span>
+                        {active && <div className="w-1.5 h-1.5 rounded-full bg-gold shadow-gold-sm" />}
+                      </div>
+                    );
+                  })}
+                  {filteredCategories.length === 0 && (
+                    <div className="px-4 py-6 text-center text-xs text-muted-foreground italic">
+                      No categories found
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tags — search + limited preview */}
+        <div>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-lightBorder dark:border-darkBorder/50">
+            <div className="p-1.5 bg-gold/10 rounded-lg border border-gold/20">
+              <TagIcon className="w-3.5 h-3.5 text-gold" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground tracking-wide">Tags</h3>
+            {selectedTags.length > 0 && (
+              <Badge className="ml-auto h-5 px-2 text-[10px] bg-gold text-dark border-0 shadow-gold-sm">
+                {selectedTags.length}
+              </Badge>
+            )}
+          </div>
+
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              type="text"
+              placeholder={tags.length > INITIAL_TAG_LIMIT ? `Search ${tags.length} tags…` : 'Search tags…'}
+              value={tagSearchTerm}
+              onChange={(e) => setTagSearchTerm(e.target.value)}
+              className="pl-9 h-10 text-sm bg-light dark:bg-darkSurface border-lightBorder dark:border-darkBorder focus:border-gold transition-colors"
+            />
+            {tagSearchTerm && (
+              <button
+                onClick={() => setTagSearchTerm('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {(tagSearchTerm ? filteredTags : filteredTags.slice(0, INITIAL_TAG_LIMIT)).map((tag) => (
+              <Badge
+                key={tag.id}
+                variant={selectedTags.includes(tag.slug) ? 'default' : 'outline'}
+                className={`cursor-pointer px-2.5 py-1 text-xs transition-all duration-200 hover:scale-105 ${selectedTags.includes(tag.slug)
+                  ? 'bg-gold text-dark border-0 shadow-gold-sm ring-1 ring-gold'
+                  : 'bg-light dark:bg-darkSurface text-muted-foreground border border-lightBorder dark:border-darkBorder hover:border-gold/60 hover:text-gold'
+                  }`}
+                onClick={() => toggleTag(tag.slug)}
+              >
+                #{tag.name}
+              </Badge>
+            ))}
+
+            {/* "More tags" hint — only shown when not searching */}
+            {!tagSearchTerm && tags.length > INITIAL_TAG_LIMIT && (
+              <div className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-dashed border-lightBorder dark:border-darkBorder/60 text-xs text-muted-foreground">
+                <span className="font-medium">+{tags.length - INITIAL_TAG_LIMIT}</span>
+                <span className="text-gold/80">· search above</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Clear Filters */}
+        {hasActiveFilters && (
+          <Button
+            variant="outline"
+            className="w-full h-10 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-all duration-200"
+            onClick={clearAllFilters}
+          >
+            <X className="w-4 h-4 mr-2" />
+            Clear All Filters
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   const getSortIcon = () => {
     switch (sortBy) {
@@ -421,20 +518,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative max-w-3xl">
-            <div className="absolute -inset-1 bg-gold rounded-2xl blur-lg opacity-10"></div>
-            <div className="relative">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10" />
-              <Input
-                type="text"
-                placeholder="Search articles by title or content..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-14 pr-5 h-16 text-base bg-card border-2 border-lightBorder dark:border-darkBorder rounded-xl shadow-card dark:shadow-card-dark hover:border-gold/40 focus:border-gold dark:focus:border-gold transition-all duration-200 font-medium"
-              />
-            </div>
-          </div>
+
         </div>
       </section>
 
@@ -442,8 +526,8 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
       <div className="flex flex-col lg:flex-row gap-8 px-5 sm:px-10 md:px-24 sxl:px-32 py-10">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-80 flex-shrink-0">
-          <div className="sticky top-6">
-            <Card className="shadow-card dark:shadow-card-dark border-lightBorder dark:border-darkBorder bg-card overflow-hidden">
+          <div className="sticky top-[72px]">
+            <Card className="shadow-card dark:shadow-card-dark border-lightBorder dark:border-darkBorder bg-card">
               <div className="bg-gradient-to-r from-gold via-goldLight to-gold h-0.5"></div>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -455,11 +539,11 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                   </h2>
                   {hasActiveFilters && (
                     <Badge className="bg-gold text-dark border-0 shadow-gold-sm px-3 py-1 font-semibold">
-                      {selectedCategories.length + selectedTags.length}
+                      {(selectedCategory ? 1 : 0) + selectedTags.length}
                     </Badge>
                   )}
                 </div>
-                <FilterPanel />
+                {renderFilterPanel()}
               </CardContent>
             </Card>
           </div>
@@ -476,7 +560,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                 <Filter className="w-6 h-6" />
                 {hasActiveFilters && (
                   <Badge className="absolute -top-2 -right-2 h-7 w-7 flex items-center justify-center p-0 bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg animate-pulse font-bold">
-                    {selectedCategories.length + selectedTags.length}
+                    {(selectedCategory ? 1 : 0) + selectedTags.length}
                   </Badge>
                 )}
               </Button>
@@ -491,7 +575,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                 </SheetTitle>
               </SheetHeader>
               <div className="mt-6">
-                <FilterPanel />
+                {renderFilterPanel()}
               </div>
             </SheetContent>
           </Sheet>
@@ -501,6 +585,25 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
         <main className="flex-1 min-w-0">
           {/* Active Filters & Controls */}
           <div className="mb-8 space-y-5">
+            {/* Mobile-only search bar */}
+            <div className="relative sm:hidden">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <Input
+                type="text"
+                placeholder="Search articles…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-9 h-11 text-sm border-2 border-lightBorder dark:border-darkBorder bg-card focus:border-gold transition-colors"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
             {/* Active Filters */}
             {hasActiveFilters && (
               <div className="flex flex-wrap gap-2.5 items-center p-4 bg-gold/[0.04] rounded-xl border border-gold/20">
@@ -508,22 +611,22 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                   <Zap className="w-4 h-4 text-gold" />
                   Active filters:
                 </span>
-                {selectedCategories.map((catSlug) => {
-                  const cat = categories.find((c) => c.slug === catSlug);
+                {selectedCategory && (() => {
+                  const cat = categories.find((c) => c.slug === selectedCategory);
                   return cat ? (
                     <Badge
-                      key={catSlug}
+                      key={selectedCategory}
                       className="gap-1.5 px-3 py-1.5 bg-gold/10 text-gold border border-gold/30 hover:shadow-gold-sm transition-all duration-200"
                     >
                       <Folder className="w-3.5 h-3.5" />
                       {cat.name}
                       <X
                         className="w-3.5 h-3.5 cursor-pointer hover:scale-110 transition-transform"
-                        onClick={() => removeFilter('category', catSlug)}
+                        onClick={() => removeFilter('category', selectedCategory)}
                       />
                     </Badge>
                   ) : null;
-                })}
+                })()}
                 {selectedTags.map((tagSlug) => {
                   const tag = tags.find((t) => t.slug === tagSlug);
                   return tag ? (
@@ -553,6 +656,34 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
               </div>
 
               <div className="flex items-center gap-3">
+                {/* Inline search bar */}
+                <div
+                  className={`relative hidden sm:flex items-center transition-all duration-300 ease-in-out ${searchFocused || searchTerm ? 'w-60' : 'w-44'
+                    }`}
+                >
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    type="text"
+                    placeholder="Search articles…"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => setSearchFocused(false)}
+                    className={`pl-9 pr-8 h-10 text-sm border-2 transition-all duration-300 ${searchFocused || searchTerm
+                      ? 'border-gold bg-card shadow-gold-sm'
+                      : 'border-lightBorder dark:border-darkBorder bg-card hover:border-gold/40'
+                      }`}
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
                 {/* Sort Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
