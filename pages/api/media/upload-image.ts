@@ -6,7 +6,7 @@ import path from 'path';
 import sharp from 'sharp';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { getStorageProvider } from '@/lib/storage';
+import { getStorageProvider } from '@/lib/storage/factory';
 
 export const config = {
   api: {

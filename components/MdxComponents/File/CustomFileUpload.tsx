@@ -6,6 +6,7 @@ import RenderMdx from '../../Blog/RenderMdx';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
+import { resolvePublicUrl } from '@/lib/storage';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 import Link from 'next/link';
 
@@ -84,7 +85,8 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
         setError(null);
 
         try {
-            const response = await fetch(url);
+            const publicUrl = resolvePublicUrl(url);
+            const response = await fetch(publicUrl);
             if (!response.ok) {
                 throw new Error('Failed to load file content');
             }
@@ -194,7 +196,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
             return (
                 <div className="p-4 max-h-[500px] overflow-y-auto">
                     <Document
-                        file={src}
+                        file={resolvePublicUrl(src)}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                         error="Failed to load PDF"
                     >
@@ -233,11 +235,16 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
                     )}
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link
+                        href={process.env.NEXT_PUBLIC_STORAGE_PROVIDER !== 'local'
+                            ? resolvePublicUrl(src)
+                            : `/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
+                        target={process.env.NEXT_PUBLIC_STORAGE_PROVIDER !== 'local' ? "_blank" : undefined}
+                        rel={process.env.NEXT_PUBLIC_STORAGE_PROVIDER !== 'local' ? "noopener noreferrer" : undefined}
                     >
                         <FiDownload />
                     </Link>

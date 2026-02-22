@@ -1,7 +1,7 @@
-// components/CustomImageUpload.tsx
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ImageSelector from '../../Admin/ImageSelector';
+import { resolvePublicUrl } from '@/lib/storage';
 
 interface ImageProps {
     id: string;
@@ -45,7 +45,7 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImage
     return (
         <div className="relative group touch-none">
             <Image
-                src={src}
+                src={resolvePublicUrl(src)}
                 alt={alt}
                 width={width}
                 height={height}

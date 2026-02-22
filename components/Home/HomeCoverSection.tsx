@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useRef } from 'react';
+import { resolvePublicUrl } from '@/lib/storage';
 import Tag from '../Elements/Tag';
 import { slug } from 'github-slugger';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -47,9 +48,9 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
         {/* Parallax image */}
         <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
           <Image
-            src={post.featured_image_url || '/static/images/default-image.webp'}
+            src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : '/static/images/default-image.webp'}
             placeholder="blur"
-            blurDataURL={post.featured_image_url || '/static/images/default-image.webp'}
+            blurDataURL={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : '/static/images/default-image.webp'}
             alt={post.title}
             fill
             className='w-full h-full object-center object-cover scale-110'

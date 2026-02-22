@@ -37,6 +37,8 @@ interface PostFormProps {
     isMounted: boolean;
 }
 
+import { resolvePublicUrl } from '@/lib/storage';
+
 const PostForm: React.FC<PostFormProps> = ({
     className,
     title,
@@ -160,7 +162,7 @@ const PostForm: React.FC<PostFormProps> = ({
                 </div>
                 {featuredImage && (
                     <img
-                        src={featuredImage}
+                        src={resolvePublicUrl(featuredImage)}
                         alt="Featured"
                         className="featured-image-preview mt-2 max-h-40 object-cover"
                     />

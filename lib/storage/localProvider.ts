@@ -24,7 +24,7 @@ export class LocalStorageProvider implements StorageProvider {
     const dest = path.join(this.publicRoot, key);
     // Ensure directory exists
     fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, buffer);
+    fs.writeFileSync(dest, buffer as any);
 
     return {
       file_url: key,                       // stored in DB  - relative, no leading slash

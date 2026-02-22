@@ -12,6 +12,7 @@ import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
 import Embed from "@/components/MdxComponents/Embed/Embed";
 import FileResource from "@/components/MdxComponents/File/FileResource";
 import siteMetadata from "@/lib/siteMetaData";
+import { resolvePublicUrl } from '@/lib/storage';
 
 interface BlogTemplateProps {
     post: any;
@@ -42,8 +43,8 @@ const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview 
     });
 
     // Handle image URLs (handle blobs from preview)
-    const displayImage = normalizedPost.featured_image_url || '/static/images/default-image.webp';
-    const blurImage = normalizedPost.featured_image_url || '/static/images/default-image.webp';
+    const displayImage = normalizedPost.featured_image_url ? resolvePublicUrl(normalizedPost.featured_image_url) : '/static/images/default-image.webp';
+    const blurImage = normalizedPost.featured_image_url ? resolvePublicUrl(normalizedPost.featured_image_url) : '/static/images/default-image.webp';
 
     return (
         <article className="bg-light dark:bg-dark">
@@ -74,9 +75,9 @@ const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview 
                 </div>
                 <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
                 <Image
-                    src={displayImage || null}
+                    src={displayImage}
                     placeholder="blur"
-                    blurDataURL={blurImage || null}
+                    blurDataURL={blurImage}
                     alt={normalizedPost.title}
                     width={800}
                     height={600}

@@ -3,6 +3,7 @@ import Tag from "../Elements/Tag";
 import Link from "next/link";
 import Image from "next/image";
 import { slug } from "github-slugger";
+import { resolvePublicUrl } from "@/lib/storage";
 
 interface BlogLayoutOneProps {
   post: {
@@ -26,9 +27,9 @@ const BlogLayoutOne = ({ post }: BlogLayoutOneProps) => {
 
       {/* Image with zoom */}
       <Image
-        src={post.featured_image_url || "/static/images/default-image.webp"}
+        src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : "/static/images/default-image.webp"}
         placeholder="blur"
-        blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
+        blurDataURL={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : "/static/images/default-image.webp"}
         alt={post.title}
         fill
         className="object-cover object-center z-0 group-hover:scale-105 transition-transform duration-700 ease-out"
