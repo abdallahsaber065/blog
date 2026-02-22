@@ -15,6 +15,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { serialize } from 'next-mdx-remote/serialize';
 import Image from "next/image";
 import Link from "next/link";
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from "@/lib/storage";
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await prisma.post.findMany({
@@ -196,14 +197,15 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                 <div className="relative w-full min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] bg-light dark:bg-dark flex items-center justify-center pt-24 pb-12 overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <Image
-                            src={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
+                            src={deserializedPost.featured_image_url ? resolvePublicUrl(deserializedPost.featured_image_url) : '/static/images/default-image.webp'}
                             placeholder="blur"
-                            blurDataURL={deserializedPost.featured_image_url || '/static/images/default-image.webp'}
+                            blurDataURL={deserializedPost.featured_image_url ? resolvePublicUrl(deserializedPost.featured_image_url) : '/static/images/default-image.webp'}
                             alt={deserializedPost.title}
                             fill
                             className="object-cover object-center"
                             priority
                             sizes="100vw"
+                            unoptimized={isCloudProvider() || (deserializedPost.featured_image_url ? isExternalUrl(resolvePublicUrl(deserializedPost.featured_image_url)) : false)}
                         />
                         <div className="absolute inset-0 bg-dark/60 z-10 transition-opacity" />
                         <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/70 to-transparent z-10" />
@@ -225,10 +227,10 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
 
                 <Breadcrumb
                     items={[
-                    { label: "Blog", href: "/explore" },
-                    ...(deserializedPost.category ? [{ label: deserializedPost.category.name, href: `/explore?category=${deserializedPost.category.slug}` }] : []),
-                    { label: deserializedPost.title },
-                ]} />
+                        { label: "Blog", href: "/explore" },
+                        ...(deserializedPost.category ? [{ label: deserializedPost.category.name, href: `/explore?category=${deserializedPost.category.slug}` }] : []),
+                        { label: deserializedPost.title },
+                    ]} />
 
                 <BlogDetails post={deserializedPost} />
                 <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">

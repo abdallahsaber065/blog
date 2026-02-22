@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { FiUpload, FiTrash2 } from 'react-icons/fi';
 import { useImageConverter } from '@/lib/hooks/useImageConverter';
 import { formatFileSize } from '@/lib/imageConverter';
+import { isCloudProvider, isExternalUrl } from '@/lib/storage';
 
 interface ImageProps {
     id: string;
@@ -320,6 +321,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                                 layout="fill"
                                                 objectFit="contain"
                                                 className="w-full h-full"
+                                                unoptimized={isCloudProvider() || isExternalUrl(image.display_url || image.public_url || image.file_url)}
                                             />
                                             <button
                                                 onClick={(e) => handleDeleteImage(image, e)}
@@ -351,6 +353,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                             layout="fill"
                                             objectFit="contain"
                                             className="h-full w-auto"
+                                            unoptimized={isCloudProvider() || isExternalUrl(selectedImage)}
                                         />
                                     </div>
                                     <p className="text-xs sm:text-sm mb-2 sm:mb-4 break-all">{selectedImage.split("/").pop()}</p>
