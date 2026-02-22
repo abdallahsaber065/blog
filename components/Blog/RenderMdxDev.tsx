@@ -80,25 +80,6 @@ const RenderMdxDev: React.FC<RenderMdxProps> = ({ mdxText, mdxSource, additional
                 style={{ height: '100%' }}
             >
                 <div
-                    className="render-mdx-toolbar sticky top-0 z-20 flex items-center justify-between border-b border-slate-300 dark:border-slate-700 px-4 bg-white dark:bg-dark"
-                    style={{ height: '40px' }}
-                >
-                    <button className="render-mdx-sync-btn mr-2" onClick={handleSyncScroll}>
-                        <FaSync className="text-dark dark:text-white" />
-                    </button>
-                    <button
-                        className="render-mdx-fullscreen-btn"
-                        onClick={handleToggleFullScreen}
-                        title={isFullScreen ? "Exit preview full screen" : "Enter preview full screen"}
-                    >
-                        {isFullScreen ? (
-                            <FaCompress className="text-dark dark:text-white" />
-                        ) : (
-                            <FaExpand className="text-dark dark:text-white" />
-                        )}
-                    </button>
-                </div>
-                <div
                     style={{ height: 'calc(100% - 40px)', overflowY: 'auto', padding: '1.5rem' }}
                     ref={previewRef}
                 >
