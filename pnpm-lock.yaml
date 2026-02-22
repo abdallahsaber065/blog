@@ -155,6 +155,9 @@ importers:
       framer-motion:
         specifier: ^12.34.1
         version: 12.34.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      fs:
+        specifier: 0.0.1-security
+        version: 0.0.1-security
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
@@ -4018,6 +4021,9 @@ packages:
 
   fs-constants@1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
+
+  fs@0.0.1-security:
+    resolution: {integrity: sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==}
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -11307,6 +11313,8 @@ snapshots:
 
   fs-constants@1.0.0:
     optional: true
+
+  fs@0.0.1-security: {}
 
   fsevents@2.3.3:
     optional: true

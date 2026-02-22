@@ -7,6 +7,7 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 import Link from 'next/link';
+import { resolvePublicUrl } from '@/lib/storage';
 
 
 if (typeof Promise.withResolvers === 'undefined') {
@@ -75,7 +76,8 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         setError(null);
 
         try {
-            const response = await fetch(src);
+            const publicUrl = resolvePublicUrl(src);
+            const response = await fetch(publicUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }
@@ -186,7 +188,8 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                 <div className="p-4 flex flex-col items-center gap-4 text-center">
                     <p className="text-red-500">{error}</p>
                     {fileSize > MAX_PREVIEW_SIZE && (
-                        <Link                             href={src}
+                        <Link
+                            href={resolvePublicUrl(src)}
                             download
                             className="px-4 py-2 bg-gold text-slate-900 rounded-lg hover:bg-goldDark transition-colors inline-flex items-center gap-2"
                         >
@@ -201,7 +204,7 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
             return (
                 <div className="pdf-container p-4 max-h-[80vh] overflow-y-auto">
                     <Document
-                        file={src}
+                        file={resolvePublicUrl(src)}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                         error="Failed to load PDF"
                         loading={
@@ -300,11 +303,16 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
                             {isCopied ? <FiCheck /> : <FiCopy />}
                         </button>
                     )}
-                    <Link                         href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link
+                        href={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3')
+                            ? resolvePublicUrl(src)
+                            : `/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
+                        target={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "_blank" : undefined}
+                        rel={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "noopener noreferrer" : undefined}
                     >
                         <FiDownload />
                     </Link>

@@ -7,6 +7,7 @@ import makeAnimated from 'react-select/animated';
 import { ClipLoader } from 'react-spinners';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import { Button } from '@/components/ui/button';
+import { resolvePublicUrl } from '@/lib/storage';
 
 const animatedComponents = makeAnimated();
 
@@ -185,7 +186,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                 {currentPost.featured_image_url && (
                     <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm">
                         <img
-                            src={currentPost.featured_image_url}
+                            src={resolvePublicUrl(currentPost.featured_image_url)}
                             alt="Featured"
                             className="featured-image-preview w-full max-h-64 object-cover"
                         />

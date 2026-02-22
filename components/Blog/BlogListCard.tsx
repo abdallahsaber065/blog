@@ -4,6 +4,7 @@ import { Calendar, Clock, Eye, Folder, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { resolvePublicUrl } from '@/lib/storage';
 
 interface Post {
   slug: string;
@@ -40,7 +41,7 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
         <div className="flex flex-col gap-2 sm:w-32 md:w-40 flex-shrink-0">
           <div className="relative w-full h-48 sm:h-32 rounded-xl overflow-hidden bg-lightElevated dark:bg-darkElevated">
             <Image
-              src={post.featured_image_url}
+              src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : '/static/images/default-image.webp'}
               alt={post.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

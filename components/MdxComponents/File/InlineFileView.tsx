@@ -4,6 +4,7 @@ import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 import Link from 'next/link';
+import { resolvePublicUrl } from '@/lib/storage';
 
 interface InlineFileProps {
     src: string;
@@ -42,7 +43,8 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
         setError(null);
 
         try {
-            const response = await fetch(src);
+            const publicUrl = resolvePublicUrl(src);
+            const response = await fetch(publicUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }
@@ -153,9 +155,14 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                 <div className="p-4 flex flex-col items-center gap-4 text-center">
                     <p className="text-red-500">{error}</p>
                     {fileSize > MAX_PREVIEW_SIZE && (
-                        <Link href={`/api/files/download?file_url_name=${file_url_name}`}
+                        <Link
+                            href={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3')
+                                ? resolvePublicUrl(src)
+                                : `/api/files/download?file_url_name=${file_url_name}`}
                             download
                             className="px-4 py-2 bg-gold text-slate-900 rounded-lg hover:bg-goldDark transition-colors inline-flex items-center gap-2"
+                            target={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "_blank" : undefined}
+                            rel={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "noopener noreferrer" : undefined}
                         >
                             <FiDownload /> Download File
                         </Link>
@@ -232,11 +239,16 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                                     {isCopied ? <FiCheck /> : <FiCopy />}
                                 </button>
                             )}
-                            <Link href={`/api/files/download?file_url_name=${file_url_name}`}
+                            <Link
+                                href={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3')
+                                    ? resolvePublicUrl(src)
+                                    : `/api/files/download?file_url_name=${file_url_name}`}
                                 download
                                 className="p-2 text-gold hover:text-goldDark"
                                 onClick={(e) => e.stopPropagation()}
                                 title="Download file"
+                                target={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "_blank" : undefined}
+                                rel={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "noopener noreferrer" : undefined}
                             >
                                 <FiDownload />
                             </Link>
@@ -267,11 +279,16 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
                     )}
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link
+                        href={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3')
+                            ? resolvePublicUrl(src)
+                            : `/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
+                        target={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "_blank" : undefined}
+                        rel={(process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 'imagekit' || process.env.NEXT_PUBLIC_STORAGE_PROVIDER === 's3') ? "noopener noreferrer" : undefined}
                     >
                         <FiDownload />
                     </Link>

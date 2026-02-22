@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { getStorageProvider } from '@/lib/storage';
+import { getStorageProvider } from '@/lib/storage/factory';
+import { resolvePublicUrl } from '@/lib/storage';
 import { apiError, methodNotAllowed } from '@/lib/apiError';
 
 // Helper Functions

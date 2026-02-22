@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
-import { getStorageProvider } from '@/lib/storage';
+import { getStorageProvider } from '@/lib/storage/factory';
 
 export const config = {
   api: {

@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { resolvePublicUrl } from "@/lib/storage";
 
 interface BlogLayoutThreeProps {
   post: {
@@ -21,9 +22,9 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
       {/* Image */}
       <Link href={`/blogs/${post.slug}`} className="w-full overflow-hidden block">
         <Image
-          src={post.featured_image_url || "/static/images/default-image.webp"}
+          src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : "/static/images/default-image.webp"}
           placeholder="blur"
-          blurDataURL={post.featured_image_url || "/static/images/default-image.webp"}
+          blurDataURL={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : "/static/images/default-image.webp"}
           alt={post.title}
           width={800}
           height={600}

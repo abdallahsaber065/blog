@@ -3,6 +3,7 @@ import { FiDownload, FiChevronDown, FiChevronUp, FiCopy, FiCheck } from 'react-i
 import { ClipLoader } from 'react-spinners';
 import RenderMdx from '../../Blog/RenderMdx';
 import FileSelector from '../../Admin/FileSelector';
+import { resolvePublicUrl } from '@/lib/storage';
 import { getFileIcon } from '@/components/Admin/FileIcons';
 import Link from 'next/link';
 
@@ -29,6 +30,7 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
     const [mdxSource, setMdxSource] = useState<any>(null);
     const [isCopied, setIsCopied] = useState(false);
     const [triedToFetch, setTriedToFetch] = useState(false);
+    const [fileSize, setFileSize] = useState<number | null>(null);
 
     const MAX_FILE_SIZE = 100 * 1024; // 100KB in bytes
     const file_url_name = src.split('/').pop();
@@ -51,13 +53,16 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
         setError(null);
 
         try {
-            const response = await fetch(url);
+            const publicUrl = resolvePublicUrl(url);
+            const response = await fetch(publicUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }
 
-            const fileSize = parseInt(response.headers.get('Content-Length') || '0');
-            if (fileSize > MAX_FILE_SIZE) {
+            const size = parseInt(response.headers.get('Content-Length') || '0');
+            setFileSize(size);
+
+            if (size > MAX_FILE_SIZE) {
                 throw new Error('File is too large to preview. Please download to view contents.');
             }
 
@@ -142,6 +147,9 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
         filename = src.split('/').pop() || 'file';
     }
 
+    const provider = process.env.NEXT_PUBLIC_STORAGE_PROVIDER || 'local';
+    const isLocal = provider === 'local';
+
     return (
         <span className="inline-block my-2 border rounded-lg overflow-hidden shadow-md align-middle max-w-full">
             <span
@@ -173,11 +181,14 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                             {isCopied ? <FiCheck /> : <FiCopy />}
                         </button>
                     )}
-                    <Link href={`/api/files/download?file_url_name=${file_url_name}`}
+                    <Link
+                        href={!isLocal ? resolvePublicUrl(src) : `/api/files/download?file_url_name=${file_url_name}`}
                         download
                         className="p-2 text-gold hover:text-goldDark"
                         onClick={(e) => e.stopPropagation()}
                         title="Download file"
+                        target={!isLocal ? "_blank" : undefined}
+                        rel={!isLocal ? "noopener noreferrer" : undefined}
                     >
                         <FiDownload />
                     </Link>
@@ -200,8 +211,20 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
                             <ClipLoader size={24} />
                         </div>
                     ) : error ? (
-                        <div className="p-4 text-red-500">
-                            {error}
+                        <div className="p-4 flex flex-col items-center gap-4 text-center">
+                            <p className="text-red-500">{error}</p>
+                            {fileSize !== null && fileSize > MAX_FILE_SIZE && (
+                                <Link
+                                    href={!isLocal ? resolvePublicUrl(src) : `/api/files/download?file_url_name=${file_url_name}`}
+                                    download
+                                    className="px-4 py-2 bg-gold text-slate-900 rounded-lg hover:bg-goldDark transition-colors inline-flex items-center gap-2"
+                                    target={!isLocal ? "_blank" : undefined}
+                                    rel={!isLocal ? "noopener noreferrer" : undefined}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <FiDownload /> Download File
+                                </Link>
+                            )}
                         </div>
                     ) : (
                         <div className="relative">
