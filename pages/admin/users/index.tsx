@@ -9,12 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-    Users, 
-    UserPlus, 
-    Mail, 
-    Search, 
-    Shield, 
+import {
+    Users,
+    UserPlus,
+    Mail,
+    Search,
+    Shield,
     Loader2,
     UserCog,
     Filter
@@ -22,7 +22,7 @@ import {
 import Link from 'next/link';
 
 // Standard select input styling matching the project's design system
-const SELECT_INPUT_CLASSNAME = "flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950";
+const SELECT_INPUT_CLASSNAME = "flex h-10 w-full rounded-md border border-lightBorder dark:border-darkBorder bg-white dark:bg-dark px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-dark/50";
 
 interface User {
     id: number;
@@ -96,7 +96,7 @@ const UsersManagementPage = () => {
 
         // Filter by search term
         if (searchTerm) {
-            filtered = filtered.filter(user => 
+            filtered = filtered.filter(user =>
                 user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
@@ -122,10 +122,10 @@ const UsersManagementPage = () => {
     const hasActiveFilters = searchTerm || roleFilter !== 'all';
 
     return (
-        <div className="min-h-screen bg-light dark:bg-[#0f0f10]">
-            
+        <div className="min-h-screen bg-light dark:bg-dark">
+
             {/* Hero Section */}
-            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-light dark:bg-[#0f0f10] border-b border-lightBorder dark:border-darkBorder overflow-hidden">
+            <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-12 md:py-16 bg-light dark:bg-dark border-b border-lightBorder dark:border-darkBorder overflow-hidden">
                 {/* Decorative blooms for "Gold Bloom" effect */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
                 <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
@@ -137,17 +137,17 @@ const UsersManagementPage = () => {
                                 <Users className="w-8 h-8 text-dark" />
                             </div>
                             <div>
-                                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                                    User Management
+                                <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+                                    User Directory
                                 </h1>
-                                <p className="text-lg text-slate-600 dark:text-slate-400 font-medium">
+                                <p className="text-lg text-muted-foreground font-medium">
                                     Manage and oversee all user accounts
                                 </p>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-3">
                             <Link href="/admin/users/create">
-                                <Button size="lg" className="bg-gold hover:bg-goldDark dark:bg-gold dark:hover:bg-goldDark text-slate-900">
+                                <Button size="lg" className="bg-gold hover:bg-goldDark dark:bg-gold dark:hover:bg-goldDark text-dark font-bold shadow-gold">
                                     <UserPlus className="w-5 h-5 mr-2" />
                                     Create User
                                 </Button>
@@ -172,8 +172,8 @@ const UsersManagementPage = () => {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Total Users</p>
-                                    <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
+                                    <p className="text-3xl font-bold text-foreground">
                                         {users.length}
                                     </p>
                                 </div>
@@ -188,7 +188,7 @@ const UsersManagementPage = () => {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Admins</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Admins</p>
                                     <p className="text-3xl font-bold text-gold">
                                         {getRoleCount('admin')}
                                     </p>
@@ -204,7 +204,7 @@ const UsersManagementPage = () => {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Moderators</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Moderators</p>
                                     <p className="text-3xl font-bold text-goldLight">
                                         {getRoleCount('moderator')}
                                     </p>
@@ -220,7 +220,7 @@ const UsersManagementPage = () => {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Editors</p>
+                                    <p className="text-sm font-medium text-muted-foreground mb-1">Editors</p>
                                     <p className="text-3xl font-bold text-goldLight">
                                         {getRoleCount('editor')}
                                     </p>
@@ -244,7 +244,7 @@ const UsersManagementPage = () => {
                     <CardContent>
                         <div className="flex flex-col md:flex-row gap-4">
                             <div className="flex-1 relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
                                     type="text"
                                     placeholder="Search by username, email, or name..."
@@ -300,16 +300,16 @@ const UsersManagementPage = () => {
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-12 h-12 animate-spin text-gold dark:text-goldLight mb-4" />
-                                <p className="text-slate-600 dark:text-slate-400">Loading users...</p>
+                                <p className="text-muted-foreground">Loading users...</p>
                             </div>
                         ) : filteredUsers.length === 0 ? (
                             <div className="text-center py-12">
-                                <Users className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-                                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                                <Users className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold text-foreground mb-2">
                                     No users found
                                 </h3>
-                                <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                    {hasActiveFilters 
+                                <p className="text-muted-foreground mb-4">
+                                    {hasActiveFilters
                                         ? 'Try adjusting your search or filter criteria'
                                         : 'Get started by creating your first user'}
                                 </p>

@@ -5,6 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { FiUpload, FiDownload, FiCode, FiTrash2, FiFileText } from 'react-icons/fi';
+import { FaFile, FaFileAlt, FaFileArchive, FaFileAudio, FaFileCode, FaFileCsv, FaFileExcel, FaFileImage, FaFilePdf, FaFilePowerpoint, FaFileVideo, FaFileWord, FaSearch } from 'react-icons/fa';
 import { FILE_ICONS, getFileIcon } from '@/components/Admin/FileIcons';
 
 interface FileProps {
@@ -45,7 +46,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfir
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600"
+                        className="px-4 py-2 text-sm rounded bg-light dark:bg-darkSurface hover:bg-gold/10 text-foreground transition-all duration-200 border border-lightBorder dark:border-darkBorder"
                     >
                         Cancel
                     </button>
@@ -206,8 +207,8 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                 <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-xl shadow-2xl flex flex-col h-[90vh]">
                     <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                         <div className="flex justify-between items-center">
-                            <span className="text-2xl font-bold text-slate-900 dark:text-white pt-0 my-0">Select File</span>
-                            <button onClick={onClose} className="text-slate-500 hover:text-slate-700">
+                            <span className="text-2xl font-bold text-foreground pt-0 my-0">Select File</span>
+                            <button onClick={onClose} className="text-muted-foreground hover:text-gold transition-colors">
                                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -218,7 +219,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                     <div className="px-4 py-2 flex justify-between items-center gap-4">
                         <div className="flex-shrink-0">
                             <input type="file" accept={allowedTypes.join(',')} onChange={handleFileUpload} className="hidden" id="file-upload" />
-                            <label htmlFor="file-upload" className="bg-gold hover:bg-goldDark text-slate-900 px-4 py-2 rounded-lg cursor-pointer inline-flex items-center gap-2">
+                            <label htmlFor="file-upload" className="bg-gold hover:bg-goldDark text-dark px-4 py-2 rounded-lg cursor-pointer inline-flex items-center gap-2 font-semibold shadow-gold transition-all duration-200">
                                 <FiUpload className="text-lg" />
                                 Upload File
                             </label>
@@ -227,15 +228,13 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Search files..."
+                                    placeholder="Filter by name..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50"
+                                    className="w-full px-10 py-2 rounded-lg border border-lightBorder dark:border-darkBorder bg-white dark:bg-dark"
                                 />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                    <FaSearch size={14} />
                                 </div>
                             </div>
                         </div>
@@ -255,8 +254,8 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                                             onClick={() => setSelectedFile(file)}
                                             className={`p-4 border rounded-lg cursor-pointer flex items-start transition-all hover:shadow-md
                                                 ${selectedFile?.id === file.id
-                                                    ? 'border-gold bg-gold/10 dark:bg-gold/20'
-                                                    : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                                    ? 'border-gold bg-gold/5 dark:bg-gold/10 ring-1 ring-gold/20'
+                                                    : 'border-lightBorder dark:border-darkBorder hover:bg-gold/5 dark:hover:bg-gold/10'
                                                 }`}
                                         >
                                             <div className="flex flex-1 gap-2 min-w-0">
@@ -288,11 +287,11 @@ const FileSelector: React.FC<FileSelectorProps> = ({
                         )}
                     </div>
 
-                    <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                    <div className="p-4 border-t border-lightBorder dark:border-darkBorder bg-light/50 dark:bg-dark/50">
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={onClose}
-                                className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
+                                className="px-4 py-2 rounded-lg border border-lightBorder dark:border-darkBorder text-foreground hover:bg-light dark:hover:bg-darkSurface transition-all duration-200"
                             >
                                 Cancel
                             </button>

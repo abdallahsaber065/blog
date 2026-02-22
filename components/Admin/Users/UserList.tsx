@@ -105,12 +105,12 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             <table className="w-full text-sm">
                 <thead>
                     <tr className="border-b border-lightBorder dark:border-darkBorder bg-light dark:bg-dark/50">
-                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Full Name</th>
-                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Username</th>
-                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Email</th>
-                        <th className="px-5 py-4 text-left font-bold text-slate-900 dark:text-slate-100">Role</th>
-                        <th className="px-5 py-4 text-center font-bold text-slate-900 dark:text-slate-100">Posts</th>
-                        <th className="px-5 py-4 text-right font-bold text-slate-900 dark:text-slate-100">Actions</th>
+                        <th className="px-5 py-4 text-left font-bold text-foreground">Full Name</th>
+                        <th className="px-5 py-4 text-left font-bold text-foreground">Username</th>
+                        <th className="px-5 py-4 text-left font-bold text-foreground">Email</th>
+                        <th className="px-5 py-4 text-left font-bold text-foreground">Role</th>
+                        <th className="px-5 py-4 text-center font-bold text-foreground">Posts</th>
+                        <th className="px-5 py-4 text-right font-bold text-foreground">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-lightBorder dark:divide-darkBorder">
@@ -135,12 +135,12 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                                         />
                                     </div>
                                 ) : (
-                                    <span className="font-medium text-slate-900 dark:text-slate-100">
+                                    <span className="font-medium text-foreground">
                                         {user.first_name} {user.last_name}
                                     </span>
                                 )}
                             </td>
-                            <td className="px-5 py-4 text-slate-600 dark:text-slate-400">
+                            <td className="px-5 py-4 text-muted-foreground">
                                 {editingUserId === user.id ? (
                                     <Input
                                         type="text"
@@ -153,7 +153,7 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                                     `@${user.username}`
                                 )}
                             </td>
-                            <td className="px-5 py-4 text-slate-600 dark:text-slate-400 font-mr">
+                            <td className="px-5 py-4 text-muted-foreground font-mr">
                                 {editingUserId === user.id ? (
                                     <Input
                                         type="email"
@@ -172,7 +172,7 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                                         name="role"
                                         value={editedUser.role || ''}
                                         onChange={handleChange}
-                                        className="h-9 px-2 rounded-md border border-lightBorder dark:border-darkBorder bg-light dark:bg-dark text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-gold transition-all outline-none"
+                                        className="h-9 px-2 rounded-md border border-lightBorder dark:border-darkBorder bg-light dark:bg-dark text-foreground focus:ring-2 focus:ring-gold transition-all outline-none"
                                     >
                                         {RoleList.map(role => (
                                             <option key={role} value={role}>
@@ -221,9 +221,9 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
                 <div className="fixed inset-0 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-sm z-50 animate-fade-in">
                     <div className="bg-white dark:bg-darkSurface p-8 rounded-2xl shadow-gold/10 border border-lightBorder dark:border-darkBorder max-w-md w-full relative">
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500 rounded-t-2xl"></div>
-                        <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-slate-100">Confirm Deletion</h2>
-                        <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                            This action is permanent. Are you sure you want to delete the user <span className="font-bold text-slate-900 dark:text-slate-100">{users.find(u => u.id === userToDelete)?.username}</span>?
+                        <h2 className="text-2xl font-bold mb-3 text-foreground">Confirm Deletion</h2>
+                        <p className="text-muted-foreground mb-8 leading-relaxed">
+                            This action is permanent. Are you sure you want to delete the user <span className="font-bold text-foreground">{users.find(u => u.id === userToDelete)?.username}</span>?
                         </p>
                         <div className="flex justify-end gap-3">
                             <Button variant="ghost" onClick={closeDeleteConfirmation} className="px-6 font-semibold">Cancel</Button>

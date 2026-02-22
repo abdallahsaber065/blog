@@ -260,15 +260,15 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
             {/* Live Preview Overlay */}
             {isLivePreview && (
                 <div className="fixed inset-0 z-[100] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
-                    <div className="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between shadow-sm">
+                    <div className="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-lightBorder dark:border-darkBorder px-4 py-3 flex items-center justify-between shadow-sm">
                         <button
                             onClick={() => setIsLivePreview(false)}
-                            className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-full font-medium transition-all duration-200"
+                            className="flex items-center gap-2 px-4 py-2 bg-light dark:bg-darkSurface hover:bg-gold/10 dark:hover:bg-gold/15 text-foreground rounded-full font-medium transition-all duration-200 border border-lightBorder dark:border-darkBorder"
                         >
                             <FaArrowLeft />
                             Back to Editor
                         </button>
-                        <span className="font-semibold text-slate-500 dark:text-slate-400">Live Preview Mode</span>
+                        <span className="font-semibold text-muted-foreground">Live Preview Mode</span>
                         <div className="w-24"></div> {/* Spacer for centering */}
                     </div>
                     <div>
@@ -291,22 +291,22 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                     <div className="flex items-center gap-4">
                         {/* Mobile Toggle */}
                         <div className="sm:hidden">
-                            <label className="flex cursor-pointer gap-2 items-center bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600">
-                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Editor</span>
+                            <label className="flex cursor-pointer gap-2 items-center bg-light dark:bg-darkSurface px-3 py-1.5 rounded-lg border border-lightBorder dark:border-darkBorder">
+                                <span className="text-xs font-medium text-foreground/70">Editor</span>
                                 <input
                                     type="checkbox"
                                     className="toggle toggle-sm border-gold bg-gold [--tglbg:yellow] hover:bg-goldDark"
                                     checked={view === 'preview'}
                                     onChange={() => setView(view === 'editor' ? 'preview' : 'editor')}
                                 />
-                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Preview</span>
+                                <span className="text-xs font-medium text-foreground/70">Preview</span>
                             </label>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3 ml-auto">
                         <button
-                            className="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white border border-green-600 flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200"
+                            className="px-3 py-1.5 rounded-lg bg-success hover:bg-success/90 text-white border border-success/20 flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200"
                             onClick={() => setIsLivePreview(true)}
                             title="Open full Screen Live Preview"
                         >
@@ -315,7 +315,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                         </button>
 
                         <button
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-gold/10 dark:hover:bg-gold/15 border border-slate-300 dark:border-slate-600 hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-slate-700 dark:text-slate-300 hover:text-gold dark:hover:text-goldLight"
+                            className="px-3 py-1.5 rounded-lg bg-light dark:bg-darkSurface hover:bg-gold/10 dark:hover:bg-gold/15 border border-lightBorder dark:border-darkBorder hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-foreground/80 dark:text-foreground/70 hover:text-gold dark:hover:text-goldLight"
                             onClick={() => setIsFullScreen(!isFullScreen)}
                             title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
                         >
@@ -332,7 +332,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                     {/* Editor Section */}
                     <div className={`editor-preview-editor-section w-full sm:w-1/2 ${view === 'preview' ? 'hidden sm:block' : ''}`}>
                         <div className="flex items-center justify-between mb-3">
-                            <label className="editor-preview-content-label text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <label className="editor-preview-content-label text-lg font-semibold text-foreground dark:text-foreground/90 flex items-center gap-2">
                                 <span className="w-1 h-6 bg-gold rounded-full"></span>
                                 Content
                             </label>
@@ -341,14 +341,14 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                                     .then(res => res.text())
                                     .then(text => onContentChange(text))
                                     .catch(err => console.error('Error loading example:', err))}
-                                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-gold hover:bg-goldDark text-slate-900 transition-all duration-200 shadow-sm hover:shadow"
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg bg-gold hover:bg-goldDark text-dark transition-all duration-200 shadow-sm hover:shadow"
                                 title="Load example content"
                             >
                                 <FaBookOpen className="text-sm" />
                                 <span>Load Example</span>
                             </button>
                         </div>
-                        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm"
+                        <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm"
                             style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
                             <Editor
                                 markdown={markdownText}
@@ -363,14 +363,13 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                     {/* Preview Section */}
                     <div className={`editor-preview-preview-section w-full sm:w-1/2 ${view === 'editor' ? 'hidden sm:block' : ''}`}>
                         <div className="flex items-center mb-3">
-                            <h2 className="editor-preview-preview-title text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-green-500 rounded-full"></span>
+                            <h2 className="editor-preview-preview-title text-lg font-semibold text-foreground dark:text-foreground/90 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-success rounded-full"></span>
                                 Preview
                             </h2>
                         </div>
-                        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-slate-900"
-                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
-                            <div className="h-full overflow-y-auto">
+                        <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm bg-white dark:bg-darkElevated"
+                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>    <div className="h-full overflow-y-auto">
                                 {error ? (
                                     <div className="flex items-center justify-center h-full">
                                         <p className="text-red-500 font-medium">{error}</p>

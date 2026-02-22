@@ -495,30 +495,28 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
       {/* Hero Section */}
-      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-20 bg-light dark:bg-dark border-b border-lightBorder dark:border-darkBorder overflow-hidden">
+      <section className="relative px-5 sm:px-10 md:px-24 sxl:px-32 py-16 md:py-24 bg-light dark:bg-dark border-b border-lightBorder dark:border-darkBorder overflow-hidden">
         {/* Decorative blooms for "Gold Bloom" effect */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold/[0.08] rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
         <div className="absolute -bottom-24 -left-24 w-[400px] h-[400px] bg-gold/[0.05] rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-start gap-5 mb-8">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gold rounded-2xl blur-xl opacity-25 group-hover:opacity-40 transition-opacity"></div>
-              <div className="relative p-4 bg-gold rounded-2xl shadow-gold">
-                <Sparkles className="w-8 h-8 text-dark" />
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 mb-8">
+            <div className="relative group shrink-0">
+              <div className="absolute inset-0 bg-gold rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500 scale-110"></div>
+              <div className="relative p-5 bg-gradient-to-br from-gold/90 to-gold rounded-3xl shadow-gold hover:scale-[1.05] transition-transform duration-300">
+                <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-dark" />
               </div>
             </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-3">
+            <div className="flex flex-col h-full justify-center">
+              <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground mb-4 drop-shadow-sm">
                 Discover Content
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground font-medium">
-                Explore <span className="font-bold text-gold">{posts.length}</span> articles across all topics
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-2xl px-4 sm:px-0">
+                Explore <span className="font-bold text-gold">{posts.length}</span> meticulously crafted articles across various tech fields.
               </p>
             </div>
           </div>
-
-
         </div>
       </section>
 
@@ -648,7 +646,7 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
 
             {/* View Controls */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="items-center gap-3 hidden md:flex">
                 <Badge variant="outline" className="px-4 py-2 text-sm font-semibold border border-lightBorder dark:border-darkBorder">
                   <span className="text-gold font-bold mr-1">{filteredAndSortedPosts.length}</span>
                   {filteredAndSortedPosts.length === 1 ? 'article' : 'articles'} found
@@ -685,16 +683,17 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                 </div>
 
                 {/* Sort Dropdown */}
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
                       className="gap-2.5 h-10 px-4 border-2 border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:border-gold/40 hover:text-gold transition-all duration-200 font-semibold"
                     >
-                      <div className="p-1 bg-gold/10 rounded">
+                      <div className="p-1 rounded">
                         {getSortIcon()}
                       </div>
-                      <span className="hidden sm:inline font-bold">{getSortLabel()}</span>
+                      <span className="sm:inline font-bold">{getSortLabel()}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
@@ -728,7 +727,6 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-
               </div>
             </div>
           </div>

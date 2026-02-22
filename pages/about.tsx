@@ -75,7 +75,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Mission */}
-      <section className="w-full max-w-6xl mx-auto px-6 pb-24 sm:pb-32">
+      <section className="w-full max-w-6xl mx-auto px-6 pb-12 sm:pb-20">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -109,11 +109,13 @@ const AboutPage: React.FC = () => {
                 </li>
               ))}
             </ul>
-            <Link href="/contact" className="inline-block ">
-              <Button size="lg" className="gap-2">
-                Get in touch <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            <div className="pt-6">
+              <Link href="/contact" className="inline-flex">
+                <Button size="lg" className="gap-2 hover:scale-105 transition-transform shadow-gold-sm hover:shadow-gold">
+                  Get in touch <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -125,11 +127,12 @@ const AboutPage: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className=" mb-12"
+          className="mb-8"
         >
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <div className="w-1 h-8 rounded-full bg-gold" />
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground">The Team</h2>
+            <div className="w-1 h-8 rounded-full bg-gold" />
           </div>
           <p className="text-center text-muted-foreground max-w-md mx-auto text-sm">
             A small, focused team obsessed with developer experience and quality content.
