@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, MutableRefObject } from 'react';
+import { createPortal } from 'react-dom';
 import Editor from "@/components/Admin/Editor";
 import RenderMdxDev from '@/components/Blog/RenderMdxDev';
 import CustomImageUpload from '@/components/MdxComponents/Image/CustomImageUpload';
@@ -54,6 +55,11 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
     const editorRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLivePreview, setIsLivePreview] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (isFullScreen || isLivePreview) {
@@ -258,8 +264,8 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
     return (
         <>
             {/* Live Preview Overlay */}
-            {isLivePreview && (
-                <div className="fixed inset-0 z-[100] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
+            {isLivePreview && mounted && createPortal(
+                <div id="live-preview-scroll-container" className="fixed inset-0 z-[100] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
                     <div className="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-lightBorder dark:border-darkBorder px-4 py-3 flex items-center justify-between shadow-sm">
                         <button
                             onClick={() => setIsLivePreview(false)}
@@ -273,18 +279,19 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                     </div>
                     <div>
                         {mdxSource ? (
-                            <BlogTemplate post={mockPost} mdxSource={mdxSource} isPreview={true} />
+                            <BlogTemplate post={mockPost} mdxSource={mdxSource} isPreview={true} scrollContainerId="live-preview-scroll-container" />
                         ) : (
                             <div className="h-[80vh] flex items-center justify-center">
                                 <p className="text-xl text-slate-400">Loading content...</p>
                             </div>
                         )}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             <div className={`editor-preview-container text-slate-900 dark:text-slate-300
-                ${isFullScreen ? 'fixed top-[64px] left-0 right-0 bottom-0 z-40 bg-white dark:bg-dark p-4' : 'relative'}`}>
+                ${isFullScreen ? 'fixed !m-0 !top-[72px] left-0 right-0 bottom-0 z-40 bg-white dark:bg-dark p-4 shadow-xl border-t border-lightBorder dark:border-darkBorder backdrop-blur-lg' : 'relative mt-0'}`}>
 
                 {/* Header with Focus Mode Button */}
                 <div className="flex items-center justify-between mb-4">
@@ -315,7 +322,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                         </button>
 
                         <button
-                            className="px-3 py-1.5 rounded-lg bg-light dark:bg-darkSurface hover:bg-gold/10 dark:hover:bg-gold/15 border border-lightBorder dark:border-darkBorder hover:border-gold dark:hover:border-goldLight flex items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-foreground/80 dark:text-foreground/70 hover:text-gold dark:hover:text-goldLight"
+                            className="px-3 py-1.5 rounded-lg bg-light dark:bg-darkSurface hover:bg-gold/10 dark:hover:bg-gold/15 border border-lightBorder dark:border-darkBorder hover:border-gold dark:hover:border-goldLight  items-center gap-2 shadow-sm hover:shadow transition-all duration-200 text-foreground/80 dark:text-foreground/70 hover:text-gold dark:hover:text-goldLight hidden sm:flex"
                             onClick={() => setIsFullScreen(!isFullScreen)}
                             title={isFullScreen ? "Exit focus mode" : "Enter focus mode"}
                         >
@@ -349,7 +356,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                             </button>
                         </div>
                         <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm"
-                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>
+                            style={{ height: isFullScreen ? 'calc(100vh - 120px)' : '600px' }}>
                             <Editor
                                 markdown={markdownText}
                                 onChange={onContentChange}
@@ -369,7 +376,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
                             </h2>
                         </div>
                         <div className="border border-lightBorder dark:border-darkBorder rounded-lg overflow-hidden shadow-sm bg-white dark:bg-darkElevated"
-                            style={{ height: isFullScreen ? 'calc(100vh - 180px)' : '600px' }}>    <div className="h-full overflow-y-auto">
+                            style={{ height: isFullScreen ? 'calc(100vh - 120px)' : '600px' }}>    <div className="h-full overflow-y-auto">
                                 {error ? (
                                     <div className="flex items-center justify-center h-full">
                                         <p className="text-red-500 font-medium">{error}</p>

@@ -18,9 +18,10 @@ interface BlogTemplateProps {
     post: any;
     mdxSource: any;
     isPreview?: boolean;
+    scrollContainerId?: string;
 }
 
-const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview = false }) => {
+const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview = false, scrollContainerId }) => {
 
     // Fallback for when post data might differ in structure (editor vs db)
     const normalizedPost = {
@@ -90,7 +91,7 @@ const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview 
 
             <BlogDetails post={normalizedPost} />
             <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-                <TableOfContent mdxContent={normalizedPost.content} />
+                <TableOfContent mdxContent={normalizedPost.content} scrollContainerId={scrollContainerId} />
                 <div className="col-span-12 lg:col-span-8">
                     <RenderMdx mdxSource={mdxSource} additionalComponents={mdxComponents()} />
                 </div>

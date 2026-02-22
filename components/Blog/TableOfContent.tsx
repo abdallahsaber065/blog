@@ -13,6 +13,7 @@ interface Heading {
 
 interface TableOfContentProps {
     mdxContent: string;
+    scrollContainerId?: string;
 }
 
 export function generateTOC(content: string): Heading[] {
@@ -83,7 +84,7 @@ function findParentH2(toc: Heading[], slug: string): string | null {
     return null;
 }
 
-const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) => {
+const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content, scrollContainerId }) => {
     const toc = generateTOC(content);
     const allSlugs = flattenSlugs(toc);
 
@@ -101,30 +102,38 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
 
     // ── Scroll progress (synced to page position) ────────────────────────────
     useEffect(() => {
+        const container = scrollContainerId ? document.getElementById(scrollContainerId) : null;
+        const scrollElement = container || window;
+
         const onScroll = () => {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollTop = container ? container.scrollTop : window.scrollY;
+            const docHeight = (container ? container.scrollHeight : document.documentElement.scrollHeight) - (container ? container.clientHeight : window.innerHeight);
             setScrollProgress(docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0);
         };
-        window.addEventListener('scroll', onScroll, { passive: true });
+        scrollElement.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+        return () => scrollElement.removeEventListener('scroll', onScroll);
+    }, [scrollContainerId]);
 
     // ── Active heading detection (upper-half of viewport) ────────────────────
     useEffect(() => {
         if (allSlugs.length === 0) return;
 
+        const container = scrollContainerId ? document.getElementById(scrollContainerId) : null;
+        const scrollElement = container || window;
+
         const getActiveHeading = (): string | null => {
-            const scrollY = window.scrollY;
+            const scrollY = container ? container.scrollTop : window.scrollY;
             // The "active line" is at the top 40% of viewport
-            const activeLine = scrollY + window.innerHeight * 0.4;
+            const activeLine = scrollY + (container ? container.clientHeight : window.innerHeight) * 0.4;
+            const containerTop = container ? container.getBoundingClientRect().top : 0;
 
             let active: string | null = null;
             for (const slug of allSlugs) {
-                const el = document.getElementById(slug);
+                const el = container ? container.querySelector(`[id="${slug}"]`) as HTMLElement : document.getElementById(slug);
                 if (!el) continue;
-                const elTop = el.getBoundingClientRect().top + scrollY;
+                // Get element top relative to container/window, unaffected by current window scroll if inside container
+                const elTop = (el.getBoundingClientRect().top - containerTop) + scrollY;
                 if (elTop <= activeLine) {
                     active = slug;
                 } else {
@@ -146,15 +155,15 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
             }
         };
 
-        window.addEventListener('scroll', onScroll, { passive: true });
+        scrollElement.addEventListener('scroll', onScroll, { passive: true });
         // Run once on mount to set initial active
         const initialTimeout = setTimeout(onScroll, 100);
         return () => {
-            window.removeEventListener('scroll', onScroll);
+            scrollElement.removeEventListener('scroll', onScroll);
             clearTimeout(initialTimeout);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [content, activeId, toc]);
+    }, [content, activeId, toc, scrollContainerId]);
 
     // ── Auto-scroll TOC to keep active item visible ──────────────────────────
     useEffect(() => {
@@ -196,21 +205,36 @@ const TableOfContent: React.FC<TableOfContentProps> = ({ mdxContent: content }) 
 
     // ── Click to scroll ──────────────────────────────────────────────────────
     const handleHeadingClick = useCallback((slug: string) => {
-        const target = document.getElementById(slug);
+        const container = scrollContainerId ? document.getElementById(scrollContainerId) : document.documentElement;
+        // Search inside container if it exists, else document. Use querySelector over document.getElementById to scope it.
+        const target = scrollContainerId ? document.getElementById(scrollContainerId)?.querySelector(`[id="${slug}"]`) as HTMLElement : document.getElementById(slug);
         if (!target) return;
         isClickScrolling.current = true;
+
         const offset = 90;
-        window.scrollTo({
-            top: target.getBoundingClientRect().top + window.pageYOffset - offset,
-            behavior: 'smooth',
-        });
+
+        if (scrollContainerId && document.getElementById(scrollContainerId)) {
+            const scrollContainer = document.getElementById(scrollContainerId)!;
+            const containerTop = scrollContainer.getBoundingClientRect().top;
+            const targetTop = target.getBoundingClientRect().top;
+            container?.scrollTo({
+                top: container.scrollTop + (targetTop - containerTop) - offset,
+                behavior: 'smooth',
+            });
+        } else {
+            window.scrollTo({
+                top: target.getBoundingClientRect().top + window.pageYOffset - offset,
+                behavior: 'smooth',
+            });
+        }
+
         setActiveId(slug);
         setReadSections(prev => new Set(prev).add(slug));
         const parentH2 = findParentH2(toc, slug);
         if (parentH2) setExpandedH2(parentH2);
         setTimeout(() => { isClickScrolling.current = false; }, 700);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [toc]);
+    }, [toc, scrollContainerId]);
 
     if (toc.length === 0) return null;
 
