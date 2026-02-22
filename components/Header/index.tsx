@@ -25,7 +25,7 @@ const navLinks = [
 const adminLinks = [
   { href: '/admin/posts', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/posts/create', label: 'Create Post', icon: PenSquare },
-  { href: '/admin/categories', label: 'Edit Categories', icon: Folder },
+  { href: '/admin/categories', label: 'Manage Categories', icon: Folder },
 ];
 
 const Header: React.FC = () => {

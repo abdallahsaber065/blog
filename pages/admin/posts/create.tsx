@@ -88,11 +88,13 @@ const CreatePost: React.FC = () => {
         voiceNoteBase64,
         voiceNoteMime,
         selectedImages: images,
+        enableWebSearch,
     }: {
         contextUrls: string[];
         voiceNoteBase64: string | null;
         voiceNoteMime: string;
         selectedImages: string[];
+        enableWebSearch: boolean;
     }) => {
         if (!topic) {
             toast.error('Please enter a topic.');
@@ -112,6 +114,7 @@ const CreatePost: React.FC = () => {
                     include_images: includeImages,
                     user_custom_instructions: userCustomInstructions,
                     website_type: 'blog',
+                    enable_web_search: enableWebSearch,
                 }),
             });
 

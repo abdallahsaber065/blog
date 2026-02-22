@@ -44,6 +44,7 @@ export interface AIContentGeneratorProps {
         voiceNoteBase64: string | null;
         voiceNoteMime: string;
         selectedImages: string[];
+        enableWebSearch: boolean;
     }) => void;
     onImageSelect: (images: string[]) => void;
 }
@@ -93,6 +94,9 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
 
     // Advanced settings
     const [showAdvanced, setShowAdvanced] = useState(false);
+
+    // Web Search
+    const [enableWebSearch, setEnableWebSearch] = useState(true);
 
     // ── URL management ───────────────────────────────────────────────────
 
@@ -185,6 +189,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
             voiceNoteBase64,
             voiceNoteMime: audioMime,
             selectedImages,
+            enableWebSearch,
         });
     };
 
@@ -219,9 +224,22 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
 
                 {/* Context URLs */}
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Context URLs</span>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Context URLs</span>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                            <span className={`text-xs font-semibold uppercase tracking-wider transition-colors ${enableWebSearch ? 'text-gold' : 'text-muted-foreground'}`}>
+                                Web Search Grounding
+                            </span>
+                            <div
+                                onClick={() => setEnableWebSearch(!enableWebSearch)}
+                                className={`relative w-8 h-4 rounded-full transition-colors flex items-center ${enableWebSearch ? 'bg-gold' : 'bg-darkBorder'}`}
+                            >
+                                <span className={`absolute w-3 h-3 rounded-full bg-white shadow transition-transform ${enableWebSearch ? 'translate-x-[18px]' : 'translate-x-[2px]'}`} />
+                            </div>
+                        </label>
                     </div>
                     <div className="flex gap-2">
                         <input

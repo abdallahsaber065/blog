@@ -42,83 +42,85 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    // ── 1. Transcribe voice notes (if any) ─────────────────────────────────
-    let voiceTranscript = '';
+    const parts: any[] = [];
+
+    // ── 1. Pass voice note directly ──────────────────────────────────────────
     if (voice_note_base64) {
-      try {
-        const audioBytes = Buffer.from(voice_note_base64, 'base64');
-        const { text } = await gemini.generateFromAudio({
-          audioData: audioBytes,
-          mimeType: voice_note_mime,
-          textPrompt:
-            'Transcribe and summarise the key points from these voice notes. Return plain text, no preamble.',
-        });
-        voiceTranscript = text;
-      } catch (err) {
-        console.warn('Voice note transcription failed, skipping:', err);
-      }
+      const audioBytes = Buffer.from(voice_note_base64, 'base64');
+      parts.push({
+        type: 'inlineBytes',
+        data: audioBytes,
+        mimeType: voice_note_mime,
+      });
     }
 
-    // ── 2. Research via Google Search grounding ─────────────────────────────
-    const researchPrompt = `Research the following topic thoroughly to provide up-to-date information for a technical blog post: "${topic}".
-    
+    // Pass images/files directly
+    for (const fileUrl of files) {
+      parts.push({
+        type: 'file',
+        fileUri: fileUrl,
+      });
+    }
+
+    // ── 2. Research via Google Search grounding (Optional) ──────────────────
+    let researchSummary = '';
+    const enable_web_search = req.body.enable_web_search ?? false;
+
+    if (enable_web_search) {
+      const researchPrompt = `Research the following topic thoroughly to provide up-to-date information for a technical blog post: "${topic}".
+      
 Summarise: key concepts, latest developments, real-world examples, statistics, and technical details.`;
 
-    const { text: researchSummary } = await gemini.generateWithWebSearch({
-      model: 'gemini-2.5-flash',
-      prompt: researchPrompt,
-      contextUrls: context_urls,
-      config: { temperature: 0.3, maxOutputTokens: 8192 },
-    });
+      const { text } = await gemini.generateWithWebSearch({
+        model: 'gemini-2.5-flash',
+        prompt: researchPrompt,
+        contextUrls: context_urls,
+        config: { temperature: 0.3, maxOutputTokens: 8192 },
+      });
+      researchSummary = text;
+    }
 
     // ── 3. Stream the final blog post ───────────────────────────────────────
+    let urlContext = '';
+    if (context_urls && context_urls.length > 0) {
+      urlContext = `\n\nAlso consider information from these URLs: ${context_urls.join(', ')}`;
+    }
+
     const contentPrompt = buildDirectContentPrompt(
       topic,
-      researchSummary,
-      voiceTranscript,
+      researchSummary + urlContext,
+      '', // No separate transcript needed
       include_images,
       user_custom_instructions,
       website_type
     );
 
+    parts.push({ type: 'text', text: contentPrompt });
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
 
-    // Build multimodal contents if files were attached
-    type Part = { text: string } | { fileData: { fileUri: string; mimeType?: string } };
-    const parts: Part[] = [{ text: contentPrompt }];
-    for (const fileUrl of files) {
-      // Files are already hosted URLs; send as fileData
-      parts.push({ fileData: { fileUri: fileUrl } });
+    const tools: any[] = [{ urlContext: {} }];
+    if (enable_web_search) {
+      tools.push({ googleSearch: {} });
     }
 
-    // Use the raw client for streaming (GeminiService wraps non-streaming calls only)
-    // We access the underlying client through a typed helper on the service.
-    // Since GeminiService doesn't expose streaming directly, we call the SDK directly.
-    const { GoogleGenAI } = await import('@google/genai');
-    const rawClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-
-    const streamResponse = await rawClient.models.generateContentStream({
+    const stream = gemini.generateTextStream({
       model: 'gemini-2.5-flash',
       contents: [{ role: 'user', parts }],
+      tools,
+      systemInstruction: `You are a world-class content writer. Write complete, detailed, valuable blog posts in Markdown.`,
       config: {
         temperature: 0.75,
         maxOutputTokens: 8192,
-        systemInstruction: `You are a world-class content writer. Write complete, detailed, valuable blog posts in Markdown.`,
-      } as any,
+      },
     });
 
     let fullContent = '';
-    for await (const chunk of streamResponse as any) {
-      const chunkText: string =
-        typeof chunk.text === 'function'
-          ? chunk.text()
-          : (chunk?.candidates?.[0]?.content?.parts?.[0]?.text ?? '');
-      if (chunkText) {
-        fullContent += chunkText;
-        res.write(`data: ${JSON.stringify({ chunk: chunkText, done: false })}\n\n`);
-      }
+    for await (const chunkText of stream) {
+      fullContent += chunkText;
+      res.write(`data: ${JSON.stringify({ chunk: chunkText, done: false })}\n\n`);
     }
 
     res.write(`data: ${JSON.stringify({ chunk: '', done: true, content: fullContent })}\n\n`);

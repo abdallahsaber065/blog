@@ -370,19 +370,19 @@ export interface GeminiTextPart {
  */
 export type GeminiInputPart =
   | {
-      type: 'text';
-      text: string;
-    }
+    type: 'text';
+    text: string;
+  }
   | {
-      type: 'file';
-      fileUri: string;
-      mimeType?: string;
-    }
+    type: 'file';
+    fileUri: string;
+    mimeType?: string;
+  }
   | {
-      type: 'inlineBytes';
-      data: ArrayBuffer | Uint8Array;
-      mimeType: string;
-    };
+    type: 'inlineBytes';
+    data: ArrayBuffer | Uint8Array | Buffer;
+    mimeType: string;
+  };
 
 export interface GeminiContent {
   role?: string;
@@ -602,7 +602,7 @@ export interface GeminiWebSearchOptions extends GeminiGenerationOptions {
  */
 export interface GeminiAudioOptions extends GeminiGenerationOptions {
   /** Inline audio bytes (e.g. WebM/Opus from MediaRecorder) */
-  audioData: ArrayBuffer | Uint8Array;
+  audioData: ArrayBuffer | Uint8Array | Buffer;
   mimeType: string;
   /** Optional extra text appended after the audio */
   textPrompt?: string;
@@ -617,20 +617,20 @@ export interface GeminiAudioOptions extends GeminiGenerationOptions {
  */
 export type GeminiUploadSource =
   | {
-      kind: 'path';
-      path: string;
-      mimeType?: string;
-    }
+    kind: 'path';
+    path: string;
+    mimeType?: string;
+  }
   | {
-      kind: 'blob';
-      blob: Blob;
-      mimeType?: string;
-    }
+    kind: 'blob';
+    blob: Blob;
+    mimeType?: string;
+  }
   | {
-      kind: 'bytes';
-      data: ArrayBuffer | Uint8Array;
-      mimeType: string;
-    };
+    kind: 'bytes';
+    data: ArrayBuffer | Uint8Array | Buffer;
+    mimeType: string;
+  };
 
 /**
  * Minimal metadata we care about from an uploaded file.
