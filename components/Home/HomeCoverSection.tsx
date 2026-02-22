@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useRef } from 'react';
-import { resolvePublicUrl } from '@/lib/storage';
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from '@/lib/storage';
 import Tag from '../Elements/Tag';
 import { slug } from 'github-slugger';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -56,6 +56,7 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
             className='w-full h-full object-center object-cover scale-110'
             sizes='100vw'
             priority
+            unoptimized={isCloudProvider() || (post.featured_image_url ? isExternalUrl(resolvePublicUrl(post.featured_image_url)) : false)}
           />
         </motion.div>
 

@@ -19,6 +19,19 @@ export function resolvePublicUrl(fileUrl: string | null | undefined): string {
     'local'
   ).toLowerCase().trim();
 
+  // Check if it's a known local static folder (e.g. from the seed or project assets)
+  const isLocalStatic = /^\/?(blogs|static|svgs|fonts|templates|images)\//i.test(fileUrl);
+  if (isLocalStatic) {
+    const base = (
+      process.env.NEXT_PUBLIC_REMOTE_URL ||
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      process.env.REMOTE_URL ||
+      process.env.BASE_URL ||
+      ''
+    ).replace(/\/$/, '');
+    return `${base}/${fileUrl.replace(/^\/+/, '')}`;
+  }
+
   const clean = fileUrl.replace(/^\/+/, '');
 
   if (provider === 'imagekit') {
@@ -54,4 +67,23 @@ export function resolvePublicUrl(fileUrl: string | null | undefined): string {
   ).replace(/\/$/, '');
 
   return `${base}/${clean}`;
+}
+
+export function isCloudProvider(): boolean {
+  const provider = (
+    process.env.NEXT_PUBLIC_STORAGE_PROVIDER ||
+    process.env.STORAGE_PROVIDER ||
+    'local'
+  ).toLowerCase().trim();
+  return provider === 'imagekit' || provider === 's3';
+}
+
+export function isExternalUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return /^https?:\/\//i.test(url) && !url.includes('localhost') && !url.includes('127.0.0.1');
+}
+
+export function isBlobUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return url.startsWith('blob:');
 }

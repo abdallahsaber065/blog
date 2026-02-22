@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { resolvePublicUrl } from "@/lib/storage";
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from "@/lib/storage";
 
 interface BlogLayoutThreeProps {
   post: {
@@ -30,6 +30,7 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
           height={600}
           className="aspect-[16/10] w-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           sizes="(max-width: 640px) 100vw,(max-width: 1024px) 50vw, 33vw"
+          unoptimized={isCloudProvider() || (post.featured_image_url ? isExternalUrl(resolvePublicUrl(post.featured_image_url)) : false)}
         />
       </Link>
 

@@ -4,7 +4,7 @@ import { Calendar, Clock, Eye, Folder, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { resolvePublicUrl } from '@/lib/storage';
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from '@/lib/storage';
 
 interface Post {
   slug: string;
@@ -46,6 +46,7 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 640px) 100vw, 160px"
+              unoptimized={isCloudProvider() || (post.featured_image_url ? isExternalUrl(resolvePublicUrl(post.featured_image_url)) : false)}
             />
           </div>
 

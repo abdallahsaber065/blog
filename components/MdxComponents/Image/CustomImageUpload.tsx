@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ImageSelector from '../../Admin/ImageSelector';
-import { resolvePublicUrl } from '@/lib/storage';
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from '@/lib/storage';
 
 interface ImageProps {
     id: string;
@@ -44,13 +44,19 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({ src, alt, onImage
 
     return (
         <div className="relative group touch-none">
-            <Image
-                src={resolvePublicUrl(src)}
-                alt={alt}
-                width={width}
-                height={height}
-                className="object-cover"
-            />
+            {(() => {
+                const resolvedSrc = resolvePublicUrl(src);
+                return (
+                    <Image
+                        src={resolvedSrc}
+                        alt={alt}
+                        width={width}
+                        height={height}
+                        className="object-cover"
+                        unoptimized={isCloudProvider() || isExternalUrl(resolvedSrc)}
+                    />
+                );
+            })()}
             <div
                 onClick={() => setShowSelector(true)}
                 className="absolute inset-0 bg-black bg-opacity-20 lg:bg-opacity-0 lg:group-hover:bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"

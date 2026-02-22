@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { isExternalUrl, isBlobUrl } from '@/lib/storage';
 
 interface StepThreeProps {
     profileImageUrl: string;
@@ -27,6 +28,7 @@ const StepThree: React.FC<StepThreeProps> = ({ profileImageUrl, handleImageChang
                         className="mt-4 rounded-lg shadow-lg mx-auto"
                         width={300}
                         height={300}
+                        unoptimized={isExternalUrl(profileImageUrl) || isBlobUrl(profileImageUrl)}
                     />
                 )}
             </div>

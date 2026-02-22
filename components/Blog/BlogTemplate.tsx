@@ -12,7 +12,7 @@ import ResourcesSection from "@/components/MdxComponents/File/ResourcesSection";
 import Embed from "@/components/MdxComponents/Embed/Embed";
 import FileResource from "@/components/MdxComponents/File/FileResource";
 import siteMetadata from "@/lib/siteMetaData";
-import { resolvePublicUrl } from '@/lib/storage';
+import { resolvePublicUrl, isCloudProvider, isExternalUrl } from '@/lib/storage';
 
 interface BlogTemplateProps {
     post: any;
@@ -84,6 +84,7 @@ const BlogTemplate: React.FC<BlogTemplateProps> = ({ post, mdxSource, isPreview 
                     className="aspect-square w-full h-full object-cover object-center"
                     priority
                     sizes="100vw"
+                    unoptimized={isCloudProvider() || isExternalUrl(displayImage)}
                 />
             </div>
 
