@@ -49,7 +49,7 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
           </div>
 
           {/* Author and Date under image */}
-          <div className="flex flex-col gap-0.5 text-xs text-muted-foreground">
+          <div className="flex flex-col gap-1 text-xs text-muted-foreground pt-6">
             <div className="flex items-center gap-1">
               <User className="w-3 h-3" />
               <span className="font-medium">{getAuthorName()}</span>

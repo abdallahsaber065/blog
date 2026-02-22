@@ -57,8 +57,8 @@ const Header: React.FC = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className={`sticky top-0 z-[49] w-full transition-all duration-300 ${scrolled
-          ? 'bg-dark/85 backdrop-blur-xl shadow-elevated border-b border-darkBorder'
-          : 'bg-dark/60 backdrop-blur-md border-b border-transparent'
+        ? 'bg-dark/85 backdrop-blur-xl shadow-elevated border-b border-darkBorder'
+        : 'bg-dark/60 backdrop-blur-md border-b border-transparent'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -90,8 +90,8 @@ const Header: React.FC = () => {
                 <Link
                   href={link.href}
                   className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isActive
-                      ? 'text-gold'
-                      : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
+                    ? 'text-gold'
+                    : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
                     }`}
                 >
                   {link.label}
@@ -150,8 +150,8 @@ const Header: React.FC = () => {
                           key={item.href}
                           href={item.href}
                           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 ${pathname === item.href
-                              ? 'text-gold bg-gold/10'
-                              : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
+                            ? 'text-gold bg-gold/10'
+                            : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
                             }`}
                         >
                           <Icon className="w-4 h-4 opacity-70" />
@@ -163,8 +163,8 @@ const Header: React.FC = () => {
                       <Link
                         href="/admin/users"
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 mt-0.5 border-t border-lightBorder dark:border-darkBorder ${pathname === '/admin/users'
-                            ? 'text-gold bg-gold/10'
-                            : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
+                          ? 'text-gold bg-gold/10'
+                          : 'text-foreground/70 hover:text-foreground hover:bg-gold/8'
                           }`}
                       >
                         <Users className="w-4 h-4 opacity-70" />
@@ -182,8 +182,7 @@ const Header: React.FC = () => {
         <div className="flex items-center gap-2">
           <SearchBar />
 
-          {/* Avatar dropdown */}
-          <div className="relative group pt-2">
+          <div className="relative group flex items-center h-full">
             <button
               className="relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-transparent group-hover:ring-gold/50 transition-all duration-200"
               aria-label="User Menu"
@@ -203,38 +202,40 @@ const Header: React.FC = () => {
             </button>
 
             {/* Dropdown */}
-            <div className="absolute top-full right-0 mt-2 w-56 rounded-2xl border border-lightBorder dark:border-darkBorder bg-light/95 dark:bg-darkSurface/95 backdrop-blur-xl shadow-elevated p-1.5 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto scale-95 group-hover:scale-100 transition-all duration-200 origin-top-right">
-              {status === 'authenticated' ? (
-                <>
-                  <div className="px-3 py-2.5 border-b border-lightBorder dark:border-darkBorder mb-1">
-                    <p className="text-sm font-semibold text-foreground truncate">{session?.user.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{session?.user.email}</p>
-                    {session?.user?.role && RoleList.includes(session.user.role) && (
-                      <Badge variant="outline" className="mt-1.5 text-[10px] px-2 py-0.5">{session.user.role.toUpperCase()}</Badge>
-                    )}
-                  </div>
-                  <Link href="/profile" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-gold/8 transition-colors duration-150">
-                    <User className="w-4 h-4" />
-                    Profile
-                  </Link>
-                  <button
-                    onClick={() => signOut()}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-danger hover:bg-red-500/10 transition-colors duration-150 mt-0.5"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold text-foreground hover:bg-gold/8 transition-colors duration-150">
-                    Sign In
-                  </Link>
-                  <Link href="/signup" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold text-gold hover:bg-gold/10 transition-colors duration-150">
-                    Create Account
-                  </Link>
-                </>
-              )}
+            <div className="absolute top-full right-0 pt-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 z-50">
+              <div className="w-56 rounded-2xl border border-lightBorder dark:border-darkBorder bg-light/95 dark:bg-darkSurface/95 backdrop-blur-xl shadow-elevated p-1.5 scale-95 group-hover:scale-100 transition-transform origin-top-right">
+                {status === 'authenticated' ? (
+                  <>
+                    <div className="px-3 py-2.5 border-b border-lightBorder dark:border-darkBorder mb-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{session?.user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{session?.user.email}</p>
+                      {session?.user?.role && RoleList.includes(session.user.role) && (
+                        <Badge variant="outline" className="mt-1.5 text-[10px] px-2 py-0.5">{session.user.role.toUpperCase()}</Badge>
+                      )}
+                    </div>
+                    <Link href="/profile" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-gold/8 transition-colors duration-150">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => signOut()}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-danger hover:bg-red-500/10 transition-colors duration-150 mt-0.5"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold text-foreground hover:bg-gold/8 transition-colors duration-150">
+                      Sign In
+                    </Link>
+                    <Link href="/signup" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold text-gold hover:bg-gold/10 transition-colors duration-150">
+                      Create Account
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
