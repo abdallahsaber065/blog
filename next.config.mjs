@@ -17,11 +17,22 @@ const nextConfig = {
   // Enable component caching for better performance
   cacheComponents: true,
 
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+
+  // Enable advanced logging for debugging Serverless/Edge functions
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+
   // Optimized for Serverless Environments (Vercel, Netlify, Docker)
   output: "standalone",
   compiler: {
     // Remove console logs in production to optimize Edge/Serverless function execution
-    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
   },
   experimental: {
     // Optimizes package imports, reducing function size when deployed as Serverless/Edge
@@ -30,7 +41,9 @@ const nextConfig = {
       'react-icons',
       'date-fns',
       'framer-motion',
-      'lodash'
+      'lodash',
+      'clsx',
+      'tailwind-merge'
     ],
   },
 
@@ -39,6 +52,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -73,7 +87,6 @@ const nextConfig = {
 
   distDir: process.env.BUILD_DIR || '.next',
   transpilePackages: ['@mdxeditor/editor'],
-  reactStrictMode: false,
 
   // Turbopack configuration (used in development by default in Next.js 16)
   turbopack: {
@@ -99,27 +112,10 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
 
-  env: {
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    CONTENT_GENERATOR_API_LINK: process.env.CONTENT_GENERATOR_API_LINK,
-    DATABASE_URL: process.env.DATABASE_URL,
-    SECRET_KEY: process.env.SECRET_KEY,
-    MAILGUN_USER: process.env.MAILGUN_USER,
-    MAILGUN_PASS: process.env.MAILGUN_PASS,
-    NEXT_PUBLIC_CSRF_TOKEN: process.env.CSRF_SECRET,
-    WEBSITE_TYPE: process.env.WEBSITE_TYPE,
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-    // Storage
-    STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
-    NEXT_PUBLIC_STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
-    STORAGE_S3_BUCKET: process.env.STORAGE_S3_BUCKET,
-    STORAGE_S3_REGION: process.env.STORAGE_S3_REGION,
-    STORAGE_S3_PUBLIC_URL: process.env.STORAGE_S3_PUBLIC_URL,
-    // ImageKit (public key & endpoint are safe to expose; private key stays server-only)
-    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
-    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
-    IMAGEKIT_FOLDER: process.env.IMAGEKIT_FOLDER,
-  },
+  // The 'env' block is removed to prevent inlining sensitive server-side variables into the client bundle.
+  // Next.js automatically handles variables prefixed with NEXT_PUBLIC_ for the client,
+  // and all other variables are available server-side by default.
+
 
   async redirects() {
     return [
