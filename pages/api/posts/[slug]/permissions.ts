@@ -4,13 +4,26 @@ import { authMiddleware } from '@/middleware/authMiddleware';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { method, query } = req;
-    const postId = Number(query.id);
+    const slugOrId = query.slug as string;
 
     if (method !== 'PUT') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
+        let postId: number;
+        if (!isNaN(Number(slugOrId))) {
+            postId = Number(slugOrId);
+        } else {
+            const post = await prisma.post.findUnique({
+                where: { slug: slugOrId },
+                select: { id: true }
+            });
+            if (!post) {
+                return res.status(404).json({ error: 'Post not found' });
+            }
+            postId = post.id;
+        }
         const { users, roles } = req.body;
 
         // Delete existing permissions

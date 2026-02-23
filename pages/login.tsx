@@ -140,8 +140,17 @@ const LoginPage = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
+          <motion.form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+            variants={{
+              hidden: { opacity: 0 },
+              show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+            }}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold text-foreground">Email address</Label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -155,9 +164,9 @@ const LoginPage = () => {
                   className="pl-10 h-11 bg-lightSurface dark:bg-darkSurface border-lightBorder dark:border-darkBorder"
                 />
               </div>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-sm font-semibold text-foreground">Password</Label>
                 <Link href="/auth/request-password-reset" className="text-xs text-gold hover:text-goldDark transition-colors">
@@ -184,7 +193,7 @@ const LoginPage = () => {
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-            </div>
+            </motion.div>
 
             {error && (
               <motion.p
@@ -196,14 +205,16 @@ const LoginPage = () => {
               </motion.p>
             )}
 
-            <Button type="submit" size="lg" className="w-full gap-2" disabled={loading}>
-              {loading ? (
-                <span className="w-5 h-5 rounded-full border-2 border-dark border-t-transparent animate-spin" />
-              ) : (
-                <>Sign in <ArrowRight className="w-4 h-4" /></>
-              )}
-            </Button>
-          </form>
+            <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+              <Button type="submit" size="lg" className="w-full gap-2" disabled={loading}>
+                {loading ? (
+                  <span className="w-5 h-5 rounded-full border-2 border-dark border-t-transparent animate-spin" />
+                ) : (
+                  <>Sign in <ArrowRight className="w-4 h-4" /></>
+                )}
+              </Button>
+            </motion.div>
+          </motion.form>
         </motion.div>
       </div>
     </div>

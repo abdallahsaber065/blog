@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const SignupForm = () => {
     const [step, setStep] = useState(1);
@@ -67,48 +68,60 @@ const SignupForm = () => {
 
     return (
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-            {step === 1 && (
-                <StepOne
-                    username={username}
-                    setUsername={setUsername}
-                    email={email}
-                    setEmail={setEmail}
-                    password={password}
-                    setPassword={setPassword}
-                    handleNextStep={handleNextStep}
-                />
-            )}
-            {step === 2 && (
-                <StepTwo
-                    firstName={firstName}
-                    setFirstName={setFirstName}
-                    lastName={lastName}
-                    setLastName={setLastName}
-                    bio={bio}
-                    setBio={setBio}
-                    handlePrevStep={handlePrevStep}
-                />
-            )}
-            {error && <p className="mt-2 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
-            {loading && <span className="inline-block w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />}
-            {step === 2 && (
-                <div className="flex justify-between mt-4 gap-4">
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handlePrevStep}
-                        className="flex-1"
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        type="submit"
-                        className="flex-1"
-                    >
-                        Sign Up
-                    </Button>
-                </div>
-            )}
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={step}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -20, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="space-y-4"
+                >
+                    {step === 1 && (
+                        <StepOne
+                            username={username}
+                            setUsername={setUsername}
+                            email={email}
+                            setEmail={setEmail}
+                            password={password}
+                            setPassword={setPassword}
+                            handleNextStep={handleNextStep}
+                        />
+                    )}
+                    {step === 2 && (
+                        <StepTwo
+                            firstName={firstName}
+                            setFirstName={setFirstName}
+                            lastName={lastName}
+                            setLastName={setLastName}
+                            bio={bio}
+                            setBio={setBio}
+                            handlePrevStep={handlePrevStep}
+                        />
+                    )}
+                    {error && <p className="mt-2 text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{error}</p>}
+                    {loading && <span className="inline-block w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />}
+                    {step === 2 && (
+                        <div className="flex justify-between mt-4 gap-4">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={handlePrevStep}
+                                className="flex-1"
+                            >
+                                Previous
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="flex-1"
+                                disabled={loading}
+                            >
+                                Sign Up
+                            </Button>
+                        </div>
+                    )}
+                </motion.div>
+            </AnimatePresence>
         </form>
     );
 };

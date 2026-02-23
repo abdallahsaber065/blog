@@ -30,6 +30,8 @@ model User {
 
   FileLibrary FileLibrary[]
   post_permissions PostPermission[]
+  likes            Like[]
+  bookmarks        Bookmark[]
 }
 
 model Category {
@@ -59,6 +61,7 @@ model Post {
   status             String    @default("draft")
   featured_image_url String?
   views              Int       @default(0)
+  is_featured        Boolean   @default(false)
   created_at         DateTime  @default(now())
   updated_at         DateTime  @updatedAt
   published_at       DateTime?
@@ -71,6 +74,8 @@ model Post {
   tags       Tag[]
   post_views PostView[] // Add this line to establish the relation
   permissions PostPermission[]
+  likes       Like[]
+  bookmarks   Bookmark[]
 }
 
 model Comment {
@@ -151,4 +156,28 @@ model PostPermission {
   user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([post_id, user_id, role]) // Prevent duplicate permissions
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  post_id    Int
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, post_id])
+}
+
+model Bookmark {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  post_id    Int
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, post_id])
 }
