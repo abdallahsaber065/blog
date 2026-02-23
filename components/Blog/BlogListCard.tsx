@@ -38,7 +38,7 @@ const BlogListCard: React.FC<BlogListCardProps> = ({ post }) => {
     : '/static/images/default-image.webp';
 
   return (
-    <Link href={`/blogs/${post.slug}`} className="block group">
+    <Link href={`/blog/${post.slug}`} className="block group">
       <article className="
         relative flex flex-col sm:flex-row gap-0 sm:gap-5
         bg-card rounded-2xl border border-lightBorder dark:border-darkBorder

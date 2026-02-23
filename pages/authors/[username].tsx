@@ -131,7 +131,7 @@ const AuthorPage: React.FC<AuthorProps> = ({ author }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 0.5 + (index * 0.1) }}
                             >
-                                <Link href={`/blogs/${post.slug}`} className="block h-full transition-transform hover:-translate-y-1 hover:shadow-2xl duration-300 rounded-2xl group">
+                                <Link href={`/blog/${post.slug}`} className="block h-full transition-transform hover:-translate-y-1 hover:shadow-2xl duration-300 rounded-2xl group">
                                     <div className="flex flex-col h-full bg-card border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark rounded-2xl overflow-hidden">
                                         {post.featured_image_url && (
                                             <div className="relative w-full h-48 sm:h-56 overflow-hidden border-b border-lightBorder dark:border-darkBorder">

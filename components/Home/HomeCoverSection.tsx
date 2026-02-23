@@ -77,7 +77,7 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
             </motion.div>
           )}
 
-          <Link href={`/blogs/${post.slug}`} className='mt-5 block group'>
+          <Link href={`/blog/${post.slug}`} className='mt-5 block group'>
             <h1 className='font-display font-bold capitalize text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight'>
               <span className='bg-gradient-to-r from-gold/80 to-gold/80 bg-[length:0px_3px] group-hover:bg-[length:100%_3px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500'>
                 {titleWords.map((word, i) => (
@@ -115,7 +115,7 @@ const HomeCoverSection = ({ posts }: HomeCoverSectionProps) => {
             className='mt-6 sm:mt-8'
           >
             <Link
-              href={`/blogs/${post.slug}`}
+              href={`/blog/${post.slug}`}
               className='inline-flex items-center gap-2.5 bg-gold text-dark font-semibold text-sm px-6 py-3 rounded-xl shadow-gold-sm hover:shadow-gold hover:bg-goldLight transition-all duration-200 group/btn'
             >
               Read Article

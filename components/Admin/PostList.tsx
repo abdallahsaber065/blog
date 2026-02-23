@@ -581,7 +581,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                         <div className="flex flex-col space-y-1">
                                             <Link
                                                 className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold font-medium hover:underline transition-all duration-200 line-clamp-2"
-                                                href={post.status === 'published' ? `/blogs/${post.slug}` : `/blogs/preview/${post.slug}`}
+                                                href={post.status === 'published' ? `/blog/${post.slug}` : `/blog/preview/${post.slug}`}
                                                 target="_blank"
                                             >
                                                 {post.title}

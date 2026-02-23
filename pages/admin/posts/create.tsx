@@ -174,7 +174,7 @@ const CreatePost: React.FC = () => {
             setExcerpt(gExcerpt);
             setTags(gTags.map((t: string) => ({ label: t, value: t })));
             setCategory(main_category ? { label: main_category, value: main_category } : null);
-            setFeaturedImage('/blogs/placeholder.webp');
+            setFeaturedImage('/blog/placeholder.webp');
 
             toast.success('Content generated successfully!');
         } catch (error: any) {

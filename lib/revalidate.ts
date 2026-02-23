@@ -10,7 +10,7 @@ export const REVALIDATE_PATHS = {
   getAuthorPath: (username: string) => `/authors/${username}`,
   getExploreTagPath: (slug: string) => `/explore?tag=${slug}`,
   getExploreCategoryPath: (slug: string) => `/explore?category=${slug}`,
-  getBlogPath: (slug: string) => `/blogs/${slug}`,
+  getBlogPath: (slug: string) => `/blog/${slug}`,
 };
 
 export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
@@ -52,7 +52,7 @@ export async function revalidateRoutes(res: NextApiResponse, paths: string[]) {
     }
 
     // Always revalidate the home page when dealing with posts
-    if (paths.some(path => path.startsWith('/blogs/'))) {
+    if (paths.some(path => path.startsWith('/blog/'))) {
       paths.push(REVALIDATE_PATHS.HOME);
     }
 

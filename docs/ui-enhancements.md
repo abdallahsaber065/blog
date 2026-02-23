@@ -78,7 +78,7 @@ const observerOptions = {
 
 ### Usage
 
-The component is automatically used in blog pages (`/pages/blogs/[slug].tsx` and `/pages/blogs/preview/[slug].tsx`):
+The component is automatically used in blog pages (`/pages/blog/[slug].tsx` and `/pages/blog/preview/[slug].tsx`):
 
 ```tsx
 <TableOfContent mdxContent={post.content} />

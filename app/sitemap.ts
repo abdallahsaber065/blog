@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
 
         const serializedBlogs = allBlogs.map((blog: { slug: string; updated_at: Date; created_at: Date }) => ({
-            url: `${siteurl}/blogs/${blog.slug}`,
+            url: `${siteurl}/blog/${blog.slug}`,
             lastModified: blog.updated_at ? blog.updated_at.toISOString() : blog.created_at.toISOString(),
             changeFrequency: 'daily' as const,
             priority: 0.7,

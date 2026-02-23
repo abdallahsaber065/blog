@@ -27,7 +27,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ mdxSource, mdxText }) => {
     const placeholderPost = {
         title: "Placeholder Title",
         tags: [{ name: "Placeholder Tag", slug: "placeholder-tag" }],
-        featured_image_url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/c-d-x-PDX_a_82obo-unsplash.webp`,
+        featured_image_url: `${process.env.NEXT_PUBLIC_BASE_URL}/blog/c-d-x-PDX_a_82obo-unsplash.webp`,
         content: mdxText,
     };
 
