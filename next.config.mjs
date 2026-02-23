@@ -16,6 +16,24 @@ const nextConfig = {
   // Turbopack is now the default bundler in Next.js 16
   // Enable component caching for better performance
   cacheComponents: true,
+
+  // Optimized for Serverless Environments (Vercel, Netlify, Docker)
+  output: "standalone",
+  compiler: {
+    // Remove console logs in production to optimize Edge/Serverless function execution
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+  },
+  experimental: {
+    // Optimizes package imports, reducing function size when deployed as Serverless/Edge
+    optimizePackageImports: [
+      'lucide-react',
+      'react-icons',
+      'date-fns',
+      'framer-motion',
+      'lodash'
+    ],
+  },
+
   images: {
     minimumCacheTTL: 600,
     dangerouslyAllowSVG: true,
