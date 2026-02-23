@@ -10,7 +10,7 @@ import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
 import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
-import { Save, CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { Save, CheckCircle, ArrowRight, Loader2, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 
@@ -291,38 +291,61 @@ const CreatePost: React.FC = () => {
             </div>
 
             <div className="mb-6">
-                <button
-                    className="ai-generator-toggle flex items-center gap-2 px-4 py-2.5 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 font-semibold rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40 shadow-sm"
+                <motion.button
+                    className={`ai-generator-toggle relative flex items-center gap-3 px-5 py-3 font-semibold rounded-xl transition-all duration-300 overflow-hidden group ${showAIGenerator
+                        ? 'bg-gold/15 border border-gold/40 text-gold hover:bg-gold/20'
+                        : 'bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/30 text-gold hover:from-gold/20 hover:to-gold/10 hover:border-gold/50'
+                        }`}
                     onClick={() => setShowAIGenerator(!showAIGenerator)}
+                    whileTap={{ scale: 0.97 }}
+                    whileHover={{ scale: 1.02 }}
                 >
+                    {/* Subtle shimmer on hover */}
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
                     {showAIGenerator ? (
                         <>
-                            <span className="text-lg">✕</span>
+                            <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-gold/10 border border-gold/20">
+                                <X className="w-4 h-4" />
+                            </span>
                             <span>Hide AI Generator</span>
                         </>
                     ) : (
                         <>
-                            <span className="text-lg">✨</span>
-                            <span>Generate Content with AI</span>
+                            <span className="relative w-8 h-8 flex items-center justify-center rounded-lg bg-gold/10 border border-gold/20">
+                                <Sparkles className="w-4 h-4" />
+                                <span className="absolute -inset-0.5 rounded-lg border border-gold/30 animate-ping opacity-40 pointer-events-none" />
+                            </span>
+                            <span>Generate with AI</span>
+                            <span className="ml-auto text-[10px] uppercase tracking-widest font-bold text-gold/60 bg-gold/10 px-2 py-0.5 rounded-full border border-gold/20">Beta</span>
                         </>
                     )}
-                </button>
+                </motion.button>
             </div>
 
-            {showAIGenerator && (
-                <AIContentGenerator
-                    className="outline-settings"
-                    topic={topic}
-                    setTopic={setTopic}
-                    userCustomInstructions={userCustomInstructions}
-                    setUserCustomInstructions={setUserCustomInstructions}
-                    includeImages={includeImages}
-                    setIncludeImages={setIncludeImages}
-                    loading={loading}
-                    onGenerate={handleGenerate}
-                    onImageSelect={handleImageSelection}
-                />
-            )}
+            <AnimatePresence mode="wait">
+                {showAIGenerator && (
+                    <motion.div
+                        key="ai-generator"
+                        initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <AIContentGenerator
+                            className="outline-settings"
+                            topic={topic}
+                            setTopic={setTopic}
+                            userCustomInstructions={userCustomInstructions}
+                            setUserCustomInstructions={setUserCustomInstructions}
+                            includeImages={includeImages}
+                            setIncludeImages={setIncludeImages}
+                            loading={loading}
+                            onGenerate={handleGenerate}
+                            onImageSelect={handleImageSelection}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <PostForm
                 className="post-form"
