@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:leapcell": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "dev": "dotenv -c -- next dev -p 3444",
     "start": "dotenv -c -- next start",
+    "start:leapcell": "npx prisma migrate deploy &&node .next/standalone/server.js",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "create-admin": "dotenv -c -- node scripts/create-admin.js",
