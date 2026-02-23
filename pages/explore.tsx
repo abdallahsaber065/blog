@@ -25,6 +25,7 @@ import {
   X,
   Zap
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -114,7 +115,7 @@ export const getStaticProps: GetStaticProps = async () => {
     }),
   ]);
 
-  const serializedPosts = posts.map((post) => ({
+  const serializedPosts = posts.map((post: any) => ({
     ...post,
     created_at: post.created_at.toISOString(),
     updated_at: post.updated_at.toISOString(),
@@ -504,12 +505,33 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 mb-8">
 
             <div className="flex flex-col h-full justify-center">
-              <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground mb-4 drop-shadow-sm">
+              {/* Animated badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.05 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/25 text-gold text-xs font-semibold tracking-wider uppercase mb-5 self-start"
+              >
+                <Sparkles className="w-3 h-3" />
+                Explore Articles
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+                className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground mb-4 drop-shadow-sm"
+              >
                 Discover Content
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-2xl px-4 sm:px-0">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-2xl px-4 sm:px-0"
+              >
                 Explore <span className="font-bold text-gold">{posts.length}</span> meticulously crafted articles across various tech fields.
-              </p>
+              </motion.p>
             </div>
           </div>
         </div>
@@ -518,7 +540,12 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row gap-8 px-5 sm:px-10 md:px-24 sxl:px-32 py-10">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-80 flex-shrink-0">
+        <motion.aside
+          initial={{ opacity: 0, x: -24 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="hidden lg:block w-80 flex-shrink-0"
+        >
           <div className="sticky top-[72px]">
             <Card className="shadow-card dark:shadow-card-dark border-lightBorder dark:border-darkBorder bg-card">
               <div className="bg-gradient-to-r from-gold via-goldLight to-gold h-0.5"></div>
@@ -540,34 +567,58 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
               </CardContent>
             </Card>
           </div>
-        </aside>
+        </motion.aside>
 
-        {/* Mobile Filter Button */}
-        <div className="lg:hidden fixed bottom-6 right-6 z-50">
+        {/* Mobile Filter FAB */}
+        <div className="lg:hidden fixed bottom-6 right-5 z-50">
           <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
             <SheetTrigger asChild>
-              <Button
-                size="lg"
-                className="rounded-full h-16 w-16 shadow-gold bg-gold hover:bg-goldDark text-dark transition-all duration-200 hover:scale-105"
+              <motion.button
+                whileTap={{ scale: 0.92 }}
+                whileHover={{ scale: 1.07 }}
+                className={`relative flex items-center gap-2.5 h-14 rounded-2xl shadow-lg transition-all duration-300 font-semibold text-sm ${hasActiveFilters
+                  ? 'px-4 bg-gradient-to-r from-gold to-goldDark text-dark shadow-gold'
+                  : 'px-4 bg-card border border-lightBorder dark:border-darkBorder text-foreground hover:border-gold/40 hover:shadow-gold-sm'
+                  }`}
               >
-                <Filter className="w-6 h-6" />
+                {/* Glow ring when filters active */}
                 {hasActiveFilters && (
-                  <Badge className="absolute -top-2 -right-2 h-7 w-7 flex items-center justify-center p-0 bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg animate-pulse font-bold">
-                    {(selectedCategory ? 1 : 0) + selectedTags.length}
-                  </Badge>
+                  <span className="absolute inset-0 rounded-2xl border-2 border-gold/60 animate-ping opacity-30 pointer-events-none" />
                 )}
-              </Button>
+                <SlidersHorizontal className={`w-5 h-5 flex-shrink-0 ${hasActiveFilters ? 'text-dark' : 'text-gold'}`} />
+                <span className={hasActiveFilters ? 'text-dark' : 'text-foreground'}>
+                  {hasActiveFilters ? 'Filters' : 'Filter'}
+                </span>
+                {hasActiveFilters && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex items-center justify-center w-5 h-5 rounded-full bg-dark/20 text-dark text-xs font-bold"
+                  >
+                    {(selectedCategory ? 1 : 0) + selectedTags.length}
+                  </motion.span>
+                )}
+              </motion.button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle className="flex items-center gap-2.5 text-xl">
-                  <div className="p-2 bg-gold/10 border border-gold/20 rounded-lg">
+            <SheetContent side="bottom" className="h-[88vh] overflow-y-auto rounded-t-3xl border-t-0 bg-card">
+              {/* Pull handle */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1 rounded-full bg-lightBorder dark:bg-darkBorder" />
+              </div>
+              <SheetHeader className="px-1 pt-3 pb-2">
+                <SheetTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 bg-gold/10 border border-gold/25 rounded-xl">
                     <SlidersHorizontal className="w-5 h-5 text-gold" />
                   </div>
-                  Filter Articles
+                  <span>Filter Articles</span>
+                  {hasActiveFilters && (
+                    <Badge className="ml-auto bg-gold text-dark border-0 font-bold shadow-gold-sm px-3">
+                      {(selectedCategory ? 1 : 0) + selectedTags.length} active
+                    </Badge>
+                  )}
                 </SheetTitle>
               </SheetHeader>
-              <div className="mt-6">
+              <div className="mt-4 px-1">
                 {renderFilterPanel()}
               </div>
             </SheetContent>
@@ -575,27 +626,34 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
         </div>
 
         {/* Content Area */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 pb-28 lg:pb-0">
           {/* Active Filters & Controls */}
-          <div className="mb-8 space-y-5">
+          <div className="mb-6 space-y-4">
             {/* Mobile-only search bar */}
             <div className="relative sm:hidden">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              <Input
-                type="text"
-                placeholder="Search articles…"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-9 h-11 text-sm border-2 border-lightBorder dark:border-darkBorder bg-card focus:border-gold transition-colors"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+              <div className={`relative flex items-center transition-all duration-300 rounded-2xl border-2 ${searchFocused || searchTerm
+                ? 'border-gold shadow-gold-sm bg-card'
+                : 'border-lightBorder dark:border-darkBorder bg-card'
+                }`}>
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="text"
+                  placeholder="Search articles…"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  className="pl-10 pr-10 h-12 text-sm border-0 bg-transparent focus:ring-0 focus-visible:ring-0 focus-visible:outline-none"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-muted/50 hover:bg-gold/10 text-muted-foreground hover:text-gold transition-all duration-200"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
             {/* Active Filters */}
             {hasActiveFilters && (
@@ -640,16 +698,24 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
             )}
 
             {/* View Controls */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="items-center gap-3 hidden md:flex">
-                <Badge variant="outline" className="px-4 py-2 text-sm font-semibold border border-lightBorder dark:border-darkBorder">
-                  <span className="text-gold font-bold mr-1">{filteredAndSortedPosts.length}</span>
-                  {filteredAndSortedPosts.length === 1 ? 'article' : 'articles'} found
-                </Badge>
+            <div className="flex flex-row gap-3 items-center justify-between">
+              {/* Article count - visible on all sizes */}
+              <div className="flex items-center gap-2">
+                <motion.div
+                  key={filteredAndSortedPosts.length}
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Badge variant="outline" className="px-3 py-1.5 text-xs sm:text-sm font-semibold border border-lightBorder dark:border-darkBorder bg-card">
+                    <span className="text-gold font-bold mr-1">{filteredAndSortedPosts.length}</span>
+                    {filteredAndSortedPosts.length === 1 ? 'article' : 'articles'}
+                  </Badge>
+                </motion.div>
               </div>
 
-              <div className="flex items-center gap-3">
-                {/* Inline search bar */}
+              <div className="flex items-center gap-2.5">
+                {/* Inline search bar - desktop only */}
                 <div
                   className={`relative hidden sm:flex items-center transition-all duration-300 ease-in-out ${searchFocused || searchTerm ? 'w-60' : 'w-44'
                     }`}
@@ -678,17 +744,17 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
                 </div>
 
                 {/* Sort Dropdown */}
-
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="gap-2.5 h-10 px-4 border-2 border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:border-gold/40 hover:text-gold transition-all duration-200 font-semibold"
+                      className="gap-2 h-10 px-3 sm:px-4 border-2 border-lightBorder dark:border-darkBorder hover:bg-gold/10 hover:border-gold/40 hover:text-gold transition-all duration-200 font-semibold text-sm"
                     >
-                      <div className="p-1 rounded">
+                      <div className="text-gold">
                         {getSortIcon()}
                       </div>
-                      <span className="sm:inline font-bold">{getSortLabel()}</span>
+                      <span className="hidden sm:inline font-bold">{getSortLabel()}</span>
+                      <span className="sm:hidden font-medium text-xs">{getSortLabel()}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
@@ -727,55 +793,93 @@ const DiscoverPage: React.FC<DiscoverPageProps> = ({ posts, categories, tags }) 
           </div>
 
           {/* Posts Grid/List */}
-          {filteredAndSortedPosts.length > 0 ? (
-            <div className="flex flex-col gap-6">
-              {filteredAndSortedPosts.map((post, index) => (
-                <article
-                  key={post.slug}
-                  className="animate-fade-in hover:scale-[1.01] transition-transform"
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                    animationFillMode: 'backwards'
-                  }}
-                >
-                  <BlogListCard post={post} />
-                </article>
-              ))}
-            </div>
-          ) : (
-            <Card className="border-dashed border-2 border-lightBorder dark:border-darkBorder bg-gradient-to-br from-light to-white dark:from-darkSurface/50 dark:to-dark/50 overflow-hidden relative shadow-card dark:shadow-card-dark">
-              {/* Decorative background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-gold/5 dark:from-gold/5 dark:via-transparent dark:to-gold/5"></div>
-
-              <CardContent className="flex flex-col items-center justify-center py-20 md:py-28 relative z-10">
-                <div className="relative mb-8">
-                  <div className="absolute inset-0 bg-gold rounded-full blur-2xl opacity-20 animate-pulse"></div>
-                  <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-gold/30 to-goldDark/20 dark:from-gold/20 dark:to-goldDark/10 shadow-gold/20 border-2 border-gold/30">
-                    <Search className="w-12 h-12 text-gold dark:text-goldLight" />
-                  </div>
-                </div>
-
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
-                  No articles found
-                </h3>
-                <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 text-center max-w-md mb-8 leading-relaxed font-medium">
-                  {searchTerm
-                    ? 'Try adjusting your search terms or filters to find what you\'re looking for'
-                    : 'No articles match your current filters. Try selecting different categories or tags'}
-                </p>
-                {hasActiveFilters && (
-                  <Button
-                    onClick={clearAllFilters}
-                    variant="outline"
-                    className="h-12 px-8 border-2 border-gold/30 hover:bg-gold/10 hover:text-gold hover:border-gold/60 transition-all duration-300 font-bold rounded-xl shadow-sm hover:shadow-gold-sm hover:-translate-y-0.5"
+          <AnimatePresence mode="wait">
+            {filteredAndSortedPosts.length > 0 ? (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col gap-6"
+              >
+                {filteredAndSortedPosts.map((post, index) => (
+                  <motion.article
+                    key={post.slug}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.45, delay: Math.min(index * 0.06, 0.4) }}
+                    whileHover={{ y: -3, transition: { duration: 0.2 } }}
                   >
-                    <X className="w-5 h-5 mr-3" />
-                    Clear All Filters
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                    <BlogListCard post={post} />
+                  </motion.article>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+              >
+                <Card className="border-dashed border-2 border-lightBorder dark:border-darkBorder bg-gradient-to-br from-light to-white dark:from-darkSurface/50 dark:to-dark/50 overflow-hidden relative shadow-card dark:shadow-card-dark">
+                  {/* Decorative background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-gold/5 dark:from-gold/5 dark:via-transparent dark:to-gold/5"></div>
+
+                  <CardContent className="flex flex-col items-center justify-center py-20 md:py-28 relative z-10">
+                    <motion.div
+                      className="relative mb-8"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                      <div className="absolute inset-0 bg-gold rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                      <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-gold/30 to-goldDark/20 dark:from-gold/20 dark:to-goldDark/10 shadow-gold/20 border-2 border-gold/30">
+                        <Search className="w-12 h-12 text-gold dark:text-goldLight" />
+                      </div>
+                    </motion.div>
+
+                    <motion.h3
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.2 }}
+                      className="text-3xl font-bold text-foreground mb-3"
+                    >
+                      No articles found
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.3 }}
+                      className="text-base md:text-lg text-muted-foreground text-center max-w-md mb-8 leading-relaxed font-medium"
+                    >
+                      {searchTerm
+                        ? 'Try adjusting your search terms or filters to find what you\'re looking for'
+                        : 'No articles match your current filters. Try selecting different categories or tags'}
+                    </motion.p>
+                    {hasActiveFilters && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                      >
+                        <Button
+                          onClick={clearAllFilters}
+                          variant="outline"
+                          className="h-12 px-8 border-2 border-gold/30 hover:bg-gold/10 hover:text-gold hover:border-gold/60 transition-all duration-300 font-bold rounded-xl shadow-sm hover:shadow-gold-sm hover:-translate-y-0.5"
+                        >
+                          <X className="w-5 h-5 mr-3" />
+                          Clear All Filters
+                        </Button>
+                      </motion.div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       </div>
 
