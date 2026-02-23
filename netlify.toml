@@ -1,0 +1,68 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  [build.environment]
+    # Omit non-sensitive keys that cause false positives (e.g., BUILD_DIR=".next")
+    # This prevents the scanner from failing when it sees '.next' in .gitignore or paths.
+    SECRETS_SCAN_OMIT_KEYS = "BUILD_DIR, WEBSITE_TYPE, STORAGE_PROVIDER, IMAGEKIT_FOLDER, NEXT_PUBLIC_BASE_URL, NEXTAUTH_URL, NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT"
+    # Omit build artifact directories from scanning to reduce noise from generated chunk paths
+    SECRETS_SCAN_OMIT_PATHS = ".netlify/*, .next/*, out/*"
+    # Specify Node.js version for functions
+    AWS_LAMBDA_JS_RUNTIME = "nodejs22.x"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  # Ensures Prisma schema and client are bundled into serverless functions
+  included_files = ["prisma/schema.prisma", "prisma/client/**/*"]
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_print = false
+
+[build.processing.images]
+  compress = true
+
+# Cache static assets for a long time
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, must-revalidate"
+
+# Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+[context.deploy-preview]
+  environment = { NODE_ENV = "development" }

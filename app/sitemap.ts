@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from "@/lib/prisma";
 
+export const revalidate = 3600; // revalidate every hour
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
         const allBlogs = await prisma.post.findMany({
@@ -16,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             throw new Error("NEXT_PUBLIC_BASE_URL is not defined");
         }
 
-        const serializedBlogs = allBlogs.map(blog => ({
+        const serializedBlogs = allBlogs.map((blog: { slug: string; updated_at: Date; created_at: Date }) => ({
             url: `${siteurl}/blogs/${blog.slug}`,
             lastModified: blog.updated_at ? blog.updated_at.toISOString() : blog.created_at.toISOString(),
             changeFrequency: 'daily' as const,
