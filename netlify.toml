@@ -16,6 +16,9 @@
 [functions]
   # Ensures Prisma schema and client are bundled into serverless functions
   included_files = ["prisma/schema.prisma", "prisma/client/**/*"]
+  # Netlify free plan max timeout is 10s, Pro plan allows 26s.
+  # The AI generation function needs the maximum available time.
+  node_bundler = "esbuild"
 
 [build.processing]
   skip_processing = false

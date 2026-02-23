@@ -1,31 +1,50 @@
 /**
- * Outline-free AI content generation.
+ * Outline-free AI content generation — Netlify Edge Function.
+ *
+ * Runs on the Edge Runtime so there is NO 10/26s timeout and SSE streaming
+ * works natively.  Auth is handled via next-auth/jwt `getToken()` which is
+ * Edge-compatible (unlike `getServerSession`).
  *
  * Flow:
- *  1. (Optional) Transcribe voice notes via Gemini audio understanding.
- *  2. Research the topic using Gemini + Google Search grounding.
- *  3. Generate the full blog post (streaming SSE) using the research as context.
- *  4. Inline images / files are forwarded to the model when provided.
+ *  1. (Optional) Pass voice notes inline to Gemini.
+ *  2. (Optional) Research the topic using Gemini + Google Search grounding.
+ *  3. Stream the full blog post (SSE) using the research as context.
  */
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { GeminiService } from '@/lib/ai/gemini-client/service';
+
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+import { GoogleGenAI } from '@google/genai';
 import { buildDirectContentPrompt } from '@/lib/ai/prompts';
 import type { GenerateDirectRequest } from '@/lib/ai/types';
-import { authMiddleware } from '@/middleware/authMiddleware';
 
-const gemini = new GeminiService({
-  defaultModel: 'gemini-3-flash',
-  defaultGenerationConfig: {
-    temperature: 0.75,
-    maxOutputTokens: 8192,
-  },
-});
+// ── Edge Runtime ────────────────────────────────────────────────────────────
+export const config = { runtime: 'edge' };
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+// ── Gemini client (Edge-safe — uses fetch internally) ───────────────────────
+function getGeminiClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
+  return new GoogleGenAI({ apiKey });
+}
+
+export default async function handler(req: NextRequest) {
+  // ── Auth check via JWT (Edge-compatible) ────────────────────────────────
+  const token = await getToken({ req, secret: process.env.SECRET_KEY });
+  if (!token) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const body = (await req.json()) as GenerateDirectRequest;
   const {
     topic,
     context_urls = [],
@@ -35,52 +54,69 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     include_images = false,
     user_custom_instructions = '',
     website_type = 'blog',
-  } = req.body as GenerateDirectRequest;
+    enable_web_search = false,
+  } = body;
 
   if (!topic || topic.trim().length === 0) {
-    return res.status(400).json({ error: 'Topic is required' });
+    return new Response(JSON.stringify({ error: 'Topic is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
+
+  const client = getGeminiClient();
 
   try {
     const parts: any[] = [];
 
-    // ── 1. Pass voice note directly ──────────────────────────────────────────
+    // ── 1. Pass voice note directly ───────────────────────────────────────
     if (voice_note_base64) {
-      const audioBytes = Buffer.from(voice_note_base64, 'base64');
+      // Edge Runtime: use atob instead of Buffer
       parts.push({
-        type: 'inlineBytes',
-        data: audioBytes,
-        mimeType: voice_note_mime,
+        inlineData: {
+          data: voice_note_base64, // already base64
+          mimeType: voice_note_mime,
+        },
       });
     }
 
     // Pass images/files directly
     for (const fileUrl of files) {
       parts.push({
-        type: 'file',
-        fileUri: fileUrl,
+        fileData: { fileUri: fileUrl },
       });
     }
 
-    // ── 2. Research via Google Search grounding (Optional) ──────────────────
+    // ── 2. Research via Google Search grounding (optional) ─────────────────
     let researchSummary = '';
-    const enable_web_search = req.body.enable_web_search ?? false;
 
     if (enable_web_search) {
-      const researchPrompt = `Research the following topic thoroughly to provide up-to-date information for a technical blog post: "${topic}".
-      
-Summarise: key concepts, latest developments, real-world examples, statistics, and technical details.`;
+      const researchPrompt = `Research the following topic thoroughly to provide up-to-date information for a technical blog post: "${topic}".\n\nSummarise: key concepts, latest developments, real-world examples, statistics, and technical details.`;
 
-      const { text } = await gemini.generateWithWebSearch({
+      const urlContext =
+        context_urls.length > 0
+          ? `\n\nAlso consider information from these URLs: ${context_urls.join(', ')}`
+          : '';
+
+      const researchResponse = await client.models.generateContent({
         model: 'gemini-2.5-flash',
-        prompt: researchPrompt,
-        contextUrls: context_urls,
-        config: { temperature: 0.3, maxOutputTokens: 8192 },
+        contents: researchPrompt + urlContext,
+        config: {
+          temperature: 0.3,
+          maxOutputTokens: 8192,
+          tools: [{ googleSearch: {} }, { urlContext: {} }],
+        } as any,
       });
-      researchSummary = text;
+
+      researchSummary =
+        (researchResponse as any).candidates?.[0]?.content?.parts?.[0]?.text ??
+        (typeof (researchResponse as any).text === 'function'
+          ? (researchResponse as any).text()
+          : '') ??
+        '';
     }
 
-    // ── 3. Stream the final blog post ───────────────────────────────────────
+    // ── 3. Stream the final blog post (SSE) ───────────────────────────────
     let urlContext = '';
     if (context_urls && context_urls.length > 0) {
       urlContext = `\n\nAlso consider information from these URLs: ${context_urls.join(', ')}`;
@@ -92,52 +128,91 @@ Summarise: key concepts, latest developments, real-world examples, statistics, a
       '', // No separate transcript needed
       include_images,
       user_custom_instructions,
-      website_type
+      website_type,
     );
 
-    parts.push({ type: 'text', text: contentPrompt });
-
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
+    parts.push({ text: contentPrompt });
 
     const tools: any[] = [{ urlContext: {} }];
     if (enable_web_search) {
       tools.push({ googleSearch: {} });
     }
 
-    const stream = gemini.generateTextStream({
-      model: 'gemini-2.5-flash',
-      contents: [{ role: 'user', parts }],
-      tools,
-      systemInstruction: `You are a world-class content writer. Write complete, detailed, valuable blog posts in Markdown.`,
-      config: {
-        temperature: 0.75,
-        maxOutputTokens: 8192,
+    // Use a TransformStream to convert the async generator into a ReadableStream
+    const encoder = new TextEncoder();
+    const stream = new TransformStream();
+    const writer = stream.writable.getWriter();
+
+    // Start streaming in a non-blocking way
+    (async () => {
+      try {
+        const streamResponse = await client.models.generateContentStream({
+          model: 'gemini-2.5-flash',
+          contents: [{ role: 'user', parts }],
+          config: {
+            temperature: 0.75,
+            maxOutputTokens: 8192,
+            systemInstruction: {
+              role: 'system',
+              parts: [
+                {
+                  text: 'You are a world-class content writer. Write complete, detailed, valuable blog posts in Markdown.',
+                },
+              ],
+            },
+            tools,
+          } as any,
+        });
+
+        let fullContent = '';
+
+        for await (const chunk of streamResponse as any) {
+          const chunkText: string =
+            typeof chunk.text === 'function'
+              ? chunk.text()
+              : (chunk?.candidates?.[0]?.content?.parts?.[0]?.text ?? '');
+
+          if (chunkText) {
+            fullContent += chunkText;
+            await writer.write(
+              encoder.encode(
+                `data: ${JSON.stringify({ chunk: chunkText, done: false })}\n\n`,
+              ),
+            );
+          }
+        }
+
+        await writer.write(
+          encoder.encode(
+            `data: ${JSON.stringify({ chunk: '', done: true, content: fullContent })}\n\n`,
+          ),
+        );
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : 'Unknown error';
+        console.error('generate-direct stream error:', error);
+        await writer.write(
+          encoder.encode(
+            `data: ${JSON.stringify({ error: msg, done: true })}\n\n`,
+          ),
+        );
+      } finally {
+        await writer.close();
+      }
+    })();
+
+    return new Response(stream.readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
       },
     });
-
-    let fullContent = '';
-    for await (const chunkText of stream) {
-      fullContent += chunkText;
-      res.write(`data: ${JSON.stringify({ chunk: chunkText, done: false })}\n\n`);
-    }
-
-    res.write(`data: ${JSON.stringify({ chunk: '', done: true, content: fullContent })}\n\n`);
-    res.end();
   } catch (error: unknown) {
     console.error('generate-direct error:', error);
-    const msg =
-      error instanceof Error ? error.message : 'Unknown error';
-
-    if (!res.headersSent) {
-      return res.status(500).json({ error: msg });
-    }
-    res.write(`data: ${JSON.stringify({ error: msg, done: true })}\n\n`);
-    res.end();
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-}
-
-export default function securedHandler(req: NextApiRequest, res: NextApiResponse) {
-  return authMiddleware(req, res, handler);
 }
