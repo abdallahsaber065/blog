@@ -11,7 +11,7 @@ import Logo from './Logo';
 import SearchBar from './SearchBar';
 import { MenuIcon } from '@/components/Icons';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, LogOut, User, LayoutDashboard, PenSquare, Folder, Users } from 'lucide-react';
+import { ChevronDown, LogOut, User, LayoutDashboard, PenSquare, Folder, Users, Bookmark } from 'lucide-react';
 
 const RoleList = ['admin', 'moderator', 'editor'];
 
@@ -216,6 +216,10 @@ const Header: React.FC = () => {
                     <Link href="/profile" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-gold/8 transition-colors duration-150">
                       <User className="w-4 h-4" />
                       Profile
+                    </Link>
+                    <Link href="/profile/library" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-gold/8 transition-colors duration-150">
+                      <Bookmark className="w-4 h-4" />
+                      Library
                     </Link>
                     <button
                       onClick={() => signOut()}

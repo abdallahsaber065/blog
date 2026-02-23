@@ -37,7 +37,7 @@ declare module 'next-auth' {
     }
 }
 
-const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: 'Credentials',
@@ -73,6 +73,7 @@ const options: NextAuthOptions = {
     session: {
         strategy: 'jwt',
     },
+    secret: process.env.NEXTAUTH_SECRET,
     jwt: {
         secret: process.env.SECRET_KEY,
     },
@@ -127,6 +128,6 @@ const options: NextAuthOptions = {
     },
 };
 
-export { options };
-export default NextAuth(options);
+export { authOptions as options };
+export default NextAuth(authOptions);
 
