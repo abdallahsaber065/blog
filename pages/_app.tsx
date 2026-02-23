@@ -38,18 +38,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <SessionProvider session={session}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
-        storageKey="theme"
+        defaultTheme="dark"
+        forcedTheme="dark"
         disableTransitionOnChange={false}
       >
         <RootLayout>
-            {!isExcludedRoute && (
-              <div id="google-analytics-container">
-                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
-              </div>
-            )}
-            <Component {...pageProps} />
+          {!isExcludedRoute && (
+            <div id="google-analytics-container">
+              <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_MEASUREMENT_ID || 'default-ga-id'} />
+            </div>
+          )}
+          <Component {...pageProps} />
         </RootLayout>
       </ThemeProvider>
     </SessionProvider>
