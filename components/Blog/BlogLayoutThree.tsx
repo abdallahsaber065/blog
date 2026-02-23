@@ -20,7 +20,7 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
   return (
     <div className="group flex flex-col items-start overflow-hidden rounded-2xl border border-lightBorder dark:border-darkBorder shadow-card dark:shadow-card-dark hover:shadow-elevated hover:border-gold/30 transition-all duration-300 bg-card card-tilt">
       {/* Image */}
-      <Link href={`/blogs/${post.slug}`} className="w-full overflow-hidden block">
+      <Link href={`/blog/${post.slug}`} className="w-full overflow-hidden block">
         <Image
           src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : "/static/images/default-image.webp"}
           placeholder="blur"
@@ -41,7 +41,7 @@ const BlogLayoutThree = ({ post }: BlogLayoutThreeProps) => {
             {post.tags[0].name}
           </span>
         )}
-        <Link href={`/blogs/${post.slug}`} className="block">
+        <Link href={`/blog/${post.slug}`} className="block">
           <h2 className="font-display font-semibold capitalize text-base sm:text-lg leading-snug text-foreground">
             <span className="bg-gradient-to-r from-gold/60 to-gold/60 bg-[length:0px_2px] group-hover:bg-[length:100%_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500">
               {post.title}

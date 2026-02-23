@@ -12,8 +12,8 @@ All notable changes to this project will be documented in this file.
   - Added URL query parameter support for filtering (e.g., `/explore?category=tech`, `/explore?tag=javascript`)
   - Implemented automatic state initialization from URL parameters on page load
   - Updated all internal links to use explore page with query parameters
-  - Modified blog post detail pages (`/blogs/[slug]`) to link categories/tags to explore page
-  - Modified blog preview pages (`/blogs/preview/[slug]`) to link categories/tags to explore page
+  - Modified blog post detail pages (`/blog/[slug]`) to link categories/tags to explore page
+  - Modified blog preview pages (`/blog/preview/[slug]`) to link categories/tags to explore page
   - Updated "Recent Posts" view all link to point to explore page
   - Updated mobile navigation drawer to use explore page
   - Added redirects for old `/tags` and `/categories` routes to `/explore`

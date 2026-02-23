@@ -14,7 +14,7 @@ const ShareButtons = ({ title, slug, siteUrl = "" }: ShareButtonsProps) => {
     const [copied, setCopied] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
-    const url = `${siteUrl}/blogs/${slug}`;
+    const url = `${siteUrl}/blog/${slug}`;
     const encodedUrl = encodeURIComponent(url);
     const encodedTitle = encodeURIComponent(title);
 

@@ -57,7 +57,7 @@ pnpm images:update-db
 This updates:
 
 - User profile images → `/static/images/profile-holder.webp`
-- Blog post featured images → `/blogs/*.webp`
+- Blog post featured images → `/blog/*.webp`
 
 ## 💻 Client-Side Usage
 
@@ -215,11 +215,11 @@ All seed data and existing database records now use WebP images:
 
 ### Blog Posts
 
-- Next.js post → `/blogs/luca-bravo-XJXWbfSo2f0-unsplash.webp`
-- TypeScript post → `/blogs/emile-perron-xrVDYZRGdw4-unsplash.webp`
-- Docker post → `/blogs/c-d-x-PDX_a_82obo-unsplash.webp`
-- UI Design post → `/blogs/kelly-sikkema--1_RZL8BGBM-unsplash.webp`
-- ML post → `/blogs/carlos-muza-hpjSkU2UYSU-unsplash.webp`
+- Next.js post → `/blog/luca-bravo-XJXWbfSo2f0-unsplash.webp`
+- TypeScript post → `/blog/emile-perron-xrVDYZRGdw4-unsplash.webp`
+- Docker post → `/blog/c-d-x-PDX_a_82obo-unsplash.webp`
+- UI Design post → `/blog/kelly-sikkema--1_RZL8BGBM-unsplash.webp`
+- ML post → `/blog/carlos-muza-hpjSkU2UYSU-unsplash.webp`
 
 ### User Profiles
 

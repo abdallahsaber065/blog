@@ -148,7 +148,7 @@ The application uses different rendering strategies based on content type:
 Used for public content that changes infrequently:
 
 ```typescript
-// pages/blogs/[slug].tsx
+// pages/blog/[slug].tsx
 export async function getStaticProps({ params }) {
   const post = await prisma.post.findUnique({
     where: { slug: params.slug }

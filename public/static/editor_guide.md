@@ -22,9 +22,9 @@ Our editor supports all standard Markdown syntax:
 
 You can add images using either Markdown syntax or our custom Image component:
 
-![Alt text](/blogs/placeholder.webp) `you can  edit it in preview`
+![Alt text](/blog/placeholder.webp) `you can  edit it in preview`
 
-<Image src="/blogs/placeholder.webp" alt="Description" /> `you can  edit it in preview`
+<Image src="/blog/placeholder.webp" alt="Description" /> `you can  edit it in preview`
 
 The `<Image>` component provides additional features:
 

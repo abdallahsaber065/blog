@@ -75,7 +75,7 @@ export default function CategoryList({ categories, refreshCategories }: Category
                         <ul className="mt-2 ml-4">
                             {categoryPosts[category.id]?.map(post => (
                                 <li key={post.id} className="truncate">
-                                    <Link href={`/blogs/${post.slug}`} className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold hover:underline transition-all duration-200">
+                                    <Link href={`/blog/${post.slug}`} className="text-gold hover:text-goldDark dark:text-goldLight dark:hover:text-gold hover:underline transition-all duration-200">
                                         {post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title}
                                     </Link>
                                 </li>
