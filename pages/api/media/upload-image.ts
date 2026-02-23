@@ -8,6 +8,8 @@ import { prisma } from '@/lib/prisma';
 import { authMiddleware } from '@/middleware/authMiddleware';
 import { getStorageProvider } from '@/lib/storage/factory';
 
+import os from 'os';
+
 export const config = {
   api: {
     bodyParser: false,
@@ -15,16 +17,21 @@ export const config = {
 };
 
 // Temp dir for formidable to park the file before we stream it to storage
-const tempDir = path.join(process.cwd(), 'public/uploads/temp');
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
-}
+// Use os.tmpdir() for serverless environments (like Netlify) where the app root is read-only
+const getTempDir = () => {
+  const dir = path.join(os.tmpdir(), 'uploads-temp');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  return dir;
+};
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const tempDir = getTempDir();
   const form = new Formidable({
     uploadDir: tempDir,
     keepExtensions: true,

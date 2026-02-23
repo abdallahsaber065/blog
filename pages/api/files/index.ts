@@ -34,7 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                         }
                     }
                 });
-                const filesWithUrls = files.map((f) => ({
+                const filesWithUrls = files.map((f: any) => ({
                     ...f,
                     public_url: storage.getPublicUrl(f.file_url),
                 }));
@@ -62,15 +62,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void>
                 // Delete the physical file via the storage provider
                 const storageForDelete = getStorageProvider();
                 await storageForDelete.delete(fileToDelete.file_url);
-                const filePath = path.join(process.cwd(), 'public', fileToDelete.file_url);
-                if (fs.existsSync(filePath)) {
-                    try {
-                        fs.unlinkSync(filePath);
-                    } catch (error) {
-                        console.error('Error deleting physical file:', error);
-                        // Continue with database deletion even if physical file deletion fails
-                    }
-                }
 
                 // Delete the database record
                 await prisma.fileLibrary.delete({
