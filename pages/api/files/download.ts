@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { prisma } from '@/lib/prisma';
-
-const cache = new Map<string, any>();
+import { resolvePublicUrl, isCloudProvider } from '@/lib/storage';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -17,13 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        // Check cache first
-        if (cache.has(file_url_name as string)) {
-            console.log(`Cache hit for file: ${file_url_name}`);
-            const cachedFile = cache.get(file_url_name as string);
-            return sendFile(res, cachedFile.filePath, cachedFile.fileRecord, req.method);
-        }
-
         const fileRecord = await prisma.fileLibrary.findFirst({
             where: { file_url: { endsWith: file_url_name as string } },
         });
@@ -32,14 +25,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ error: 'File not found' });
         }
 
+        // Handle Cloud Storage (ImageKit/S3) - Redirect to the public URL
+        if (isCloudProvider()) {
+            const publicUrl = resolvePublicUrl(fileRecord.file_url);
+            return res.redirect(publicUrl);
+        }
+
+        // Handle Local Storage
         const filePath = path.join(process.cwd(), 'public', fileRecord.file_url);
 
         if (!fs.existsSync(filePath)) {
+            // Check if it exists in the temp directory (for recent uploads not yet migrated or stuck)
+            const tempPath = path.join(os.tmpdir(), 'uploads-temp', path.basename(fileRecord.file_url));
+            if (fs.existsSync(tempPath)) {
+                return sendFile(res, tempPath, fileRecord, req.method);
+            }
             return res.status(404).json({ error: 'File not found on server' });
         }
-
-        // Cache the file metadata
-        cache.set(file_url_name as string, { filePath, fileRecord });
 
         return sendFile(res, filePath, fileRecord, req.method);
     } catch (error) {
