@@ -127,6 +127,7 @@ const CreatePost: React.FC = () => {
                 throw new Error(errorData.error || 'Failed to generate content');
             }
 
+            // SSE streaming from the Edge Function
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
             let generatedContent = '';
