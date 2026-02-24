@@ -468,9 +468,15 @@ button[role="combobox"] {
   color: inherit !important;
 }
 
-.dark-theme .mdxeditor-popup-container {
+.dark-theme .mdxeditor-popup-container,
+.dark .mdxeditor-popup-container {
   background-color: #1E2023 !important;
-  border-color: #2A2A2E !important;
+  border: 1px solid #2A2A2E !important;
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme .mdxeditor-popup-container label,
+.dark .mdxeditor-popup-container label {
   color: hsl(210 12% 88%) !important;
 }
 
@@ -508,6 +514,60 @@ button[role="combobox"] {
   background-color: #2A2A2E !important;
   color: #F8CC4D !important;
   cursor: pointer;
+}
+
+/* MDX Editor Dialogs/Popovers Fix */
+.dark-theme [role="dialog"],
+.dark-theme [role="alertdialog"],
+.dark-theme [data-radix-popper-content-wrapper],
+.dark [role="dialog"],
+.dark [role="alertdialog"],
+.dark [data-radix-popper-content-wrapper] {
+  background-color: #1E2023 !important;
+  border: 1px solid #2A2A2E !important;
+  color: hsl(210 12% 88%) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  z-index: 9999 !important;
+}
+
+.dark-theme [role="dialog"] label,
+.dark-theme [role="alertdialog"] label,
+.dark [role="dialog"] label,
+.dark [role="alertdialog"] label,
+.dark-theme [role="dialog"] span,
+.dark-theme [role="alertdialog"] span,
+.dark [role="dialog"] span,
+.dark [role="alertdialog"] span {
+  color: hsl(210 12% 88%) !important;
+}
+
+/* Ensure form backgrounds are dark */
+.dark-theme [role="dialog"] form,
+.dark-theme [role="alertdialog"] form,
+.dark [role="dialog"] form,
+.dark [role="alertdialog"] form {
+  background-color: #1E2023 !important;
+}
+
+/* Fix for link dialog overlap and theme */
+.dark-theme [class*="linkDialog"],
+.dark [class*="linkDialog"],
+.dark-theme [class*="Dialog"],
+.dark [class*="Dialog"] {
+  z-index: 9999 !important;
+  background-color: #1E2023 !important;
+  border-color: #2A2A2E !important;
+}
+
+.dark-theme [role="dialog"] {
+  z-index: 9999 !important;
+  background-color: #1E2023 !important;
+  border-color: #2A2A2E !important;
+}
+.dark [role="dialog"] {
+  z-index: 9999 !important;
+  background-color: #1E2023 !important;
+  border-color: #2A2A2E !important;
 }
 
 /* ─────────────────────────────────────────────────────────

@@ -85,6 +85,12 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
     const [showImageSelector, setShowImageSelector] = useState(false);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (previewImage) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [previewImage]);
+
     // Voice recording
     const [isRecording, setIsRecording] = useState(false);
     const [recordingSeconds, setRecordingSeconds] = useState(0);
@@ -484,10 +490,10 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                 <motion.div whileTap={{ scale: 0.98 }}>
                     <Button
                         className={`w-full h-12 text-sm font-bold tracking-wide gap-2.5 rounded-xl transition-all duration-300 ${loading
-                                ? 'bg-gold/80 text-dark cursor-wait'
-                                : topic.trim()
-                                    ? 'bg-gradient-to-r from-gold to-goldDark text-dark hover:from-goldDark hover:to-gold shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5'
-                                    : 'bg-darkElevated text-muted-foreground border border-darkBorder cursor-not-allowed'
+                            ? 'bg-gold/80 text-dark cursor-wait'
+                            : topic.trim()
+                                ? 'bg-gradient-to-r from-gold to-goldDark text-dark hover:from-goldDark hover:to-gold shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5'
+                                : 'bg-darkElevated text-muted-foreground border border-darkBorder cursor-not-allowed'
                             }`}
                         onClick={handleGenerate}
                         disabled={loading || !topic.trim()}
@@ -534,7 +540,7 @@ const AIContentGenerator: React.FC<AIContentGeneratorProps> = ({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-dark/85 backdrop-blur-md flex justify-center items-center z-50"
+                        className="fixed top-16 inset-x-0 bottom-0 bg-dark/85 backdrop-blur-md flex justify-center items-center z-[48]"
                         onClick={() => setPreviewImage(null)}
                     >
                         <motion.div

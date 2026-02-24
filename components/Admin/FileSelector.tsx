@@ -33,10 +33,16 @@ interface ConfirmDialogProps {
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfirm, fileName }) => {
+    useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
             <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
                 <h3 className="text-lg font-semibold mb-4">Delete File</h3>
                 <p className="mb-6">
@@ -203,7 +209,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <div className="fixed top-16 inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[48] p-4">
                 <div className="bg-white dark:bg-dark w-full max-w-4xl rounded-xl shadow-2xl flex flex-col h-[90vh]">
                     <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                         <div className="flex justify-between items-center">

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
 import { FaTimes } from 'react-icons/fa';
 
@@ -24,6 +24,11 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave, is
         setCroppedAreaPixels(croppedAreaPixels);
     }, []);
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, []);
+
     const handleSave = async () => {
         if (croppedAreaPixels) {
             const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
@@ -32,7 +37,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageSrc, onClose, onSave, is
     };
 
     return (
-        <div className="fixed inset-0 bg-dark/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-dark/80 backdrop-blur-sm flex items-center justify-center z-[48] p-4">
             <div className="bg-card rounded-2xl p-6 relative w-full max-w-xl shadow-elevated border border-lightBorder dark:border-darkBorder flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold font-display text-foreground">Adjust Profile Picture</h3>

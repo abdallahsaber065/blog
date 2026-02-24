@@ -39,8 +39,13 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, link }) => {
         }
     }, [logs]);
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, []);
+
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20 dark:bg-opacity-75">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-[48] dark:bg-opacity-75">
             <div className="bg-white p-4 rounded shadow-lg w-3/4 h-3/4 flex flex-col dark:bg-zinc-800">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-bold dark:text-white">Log Viewer</h2>

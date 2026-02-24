@@ -263,17 +263,13 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ src, onFileChange, 
             {(isProgrammingFile(filename) || isPdfFile(filename)) && renderContent()}
 
             {showSelector && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white dark:bg-dark rounded-lg shadow-xl max-h-[90vh] w-[90vw] max-w-2xl overflow-hidden">
-                        <FileSelector
-                            isOpen={showSelector}
-                            onClose={() => setShowSelector(false)}
-                            onSelect={handleFileSelect}
-                            currentFile={src}
-                            folder="media"
-                        />
-                    </div>
-                </div>
+                <FileSelector
+                    isOpen={showSelector}
+                    onClose={() => setShowSelector(false)}
+                    onSelect={handleFileSelect}
+                    currentFile={src}
+                    folder="media"
+                />
             )}
         </div>
     );
