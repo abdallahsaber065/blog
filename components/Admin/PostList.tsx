@@ -114,6 +114,12 @@ const PermissionsModal: React.FC<{
         }
     }, [isOpen, post]);
 
+    useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const filteredUsers = availableUsers.filter(user =>
@@ -145,7 +151,7 @@ const PermissionsModal: React.FC<{
     };
 
     return (
-        <div className="fixed inset-0 bg-dark/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 text-slate-900 dark:text-slate-300 animate-fade-in font-mr">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-dark/60 backdrop-blur-sm flex items-center justify-center p-4 z-[48] text-slate-900 dark:text-slate-300 animate-fade-in font-mr">
             <div className="bg-white dark:bg-darkSurface rounded-2xl p-7 max-w-md w-full max-h-[85vh] overflow-y-auto shadow-gold/10 border border-lightBorder dark:border-darkBorder relative">
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-gold via-goldLight to-gold rounded-t-2xl"></div>
                 <div className="flex justify-between items-center mb-6">

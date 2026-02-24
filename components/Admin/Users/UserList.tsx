@@ -1,5 +1,5 @@
 // components/UserList.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -31,6 +31,12 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
     const [editedUser, setEditedUser] = useState<Partial<User>>({});
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [userToDelete, setUserToDelete] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (showDeleteConfirmation) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [showDeleteConfirmation]);
 
     const handleEdit = (user: User) => {
         setEditingUserId(user.id);
@@ -218,7 +224,7 @@ const UserList: React.FC<UserListProps> = ({ users, setUsers, loading }) => {
             </table>
 
             {showDeleteConfirmation && (
-                <div className="fixed inset-0 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-sm z-50 animate-fade-in">
+                <div className="fixed top-16 inset-x-0 bottom-0 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-sm z-[48] animate-fade-in">
                     <div className="bg-white dark:bg-darkSurface p-8 rounded-2xl shadow-gold/10 border border-lightBorder dark:border-darkBorder max-w-md w-full relative">
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500 rounded-t-2xl"></div>
                         <h2 className="text-2xl font-bold mb-3 text-foreground">Confirm Deletion</h2>

@@ -37,10 +37,16 @@ interface ConfirmDialogProps {
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, onClose, onConfirm, imageName }) => {
+    useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
+        <div className="fixed top-16 inset-x-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-[60]">
             <div className="bg-white dark:bg-dark rounded-lg p-6 max-w-sm w-full mx-4">
                 <h3 className="text-lg font-semibold mb-4">Delete Image</h3>
                 <p className="mb-6">
@@ -92,6 +98,18 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
     useEffect(() => {
         fetchImages();
     }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
 
     const fetchImages = async () => {
         setLoading(true);
@@ -244,7 +262,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-100 p-0 sm:px-2">
+            <div className="fixed top-16 inset-x-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-[48] p-0 sm:px-2">
                 <div className="bg-white dark:bg-dark w-full h-full sm:h-auto sm:rounded-lg sm:max-w-4xl sm:max-h-[90vh] flex flex-col md:flex-row overflow-hidden">
                     {/* Main Content */}
                     <div className="flex-1 px-2 pb-2 sm:px-4 sm:pb-4 overflow-y-auto">

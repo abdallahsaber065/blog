@@ -265,7 +265,7 @@ const EditorWithPreview: React.FC<EditorWithPreviewProps> = ({
         <>
             {/* Live Preview Overlay */}
             {isLivePreview && mounted && createPortal(
-                <div id="live-preview-scroll-container" className="fixed inset-0 z-[100] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
+                <div id="live-preview-scroll-container" className="fixed top-16 inset-x-0 bottom-0 z-[48] bg-white dark:bg-dark overflow-y-auto animate-in fade-in duration-300">
                     <div className="sticky top-0 z-50 bg-white/80 dark:bg-dark/80 backdrop-blur-md border-b border-lightBorder dark:border-darkBorder px-4 py-3 flex items-center justify-between shadow-sm">
                         <button
                             onClick={() => setIsLivePreview(false)}
