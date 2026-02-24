@@ -1,15 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import ModernBlogCard, { ModernPost } from '../Blog/ModernBlogCard';
+import BlogCard, { Post } from '../Blog/BlogCard';
 
-interface ModernBlogListProps {
+interface BlogListProps {
     title: string;
     description?: string;
-    posts: ModernPost[];
+    posts: Post[];
     highlightFirst?: boolean;
 }
 
-const ModernBlogList: React.FC<ModernBlogListProps> = ({ title, description, posts, highlightFirst = false }) => {
+const BlogList: React.FC<BlogListProps> = ({ title, description, posts, highlightFirst = false }) => {
     if (!posts || posts.length === 0) return null;
 
     return (
@@ -47,7 +47,7 @@ const ModernBlogList: React.FC<ModernBlogListProps> = ({ title, description, pos
                                 key={post.id}
                                 className={isFeaturedInGrid ? 'md:col-span-2 lg:col-span-2' : ''}
                             >
-                                <ModernBlogCard post={post} index={index} />
+                                <BlogCard post={post} index={index} />
                             </div>
                         );
                     })}
@@ -57,4 +57,4 @@ const ModernBlogList: React.FC<ModernBlogListProps> = ({ title, description, pos
     );
 };
 
-export default ModernBlogList;
+export default BlogList;

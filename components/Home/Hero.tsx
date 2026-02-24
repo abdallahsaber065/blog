@@ -13,11 +13,11 @@ interface HeroPost {
     category: { name: string; slug: string } | null;
 }
 
-interface ModernHeroProps {
+interface HeroProps {
     post: HeroPost;
 }
 
-const ModernHero: React.FC<ModernHeroProps> = ({ post }) => {
+const Hero: React.FC<HeroProps> = ({ post }) => {
     if (!post) return null;
 
     const formattedDate = post.published_at
@@ -113,4 +113,4 @@ const ModernHero: React.FC<ModernHeroProps> = ({ post }) => {
     );
 };
 
-export default ModernHero;
+export default Hero;

@@ -24,6 +24,7 @@ interface Post {
     author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
+    views: number;
     permissions: PostPermission[];
 }
 
@@ -42,6 +43,7 @@ const POST_SELECT_FIELDS = {
     slug: true,
     title: true,
     status: true,
+    views: true,
     tags: {
         select: {
             id: true,
@@ -565,6 +567,9 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                 <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                                     Status
                                 </th>
+                                <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
+                                    Views
+                                </th>
                                 <th className="px-4 py-3 text-right text-sm font-semibold text-muted-foreground">
                                     Actions
                                 </th>
@@ -644,6 +649,11 @@ const PostList: React.FC<PostListProps> = ({ posts, onSelectPost, onDeletePost, 
                                                     ? 'Waiting'
                                                     : post.status}
                                             </Badge>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        <div className="flex items-center gap-1.5 text-foreground/80">
+                                            <span className="text-sm font-medium">{post.views || 0}</span>
                                         </div>
                                     </td>
                                     <td className="px-4 py-4">

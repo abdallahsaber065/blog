@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, ArrowRight } from 'lucide-react';
 
-export interface ModernPost {
+export interface Post {
     id: string;
     slug: string;
     title: string;
@@ -14,12 +14,12 @@ export interface ModernPost {
     tags?: { name: string; slug: string }[];
 }
 
-interface ModernBlogCardProps {
-    post: ModernPost;
+interface BlogCardProps {
+    post: Post;
     index: number;
 }
 
-const ModernBlogCard: React.FC<ModernBlogCardProps> = ({ post, index }) => {
+const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
     const formattedDate = post.published_at
         ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(post.published_at))
         : '';
@@ -68,15 +68,17 @@ const ModernBlogCard: React.FC<ModernBlogCardProps> = ({ post, index }) => {
                     {post.excerpt}
                 </p>
 
-                <div className="pt-4 border-t border-darkBorder flex items-center justify-between mt-auto">
-                    <span className="text-sm font-semibold text-gold flex items-center gap-1 transition-transform group-hover:translate-x-1 duration-300">
-                        Read more <ArrowRight className="w-4 h-4 ml-1" />
-                    </span>
-                    {/* Subtle read time or something if available, or omit */}
-                </div>
+                <Link href={`/blog/${post.slug}`}>
+                    <div className="pt-4 border-t border-darkBorder flex items-center justify-between mt-auto">
+                        <span className="text-sm font-semibold text-gold flex items-center gap-1 transition-transform group-hover:translate-x-1 duration-300">
+                            Read more <ArrowRight className="w-4 h-4 ml-1" />
+                        </span>
+                        {/* Subtle read time or something if available, or omit */}
+                    </div>
+                </Link>
             </div>
         </motion.article>
     );
 };
 
-export default ModernBlogCard;
+export default BlogCard;
