@@ -2,15 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
-import { ClipLoader } from 'react-spinners';
 import PostEditor from '@/components/Admin/PostEditor';
 import Tag from '@prisma/client';
 import withAuth from '@/components/Admin/withAuth';
 import readingTime from "reading-time"
 import { slug } from 'github-slugger';
 import { useSession } from 'next-auth/react';
-import EditTourGuide from '@/components/Admin/EditTourGuide';
 import { motion } from 'framer-motion';
+import { Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 interface Post {
     id: number;
@@ -69,7 +68,6 @@ const PostEditorPage: React.FC = () => {
     const [author, setAuthor] = useState<Author | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const { data: session } = useSession();
-    const [showTour, setShowTour] = useState(false);
     const [postNotFound, setPostNotFound] = useState(false);
     const [isValidId, setIsValidId] = useState<boolean | null>(null);
 
@@ -77,7 +75,6 @@ const PostEditorPage: React.FC = () => {
     const { id } = router.query;
 
     useEffect(() => {
-        // Check if id exists and is valid
         if (!id) {
             setIsValidId(false);
             return;
@@ -91,7 +88,6 @@ const PostEditorPage: React.FC = () => {
 
         setIsValidId(true);
 
-        // Only proceed with permission check if we have a valid ID and session
         if (session?.user) {
             checkPermission(numId).then(hasPermission => {
                 if (hasPermission) {
@@ -106,24 +102,15 @@ const PostEditorPage: React.FC = () => {
         const userRole = session?.user?.role;
 
         try {
-            // First, check if user is admin/moderator
             if (ApproveRoles.includes(userRole || '')) {
                 setHasPermission(true);
                 return true;
             }
 
-            // Fetch post with permissions
             const postWhere = JSON.stringify({ id: postId });
             const postSelect = JSON.stringify({
-                author: {
-                    select: { id: true }
-                },
-                permissions: {
-                    select: {
-                        user_id: true,
-                        role: true
-                    }
-                }
+                author: { select: { id: true } },
+                permissions: { select: { user_id: true, role: true } }
             });
 
             const postUrl = `/api/posts?where=${postWhere}&select=${postSelect}`;
@@ -136,13 +123,11 @@ const PostEditorPage: React.FC = () => {
                 return false;
             }
 
-            // Check if user is author
             if (post.author?.id === userId) {
                 setHasPermission(true);
                 return true;
             }
 
-            // Check permissions
             const hasPermission = post.permissions?.some((p: { user_id: number; role: string | undefined; }) =>
                 (p.user_id === userId) || (p.role === userRole)
             );
@@ -161,11 +146,11 @@ const PostEditorPage: React.FC = () => {
         if (postLoaded) return;
         setLoadingPost(true);
         try {
-            // Fetch post with all necessary data including permissions
             const postWhere = JSON.stringify({ id: postId });
             const postSelect = JSON.stringify({
                 id: true,
                 title: true,
+                excerpt: true,
                 featured_image_url: true,
                 content: true,
                 status: true,
@@ -210,10 +195,8 @@ const PostEditorPage: React.FC = () => {
                 return;
             }
 
-            // Set author
             setAuthor(post.author);
 
-            // Process content (your existing bold text processing)
             const boldMatch = post.content.match(/\\\*\\\*[^*]+?\\\*\\\*/g);
             const boldTextOnly = boldMatch?.map((text: string) => text.replace(/\\\*\\\*/g, ''));
             const boldTextTrimmed = boldTextOnly?.map((text: string) => text.trim());
@@ -236,7 +219,6 @@ const PostEditorPage: React.FC = () => {
     };
 
     const handleSave = async (updatedPostRecieved: any, status: string) => {
-        // Add permission check
         if (!ApproveRoles.includes(session?.user?.role || '') &&
             author?.id !== Number(session?.user?.id)) {
             toast.dismiss();
@@ -245,43 +227,30 @@ const PostEditorPage: React.FC = () => {
         }
 
         setLoading(true);
-        // Enforce status rules based on role
         const resolvedStatus = getStatusByRole(session?.user?.role || 'reader', status);
 
         let updatedPost = { ...updatedPostRecieved, status: resolvedStatus };
         try {
-            // Format tags - handle both existing and new tags
             updatedPost.tags = {
-                set: [], // Clear existing connections
+                set: [],
                 connectOrCreate: updatedPost.tags.map((tag: Tag) => {
                     if (tag.id > 0) {
-                        // Existing tag
                         return {
                             where: { id: tag.id },
-                            create: { // Required even for existing tags
-                                name: tag.name,
-                                slug: slug(tag.name)
-                            }
+                            create: { name: tag.name, slug: slug(tag.name) }
                         };
                     } else {
-                        // New tag
                         return {
                             where: { slug: slug(tag.name) },
-                            create: {
-                                name: tag.name,
-                                slug: slug(tag.name)
-                            }
+                            create: { name: tag.name, slug: slug(tag.name) }
                         };
                     }
                 })
             };
 
-            // Format category
             updatedPost.category = {
                 connectOrCreate: {
-                    where: {
-                        slug: slug(updatedPost.category.name)
-                    },
+                    where: { slug: slug(updatedPost.category.name) },
                     create: {
                         name: updatedPost.category.name,
                         slug: slug(updatedPost.category.name)
@@ -292,19 +261,12 @@ const PostEditorPage: React.FC = () => {
             let finalPost = { ...updatedPost };
             delete finalPost.id;
             finalPost.reading_time = Math.round(readingTime(finalPost.content).minutes);
-            // add slug to finalPost
             finalPost.slug = slug(finalPost.title);
-
 
             const response = await fetch(`/api/posts`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    data: finalPost,
-                    id: updatedPost.id
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: finalPost, id: updatedPost.id }),
             });
 
             if (response.ok) {
@@ -330,70 +292,60 @@ const PostEditorPage: React.FC = () => {
         }
     };
 
-    // Helper function to render error message
     const renderErrorMessage = () => {
         if (!isValidId) {
             return (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-5 mb-4 rounded-xl" role="alert">
-                    <div className="flex items-start gap-3">
-                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <div>
-                            <p className="font-semibold text-red-300">Invalid Post ID</p>
-                            <p className="text-sm mt-1">The post ID provided is invalid or missing.</p>
-                            <button
-                                onClick={() => router.push('/admin/posts')}
-                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
-                            >
-                                Return to Posts List
-                            </button>
-                        </div>
+                <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                        <AlertTriangle className="w-7 h-7 text-red-400" />
                     </div>
+                    <h2 className="text-xl font-display font-bold text-foreground mb-2">Invalid Post ID</h2>
+                    <p className="text-sm text-muted-foreground mb-6">The post ID provided is invalid or missing.</p>
+                    <button
+                        onClick={() => router.push('/admin/posts')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gold/10 border border-gold/30 text-gold text-sm font-medium hover:bg-gold/20 transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Return to Posts
+                    </button>
                 </div>
             );
         }
 
         if (postNotFound && hasPermission) {
             return (
-                <div className="bg-gold/10 border border-gold/30 text-gold p-5 mb-4 rounded-xl" role="alert">
-                    <div className="flex items-start gap-3">
-                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <div>
-                            <p className="font-semibold text-gold">Post Not Found</p>
-                            <p className="text-sm text-muted-foreground mt-1">The post you're looking for doesn't exist or has been deleted.</p>
-                            <button
-                                onClick={() => router.push('/admin/posts')}
-                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
-                            >
-                                Return to Posts List
-                            </button>
-                        </div>
+                <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center mb-6">
+                        <AlertTriangle className="w-7 h-7 text-gold" />
                     </div>
+                    <h2 className="text-xl font-display font-bold text-foreground mb-2">Post Not Found</h2>
+                    <p className="text-sm text-muted-foreground mb-6">The post you&apos;re looking for doesn&apos;t exist or has been deleted.</p>
+                    <button
+                        onClick={() => router.push('/admin/posts')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gold/10 border border-gold/30 text-gold text-sm font-medium hover:bg-gold/20 transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Return to Posts
+                    </button>
                 </div>
             );
         }
 
         if (hasPermission === false) {
             return (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-5 mb-4 rounded-xl" role="alert">
-                    <div className="flex items-start gap-3">
-                        <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <div>
-                            <p className="font-semibold text-red-300">Access Denied</p>
-                            <p className="text-sm mt-1">You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
-                            <button
-                                onClick={() => router.push('/admin/posts')}
-                                className="mt-3 text-gold hover:text-goldLight underline underline-offset-2 text-sm font-medium transition-colors"
-                            >
-                                Return to Posts List
-                            </button>
-                        </div>
+                <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6">
+                        <AlertTriangle className="w-7 h-7 text-red-400" />
                     </div>
+                    <h2 className="text-xl font-display font-bold text-foreground mb-2">Access Denied</h2>
+                    <p className="text-sm text-muted-foreground mb-6 max-w-md">You do not have permission to edit this post. Only the author or users with proper permissions can edit this content.</p>
+                    <button
+                        onClick={() => router.push('/admin/posts')}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gold/10 border border-gold/30 text-gold text-sm font-medium hover:bg-gold/20 transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Return to Posts
+                    </button>
                 </div>
             );
         }
@@ -409,26 +361,11 @@ const PostEditorPage: React.FC = () => {
             className="container mx-auto p-4 text-foreground"
             id="post-editor-container"
         >
-            <EditTourGuide
-                run={showTour}
-                onFinish={() => setShowTour(false)}
-            />
-
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-lightBorder dark:border-darkBorder">
-                <h1 className="text-3xl font-display font-bold text-foreground" id="post-editor-title">Edit Post</h1>
-                <button
-                    className="flex items-center gap-2 px-4 py-2 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40"
-                    onClick={() => setShowTour(true)}
-                >
-                    <span className="text-lg">❔</span>
-                    <span className="font-medium">Show Guide</span>
-                </button>
-            </div>
 
             {loadingPost && (
-                <div className="flex items-center justify-center p-4" id="post-editor-loading">
-                    <ClipLoader />
-                    <span className="ml-2">Loading post...</span>
+                <div className="flex flex-col items-center justify-center py-24 gap-4" id="post-editor-loading">
+                    <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                    <span className="text-muted-foreground font-medium">Loading post…</span>
                 </div>
             )}
 

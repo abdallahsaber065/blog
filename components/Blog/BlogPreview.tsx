@@ -5,7 +5,6 @@ import Image from "next/image";
 import Tag from "@/components/Elements/Tag";
 import CustomImage from '@/components/MdxComponents/Image/CustomImageView';
 import CustomFileView from '@/components/MdxComponents/File/CustomFileView';
-import TableOfContent from "@/components/Blog/TableOfContent";
 import { serialize } from 'next-mdx-remote/serialize';
 import { Options } from "@/lib/articles/mdxconfig";
 import { GetServerSideProps } from 'next';

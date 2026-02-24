@@ -114,6 +114,8 @@ const PostForm: React.FC<PostFormProps> = ({
                     tags={tags}
                     featuredImage={featuredImage}
                     excerpt={excerpt}
+                    isLivePreview={false}
+                    setIsLivePreview={() => { }}
                 />
             </div>
             {isMounted && (

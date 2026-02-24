@@ -13,7 +13,7 @@ interface BlogDetailsProps {
 const BlogDetails = ({ post }: BlogDetailsProps) => {
   const { data: session } = useSession();
   const [interactions, setInteractions] = useState({
-    views: post.views || 0,
+    views: post.views || 1,
     likesCount: 0,
     hasLiked: false,
     hasBookmarked: false,
