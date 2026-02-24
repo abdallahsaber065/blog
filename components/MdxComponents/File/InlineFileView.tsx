@@ -43,8 +43,9 @@ const InlineFileView: React.FC<InlineFileProps> = ({ src, filename }) => {
         setError(null);
 
         try {
-            const publicUrl = resolvePublicUrl(src);
-            const response = await fetch(publicUrl);
+            const fileNameForFetch = src.split('/').pop();
+            const fetchUrl = `/api/files/download?file_url_name=${fileNameForFetch}&proxy=true`;
+            const response = await fetch(fetchUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }
