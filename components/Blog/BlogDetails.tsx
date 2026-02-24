@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { slug } from "github-slugger";
 import { CalendarDays, Clock, UserCircle2, Heart, Bookmark, Eye, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import toast from "react-hot-toast";
 
 interface BlogDetailsProps {
   post: any;
@@ -42,68 +41,23 @@ const BlogDetails = ({ post }: BlogDetailsProps) => {
     fetchInteractions();
   }, [post.slug]);
 
-  const toggleLike = async () => {
-    if (!session) {
-      toast.error("Please sign in to like posts.");
-      return;
-    }
-    // Optimistic update
-    setInteractions((prev) => ({
-      ...prev,
-      hasLiked: !prev.hasLiked,
-      likesCount: prev.hasLiked ? prev.likesCount - 1 : prev.likesCount + 1,
-    }));
-    try {
-      const res = await fetch(`/api/posts/${post.slug}/like`, { method: "POST" });
-      if (!res.ok) throw new Error();
-    } catch {
-      // Revert on failure
-      setInteractions((prev) => ({
-        ...prev,
-        hasLiked: !prev.hasLiked,
-        likesCount: prev.hasLiked ? prev.likesCount - 1 : prev.likesCount + 1,
-      }));
-      toast.error("Failed to like post.");
-    }
-  };
-
-  const toggleBookmark = async () => {
-    if (!session) {
-      toast.error("Please sign in to bookmark posts.");
-      return;
-    }
-    setInteractions((prev) => ({
-      ...prev,
-      hasBookmarked: !prev.hasBookmarked,
-    }));
-    try {
-      const res = await fetch(`/api/posts/${post.slug}/bookmark`, { method: "POST" });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      toast.success(data.action === 'added' ? "Bookmarked!" : "Removed bookmark");
-    } catch {
-      setInteractions((prev) => ({
-        ...prev,
-        hasBookmarked: !prev.hasBookmarked,
-      }));
-      toast.error("Failed to bookmark post.");
-    }
-  };
+  const canViewStats = session?.user?.role === 'admin' || session?.user?.id === String(post.author?.id);
 
   return (
-    <div className="bg-gradient-to-r from-gold/5 via-gold/10 to-gold/5 border border-gold/20 text-foreground py-4 px-6 md:px-10 flex flex-wrap items-center justify-center sm:justify-around font-medium mx-5 md:mx-10 rounded-2xl gap-x-8 gap-y-4 mt-2 mb-8 shadow-sm backdrop-blur-sm">
-      <div className="flex items-center gap-2 text-sm md:text-base font-bold opacity-90 group cursor-default">
-        <CalendarDays className="w-5 h-5 text-gold group-hover:scale-110 transition-transform" />
-        <time>
-          {post.published_at ? format(parseISO(post.published_at.toISOString() || post.published_at), "LLLL d, yyyy") : "Unpublished"}
-        </time>
-      </div>
+    <div className="bg-transparent md:bg-gradient-to-r md:from-gold/5 md:via-gold/10 md:to-gold/5 border-y md:border border-gold/10 md:border-gold/20 text-foreground py-3 md:py-4 px-4 md:px-10 flex flex-wrap items-center justify-start md:justify-around text-xs md:text-sm md:font-medium mx-0 md:mx-10 md:rounded-2xl gap-x-6 gap-y-3 mt-4 mb-4 md:mb-8 md:shadow-sm md:backdrop-blur-sm">
 
-      <div className="flex items-center gap-2 text-sm md:text-base font-bold opacity-90">
+      <div className="flex items-center gap-2 text-sm md:text-base font-bold opacity-90 group cursor-default">
         <UserCircle2 className="w-5 h-5 text-gold" />
         By: <Link href={`/authors/${slug(post.author.username)}`} className="text-gold hover:text-gold/80 hover:underline transition-all">
           @{post.author.username}
         </Link>
+      </div>
+
+      <div className="flex items-center gap-2 text-sm md:text-base font-bold opacity-90 mr-auto md:m-0">
+        <CalendarDays className="w-5 h-5 text-gold group-hover:scale-110 transition-transform" />
+        <time>
+          {post.published_at ? format(parseISO(post.published_at.toISOString() || post.published_at), "LLLL d, yyyy") : "Unpublished"}
+        </time>
       </div>
 
       <div className="flex items-center gap-6">
@@ -115,29 +69,12 @@ const BlogDetails = ({ post }: BlogDetailsProps) => {
         {loading ? (
           <Loader2 className="w-5 h-5 text-gold animate-spin" />
         ) : (
-          <>
+          canViewStats && (
             <div className="flex items-center gap-1.5 text-sm md:text-base font-bold opacity-90" title="Views">
               <Eye className="w-5 h-5 text-gold" />
               <span>{interactions.views}</span>
             </div>
-
-            <button
-              onClick={toggleLike}
-              className="flex items-center gap-1.5 text-sm md:text-base font-bold opacity-90 hover:opacity-100 transition-opacity"
-              title={interactions.hasLiked ? "Unlike post" : "Like post"}
-            >
-              <Heart className={`w-5 h-5 transition-transform ${interactions.hasLiked ? "fill-red-500 text-red-500" : "text-gold"} active:scale-95`} />
-              <span>{interactions.likesCount}</span>
-            </button>
-
-            <button
-              onClick={toggleBookmark}
-              className="flex items-center gap-1.5 text-sm md:text-base font-bold opacity-90 hover:opacity-100 transition-opacity"
-              title={interactions.hasBookmarked ? "Remove bookmark" : "Bookmark post"}
-            >
-              <Bookmark className={`w-5 h-5 transition-transform ${interactions.hasBookmarked ? "fill-gold text-gold" : "text-gold"} active:scale-95`} />
-            </button>
-          </>
+          )
         )}
       </div>
     </div>

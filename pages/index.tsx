@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
-import ModernHero from "@/components/Home/ModernHero";
-import ModernBlogList from "@/components/Home/ModernBlogList";
+import Hero from "@/components/Home/Hero";
+import BlogList from "@/components/Home/BlogList";
 
 export const getStaticProps: GetStaticProps = async () => {
   const selectQuery = {
@@ -102,10 +102,10 @@ const Home = ({ featuredBlogs, recentBlogs }: { featuredBlogs: any[], recentBlog
           </div>
         ) : (
           <>
-            {heroPost && <ModernHero post={heroPost} />}
+            {heroPost && <Hero post={heroPost} />}
 
             {remainingFeatured.length > 0 && (
-              <ModernBlogList
+              <BlogList
                 title="Featured Stories"
                 description="Our most impactful and essential reads."
                 posts={remainingFeatured}
@@ -114,7 +114,7 @@ const Home = ({ featuredBlogs, recentBlogs }: { featuredBlogs: any[], recentBlog
             )}
 
             {deserializedRecent.length > 0 && (
-              <ModernBlogList
+              <BlogList
                 title="Latest Posts"
                 description="Catch up on the newest insights and tutorials."
                 posts={deserializedRecent}

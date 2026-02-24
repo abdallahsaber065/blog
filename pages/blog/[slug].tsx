@@ -56,6 +56,7 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
             status: true,
             author: {
                 select: {
+                    id: true,
                     username: true,
                     created_at: true,
                     updated_at: true,
@@ -163,6 +164,7 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false }
 
 import ReadingProgressBar from "@/components/Blog/ReadingProgressBar";
 import ShareButtons from "@/components/Blog/ShareButtons";
+import PostActions from "@/components/Blog/PostActions";
 import Breadcrumb from "@/components/Elements/Breadcrumb";
 import siteMetadataShare from "@/lib/siteMetaData";
 
@@ -250,7 +252,10 @@ const BlogPage = ({ post, mdxSource, jsonLd }: any) => {
                             </Link>
                         ))}
                     </div>
-                    <ShareButtons title={deserializedPost.title} slug={deserializedPost.slug} siteUrl={siteMetadataShare.siteUrl} />
+                    <div className="flex items-center gap-4">
+                        <PostActions postSlug={deserializedPost.slug} />
+                        <ShareButtons title={deserializedPost.title} slug={deserializedPost.slug} siteUrl={siteMetadataShare.siteUrl} />
+                    </div>
                 </div>
             </article>
         </>

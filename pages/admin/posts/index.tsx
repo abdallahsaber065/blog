@@ -25,6 +25,7 @@ interface Post {
     author: { id: number; username: string; first_name: string; last_name: string };
     created_at: string;
     status: string;
+    views: number;
     permissions: PostPermission[];
 }
 
@@ -45,6 +46,7 @@ const DashboardPage: React.FC = () => {
             slug: true,
             title: true,
             status: true,
+            views: true,
             tags: {
                 select: {
                     id: true,
