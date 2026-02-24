@@ -28,6 +28,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Handle Cloud Storage (ImageKit/S3) - Redirect to the public URL
         if (isCloudProvider()) {
             const publicUrl = resolvePublicUrl(fileRecord.file_url);
+
+            if (req.query.proxy === 'true') {
+                try {
+                    const cloudRes = await fetch(publicUrl);
+                    if (!cloudRes.ok) {
+                        return res.status(cloudRes.status).json({ error: `Cloud storage error: ${cloudRes.statusText}` });
+                    }
+
+                    res.setHeader('Content-Type', fileRecord.file_type || cloudRes.headers.get('Content-Type') || 'application/octet-stream');
+                    if (fileRecord.file_size) {
+                        res.setHeader('Content-Length', fileRecord.file_size.toString());
+                    }
+                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+
+                    const arrayBuffer = await cloudRes.arrayBuffer();
+                    return res.send(Buffer.from(arrayBuffer));
+                } catch (error) {
+                    console.error('Error proxying cloud file:', error);
+                    return res.status(500).json({ error: 'Failed to proxy file from cloud storage' });
+                }
+            }
             return res.redirect(publicUrl);
         }
 
@@ -53,12 +74,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 function sendFile(res: NextApiResponse, filePath: string, fileRecord: any, method: string) {
     res.setHeader('Content-Disposition', `attachment; filename="${fileRecord.file_name}"`);
     res.setHeader('Content-Type', fileRecord.file_type || 'application/octet-stream');
-    res.setHeader('Content-Length', fileRecord.file_size.toString());
-    res.setHeader('File-Id', fileRecord.id.toString());
+    if (fileRecord.file_size) {
+        res.setHeader('Content-Length', fileRecord.file_size.toString());
+    }
+    res.setHeader('File-Id', fileRecord.id?.toString() || '');
     res.setHeader('File-Name', fileRecord.file_name);
     res.setHeader('File-Url', fileRecord.file_url);
     res.setHeader('File-Type', fileRecord.file_type);
-    res.setHeader('File-Size', fileRecord.file_size.toString());
+    if (fileRecord.file_size) {
+        res.setHeader('File-Size', fileRecord.file_size.toString());
+    }
 
     if (method === 'HEAD') {
         return res.status(200).end();

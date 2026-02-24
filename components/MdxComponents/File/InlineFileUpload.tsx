@@ -53,8 +53,9 @@ const InlineFileUpload: React.FC<InlineFileUploadProps> = ({ src, filename, onFi
         setError(null);
 
         try {
-            const publicUrl = resolvePublicUrl(url);
-            const response = await fetch(publicUrl);
+            const fileNameForFetch = url.split('/').pop();
+            const fetchUrl = `/api/files/download?file_url_name=${fileNameForFetch}&proxy=true`;
+            const response = await fetch(fetchUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }

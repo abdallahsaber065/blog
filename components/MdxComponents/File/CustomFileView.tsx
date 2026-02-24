@@ -76,8 +76,9 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         setError(null);
 
         try {
-            const publicUrl = resolvePublicUrl(src);
-            const response = await fetch(publicUrl);
+            const file_url_name = src.split('/').pop();
+            const fetchUrl = `/api/files/download?file_url_name=${file_url_name}&proxy=true`;
+            const response = await fetch(fetchUrl);
             if (!response.ok) {
                 throw new Error('Failed to fetch file content');
             }
@@ -201,10 +202,12 @@ const CustomFileView: React.FC<CustomFileViewProps> = ({ src, filename }) => {
         }
 
         if (isPdfFile(filename)) {
+            const file_url_name = src.split('/').pop();
+            const pdfUrl = `/api/files/download?file_url_name=${file_url_name}&proxy=true`;
             return (
                 <div className="pdf-container p-4 max-h-[80vh] overflow-y-auto">
                     <Document
-                        file={resolvePublicUrl(src)}
+                        file={pdfUrl}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                         error="Failed to load PDF"
                         loading={
