@@ -1,141 +1,233 @@
 'use client';
+import React, { forwardRef } from 'react';
 import '@mdxeditor/editor/style.css';
-import React, { useState } from 'react';
-import 'react-markdown-editor-lite/lib/index.css';
-import MarkdownIt from 'markdown-it';
-import dynamic from 'next/dynamic';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css'; // You can choose any highlight.js theme
+import {
+    MDXEditor,
+    MDXEditorMethods,
+    headingsPlugin,
+    listsPlugin,
+    quotePlugin,
+    thematicBreakPlugin,
+    linkPlugin,
+    linkDialogPlugin,
+    tablePlugin,
+    codeBlockPlugin,
+    codeMirrorPlugin,
+    toolbarPlugin,
+    diffSourcePlugin,
+    jsxPlugin,
+    markdownShortcutPlugin,
+    imagePlugin,
+    GenericJsxEditor,
+    JsxComponentDescriptor,
+    // Toolbar components
+    UndoRedo,
+    BoldItalicUnderlineToggles,
+    BlockTypeSelect,
+    ListsToggle,
+    CreateLink,
+    InsertTable,
+    InsertCodeBlock,
+    InsertThematicBreak,
+    InsertImage,
+    Separator,
+    DiffSourceToggleWrapper,
+    CodeToggle,
+    StrikeThroughSupSubToggles,
+    ConditionalContents,
+} from '@mdxeditor/editor';
 
-const MdEditor = dynamic(
-    async () => {
-        const [MdEditor, ImagePlugin, FilePlugin, InlineFilePlugin, EmbedPlugin, SectionPlugin] = await Promise.all([
-            import('react-markdown-editor-lite'),
-            import('./Editor/Plugins/ImagePlugin'),
-            import('./Editor/Plugins/FilePlugin'),
-            import('./Editor/Plugins/InlineFilePlugin'),
-            import('./Editor/Plugins/EmbedPlugin'),
-            import('./Editor/Plugins/SectionPlugin'),
-            /** Add more plugins, and use below */
-        ]);
-        MdEditor.default.use(ImagePlugin.default as any);
-        MdEditor.default.use(FilePlugin.default as any);
-        MdEditor.default.use(InlineFilePlugin.default as any);
-        MdEditor.default.use(EmbedPlugin.default as any);
-        MdEditor.default.use(SectionPlugin.default as any);
-        return MdEditor.default;
+import {
+    InsertCustomImage,
+    InsertCustomFile,
+    InsertInlineFile,
+    InsertEmbed,
+    InsertSection,
+} from './Editor/MdxEditorToolbarButtons';
+
+// JSX component descriptors for custom MDX components
+const jsxComponentDescriptors: JsxComponentDescriptor[] = [
+    {
+        name: 'Image',
+        kind: 'flow',
+        props: [
+            { name: 'src', type: 'string', required: true },
+            { name: 'alt', type: 'string' },
+            { name: 'width', type: 'expression' },
+            { name: 'height', type: 'expression' },
+            { name: 'id', type: 'string' },
+        ],
+        hasChildren: false,
+        Editor: GenericJsxEditor,
     },
     {
-        ssr: false,
+        name: 'File',
+        kind: 'flow',
+        props: [
+            { name: 'src', type: 'string', required: true },
+            { name: 'filename', type: 'string' },
+            { name: 'alt', type: 'string' },
+            { name: 'id', type: 'string' },
+        ],
+        hasChildren: false,
+        Editor: GenericJsxEditor,
     },
-);
-
-// Configure markdown-it with highlight.js
-const mdParser = new MarkdownIt({
-    highlight: function (str: string, lang: string): string {
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return '<pre class="hljs"><code>' +
-                    hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-                    '</code></pre>';
-            } catch (__) { }
-        }
-        return '<pre class="hljs"><code>' + mdParser.utils.escapeHtml(str) + '</code></pre>';
-    }
-});
+    {
+        name: 'InlineFile',
+        kind: 'text',
+        props: [
+            { name: 'src', type: 'string', required: true },
+            { name: 'filename', type: 'string' },
+            { name: 'alt', type: 'string' },
+            { name: 'id', type: 'string' },
+        ],
+        hasChildren: false,
+        Editor: GenericJsxEditor,
+    },
+    {
+        name: 'Embed',
+        kind: 'flow',
+        props: [
+            { name: 'src', type: 'string', required: true },
+            { name: 'alt', type: 'string' },
+            { name: 'height', type: 'string' },
+            { name: 'width', type: 'string' },
+        ],
+        hasChildren: false,
+        Editor: GenericJsxEditor,
+    },
+    {
+        name: 'FileResource',
+        kind: 'flow',
+        props: [
+            { name: 'src', type: 'string', required: true },
+            { name: 'filename', type: 'string' },
+        ],
+        hasChildren: false,
+        Editor: GenericJsxEditor,
+    },
+    {
+        // Handle <details> blocks as a JSX component
+        name: 'details',
+        kind: 'flow',
+        props: [],
+        hasChildren: true,
+        Editor: GenericJsxEditor,
+    },
+    {
+        name: 'summary',
+        kind: 'flow',
+        props: [],
+        hasChildren: true,
+        Editor: GenericJsxEditor,
+    },
+];
 
 interface EditorProps {
     markdown: string;
     onChange: (markdown: string) => void;
-    parseMarkdown?: (markdown: string) => string;
-    onScroll?: (e: React.UIEvent<HTMLTextAreaElement | HTMLDivElement>, type: 'md' | 'html') => void;
-    editorRef?: React.MutableRefObject<HTMLDivElement>;
-    isFullScreen?: boolean;
+    editorRef?: React.Ref<MDXEditorMethods>;
+    className?: string;
+    diffMarkdown?: string;
 }
 
-const Editor = ({ markdown, onChange, parseMarkdown, onScroll, editorRef, isFullScreen }: EditorProps) => {
-    const [error, setError] = useState<string | null>(null);
-
-    const handleChange = ({ text }: { text: string }) => {
-        try {
-            onChange(text);
-            setError(null); // Clear any previous errors
-        } catch (err) {
-            setError('Error while updating the content.');
-        }
-    };
-
-    const renderHTML = (text: string) => {
-        try {
-            return parseMarkdown ? parseMarkdown(text) : mdParser.render(text);
-        } catch (err) {
-            setError('Error while parsing the content.');
-            return '<p>Error while parsing the content.</p>';
-        }
-    };
-
+const Editor: React.FC<EditorProps> = ({ markdown, onChange, editorRef, className, diffMarkdown }) => {
     return (
-        <div className="h-full">
-            {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2 rounded text-sm mb-2">
-                    {error}
-                </div>
-            )}
-            <MdEditor
-                className="markdown-editor-main"
-                markdownClass="editor-class"
-                onScroll={onScroll}
-                style={{
-                    height: "100%",
-                }}
-                renderHTML={renderHTML}
-                config={{
-                    view: {
-                        menu: true,
-                        md: true,
-                        html: false,
-                    },
-                    canView: {
-                        menu: true,
-                        md: true,
-                        html: true,
-                        fullScreen: true,
-                        hideMenu: false,
-                        both: false,
-                    },
-                    shortcuts: true,
-                }}
+        <div className={`mdx-editor-wrapper h-full ${className || ''}`}>
+            <MDXEditor
+                ref={editorRef}
+                markdown={markdown}
+                onChange={onChange}
+                className="dark-theme w-full"
+                contentEditableClassName="mdx-editor-content prose prose-lg dark:prose-invert max-w-none"
                 plugins={[
-                    'header',
-                    'font-bold',
-                    'font-italic',
-                    'font-underline',
-                    'font-strikethrough',
-                    'list-unordered',
-                    'list-ordered',
-                    'block-quote',
-                    'block-wrap',
-                    'block-code-inline',
-                    'block-code-block',
-                    'table',
-                    'image',
-                    'link',
-                    'ImagePlugin',
-                    'FilePlugin',
-                    'InlineFilePlugin',
-                    'EmbedPlugin',
-                    'SectionPlugin',
-                    'logger',
-                    'clear',
-                    'undo',
-                    'redo',
+                    headingsPlugin(),
+                    listsPlugin(),
+                    quotePlugin(),
+                    thematicBreakPlugin(),
+                    linkPlugin(),
+                    linkDialogPlugin(),
+                    tablePlugin(),
+                    codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+                    codeMirrorPlugin({
+                        codeBlockLanguages: {
+                            js: 'JavaScript',
+                            ts: 'TypeScript',
+                            tsx: 'TSX',
+                            jsx: 'JSX',
+                            css: 'CSS',
+                            html: 'HTML',
+                            python: 'Python',
+                            rust: 'Rust',
+                            go: 'Go',
+                            bash: 'Bash',
+                            shell: 'Shell',
+                            json: 'JSON',
+                            yaml: 'YAML',
+                            sql: 'SQL',
+                            graphql: 'GraphQL',
+                            markdown: 'Markdown',
+                            c: 'C',
+                            cpp: 'C++',
+                            java: 'Java',
+                            php: 'PHP',
+                            ruby: 'Ruby',
+                            swift: 'Swift',
+                            kotlin: 'Kotlin',
+                            dart: 'Dart',
+                            '': 'Plain Text',
+                        },
+                    }),
+                    imagePlugin(),
+                    jsxPlugin({ jsxComponentDescriptors }),
+                    diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: diffMarkdown || markdown }),
+                    markdownShortcutPlugin(),
+                    toolbarPlugin({
+                        toolbarContents: () => (
+                            <DiffSourceToggleWrapper>
+                                <ConditionalContents
+                                    options={[
+                                        {
+                                            when: (editor) => editor?.editorType === 'codeblock',
+                                            contents: () => <></>
+                                        },
+                                        {
+                                            fallback: () => (
+                                                <>
+                                                    <UndoRedo />
+                                                    <Separator />
+                                                    <BlockTypeSelect />
+                                                    <Separator />
+                                                    <BoldItalicUnderlineToggles />
+                                                    <StrikeThroughSupSubToggles />
+                                                    <CodeToggle />
+                                                    <Separator />
+                                                    <ListsToggle />
+                                                    <Separator />
+                                                    <CreateLink />
+                                                    <InsertImage />
+                                                    <InsertTable />
+                                                    <InsertCodeBlock />
+                                                    <InsertThematicBreak />
+                                                    <Separator />
+                                                    {/* Custom MDX component buttons */}
+                                                    <InsertCustomImage />
+                                                    <InsertCustomFile />
+                                                    <InsertInlineFile />
+                                                    <InsertEmbed />
+                                                    <InsertSection />
+                                                </>
+                                            )
+                                        }
+                                    ]}
+                                />
+                            </DiffSourceToggleWrapper>
+                        ),
+                    }),
                 ]}
-                onChange={handleChange}
-                value={markdown}
-                syncScrollMode={['rightFollowLeft', 'leftFollowRight']}
             />
         </div>
     );
-}
+};
 
 export default Editor;

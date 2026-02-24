@@ -415,3 +415,200 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 .skip-to-content:focus {
   top: 0;
 }
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR THEME OVERRIDES
+───────────────────────────────────────────────────────── */
+.dark-theme,
+.dark .mdxeditor {
+  --mdxeditor-base-base: transparent !important;
+  --mdxeditor-base-surface: #1E2023 !important; /* darkElevated */
+  --mdxeditor-base-divider: #2A2A2E !important; /* darkBorder */
+  --mdxeditor-base-text: hsl(210 12% 88%) !important; /* foreground */
+  --mdxeditor-accent-base: #F8CC4D !important; /* gold */
+  --mdxeditor-accent-text: #161618 !important; /* dark */
+  background-color: transparent !important;
+}
+
+.dark-theme [role="toolbar"],
+.dark .mdxeditor [role="toolbar"] {
+  background-color: #191B1D !important; /* darkSurface for toolbar */
+  border-bottom: 1px solid #2A2A2E !important;
+}
+
+.dark-theme [role="toolbar"] button:hover {
+  background-color: #2A2A2E !important;
+}
+
+button[role="combobox"] {
+  background-color: #191B1D !important;
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme .mdx-editor-content,
+.dark .mdxeditor .mdx-editor-content {
+  color: hsl(210 12% 88%) !important;
+  background-color: transparent !important;
+}
+
+.dark-theme .mdx-editor-content [data-lexical-text] {
+  color: inherit !important;
+}
+
+.dark-theme .mdx-editor-content p,
+.dark-theme .mdx-editor-content h1,
+.dark-theme .mdx-editor-content h2,
+.dark-theme .mdx-editor-content h3,
+.dark-theme .mdx-editor-content h4,
+.dark-theme .mdx-editor-content h5,
+.dark-theme .mdx-editor-content h6,
+.dark-theme .mdx-editor-content ul,
+.dark-theme .mdx-editor-content ol,
+.dark-theme .mdx-editor-content li {
+  color: inherit !important;
+}
+
+.dark-theme .mdxeditor-popup-container {
+  background-color: #1E2023 !important;
+  border-color: #2A2A2E !important;
+  color: hsl(210 12% 88%) !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR: DROPDOWNS & POPOVERS (Radix UI)
+───────────────────────────────────────────────────────── */
+.dark-theme [role="listbox"],
+.dark-theme [role="menu"],
+.dark-theme [data-radix-popper-content-wrapper] > div,
+.dark .mdxeditor-popup-container,
+.dark [data-radix-popper-content-wrapper] > div {
+  background-color: #1E2023 !important;
+  border: 1px solid #2A2A2E !important;
+  color: hsl(210 12% 88%) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme [role="option"],
+.dark-theme [role="menuitem"],
+.dark [role="option"],
+.dark [role="menuitem"] {
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme [role="option"]:hover,
+.dark-theme [role="option"][data-highlighted],
+.dark-theme [role="option"][data-state="checked"],
+.dark-theme [role="menuitem"]:hover,
+.dark-theme [role="menuitem"][data-highlighted],
+.dark [role="option"]:hover,
+.dark [role="option"][data-highlighted],
+.dark [role="option"][data-state="checked"],
+.dark [role="menuitem"]:hover,
+.dark [role="menuitem"][data-highlighted] {
+  background-color: #2A2A2E !important;
+  color: #F8CC4D !important;
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR: DIFF / SOURCE MODE TABS
+───────────────────────────────────────────────────────── */
+.dark-theme [role="tablist"],
+.dark [role="tablist"] {
+  background-color: #191B1D !important;
+  border-bottom: 1px solid #2A2A2E !important;
+}
+
+.dark-theme [role="tab"],
+.dark [role="tab"] {
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme [role="tab"][data-state="active"],
+.dark [role="tab"][data-state="active"] {
+  background-color: #1E2023 !important;
+  color: #F8CC4D !important;
+  border-bottom: 2px solid #F8CC4D !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR: SOURCE MODE (CodeMirror) & CODE BLOCKS
+───────────────────────────────────────────────────────── */
+.dark-theme .mdxeditor-source-editor,
+.dark .mdxeditor-source-editor,
+.dark-theme .cm-editor,
+.dark .cm-editor {
+  background-color: transparent !important;
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme .cm-gutters,
+.dark .cm-gutters {
+  background-color: #191B1D !important;
+  color: #888 !important;
+  border-right: 1px solid #2A2A2E !important;
+}
+
+.dark-theme .cm-activeLine,
+.dark-theme .cm-activeLineGutter,
+.dark .cm-activeLine,
+.dark .cm-activeLineGutter {
+  background-color: #2A2A2E !important;
+}
+
+.dark-theme .mdx-editor-content pre,
+.dark .mdxeditor .mdx-editor-content pre,
+.dark-theme .mdx-editor-content code {
+  background-color: #161618 !important;
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme .mdx-editor-content pre,
+.dark .mdxeditor .mdx-editor-content pre {
+  border: 1px solid #2A2A2E !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR: STICKY TOOLBAR
+───────────────────────────────────────────────────────── */
+.dark-theme [role="toolbar"],
+.mdxeditor [role="toolbar"] {
+  position: sticky;
+  top: 64px;
+  z-index: 20;
+  background-color: var(--mdxeditor-base-surface, #1E2023);
+  border-bottom: 1px solid var(--mdxeditor-base-divider, #2A2A2E);
+}
+
+/* ─────────────────────────────────────────────────────────
+   MDX EDITOR: OVERRIDES REQUESTED (SELECTION, SUGGESTION, LANGUAGE DROPDOWN)
+───────────────────────────────────────────────────────── */
+
+/* Selection area in codemirror */
+.dark-theme .cm-selectionBackground,
+.dark-theme .cm-content ::selection,
+.dark-theme .cm-line::selection {
+  background-color: rgba(248, 204, 77, 0.3) !important; /* Gold transparent */
+}
+
+/* Code suggestions (autocomplete tooltip) */
+.dark-theme .cm-tooltip-autocomplete {
+  background-color: #191B1D !important;
+  border: 1px solid #2A2A2E !important;
+}
+
+.dark-theme .cm-tooltip-autocomplete > ul > li {
+  color: hsl(210 12% 88%) !important;
+}
+
+.dark-theme .cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background-color: #2A2A2E !important;
+  color: #F8CC4D !important;
+}
+
+/* Restrict the size of Language selector dropdown */
+.dark-theme [data-radix-popper-content-wrapper] [role="listbox"],
+.dark-theme [data-radix-popper-content-wrapper] [role="menu"] {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}

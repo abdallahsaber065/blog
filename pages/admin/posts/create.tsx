@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import readingTime from "reading-time";
-import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-hot-toast';
 import { slug } from "github-slugger";
 import { useSession } from 'next-auth/react';
-import PostForm from '@/components/Admin/CreatePost/PostForm';
 import withAuth from '@/components/Admin/withAuth';
 import { useRouter } from 'next/router';
 import AIContentGenerator from '@/components/Admin/CreatePost/AIContentGenerator';
-import TourGuide from '@/components/Admin/CreatePost/CreateTourGuide';
-import { Save, CheckCircle, ArrowRight, Loader2, X, Sparkles } from 'lucide-react';
+import EditorWithPreview from '@/components/Admin/EditorWithPreview';
+import ImageSelector from '@/components/Admin/ImageSelector';
+import CreatableSelect from 'react-select/creatable';
+import makeAnimated from 'react-select/animated';
+import { resolvePublicUrl } from '@/lib/storage';
+import {
+    Save, CheckCircle, ArrowRight, Loader2, X, Sparkles,
+    Settings2, ChevronRight, PanelRightClose, PanelRightOpen,
+    FileText, Tag, FolderOpen, ImageIcon, BookOpen, Eye
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PostSettingsSidebar from '@/components/Admin/PostSettingsSidebar';
 
+const animatedComponents = makeAnimated();
 
 interface ImageProps {
     id: string;
@@ -29,17 +37,22 @@ const ApproveRoles = ['admin', 'moderator'];
 const getStatusByRole = (role: string, status: string) => {
     if (status === 'draft') {
         return 'draft';
-    } else
-        if (ApproveRoles.includes(role)) {
-            return status;
-        } else {
-            return 'pending';
-        }
+    } else if (ApproveRoles.includes(role)) {
+        return status;
+    } else {
+        return 'pending';
+    }
 }
 
 const CreatePost: React.FC = () => {
+    // AI Generator
     const [showAIGenerator, setShowAIGenerator] = useState(false);
     const [topic, setTopic] = useState('');
+    const [userCustomInstructions, setUserCustomInstructions] = useState('');
+    const [includeImages, setIncludeImages] = useState(false);
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+    // Post data
     const [title, setTitle] = useState('');
     const [excerpt, setExcerpt] = useState('');
     const [content, setContent] = useState('');
@@ -52,41 +65,27 @@ const CreatePost: React.FC = () => {
     const { data: session } = useSession();
     const [isMounted, setIsMounted] = useState(false);
 
-    const [userCustomInstructions, setUserCustomInstructions] = useState('');
+    // UI state
     const [showTour, setShowTour] = useState(false);
-    const [includeImages, setIncludeImages] = useState(false);
-    const [selectedImages, setSelectedImages] = useState<string[]>([]);
-
+    const [showSettings, setShowSettings] = useState(false);
+    const [isLivePreview, setIsLivePreview] = useState(false);
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [savedPostId, setSavedPostId] = useState<number | null>(null);
 
-    // Inside the CreatePost component
     const router = useRouter();
-
-    const setFeaturedImageFromSelector = (image: ImageProps) => {
-        setFeaturedImage(image.file_url);
-    }
 
     useEffect(() => {
         const fetchOldTagsAndCategories = async () => {
             const select = JSON.stringify({ name: true });
             const Tags = await axios.get(`/api/tags?select=${select}`);
             setOldTags(Tags.data.map((tag: { name: any; }) => ({ label: tag.name, value: tag.name })));
-
             const Categories = await axios.get(`/api/categories?select=${select}`);
             setOldCategories(Categories.data.map((category: { name: any; }) => ({ label: category.name, value: category.name })));
         };
-
         fetchOldTagsAndCategories();
         setIsMounted(true);
     }, []);
 
-    /**
-     * New single-step generation flow:
-     *  1. Research topic with Google Search grounding
-     *  2. Stream the full blog post
-     *  3. Generate metadata
-     */
     const handleGenerate = async ({
         contextUrls,
         voiceNoteBase64,
@@ -127,7 +126,6 @@ const CreatePost: React.FC = () => {
                 throw new Error(errorData.error || 'Failed to generate content');
             }
 
-            // SSE streaming from the Edge Function
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
             let generatedContent = '';
@@ -136,7 +134,6 @@ const CreatePost: React.FC = () => {
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-
                     const chunk = decoder.decode(value);
                     for (const line of chunk.split('\n')) {
                         if (line.startsWith('data: ')) {
@@ -161,7 +158,6 @@ const CreatePost: React.FC = () => {
             if (!generatedContent) throw new Error('No content generated. Please try again.');
             setContent(generatedContent);
 
-            // Generate metadata
             const metaRes = await axios.post('/api/ai/generate-metadata', {
                 topic,
                 content: generatedContent,
@@ -268,137 +264,209 @@ const CreatePost: React.FC = () => {
         } catch (error) {
             console.error('Error publishing post:', error);
         }
-    }
+    };
+
+    const handleCreateTag = (inputValue: string) => {
+        const newTag = { label: inputValue, value: inputValue };
+        setTags([...tags, newTag]);
+    };
+
+    const handleCreateCategory = (inputValue: string) => {
+        const newCategory = { label: inputValue, value: inputValue };
+        setCategory(newCategory);
+    };
+
+    // Count filled metadata fields for badge
+    const metadataCount = [title, excerpt, category, featuredImage, tags.length > 0].filter(Boolean).length;
 
     return (
-        <div className="container mx-auto p-4 bg-card text-foreground">
-            <TourGuide
-                run={showTour}
-                onFinish={() => setShowTour(false)}
-                setShowAIGenerator={setShowAIGenerator}
-                setShowContentSettings={() => { }}
-            />
+        <div className="min-h-screen bg-background">
 
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-lightBorder dark:border-darkBorder">
-                <h1 className="text-3xl font-display font-bold text-foreground">Create New Post</h1>
-                <button
-                    className="flex items-center gap-2 px-4 py-2 text-gold dark:text-goldLight hover:bg-gold/10 dark:hover:bg-gold/15 rounded-lg transition-all duration-200 border border-gold/30 dark:border-gold/40"
-                    onClick={() => setShowTour(true)}
-                >
-                    <span className="text-lg">❔</span>
-                    <span className="font-medium">Show Guide</span>
-                </button>
-            </div>
 
-            <div className="mb-6">
-                <motion.button
-                    className={`ai-generator-toggle relative flex items-center gap-3 px-5 py-3 font-semibold rounded-xl transition-all duration-300 overflow-hidden group ${showAIGenerator
-                        ? 'bg-gold/15 border border-gold/40 text-gold hover:bg-gold/20'
-                        : 'bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/30 text-gold hover:from-gold/20 hover:to-gold/10 hover:border-gold/50'
-                        }`}
-                    onClick={() => setShowAIGenerator(!showAIGenerator)}
-                    whileTap={{ scale: 0.97 }}
-                    whileHover={{ scale: 1.02 }}
-                >
-                    {/* Subtle shimmer on hover */}
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
-                    {showAIGenerator ? (
-                        <>
-                            <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-gold/10 border border-gold/20">
-                                <X className="w-4 h-4" />
-                            </span>
-                            <span>Hide AI Generator</span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="relative w-8 h-8 flex items-center justify-center rounded-lg bg-gold/10 border border-gold/20">
-                                <Sparkles className="w-4 h-4" />
-                                <span className="absolute -inset-0.5 rounded-lg border border-gold/30 animate-ping opacity-40 pointer-events-none" />
-                            </span>
-                            <span>Generate with AI</span>
-                            <span className="ml-auto text-[10px] uppercase tracking-widest font-bold text-gold/60 bg-gold/10 px-2 py-0.5 rounded-full border border-gold/20">Beta</span>
-                        </>
-                    )}
-                </motion.button>
-            </div>
-
-            <AnimatePresence mode="wait">
-                {showAIGenerator && (
-                    <motion.div
-                        key="ai-generator"
-                        initial={{ opacity: 0, y: -12, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                        <AIContentGenerator
-                            className="outline-settings"
-                            topic={topic}
-                            setTopic={setTopic}
-                            userCustomInstructions={userCustomInstructions}
-                            setUserCustomInstructions={setUserCustomInstructions}
-                            includeImages={includeImages}
-                            setIncludeImages={setIncludeImages}
-                            loading={loading}
-                            onGenerate={handleGenerate}
-                            onImageSelect={handleImageSelection}
+            {/* ── Top Bar ── */}
+            <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-lightBorder dark:border-darkBorder">
+                <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+                    {/* Left: Title input */}
+                    <div className="flex-1 min-w-0 hidden sm:block">
+                        <input
+                            type="text"
+                            className="post-title w-full text-xl sm:text-2xl font-display font-bold bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/40 truncate"
+                            placeholder="Post title…"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                         />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    </div>
 
-            <PostForm
-                className="post-form"
-                title={title}
-                setTitle={setTitle}
-                excerpt={excerpt}
-                setExcerpt={setExcerpt}
-                content={content}
-                setContent={setContent}
-                tags={tags}
-                setTags={setTags}
-                category={category}
-                setCategory={setCategory}
-                featuredImage={featuredImage}
-                setFeaturedImage={setFeaturedImageFromSelector}
-                oldTags={oldTags}
-                oldCategories={oldCategories}
-                isMounted={isMounted}
-            />
+                    {/* Right: Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Live Preview Button */}
+                        <button
+                            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold bg-success/10 text-success border border-success/30 hover:bg-success/20 transition-all duration-200"
+                            onClick={() => setIsLivePreview(true)}
+                            title="Open full screen Live Preview"
+                        >
+                            <Eye className="w-4 h-4" />
+                            <span className="hidden sm:inline">Preview</span>
+                        </button>
 
-            <div className="publish-buttons flex gap-4 pt-6 border-t border-lightBorder dark:border-darkBorder mt-6">
-                <button
-                    className="flex-1 h-11 px-6 bg-gold hover:bg-goldDark text-slate-900 dark:text-slate-900 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    onClick={handlePublish}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <ClipLoader size={18} color={"#fff"} />
-                            <span>Publishing...</span>
-                        </>
-                    ) : (
-                        <>
-                            <Save className="w-4 h-4" />
-                            <span>Publish</span>
-                        </>
-                    )}
-                </button>
-                <button
-                    className="flex-1 h-11 px-6 bg-darkElevated hover:bg-darkBorder text-foreground font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    onClick={handleSaveDraft}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <ClipLoader size={18} color={"currentColor"} />
-                            <span>Saving...</span>
-                        </>
-                    ) : (
-                        <span>Save Draft</span>
-                    )}
-                </button>
+                        {/* AI Generator toggle */}
+                        <motion.button
+                            className={`ai-generator-toggle relative flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${showAIGenerator
+                                ? 'bg-gold/15 border border-gold/40 text-gold'
+                                : 'bg-card border border-lightBorder dark:border-darkBorder text-muted-foreground hover:text-gold hover:border-gold/40'
+                                }`}
+                            onClick={() => setShowAIGenerator(!showAIGenerator)}
+                            whileTap={{ scale: 0.96 }}
+                        >
+                            <Sparkles className="w-4 h-4" />
+                            <span className="hidden sm:inline">AI</span>
+                        </motion.button>
+
+                        {/* Settings toggle */}
+                        <button
+                            className={`relative flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${showSettings
+                                ? 'bg-gold/15 border border-gold/40 text-gold'
+                                : 'bg-card border border-lightBorder dark:border-darkBorder text-muted-foreground hover:text-foreground hover:border-gold/40'
+                                }`}
+                            onClick={() => setShowSettings(!showSettings)}
+                        >
+                            {showSettings ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+                            <span className="hidden sm:inline">Settings</span>
+                            {metadataCount > 0 && !showSettings && (
+                                <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-[10px] font-bold bg-gold text-dark rounded-full">
+                                    {metadataCount}
+                                </span>
+                            )}
+                        </button>
+
+                        {/* Save / Publish */}
+                        <div className="flex items-center gap-1.5 ml-1">
+                            <button
+                                className="publish-buttons h-9 px-4 bg-card hover:bg-muted text-foreground text-sm font-medium rounded-xl transition-all duration-200 border border-lightBorder dark:border-darkBorder disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                onClick={handleSaveDraft}
+                                disabled={loading}
+                            >
+                                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                                <span>Save Draft</span>
+                            </button>
+                            <button
+                                className="publish-buttons h-9 px-4 bg-gold hover:bg-goldDark text-dark text-sm font-bold rounded-xl transition-all duration-200 shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                onClick={handlePublish}
+                                disabled={loading}
+                            >
+                                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                                <span>Publish</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            {/* ── Main Content Area ── */}
+            <div className="max-w-screen-2xl mx-auto flex">
+                {/* Editor Area */}
+                <div className={`flex-1 min-w-0 transition-all duration-300 ${showSettings ? 'mr-0' : ''}`}>
+                    {/* AI Generator Panel */}
+                    <AnimatePresence mode="wait">
+                        {showAIGenerator && (
+                            <motion.div
+                                key="ai-generator"
+                                initial={{ opacity: 0, y: -8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                                className="px-4 sm:px-6 pt-4"
+                            >
+                                <AIContentGenerator
+                                    className="ai-generator-toggle"
+                                    topic={topic}
+                                    setTopic={setTopic}
+                                    userCustomInstructions={userCustomInstructions}
+                                    setUserCustomInstructions={setUserCustomInstructions}
+                                    includeImages={includeImages}
+                                    setIncludeImages={setIncludeImages}
+                                    loading={loading}
+                                    onGenerate={handleGenerate}
+                                    onImageSelect={handleImageSelection}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Editor */}
+                    <div className="px-4 sm:px-6 py-4 post-content">
+                        <EditorWithPreview
+                            markdownText={content}
+                            onContentChange={setContent}
+                            title={title}
+                            category={category}
+                            tags={tags}
+                            featuredImage={featuredImage}
+                            excerpt={excerpt}
+                            isLivePreview={isLivePreview}
+                            setIsLivePreview={setIsLivePreview}
+                        />
+                    </div>
+                </div>
+
+                {/* ── Settings Sidebar ── */}
+                <PostSettingsSidebar
+                    showSettings={showSettings}
+                    setShowSettings={setShowSettings}
+                    title={title}
+                    onTitleChange={setTitle}
+                    excerpt={excerpt}
+                    onExcerptChange={setExcerpt}
+                    featuredImage={featuredImage}
+                    onFeaturedImageChange={setFeaturedImage}
+                    markdownText={content}
+                    renderTags={
+                        isMounted && (
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                    <Tag className="w-3 h-3 text-gold/70" />
+                                    Tags
+                                </label>
+                                <CreatableSelect
+                                    isMulti
+                                    components={animatedComponents}
+                                    options={oldTags}
+                                    value={tags}
+                                    onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                                    onCreateOption={handleCreateTag}
+                                    className="tags-select my-react-select-container"
+                                    classNamePrefix="my-react-select"
+                                    placeholder="Select or create tags..."
+                                    formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+                                />
+                            </div>
+                        )
+                    }
+                    renderCategory={
+                        isMounted && (
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                                    <FolderOpen className="w-3 h-3 text-gold/70" />
+                                    Category
+                                </label>
+                                <CreatableSelect
+                                    components={animatedComponents}
+                                    options={oldCategories}
+                                    value={category}
+                                    onChange={(selectedOption) => setCategory(selectedOption as { label: string; value: string } | null)}
+                                    onCreateOption={handleCreateCategory}
+                                    className="category-select my-react-select-container"
+                                    classNamePrefix="my-react-select"
+                                    placeholder="Select or create category..."
+                                    formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+                                />
+                            </div>
+                        )
+                    }
+                />
+            </div>
+
+            {/* Redirect overlay */}
             <AnimatePresence>
                 {isRedirecting && (
                     <motion.div

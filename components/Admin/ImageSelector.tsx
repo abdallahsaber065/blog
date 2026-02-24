@@ -244,7 +244,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-0 sm:px-2">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-100 p-0 sm:px-2">
                 <div className="bg-white dark:bg-dark w-full h-full sm:h-auto sm:rounded-lg sm:max-w-4xl sm:max-h-[90vh] flex flex-col md:flex-row overflow-hidden">
                     {/* Main Content */}
                     <div className="flex-1 px-2 pb-2 sm:px-4 sm:pb-4 overflow-y-auto">

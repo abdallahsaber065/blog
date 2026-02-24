@@ -43,7 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             case 'GET': {
                 const storage = getStorageProvider();
                 const mediaItems = await prisma.mediaLibrary.findMany({
-                    where: query.where ? JSON.parse(query.where as string) : undefined,
+                    where: query.where ? JSON.parse(query.where as string) : { file_url: { contains: 'media' } },
                     ...(query.include ? { include: JSON.parse(query.include as string) } : {}),
                     ...(query.select ? { select: JSON.parse(query.select as string) } : {}),
                 });
