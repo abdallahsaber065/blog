@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
+import TagsSelector from '@/components/Admin/TagsSelector';
 import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import { Button } from '@/components/ui/button';
@@ -122,17 +123,13 @@ const PostForm: React.FC<PostFormProps> = ({
                 <>
                     <div className="mb-4">
                         <label className="block text-l font-bold text-gray dark:text-lightgray my-4">Tags</label>
-                        <CreatableSelect
-                            isMulti
-                            components={animatedComponents}
-                            options={oldTags}
+                        <TagsSelector
                             value={tags}
-                            onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                            onChange={(selectedOptions) => setTags(selectedOptions || [])}
+                            options={oldTags}
                             onCreateOption={handleCreateTag}
-                            className="tags-select my-react-select-container"
-                            classNamePrefix="my-react-select"
-                            placeholder="Select or create tags..."
                             formatCreateLabel={(inputValue) => `Create new tag "${inputValue}"`}
+                            placeholder="Select or create tags..."
                         />
                     </div>
                     <div className="mb-4">

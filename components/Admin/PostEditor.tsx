@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EditorWithPreview from "@/components/Admin/EditorWithPreview";
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
+import TagsSelector from '@/components/Admin/TagsSelector';
 import PostSettingsSidebar from '@/components/Admin/PostSettingsSidebar';
 import { resolvePublicUrl } from '@/lib/storage';
 import readingTime from "reading-time";
@@ -219,11 +220,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                                 <Tag className="w-3 h-3 text-gold/70" />
                                 Tags
                             </label>
-                            <CreatableSelect
-                                isMulti
-                                components={animatedComponents}
-                                className="post-editor-tags-select my-react-select-container"
-                                classNamePrefix="my-react-select"
+                            <TagsSelector
                                 value={currentPost.tags}
                                 onChange={(selectedOptions) => handleFieldChange('tags', selectedOptions)}
                                 options={tags}
@@ -232,6 +229,7 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, tags, categories, onSave,
                                 getOptionValue={(option) => String(option.id)}
                                 formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
                                 placeholder="Select or create tags..."
+                                className="post-editor-tags-select my-react-select-container"
                             />
                         </div>
                     }
