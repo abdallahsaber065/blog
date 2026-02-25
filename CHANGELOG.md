@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed - February 2025
+
+#### Tags selector
+
+- **Modernized tags selector**: New design for the post tags multi-select across create/edit and settings sidebar
+  - Added reusable `TagsSelector` component with pill-style selected tags (gold accent, rounded chips with remove button)
+  - Applied design-system tokens (background, border, gold focus ring, popover menu) via react-select `styles` prop
+  - Updated global react-select styles (`.my-react-select-container`) for category and other selects: `--radius`, gold focus ring, muted/popover backgrounds, hidden indicator separator
+  - Replaced inline `CreatableSelect` for tags in `PostForm`, `PostEditor`, and `pages/admin/posts/create.tsx` with `TagsSelector`
+
 ### Changed - October 31, 2025
 
 #### Navigation & Routing Updates

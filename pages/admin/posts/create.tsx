@@ -11,6 +11,7 @@ import EditorWithPreview from '@/components/Admin/EditorWithPreview';
 import ImageSelector from '@/components/Admin/ImageSelector';
 import CreatableSelect from 'react-select/creatable';
 import makeAnimated from 'react-select/animated';
+import TagsSelector from '@/components/Admin/TagsSelector';
 import { resolvePublicUrl } from '@/lib/storage';
 import {
     Save, CheckCircle, ArrowRight, Loader2, X, Sparkles,
@@ -427,17 +428,14 @@ const CreatePost: React.FC = () => {
                                     <Tag className="w-3 h-3 text-gold/70" />
                                     Tags
                                 </label>
-                                <CreatableSelect
-                                    isMulti
-                                    components={animatedComponents}
-                                    options={oldTags}
+                                <TagsSelector
                                     value={tags}
-                                    onChange={(selectedOptions) => setTags(selectedOptions as { label: string; value: string }[] || [])}
+                                    onChange={(selectedOptions) => setTags(selectedOptions || [])}
+                                    options={oldTags}
                                     onCreateOption={handleCreateTag}
-                                    className="tags-select my-react-select-container"
-                                    classNamePrefix="my-react-select"
-                                    placeholder="Select or create tags..."
                                     formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+                                    placeholder="Select or create tags..."
+                                    data-tour="tags-select"
                                 />
                             </div>
                         )
