@@ -32,9 +32,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
             transition={{ duration: 0.6, delay: Math.min(index * 0.1, 0.4), ease: [0.16, 1, 0.3, 1] }}
             className="group relative flex flex-col h-[450px] bg-darkElevated rounded-2xl overflow-hidden border border-darkBorder transition-all hover:border-gold/30 hover:shadow-card-dark"
         >
-            <Link href={`/blog/${post.slug}`} className="absolute inset-0 z-10">
-                <span className="sr-only">Read {post.title}</span>
-            </Link>
+            {/* Full-card link overlay */}
+            <Link href={`/blog/${post.slug}`} className="absolute inset-0 z-20" aria-label={post.title} />
 
             <div className="relative aspect-[16/10] overflow-hidden bg-dark">
                 <motion.img
@@ -54,7 +53,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
                 )}
             </div>
 
-            <div className="flex flex-col flex-grow p-6 relative z-20">
+            <div className="flex flex-col flex-grow p-6 relative z-10">
                 <div className="flex items-center text-light/50 text-xs font-medium mb-3">
                     <Calendar className="w-3.5 h-3.5 mr-1.5" />
                     <time>{formattedDate}</time>
@@ -68,14 +67,11 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
                     {post.excerpt}
                 </p>
 
-                <Link href={`/blog/${post.slug}`}>
-                    <div className="pt-4 border-t border-darkBorder flex items-center justify-between mt-auto">
-                        <span className="text-sm font-semibold text-gold flex items-center gap-1 transition-transform group-hover:translate-x-1 duration-300">
-                            Read more <ArrowRight className="w-4 h-4 ml-1" />
-                        </span>
-                        {/* Subtle read time or something if available, or omit */}
-                    </div>
-                </Link>
+                <div className="pt-4 border-t border-darkBorder flex items-center justify-between mt-auto">
+                    <span className="text-sm font-semibold text-gold flex items-center gap-1 transition-transform group-hover:translate-x-1 duration-300">
+                        Read more <ArrowRight className="w-4 h-4 ml-1" />
+                    </span>
+                </div>
             </div>
         </motion.article>
     );
