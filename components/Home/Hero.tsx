@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Calendar, ChevronDown } from 'lucide-react';
+import { resolvePublicUrl } from '@/lib/storage';
 
 export interface HeroPost {
     id: string;
@@ -95,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({ posts }) => {
                     {/* BG image */}
                     <div className="absolute inset-0">
                         <img
-                            src={main.featured_image_url || FALLBACK}
+                            src={main.featured_image_url ? resolvePublicUrl(main.featured_image_url) : FALLBACK}
                             alt={main.title}
                             className="w-full h-full object-cover transition-transform duration-700 ease-out
                                        group-hover:scale-[1.04]"
@@ -166,7 +167,7 @@ const Hero: React.FC<HeroProps> = ({ posts }) => {
                                     {/* Thumbnail strip */}
                                     <div className="relative w-[38%] shrink-0 overflow-hidden rounded-l-2xl">
                                         <img
-                                            src={post.featured_image_url || FALLBACK}
+                                            src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : FALLBACK}
                                             alt={post.title}
                                             className="w-full h-full object-cover transition-transform duration-500
                                                        group-hover:scale-[1.05]"
@@ -210,7 +211,7 @@ const Hero: React.FC<HeroProps> = ({ posts }) => {
                                 {/* ── DESKTOP: full-bleed image with overlay ── */}
                                 <div className="hidden md:block absolute inset-0">
                                     <img
-                                        src={post.featured_image_url || FALLBACK}
+                                        src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : FALLBACK}
                                         alt={post.title}
                                         className="w-full h-full object-cover transition-transform duration-700 ease-out
                                                    group-hover:scale-[1.05]"

@@ -9,8 +9,12 @@ export type { StorageProvider, UploadResult, DeleteResult } from './types';
 export function resolvePublicUrl(fileUrl: string | null | undefined): string {
   if (!fileUrl) return '/static/images/default-image.webp';
 
-  // Already an absolute URL (http/https) - return as-is
+  // If it's already a full URL that's NOT a relative-looking path accidentally matched
   if (/^https?:\/\//i.test(fileUrl)) return fileUrl;
+
+  // Handle absolute paths by making them relative to the root if they aren't already
+  // This ensures they are prefixed with the BASE_URL correctly
+  const path = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
 
   // Use NEXT_PUBLIC_ if available (client side), otherwise fallback to server-side env
   const provider = (
@@ -20,8 +24,10 @@ export function resolvePublicUrl(fileUrl: string | null | undefined): string {
   ).toLowerCase().trim();
 
   // Check if it's a known local static folder (e.g. from the seed or project assets)
-  const isLocalStatic = /^\/?(blogs|static|svgs|fonts|templates|images)\//i.test(fileUrl);
-  if (isLocalStatic) {
+  // We check the path (which now definitely starts with /)
+  const isLocalStatic = /^\/(blogs|static|svgs|fonts|templates|images|favicon|robots|sitemap|manifest)/i.test(path);
+
+  if (isLocalStatic || provider === 'local') {
     const base = (
       process.env.NEXT_PUBLIC_REMOTE_URL ||
       process.env.NEXT_PUBLIC_BASE_URL ||
@@ -29,10 +35,11 @@ export function resolvePublicUrl(fileUrl: string | null | undefined): string {
       process.env.BASE_URL ||
       ''
     ).replace(/\/$/, '');
-    return `${base}/${fileUrl.replace(/^\/+/, '')}`;
+
+    return `${base}${path}`;
   }
 
-  const clean = fileUrl.replace(/^\/+/, '');
+  const clean = path.replace(/^\/+/, '');
 
   if (provider === 'imagekit') {
     const endpoint = (

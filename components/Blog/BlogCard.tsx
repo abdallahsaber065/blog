@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, ArrowRight } from 'lucide-react';
+import { resolvePublicUrl } from '@/lib/storage';
 
 export interface Post {
     id: string;
@@ -37,7 +38,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
 
             <div className="relative aspect-[16/10] overflow-hidden bg-dark">
                 <motion.img
-                    src={post.featured_image_url || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'}
+                    src={post.featured_image_url ? resolvePublicUrl(post.featured_image_url) : 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop'}
                     alt={post.title}
                     className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-105"
                 />
